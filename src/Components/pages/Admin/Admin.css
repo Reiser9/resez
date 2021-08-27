@@ -1,0 +1,9 @@
+.admin__link{
+	background: #fff;
+	color: var(--mainC);
+}
+
+.admin__link.active{
+	color: #fff;
+	background: var(--mainC);
+}

@@ -1,0 +1,39 @@
+.profile__data--item{
+	margin-top: 1.5rem;
+}
+
+.profile__data--item:first-child{
+	margin-top: 0;
+}
+
+.profile__data--value{
+	margin-top: 1rem;
+	padding: 1.2rem 2rem;
+	border-radius: 7px;
+	border: 1px solid #CDCDCD;
+}
+
+.profile__content--button--inner{
+	margin-top: 3rem;
+}
+
+.profile__content--button{
+	margin-top: 1.5rem;
+}
+
+.profile__content--button:first-child{
+	margin-top: 0;
+}
+
+.delete__account{
+	background: #FF6666;
+	border: 1px solid #FF6666;
+}
+
+.delete__account:hover{
+	color: #FF6666;
+}
+
+.profile__lvl--inner, .profile__data--inner{
+	margin-top: 1.5rem;
+}

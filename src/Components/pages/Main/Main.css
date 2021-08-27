@@ -1,0 +1,63 @@
+/* Главный экран */
+.content{
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	overflow-y: auto;
+}
+
+.main{
+	padding: 7.2rem 6rem;
+	background: linear-gradient(90deg, #007CEE 0%, #9EEEFF 100%);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.main__text--inner{
+	
+}
+
+.main__text--title{
+	font-size: 5rem;
+	color: #fff;
+	font-weight: 700;
+}
+
+.main__text--text{
+	margin-top: 1rem;
+	color: #fff;
+	font-size: 2.4rem;
+}
+
+.main__text--button--inner{
+	margin-top: 4rem;
+	display: flex;
+	align-items: center;
+}
+
+.main__text--button{
+	margin-right: 3rem;
+	color: #007cee;
+}
+
+.main__text--button:hover{
+	color: #007cee;
+}
+
+.main__text--button:last-child{
+	margin-right: 0;
+}
+
+.main__img--inner{
+	width: 591px;
+	margin-left: 3rem;
+	flex-shrink: 0;
+}
+
+.main__img{
+	width: 100%;
+	height: auto;
+}

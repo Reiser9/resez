@@ -1,0 +1,22 @@
+.profile__settings--content{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-top: 3rem;
+}
+
+.profile__settings--item{
+	width: 48%;
+}
+
+.profile__settings--button, .profile__settings--confirm{
+	margin-top: 1rem;
+}
+
+.profile__settings--confirm{
+	border: 1px solid var(--mainC);
+}
+
+.confirmed{
+	pointer-events: none;
+}

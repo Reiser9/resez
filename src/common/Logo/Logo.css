@@ -1,0 +1,8 @@
+.logo__abs{
+	font-size: 5rem;
+	color: var(--mainC);
+	font-weight: 700;
+	position: absolute;
+	top: 15px;
+	left: 30px;
+}

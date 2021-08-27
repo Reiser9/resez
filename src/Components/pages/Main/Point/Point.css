@@ -1,0 +1,20 @@
+/* Преимущества */
+.point{
+	padding: 5rem 6rem;
+	position: relative;
+}
+
+.point__title{
+	text-align: center;
+}
+
+.point__subtitle{
+	text-align: center;
+	margin-top: 1rem;
+	font-size: 2.1rem;
+}
+
+.point__content{
+	display: flex;
+	flex-wrap: wrap;
+}
