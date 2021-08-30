@@ -20,9 +20,9 @@ const Admin = () => {
 				<div className="admin__inner flexsh wrapper flexstart w100">
 					<div className="wrapper__content flexcenter w100">
 						<div className="admin__link--inner w100">
-							<NavLinkButton text={'Главная'} href={'admin'} classMore={'button admin__link'} exact={true} />
-							<NavLinkButton text={'Уведомления'} href={'admin/notify'} classMore={'button admin__link'} />
-							<NavLinkButton text={'Пользователи'} href={'admin/users'} classMore={'button admin__link'} />
+							<NavLinkButton text={'Главная'} href={'admin'} classMore={'button white__button admin__link'} exact={true} />
+							<NavLinkButton text={'Уведомления'} href={'admin/notify'} classMore={'button white__button admin__link'} />
+							<NavLinkButton text={'Пользователи'} href={'admin/users'} classMore={'button white__button admin__link'} />
 						</div>
 
 						<div className="flexcenter w100">

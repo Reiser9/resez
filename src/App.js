@@ -20,6 +20,7 @@ const NotifyPage = React.lazy(() => import('./Components/pages/Notify/Notify.jsx
 const Sitecolor = React.lazy(() => import('./Components/pages/Sitecolor/Sitecolor.jsx'));
 const Admin = React.lazy(() => import('./Components/pages/Admin/Admin.jsx'));
 const Info = React.lazy(() => import('./Components/pages/Info/Info.jsx'));
+const Tasks = React.lazy(() => import('./Components/pages/Tasks/Tasks.jsx'));
 
 const App = ({initApp, initializedApp, notify, sitecolor}) => {
     React.useEffect(() => {
@@ -56,6 +57,7 @@ const App = ({initApp, initializedApp, notify, sitecolor}) => {
                 <Route path="/sitecolor" render={() => withSuspense(Sitecolor)} />
                 <Route path="/admin" render={() => withSuspense(Admin)} />
                 <Route path="/info" render={() => withSuspense(Info)} />
+                <Route path="/tasks" render={() => withSuspense(Tasks)} />
                 <Route exact path="/404" render={() => withSuspense(NotFound)} />
                 <Route path="*" render={() => <Redirect to={"/404"} />}/>
             </Switch>
