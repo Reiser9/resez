@@ -18,10 +18,10 @@ const InputLocal = ({val, editSetData, editDataVal, placeholder = "", password =
 	return(
 		<div className="input__inner">
 			<div className="input__wrapper">
-				<input onChange={handleChange} value={editDataVal} type={password ? inputView ? 'text' : 'password' : 'text'} className={`input form__input login__input${password ? ' input__password' : ''}`} placeholder={placeholder} />
+				<textarea onChange={handleChange} value={editDataVal} type={password ? inputView ? 'text' : 'password' : 'text'} className={`input form__input ${password ? ' input__password' : ''}`} placeholder={placeholder}></textarea>
 
 				{editDataVal.length > 0 &&
-				<div className="input__delete">
+				<div className="input__delete textarea">
 					<img onClick={remove} src="/assets/img/crossField.svg" alt="Удалить содержимое" className="input__delete--img" />
 
 					{password && <img onClick={() => setInputView(prev => !prev)} src={inputView ? '/assets/img/noteye.svg' : '/assets/img/eye.svg'} alt="Посмотреть пароль" className="input__view--img" />}

@@ -112,6 +112,7 @@
 	color: var(--mainC);
 	display: inline-block;
 	width: 100%;
+	position: relative;
 }
 
 .sidebar__nav--link:hover, .sidebar__nav--link.active{

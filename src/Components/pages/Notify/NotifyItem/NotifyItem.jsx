@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import './NotifyItem.css';
 
 import LoadButton from '../../../../common/Buttons/LoadButton/LoadButton.jsx';
+import Button from '../../../../common/Buttons/Button/Button.jsx';
 
 import {readNotifyUser} from '../../../../redux/notify-reducer.js';
 import {reqReadNotifyLoad} from '../../../../redux/user-selectors.js';
@@ -31,15 +32,11 @@ const NotifyItem = ({title, text, date, read, id, readNotifyLoad, readNotifyUser
 
 			<div className="notify__read--inner flexbet w100 mt3">
 				{read
-				? <button className="notify__read--button button disable">
-					Прочитано
-				</button>
+				? <Button text="Прочитано" widthAuto margin={0} classMore={'disable'} />
 				: <>
 					{readNotifyLoad
-					? <LoadButton margin={0} />
-					: <button className="notify__read--button button" onClick={readNotify}>
-						Прочитать
-					</button>}
+					? <LoadButton margin={0} width />
+					: <Button text="Прочитать" widthAuto margin={0} onClick={readNotify} />}
 					
 					<div className="notify__indicator"></div>
 				</>}

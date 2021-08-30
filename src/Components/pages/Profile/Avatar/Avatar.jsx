@@ -9,7 +9,7 @@ const Avatar = ({img, status}) => {
 	return(
 		<div className="profile__avatar--inner w100">
 			<div className="profile__avatar--content">
-				<img src={img ? `./assets/img/${img}.svg` : './assets/img/1.svg'} alt="Аватарка" className="profile__avatar--img" />
+				<img src={img ? `/assets/img/${img}.svg` : '/assets/img/1.svg'} alt="Аватарка" className="profile__avatar--img" />
 
 				<div className="profile__avatar--edit">
 					Изменить

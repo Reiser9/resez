@@ -69,10 +69,21 @@ body{
     box-sizing: border-box;
 }
 
-a, button, input, textarea{
+a, button, input, textarea, select{
     transition: .2s linear;
     font-family: 'Nunito', sans-serif;
     font-size: 1.8rem;
+}
+
+textarea{
+    resize: none;
+    height: 150px;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 a{
@@ -162,7 +173,7 @@ input::-webkit-inner-spin-button{
     border-radius: 7px;
     border: 1px solid #CDCDCD;
     color: #000;
-    padding: 1.2rem 4rem 1.2rem 2rem;
+    padding: 1rem 4.5rem 1rem 1.5rem;
     outline: none;
 }
 
@@ -266,7 +277,7 @@ input::-webkit-inner-spin-button{
 }
 
 .input__password{
-    padding: 1.2rem 7.5rem 1.2rem 2rem;
+    padding-right: 7.5rem;
 }
 
 .input__warn--text{
@@ -282,6 +293,11 @@ input::-webkit-inner-spin-button{
     right: 20px;
     display: flex;
     align-items: center;
+}
+
+.input__delete.textarea{
+    top: 15px;
+    transform: translateY(0);
 }
 
 .input__delete--img, .input__view--img{
@@ -435,4 +451,21 @@ input::-webkit-inner-spin-button{
 
 .flexsh{
     flex-shrink: 0;
+}
+
+.notify__index{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #ff6666;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 20px;
+    border: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.6rem;
 }

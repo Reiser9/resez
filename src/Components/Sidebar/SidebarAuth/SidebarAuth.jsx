@@ -5,9 +5,9 @@ import PreloaderTop from '../../../common/Preloaders/PreloaderTop/PreloaderTop.j
 import NavLinkButton from '../../../common/Buttons/NavLinkButton/NavLinkButton.jsx';
 
 import {quitUser} from '../../../redux/auth-reducer.js';
-import {reqStatus, reqName, reqSurname, reqImg, reqLvl, reqBalance, reqRole} from '../../../redux/user-selectors.js';
+import {reqStatus, reqName, reqSurname, reqImg, reqLvl, reqBalance, reqRole, reqNotifyNotRead} from '../../../redux/user-selectors.js';
 
-const SidebarAuth = ({status, name, surname, img, lvl, balance, role, quitUser}) => {
+const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotRead, quitUser}) => {
 	const quit = () => {
 		quitUser(true);
 	}
@@ -19,7 +19,7 @@ const SidebarAuth = ({status, name, surname, img, lvl, balance, role, quitUser})
 	        	? <>
 	        		<div className="user__inner">
 		        		<NavLinkButton href={'profile'} classMore="user__img--inner">
-		        		    <img src={img ? `./assets/img/${img}.svg` : "./assets/img/1.svg"} alt="Аватарка" className="user__img" />
+		        		    <img src={img ? `/assets/img/${img}.svg` : "/assets/img/1.svg"} alt="Аватарка" className="user__img" />
 		        		</NavLinkButton>
 
 		        		<div className="user__data--inner">
@@ -49,7 +49,7 @@ const SidebarAuth = ({status, name, surname, img, lvl, balance, role, quitUser})
 	        <div className="sidebar__nav">
 	        	{role === 'admin' && <NavLinkButton text={'Админка'} href={'admin'} classMore="sidebar__nav--link" />}
 	        	<NavLinkButton text={'Мой профиль'} href={'profile'} classMore="sidebar__nav--link" />
-	            <NavLinkButton text={'Уведомления'} href={'notify'} classMore="sidebar__nav--link" />
+	            <NavLinkButton text={'Уведомления'} href={'notify'} classMore="sidebar__nav--link" notify notifyNotRead={notifyNotRead} />
 	            <NavLinkButton text={'Цветовая гамма'} href={'sitecolor'} classMore="sidebar__nav--link" />
 	            <button onClick={quit} className="button sidebar__button sidebar__nav--link quit__button">Выйти</button>
 	        </div>
@@ -65,7 +65,8 @@ const mapStateToProps = (state) => {
 		img: reqImg(state),
 		lvl: reqLvl(state),
 		balance: reqBalance(state),
-		role: reqRole(state)
+		role: reqRole(state),
+		notifyNotRead: reqNotifyNotRead(state)
 	}
 }
 

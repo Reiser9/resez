@@ -13,9 +13,9 @@ import Avatar from '../Avatar/Avatar.jsx';
 
 import {deleteAccount, editUserDataInDatabase, checkAlreadyNick} from '../../../../redux/auth-reducer.js';
 import {patternNotify} from '../../../../redux/notify-reducer.js';
-import {reqRole, reqName, reqSurname, reqNick, reqEditNickLoad} from '../../../../redux/user-selectors.js';
+import {reqRole, reqName, reqSurname, reqNick, reqEditNickLoad, reqExp, reqLvl} from '../../../../redux/user-selectors.js';
 
-const Data = ({role, name, surname, nick, editNickLoad, deleteAccount, editUserDataInDatabase, checkAlreadyNick, patternNotify}) => {
+const Data = ({role, name, surname, nick, exp, lvl, editNickLoad, deleteAccount, editUserDataInDatabase, checkAlreadyNick, patternNotify}) => {
 	const [editData, setEditData] = React.useState(false); //Редактируем ли данные сейчас
 	const [nameEdit, setNameEdit] = React.useState(""); //Записываем измененное имя
 	const [surnameEdit, setSurnameEdit] = React.useState(""); //Записываем измененную фамилию
@@ -64,7 +64,7 @@ const Data = ({role, name, surname, nick, editNickLoad, deleteAccount, editUserD
 			<div className="profile__content--wrapper flexstart w100">
 				<Avatar />
 
-				<Lvl />
+				<Lvl exp={exp} lvl={lvl} />
 
 				<div className="profile__data--inner flexstart w100">
 					<div className="profile__data--item flexstart w100">
@@ -129,6 +129,8 @@ const mapStateToProps = (state) => {
 		surname: reqSurname(state),
 		nick: reqNick(state),
 		editNickLoad: reqEditNickLoad(state),
+		exp: reqExp(state),
+		lvl: reqLvl(state)
 	}
 }
 

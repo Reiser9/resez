@@ -19,7 +19,7 @@ const SitecolorItem = ({name, hex, sitecolor, changeSitecolor}) => {
 
 			{hex === sitecolor
 			&& <div className="sitecolor__item--active">
-				<img src="./assets/img/check.svg" alt="Выбрано" className="sitecolor__item--active--img" />
+				<img src="/assets/img/check.svg" alt="Выбрано" className="sitecolor__item--active--img" />
 			</div>}
 		</div>
 	)

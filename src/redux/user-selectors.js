@@ -112,3 +112,9 @@ export const reqSitecolors = (state) => {
 export const reqReadNotifyLoad = (state) => {
     return state.notify.readNotifyLoad
 }
+export const reqLoadDataUser = (state) => {
+    return state.auth.loadDataUser
+}
+export const reqNotifyNotRead = (state) => {
+    return state.notify.notifyNotRead
+}

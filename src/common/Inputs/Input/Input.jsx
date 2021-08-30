@@ -21,9 +21,9 @@ const Input = ({id, value, placeholder = "", password = false, setData, setDataR
 
 				{value.length > 0 &&
 				<div className="input__delete">
-					<img id={id + 'Remove'} onClick={remove} src="./assets/img/crossField.svg" alt="Удалить содержимое" className="input__delete--img" />
+					<img id={id + 'Remove'} onClick={remove} src="/assets/img/crossField.svg" alt="Удалить содержимое" className="input__delete--img" />
 
-					{password && <img onClick={() => setInputView(prev => !prev)} src={inputView ? './assets/img/noteye.svg' : './assets/img/eye.svg'} alt="Посмотреть пароль" className="input__view--img" />}
+					{password && <img onClick={() => setInputView(prev => !prev)} src={inputView ? '/assets/img/noteye.svg' : '/assets/img/eye.svg'} alt="Посмотреть пароль" className="input__view--img" />}
 				</div>}
 			</div>
 		</div>

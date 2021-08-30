@@ -9,26 +9,35 @@ import PrivatePageWrapper from '../../../common/PageWrappers/PrivatPageWrapper/P
 
 import NotifyItem from './NotifyItem/NotifyItem.jsx';
 
-import {reqNotifyBase} from '../../../redux/user-selectors.js';
+import {reqNotifyBase, reqLoadDataUser} from '../../../redux/user-selectors.js';
 
-const Notify = ({notifyBase}) => {
+const Notify = ({notifyBase, loadDataUser}) => {
 	const notifyBaseArr = Object.keys(notifyBase).map((key) => {
 		return notifyBase[key];
 	});
+
+	// Сортируем уведомления по дате
+	const compare = (a, b) => {
+	    return (a.id > b.id) && -1;
+	    return (a.id < b.id) && 1;
+	    return 0;
+	}
 
 	return(
 		<PrivatePageWrapper>
 			<PageWrapper>
 				<div className="wrapper flexsh w100">
 					<div className="wrapper__content flexcenter w100">
-						{notifyBaseArr.length > 0
+						{!loadDataUser
 						? <>
 							<h2 className="pretitle">
 								Уведомления
 							</h2>
 
-							<div className="notify__content flexstart w100">
-								{notifyBaseArr.map((d, id) => <NotifyItem key={id} title={d.title} text={d.text} date={d.date} read={d.read} id={d.id} />)}
+							<div className="notify__content flexcenter w100">
+								{notifyBaseArr.length > 0
+								? notifyBaseArr.sort(compare).map((d, id) => <NotifyItem key={id} title={d.title} text={d.text} date={d.date} read={d.read} id={d.id} />)
+								: 'Уведомлений нет'}
 							</div>
 						</>
 						: <PreloaderFill />}
@@ -41,7 +50,8 @@ const Notify = ({notifyBase}) => {
 
 const mapStateToProps = (state) => {
 	return{
-		notifyBase: reqNotifyBase(state)
+		notifyBase: reqNotifyBase(state),
+		loadDataUser: reqLoadDataUser(state)
 	}
 }
 

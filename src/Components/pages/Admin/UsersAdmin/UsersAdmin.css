@@ -1,0 +1,38 @@
+.admin__users--search--inner{
+	width: 350px;
+	position: relative;
+}
+
+.admin__users--search{
+	width: 46px;
+	height: 46px;
+	border-radius: 7px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--mainC);
+	position: absolute;
+	top: 0;
+	right: 0;
+	cursor: pointer;
+	transition: .2s linear;
+}
+
+.admin__users--search:hover{
+	opacity: 0.6;
+}
+
+.admin__users--search--icon{
+	width: 20px;
+}
+
+.admin__users--select{
+	margin-left: 2rem;
+	width: 100px;
+}
+
+.admin__users--inner{
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}

@@ -8,11 +8,13 @@ const SET_NOTIFY = 'SET_NOTIFY';
 const SET_NOTIFY_BASE = 'SET_NOTIFY_BASE';
 const SET_REMOVE_NOTIFY = 'SET_REMOVE_NOTIFY';
 const SET_READ_NOTIFY_LOAD = 'SET_READ_NOTIFY_LOAD';
+const SET_NOTIFY_NOT_READ = 'SET_NOTIFY_NOT_READ';
 
 const initialState = {
 	notify: {},
 	notifyBase: {},
-	readNotifyLoad: false
+	readNotifyLoad: false,
+	notifyNotRead: 0
 }
 
 const notifyReducer = (state = initialState, action) => {
@@ -44,6 +46,11 @@ const notifyReducer = (state = initialState, action) => {
 				...state,
 				readNotifyLoad: action.value
 			}
+		case SET_NOTIFY_NOT_READ:
+			return{
+				...state,
+				notifyNotRead: action.value
+			}
         default:
             return state;
     }
@@ -70,6 +77,12 @@ const setRemoveNotify = (value) => {
 const setReadNotifyLoad = (value) => {
 	return{
 		type: SET_READ_NOTIFY_LOAD,
+		value
+	}
+}
+export const setNotifyNotRead = (value) => {
+	return{
+		type: SET_NOTIFY_NOT_READ,
 		value
 	}
 }
@@ -108,6 +121,43 @@ export const addNotify = (title, text, type) => (dispatch) => {
 	dispatch(setNotify(tempObject));
 }
 
+// Добавить уведомление всем пользователям
+export const addNotifyAll = (title, text) => async (dispatch) => {
+	await firebase.database().ref('users').once('value', val => {
+		let tempObject = {
+			[getTimeId()]: {
+				title,
+				text,
+				read: false,
+				date: getTimeNormal(),
+				id: getTimeId()
+			}
+		}
+
+		for(let i in val.val()){
+			firebase.database().ref('users/' + val.val()[i].uid + '/notify').update(tempObject);
+		}
+		dispatch(patternNotify('notify_added'));
+	});
+}
+
+// Добавить уведомление определенному пользователю
+export const addNotifyForOneUser = (title, text, uid = user.uid) => async (dispatch) => {
+	let tempObject = {
+		[getTimeId()]: {
+			title,
+			text,
+			read: false,
+			date: getTimeNormal(),
+			id: getTimeId()
+		}
+	}
+
+	await firebase.database().ref('users/' + uid + '/notify').update(tempObject).then(() => {
+		dispatch(patternNotify('notify_added'));
+	});
+}
+
 // Удалить уведомление
 export const removeNotify = (id) => (dispatch) => {
 	dispatch(setRemoveNotify(id));
@@ -121,7 +171,7 @@ export const readNotifyUser = (id) => async (dispatch) => {
 	});
 }
 
-// Выбор уведомления, вводим id и все
+// Выбор уведомления, вводим id
 export const patternNotify = (id) => (dispatch) => {
 	switch(id){
 		case 'quit_account':
@@ -192,6 +242,15 @@ export const patternNotify = (id) => (dispatch) => {
 			break;
 		case 'sitecolor_changed':
 			dispatch(addNotify('Успешно!', 'Цветовая гамма сайта сменена!', 'success'));
+			break;
+		case 'notify_added':
+			dispatch(addNotify('Успешно!', 'Уведомление добавлено!', 'success'));
+			break;
+		case 'title_empty':
+			dispatch(addNotify('Ошибка!', 'Заголовок не должен быть пустым!', 'error'));
+			break;
+		case 'text_empty':
+			dispatch(addNotify('Ошибка!', 'Текст не должен быть пустым!', 'error'));
 			break;
 		default:
 			break;

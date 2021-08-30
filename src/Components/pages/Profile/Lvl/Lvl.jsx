@@ -1,9 +1,6 @@
 import React from 'react';
-import {connect} from 'react-redux';
 
 import './Lvl.css';
-
-import {reqExp, reqLvl} from '../../../../redux/user-selectors.js';
 
 const Lvl = ({exp, lvl}) => {
 	const [allExp, setAllExp] = React.useState(""); //Всего опыта до следующего уровня
@@ -17,7 +14,7 @@ const Lvl = ({exp, lvl}) => {
 	return(
 		<div className="profile__lvl--inner flexcenter w100">
 			<div className="profile__lvl--img--inner">
-				<img src="./assets/img/crown.svg" alt="Корона" className="profile__lvl--img" />
+				<img src="/assets/img/crown.svg" alt="Корона" className="profile__lvl--img" />
 			</div>
 
 			<div className="profile__lvl--content w100">
@@ -41,11 +38,4 @@ const Lvl = ({exp, lvl}) => {
 	)
 }
 
-const mapStateToProps = (state) => {
-	return{
-		exp: reqExp(state),
-		lvl: reqLvl(state)
-	}
-}
-
-export default connect(mapStateToProps, {})(Lvl);
+export default Lvl;

@@ -18,7 +18,7 @@ const Notify = ({title, text, notifyType, id, removeNotify}) => {
 	return(
 		<div className={`notify__item ${notifyType}`} onClick={removeClick}>
 		    <div className="notify__icon--inner">
-		        <img src={`./assets/img/${notifyType}.svg`} className="notify__icon" alt="Иконка" />
+		        <img src={`/assets/img/${notifyType}.svg`} className="notify__icon" alt="Иконка" />
 		    </div>
 
 		    <div className="notify__text--inner">

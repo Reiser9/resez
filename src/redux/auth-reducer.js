@@ -4,12 +4,13 @@ import "firebase/auth";
 import '../firebase/firebaseConfig.js';
 
 import {errorWrapper} from '../common/validate/validate.js';
-import {patternNotify, setNotifyBase} from './notify-reducer.js';
+import {patternNotify, setNotifyBase, setNotifyNotRead} from './notify-reducer.js';
 
 export let user;
 
 const SET_IS_AUTH = 'SET_IS_AUTH';
 const SET_LOAD_AUTH = 'SET_LOAD_AUTH';
+const SET_LOAD_DATA_USER = 'SET_LOAD_DATA_USER';
 const SET_AUTH_IS_LOAD = 'SET_AUTH_IS_LOAD';
 const SET_EDIT_NICK_LOAD = 'SET_EDIT_NICK_LOAD';
 const SET_EDIT_EMAIL_LOAD = 'SET_EDIT_EMAIL_LOAD';
@@ -47,6 +48,7 @@ const SET_USERS_IN_LOAD = 'SET_USERS_IN_LOAD';
 const initialState = {
     isAuth: false, //Авторизованы ли мы
     loadAuth: true, //Загрузка авторизации
+    loadDataUser: true, //Загрузка авторизации
     authIsLoad: false, //При нажатии Вход, Регистрация, Восстановление пароля происходит загрузка
     editNickLoad: false, // Загрузка смены ника
     editEmailLoad: false, // Загрузка смены почты
@@ -93,6 +95,11 @@ const authReducer = (state = initialState, action) => {
             return{
                 ...state,
                 loadAuth: action.value
+            }
+        case SET_LOAD_DATA_USER:
+            return{
+                ...state,
+                loadDataUser: action.value
             }
         case SET_AUTH_IS_LOAD:
             return{
@@ -248,6 +255,12 @@ export const setIsAuth = (value) => {
 export const setLoadAuth = (value) => {
     return{
         type: SET_LOAD_AUTH,
+        value
+    }
+}
+export const setLoadDataUser = (value) => {
+    return{
+        type: SET_LOAD_DATA_USER,
         value
     }
 }
@@ -494,6 +507,7 @@ export const setDataRemove = (id, value) => (dispatch) => {
 export const authStateListener = () => async (dispatch) => {
     await firebase.auth().onAuthStateChanged((data) => {
         user = firebase.auth().currentUser;
+        dispatch(getUsers());
         if(user){
             dispatch(loadUserData());
             dispatch(setIsAuth(true));
@@ -526,8 +540,21 @@ const loadUserData = () => async (dispatch) => {
         dispatch(setEmail(dataVal.email));
         dispatch(setRole(dataVal.role));
         dispatch(setPrivatProfile(dataVal.privatProfile));
-        dispatch(setNotifyBase(dataVal.notify));
+        dataVal.notify && dispatch(setNotifyBase(dataVal.notify));
         dispatch(setSitecolor(dataVal.sitecolor));
+        dispatch(setLoadDataUser(false));
+        
+        const n = dataVal.notify;
+        if(n){
+            const notify = Object.keys(n).map((key) => {
+                return n[key];
+            });
+            const notifyIndex = notify.filter((d) => d.read === false).length;
+            dispatch(setNotifyNotRead(notifyIndex));
+        }
+        else{
+            dispatch(setNotifyNotRead(0));
+        }
     });
 }
 
@@ -571,7 +598,8 @@ export const registerUser = (email, password, nick, name, surname) => (dispatch)
                     status: 'Новичок',
                     img: '',
                     role: 'user',
-                    privatProfile: false
+                    privatProfile: false,
+                    sitecolor: '#007cee'
                 });
 
                 firebase.database().ref('nicks/' + nick).set({
