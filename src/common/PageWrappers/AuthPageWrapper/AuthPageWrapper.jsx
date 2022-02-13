@@ -6,7 +6,7 @@ import Preloader from '../../../common/Preloaders/Preloader/Preloader.jsx';
 
 import {reqIsAuth, reqLoadAuth} from '../../../redux/user-selectors.js';
 
-// Не пускает на страницу не авторизованных, перебрасывая их на главную
+// Страница, на которую нельзя зайти авторизированным пользователям
 const AuthPageWrapper = ({isAuth, loadAuth, children}) => {
 	if(loadAuth){
 		return <Preloader />

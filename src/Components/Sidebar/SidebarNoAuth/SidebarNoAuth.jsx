@@ -1,27 +1,39 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import NavLinkButton from '../../../common/Buttons/NavLinkButton/NavLinkButton.jsx';
+import {useStyles} from '../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
+import LinkMui from '../../../common/Buttons/LinkMui/LinkMui.jsx';
 
 import {reqIsAuth} from '../../../redux/user-selectors.js';
 
 const SidebarNoAuth = ({isAuth}) => {
+	const gstyle = useStyles();
 	return(
-		<div className="sidebar__noauth">
-		    <div className="sidebar__nav">
-		    	{!isAuth &&
-		    	<>
-		    		<NavLinkButton text={'Вход'} href={'login'} classMore="sidebar__nav--link" />
-		    		<NavLinkButton text={'Регистрация'} href={'register'} classMore="sidebar__nav--link" />
+		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.sidebarContent}`}>
+		    <Box className={`${gstyle.flexstart} ${gstyle.w100}`}>
+		    	{!isAuth && <>
+		    		<LinkMui href="login" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
+		    			Вход
+		    		</LinkMui>
+
+		    		<LinkMui href="register" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
+		    			Регистрация
+		    		</LinkMui>
 		    	</>}
-		        <NavLinkButton text={'Информация о ЕГЭ'} href={'info'} classMore="sidebar__nav--link" />
-		        <NavLinkButton text={'Разбор заданий'} href={'tasks'} classMore="sidebar__nav--link" />
-		        {isAuth &&
-		       	<>
-		       		<NavLinkButton text={'Тесты'} href={'tests'} classMore="sidebar__nav--link" />
-		       	</>}
-		    </div>
-		</div>
+		        <LinkMui href="info" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
+		        	Информация о ЕГЭ
+		        </LinkMui>
+
+		        <LinkMui href="tasks" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
+		        	Разбор заданий
+		        </LinkMui>
+		        {isAuth && <LinkMui href="tests" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
+		       		Тесты
+		       	</LinkMui>}
+		    </Box>
+		</Box>
 	)
 }
 

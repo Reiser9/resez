@@ -50,10 +50,10 @@ export const reqNameRegister = (state) => {
     return state.auth.nameRegister
 }
 export const reqUsers = (state) => {
-    return state.auth.users
+    return state.admin.users
 }
 export const reqUsersInLoad = (state) => {
-    return state.auth.usersInLoad
+    return state.admin.usersInLoad
 }
 export const reqLvl = (state) => {
     return state.auth.lvl
@@ -106,9 +106,6 @@ export const reqNotifyBase = (state) => {
 export const reqSitecolor = (state) => {
     return state.auth.sitecolor
 }
-export const reqSitecolors = (state) => {
-    return state.datasite.sitecolors
-}
 export const reqReadNotifyLoad = (state) => {
     return state.notify.readNotifyLoad
 }
@@ -117,4 +114,19 @@ export const reqLoadDataUser = (state) => {
 }
 export const reqNotifyNotRead = (state) => {
     return state.notify.notifyNotRead
+}
+export const reqQuitModal = (state) => {
+    return state.modal.quitModal
+}
+export const reqDeleteModal = (state) => {
+    return state.modal.deleteModal
+}
+export const reqUsersValue = (state) => {
+    return state.admin.usersValue
+}
+export const reqPrivatProfile = (state) => {
+    return state.auth.privatProfile
+}
+export const reqStatuses = (state) => {
+    return state.datasite.statuses
 }

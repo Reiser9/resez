@@ -3,50 +3,60 @@
 }
 
 @font-face{
-    font-family: 'NunitoExtraLight';
+    font-family: 'Nunito';
+    font-weight: 200;
     src: url('./assets/fonts/NunitoExtraLight.ttf');
 }
 
 @font-face{
-    font-family: 'NunitoLight';
+    font-family: 'Nunito';
+    font-weight: 300;
     src: url('./assets/fonts/NunitoLight.ttf');
 }
 
 @font-face{
     font-family: 'Nunito';
+    font-weight: 400;
     src: url('./assets/fonts/NunitoRegular.ttf');
 }
 
 @font-face{
-    font-family: 'NunitoSemi';
+    font-family: 'Nunito';
+    font-weight: 600;
     src: url('./assets/fonts/NunitoSemiBold.ttf');
 }
 
 @font-face{
-    font-family: 'NunitoBold';
+    font-family: 'Nunito';
+    font-weight: 700;
     src: url('./assets/fonts/NunitoBold.ttf');
 }
 
 @font-face{
-    font-family: 'NunitoExtraBold';
+    font-family: 'Nunito';
+    font-weight: 800;
     src: url('./assets/fonts/NunitoExtraBold.ttf');
 }
 
 @font-face{
-    font-family: 'NunitoBlack';
+    font-family: 'Nunito';
+    font-weight: 900;
     src: url('./assets/fonts/NunitoBlack.ttf');
 }
 
 html{
     --mainC: #007CEE;
+    --whiteC: #fff;
+    --lightblueC: #F2F5FF;
+    --lightgreyC: #F6F7FB;
 }
 
 body{
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
     font-size: 1.8rem;
-    background: #fff;
+    background: var(--whiteC);
     font-family: 'Nunito', sans-serif;
 }
 
@@ -110,6 +120,10 @@ input::-webkit-inner-spin-button{
     appearance: none;
 }
 
+.textcenter{
+    text-align: center;
+}
+
 .flexstart, .flexcenter{
     display: flex;
     flex-direction: column;
@@ -126,8 +140,18 @@ input::-webkit-inner-spin-button{
     justify-content: space-between;
 }
 
+.flex{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .w100{
     width: 100%;
+}
+
+.bold{
+    font-weight: 700;
 }
 
 .button, .button.active{
@@ -163,9 +187,12 @@ input::-webkit-inner-spin-button{
     color: var(--mainC);
 }
 
-.disable{
-    pointer-events: none;
-    opacity: 0.6;
+.green{
+    color: #22d80c;
+}
+
+.red{
+    color: #f10e0e;
 }
 
 .input{
@@ -173,7 +200,7 @@ input::-webkit-inner-spin-button{
     border-radius: 7px;
     border: 1px solid #CDCDCD;
     color: #000;
-    padding: 1rem 4.5rem 1rem 1.5rem;
+    padding: 0.75rem 4.5rem 0.75rem 1.5rem;
     outline: none;
 }
 
@@ -202,78 +229,14 @@ input::-webkit-inner-spin-button{
     font-size: 4rem;
 }
 
-.app{
-    width: 100%;
-    display: flex;
-}
-
 /* Авторизация */
-.auth{
-    width: 100%;
-    height: 100vh;
-    padding: 3rem 0;
-    overflow-y: auto;
-    display: block;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth__inner{
-    width: 100%;
-    max-width: 602px;
-    border-radius: 15px;
-    background: #F6F7FB;
-    border: 2px solid var(--mainC);
-    padding: 4rem 6rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.auth__wrapper{
-    width: 100%;
-    min-height: calc(100vh - 6rem);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth__img--inner{
-    width: 100%;
-}
-
-.auth__img{
+.auth__img, .img{
     width: 100%;
     height: auto;
 }
 
-.auth__content{
-    width: 100%;
-    margin-top: 3rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.input__wrapper{
-    width: 100%;
-    position: relative;
-}
-
 .form__input{
     width: 100%;
-}
-
-.input__inner{
-    width: 100%;
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.input__inner:first-child{
-    margin-top: 0;
 }
 
 .input__password{
@@ -283,21 +246,7 @@ input::-webkit-inner-spin-button{
 .input__warn--text{
     color: #f66;
     font-size: 1.4rem;
-    margin-top: .7rem;
-}
-
-.input__delete{
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 20px;
-    display: flex;
-    align-items: center;
-}
-
-.input__delete.textarea{
-    top: 15px;
-    transform: translateY(0);
+    margin-top: .3rem;
 }
 
 .input__delete--img, .input__view--img{
@@ -337,135 +286,143 @@ input::-webkit-inner-spin-button{
     margin-top: 5rem;
 }
 
-.form__link--inner{
-    margin-top: 2rem;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.form__link{
-    color: var(--mainC);
-    margin-top: 1rem;
-}
-
-.form__link:first-child{
-    margin-top: 0;
-}
-
 /* Уведомления */
-.notify{
-    left: 50%;
-    transform: translateX(-50%);
-    top: 5px;
-    position: absolute;
-    z-index: 50;
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    cursor: pointer;
-}
-
-.notify__item{
-    width: 100%;
-    margin-top: 1rem;
-    padding: 1rem 2rem;
-    border-radius: 7px;
-    background: #fff;
-    display: flex;
-    align-items: flex-start;
-    border: 2px solid transparent;
-}
-
-.notify__item.info{
-    border: 2px solid #00C1FD;
-}
-
-.notify__item.error{
-    border: 2px solid #F25A3C;
-}
-
-.notify__item.warn{
-    border: 2px solid #FFD764;
-}
-
-.notify__item.success{
-    border: 2px solid #82D180;
-}
-
-.notify__item:first-child{
-    margin-top: 0;
-}
-
-.notify__icon--inner{
-    width: 50px;
-    height: 50px;
-    flex-shrink: 0;
-    margin-right: 2rem;
-    display: flex;
-}
-
-.notify__icon{
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-}
-
-.notify__text--inner{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.notify__text--title{
-    font-weight: 700;
-}
-
-.notify__text--text{
-    margin-top: .5rem;
-    font-size: 1.6rem;
-}
-
 .pretitle{
     font-size: 3.1rem;
     font-weight: 700;
     text-align: center;
 }
 
-.wrapper{
-    padding: 6rem;
-    min-height: 100vh;
-}
-
-.wrapper__content{
-    background: #F6F7FB;
-    border-radius: 15px;
-    padding: 3rem;
-    min-height: 100%;
-}
-
 .flexsh{
     flex-shrink: 0;
 }
 
-.notify__index{
-    width: 25px;
-    height: 25px;
+.link__inner{
+    display: flex;
+    align-items: center;
+}
+
+.link__inner::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
+
+.tab__link{
+    margin: 0 1rem 1rem 0;
+    flex-shrink: 0;
+}
+
+.modal__input{
+    padding: 1rem 1.5rem;
+}
+
+.button__number--inner{
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.button__number--inner::-webkit-scrollbar{
+    width: 0;
+    height: 5px;
+}
+
+.button__number{
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #ff6666;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 20px;
-    border: 1px solid #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 1.6rem;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0 1rem 0 0rem;
+}
+
+.button__number:last-child{
+    margin: 0;
+}
+
+.grecaptcha-badge{
+    visibility: hidden;
+}
+
+.disable{
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.page {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+}
+
+.page-enter {
+    opacity: 0;
+    transform: scale(1.1);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 300ms, transform 300ms;
+}
+
+/* Адаптив */
+@media(max-width: 1400px){
+    .tab__link, .tab__link.active{
+        padding: 0.8rem 2rem;
+        margin: 0rem 1rem 1rem 0;
+    }
+}
+@media(max-width: 998px){
+    .button__number--inner::-webkit-scrollbar{
+        height: 0;
+    }
+}
+@media(max-width: 730px){
+    .link__inner{
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .tab__link, .tab__link.active{
+        margin: 0rem 1rem 0rem 0rem;
+    }
+}
+@media(max-width: 500px){
+    .button, .button.active{
+        padding: 1rem 2rem;
+        font-size: 1.6rem;
+    }
+
+    .button__number{
+        padding: 0;
+    }
+
+    .pretitle{
+        font-size: 2.5rem;
+    }
+
+    .input{
+        padding: 0.8rem 4.5rem .8rem 1.3rem;
+        font-size: 1.6rem;
+    }
+
+    .input__password{
+        padding: 0.8rem 7.5rem .8rem 1.3rem;
+    }
 }

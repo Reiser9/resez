@@ -1,12 +1,15 @@
 import React from 'react';
 
-import './PreloaderTopOpacity.css';
+import {useStyles} from '../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
 
 const PreloaderTopOpacity = () => {
+	const gstyle = useStyles();
 	return(
-		<div className="loadertopopacity__inner">
-			<div className="loadertopopacity"></div>
-		</div>
+		<Box className={`${gstyle.loaderInnerTop} ${gstyle.flex} ${gstyle.w100}`}>
+			<Box className={`${gstyle.loader} ${gstyle.loaderSmall}`}></Box>
+		</Box>
 	)
 }
 

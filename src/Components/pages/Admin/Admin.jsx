@@ -1,40 +1,50 @@
 import React from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 
-import './Admin.css';
+import {useStyles} from '../../../theme/gstyle.js';
 
 import {withSuspense} from '../../../hoc/withSuspense.js';
 
-import NavLinkButton from '../../../common/Buttons/NavLinkButton/NavLinkButton.jsx';
+import Box from '@mui/material/Box';
+
 import PrivatePageWrapper from '../../../common/PageWrappers/PrivatPageWrapper/PrivarPageWrapper.jsx';
 import PageWrapper from '../../../common/PageWrappers/PageWrapper/PageWrapper.jsx';
+import DefaultWrapper from '../../../common/PageWrappers/DefaultWrapper/DefaultWrapper.jsx';
+import NavLinkMui from '../../../common/Buttons/NavLinkMui/NavLinkMui.jsx';
 
-const MainAdmin = React.lazy(() => import('./MainAdmin/MainAdmin.jsx'));
 const NotifyAdmin = React.lazy(() => import('./NotifyAdmin/NotifyAdmin.jsx'));
 const UsersAdmin = React.lazy(() => import('./UsersAdmin/UsersAdmin.jsx'));
 
 const Admin = () => {
+	const gstyle = useStyles();
+
+	React.useEffect(() => {
+		document.title = 'ResEz - Админка';
+	}, []);
+	
 	return(
 		<PrivatePageWrapper admin={true}>
 			<PageWrapper>
-				<div className="admin__inner flexsh wrapper flexstart w100">
-					<div className="wrapper__content flexcenter w100">
-						<div className="admin__link--inner w100">
-							<NavLinkButton text={'Главная'} href={'admin'} classMore={'button white__button admin__link'} exact={true} />
-							<NavLinkButton text={'Уведомления'} href={'admin/notify'} classMore={'button white__button admin__link'} />
-							<NavLinkButton text={'Пользователи'} href={'admin/users'} classMore={'button white__button admin__link'} />
-						</div>
+				<DefaultWrapper>
+					<Box className={`${gstyle.linkInner} ${gstyle.w100}`}>
+						<NavLinkMui variant="outlined" href="admin/notify" sx={{mr: 1}} className={gstyle.flexsh}>
+							Уведомления
+						</NavLinkMui>
 
-						<div className="flexcenter w100">
-							<Switch>
-								<Route exact path="/admin" render={() => withSuspense(MainAdmin)} />
-								<Route exact path="/admin/notify" render={() => withSuspense(NotifyAdmin)} />
-								<Route exact path="/admin/users" render={() => withSuspense(UsersAdmin)} />
-								<Route path="/admin/*" render={() => <Redirect to={"/404"} />}/>
-							</Switch>
-						</div>
-					</div>
-				</div>
+						<NavLinkMui variant="outlined" href="admin/users" className={gstyle.flexsh}>
+							Пользователи
+						</NavLinkMui>
+					</Box>
+
+					<Box sx={{mt: 1}} className={`${gstyle.flexcenter} ${gstyle.w100}`}>
+						<Switch>
+							<Route exact path="/admin" render={() => <Redirect to={"admin/notify"} />} />
+							<Route exact path="/admin/notify" render={() => withSuspense(NotifyAdmin)} />
+							<Route exact path="/admin/users" render={() => withSuspense(UsersAdmin)} />
+							<Route path="/admin/*" render={() => <Redirect to={"/404"} />}/>
+						</Switch>
+					</Box>
+				</DefaultWrapper>
 			</PageWrapper>
 		</PrivatePageWrapper>
 	)

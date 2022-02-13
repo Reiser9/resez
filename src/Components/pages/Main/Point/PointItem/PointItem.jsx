@@ -1,33 +1,39 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import './PointItem.css';
+import {useStyles} from '../../../../../theme/gstyle.js';
 
-import NavLinkButton from '../../../../../common/Buttons/NavLinkButton/NavLinkButton.jsx';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+
+import NavLinkMui from '../../../../../common/Buttons/NavLinkMui/NavLinkMui.jsx';
+import LoadButtonMui from '../../../../../common/Buttons/LoadButtonMui/LoadButtonMui.jsx';
 
 import {reqIsAuth} from '../../../../../redux/user-selectors.js';
 
-const PointItem = ({title, text, buttonText, link, buttonAuth = false, isAuth}) => {
-	return(
-		<div className="point__item flexstart w100">
-		    <div className="point__item--text--inner flexstart w100">
-		        <h3 className="point__item--title">
-		            {title}
-		        </h3>
+const PointItem = ({data, isAuth}) => {
+	const {title, text, buttonText, link, buttonAuth = false} = data;
 
-		        <p className="point__item--text">
+	const gstyle = useStyles();
+	return(
+		<Box sx={{p: '2rem', borderRadius: 1.5, justifyContent: 'space-between', bgcolor: 'lightgrey.main'}}
+		className={`${gstyle.flexstart} ${gstyle.w100}`}>
+		    <Box className="point__item--text--inner flexstart w100">
+		        <Typography component="h2" variant="h3" className={gstyle.w100}>
+		            {title}
+		        </Typography>
+
+		        <Typography sx={{mt: 1}} component="p" variant="p" className={gstyle.w100}>
 		            {text}
-		        </p>
-		    </div>
+		        </Typography>
+		    </Box>
 
 		    {buttonAuth
 		    ? isAuth
-		    ? <NavLinkButton text={buttonText} href={link} classMore="button point__item--button" />
-			: <button className="button point__item--button disable">
-		        Авторизуйтесь
-		    </button>
-			: <NavLinkButton text={buttonText} href={link} classMore="button point__item--button" />}
-		</div>
+		    ? <NavLinkMui sx={{marginTop: 2}} href={link}>{buttonText}</NavLinkMui>
+			: <LoadButtonMui sx={{marginTop: 2}}>Авторизуйтесь</LoadButtonMui>
+			: <NavLinkMui sx={{marginTop: 2}} href={link}>{buttonText}</NavLinkMui>}
+		</Box>
 	)
 }
 
@@ -37,4 +43,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, {})(PointItem);
+export default connect(mapStateToProps, {})(React.memo(PointItem));

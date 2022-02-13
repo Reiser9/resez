@@ -2,67 +2,99 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import './UsersAdmin.css';
+import {useStyles} from '../../../../theme/gstyle.js';
 
-import {reqUsers} from '../../../../redux/user-selectors.js';
+import {reqUsers, reqUsersValue, reqUsersInLoad} from '../../../../redux/user-selectors.js';
+import {getUsers, getUsersNumber} from '../../../../redux/admin-reducer.js';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import UserItem from './UserItem/UserItem.jsx';
 
-const UsersAdmin = ({users}) => {
-	const [usersView, setUsersView] = React.useState(10);
+const UsersAdmin = ({users, usersValue, usersInLoad, getUsers, getUsersNumber}) => {
+	const gstyle = useStyles();
 
-	const usersViewChange = ({target: {value}}) => {
-		setUsersView(value);
+	const [usersArr, setUsersArr] = React.useState([]);
+	const [search, setSearch] = React.useState('');
+
+	const handleChange = ({target: {value, id}}) => {
+		switch(id){
+			case 'searchUsers':
+				setSearch(value);
+				break;
+			case 'changeUserInPage':
+				getUsers(value);
+				break;
+			default:
+				break;
+		}
 	}
 
-	const usersArr = Object.keys(users).map((key) => {
-		return users[key];
-	});
+	React.useEffect(() => {
+		setUsersArr(Object.keys(users).map((key) => {
+			return users[key];
+		}));
+	}, [users]);
+
+	React.useEffect(() => {
+		users.length === 0 && getUsers();
+		!usersValue && getUsersNumber();
+	}, [users, usersValue, getUsers, getUsersNumber]);
+
+	React.useEffect(() => {
+		document.title = 'ResEz - Админка пользователи';
+	}, []);
 
 	return(
-		<>
-			<h2 className="pretitle">
-				Пользователи
-			</h2>
+		<Box className={`${gstyle.flexcenter} ${gstyle.w100}`}>
+			<Box className={gstyle.w100}>
+				<Box className={`${gstyle.flexbet} ${gstyle.w100}`} sx={{flexWrap: 'wrap'}}>
+					<Box className="admin__users--search--inner">
+						<input id="searchUsers" value={search} onChange={handleChange} className="input admin__users--search--input w100"
+						type="text" placeholder="Поиск"/>
 
-			<div className="admin__users--content w100 mt1">
-				<div className="admin__users--filter--inner flexbet w100">
-					<div className="admin__users--search--inner">
-						<input className="input admin__users--search--input w100" type="text" placeholder="Введите ник пользователя"/>
-
-						<div className="admin__users--search">
+						<Box className="admin__users--search">
 							<img src="/assets/img/search.svg" alt="Поиск" className="admin__users--search--icon" />
-						</div>
-					</div>
+						</Box>
+					</Box>
 
-					<p className="admin__users--count">
-						{/*Всего пользователей: СДЕЛАТЬ!ХРАНИТЬ ЗНАЧЕНИЕ КОЛИЧЕСТВА ПОЛЬЗОВАТЕЛЕЙ ОТДЕЛЬНО В БАЗЕ ДАННЫХ*/}
-					</p>
+					<Typography component="p" variant="p" sx={{fontWeight: 700, width: {r680: 'auto', r0: '100%'}, mt: {r680: 0, r0: 1.5}}}>
+						Всего пользователей: {usersValue ? usersValue : '0'}
+					</Typography>
 
-					<div className="admin__users--filter">
-						Показывать:
+					<Box className="admin__users--filter">
+						Показывать по:
 
-						<select className="input admin__users--select" onChange={usersViewChange}>
-							<option>10</option>
-							<option>20</option>
-							<option>Все</option>
+						<select id="changeUserInPage" className="input admin__users--select" onChange={handleChange}>
+							<option>5</option>
+							<option>15</option>
+							<option>50</option>
+							<option>100</option>
 						</select>
-					</div>
-				</div>
+					</Box>
+				</Box>
 
-				<div className="admin__users--inner mt3 w100">
-					{usersArr.map((u, id) => <UserItem key={id} sitecolor={u.sitecolor} name={u.name} surname={u.surname} lvl={u.lvl}
-					status={u.status} exp={u.exp} uid={u.uid} role={u.role} nick={u.nick} email={u.email} verificateEmail={u.verificateEmail}
-					balance={u.balance} privatProfile={u.privatProfile} />)}
-				</div>
-			</div>
-		</>
+				{!usersInLoad ? usersArr.length === 0
+				? <Typography component="div" variant="p" sx={{width: '100%', textAlign: 'center', mt: 2}}>
+					Пользователей не найдено
+				</Typography>
+				: <Box className={gstyle.w100} sx={{mt: 3, display: 'grid', gap: 3, gridTemplateColumns: 'repeat(auto-fill, minmax(275px, 1fr))'}}>
+					{usersArr?.map((u, id) => <UserItem key={id} data={u} />)}
+				</Box>
+				: <CircularProgress sx={{mt: 2}} />}
+			</Box>
+		</Box>
 	)
 }
 
 const mapStateToProps = (state) => {
 	return{
-		users: reqUsers(state)
+		users: reqUsers(state),
+		usersValue: reqUsersValue(state),
+		usersInLoad: reqUsersInLoad(state)
 	}
 }
 
-export default connect(mapStateToProps, {})(UsersAdmin);
+export default connect(mapStateToProps, {getUsers, getUsersNumber})(UsersAdmin);

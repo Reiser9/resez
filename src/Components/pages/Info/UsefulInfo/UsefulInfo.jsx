@@ -1,14 +1,19 @@
 import React from 'react';
 
-import './UsefulInfo.css';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 const UsefulInfo = () => {
+	React.useEffect(() => {
+		document.title = 'ResEz - Полезные советы';
+	}, []);
+
 	return(
-		<>
-			<h2 className="pretitle">
+		<Box>
+			<Typography component="h2" variant="h3">
 				Полезное
-			</h2>
-		</>
+			</Typography>
+		</Box>
 	)
 }
 

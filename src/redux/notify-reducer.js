@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
-import "firebase/database";
-import "firebase/auth";
+import firebase from 'firebase/compat/app';
+import "firebase/compat/database";
+import "firebase/compat/auth";
 
 import {user} from './auth-reducer.js'
 
@@ -110,12 +110,13 @@ export const getTimeNormal = () => {
 
 // Добавить уведомление
 export const addNotify = (title, text, type) => (dispatch) => {
+	let id = getTimeId();
 	let tempObject = {
-		[getTimeId()]: {
+		[id]: {
 			title,
 			text,
 			type,
-			id: getTimeId()
+			id
 		}
 	}
 	dispatch(setNotify(tempObject));
@@ -124,13 +125,14 @@ export const addNotify = (title, text, type) => (dispatch) => {
 // Добавить уведомление всем пользователям
 export const addNotifyAll = (title, text) => async (dispatch) => {
 	await firebase.database().ref('users').once('value', val => {
+		let id = getTimeId();
 		let tempObject = {
-			[getTimeId()]: {
+			[id]: {
 				title,
 				text,
 				read: false,
 				date: getTimeNormal(),
-				id: getTimeId()
+				id
 			}
 		}
 
@@ -143,13 +145,14 @@ export const addNotifyAll = (title, text) => async (dispatch) => {
 
 // Добавить уведомление определенному пользователю
 export const addNotifyForOneUser = (title, text, uid = user.uid) => async (dispatch) => {
+	let id = getTimeId();
 	let tempObject = {
-		[getTimeId()]: {
+		[id]: {
 			title,
 			text,
 			read: false,
 			date: getTimeNormal(),
-			id: getTimeId()
+			id
 		}
 	}
 
@@ -241,7 +244,7 @@ export const patternNotify = (id) => (dispatch) => {
 			dispatch(addNotify('Ошибка!', 'Пароль не может быть меньше 8 символов!', 'error'));
 			break;
 		case 'sitecolor_changed':
-			dispatch(addNotify('Успешно!', 'Цветовая гамма сайта сменена!', 'success'));
+			dispatch(addNotify('Успешно!', 'Цветовая палитра сайта изменена!', 'success'));
 			break;
 		case 'notify_added':
 			dispatch(addNotify('Успешно!', 'Уведомление добавлено!', 'success'));
@@ -251,6 +254,15 @@ export const patternNotify = (id) => (dispatch) => {
 			break;
 		case 'text_empty':
 			dispatch(addNotify('Ошибка!', 'Текст не должен быть пустым!', 'error'));
+			break;
+		case 'wrong_confirm_word':
+			dispatch(addNotify('Ошибка!', 'Неверно введен текст подтверждения действия', 'error'));
+			break;
+		case 'many_requests':
+			dispatch(addNotify('Внимание!', 'Проверка google recaptcha не пройдена, попробуйте позже', 'warn'));
+			break;
+		case 'data_changed':
+			dispatch(addNotify('Успешно!', 'Данные успешно изменены', 'success'));
 			break;
 		default:
 			break;

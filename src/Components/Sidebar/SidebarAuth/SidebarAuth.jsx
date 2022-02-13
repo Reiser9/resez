@@ -1,59 +1,101 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {makeStyles} from '@mui/styles';
 
+import {useStyles} from '../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import PreloaderTop from '../../../common/Preloaders/PreloaderTop/PreloaderTop.jsx';
-import NavLinkButton from '../../../common/Buttons/NavLinkButton/NavLinkButton.jsx';
+import LinkMui from '../../../common/Buttons/LinkMui/LinkMui.jsx';
+import NavLinkMui from '../../../common/Buttons/NavLinkMui/NavLinkMui.jsx';
 
-import {quitUser} from '../../../redux/auth-reducer.js';
 import {reqStatus, reqName, reqSurname, reqImg, reqLvl, reqBalance, reqRole, reqNotifyNotRead} from '../../../redux/user-selectors.js';
+import {setQuitModal} from '../../../redux/modal-reducer.js';
 
-const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotRead, quitUser}) => {
-	const quit = () => {
-		quitUser(true);
+const useLocalStyles = makeStyles({
+	imgInner: {
+		width: 70,
+		height: 70,
+		background: '#007cee',
+		borderRadius: '50%',
+		overflow: 'hidden'
+	},
+	lvl: {
+		width: 25,
+		height: 25,
+		borderRadius: '50%',
+		fontSize: '1.4rem',
+		background: 'var(--mainC)',
+		marginLeft: 10
 	}
+});
 
+const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotRead, setQuitModal}) => {
+	const gstyle = useStyles();
+	const localStyle = useLocalStyles();
 	return(
-	    <div className="sidebar__auth">
-	        <div className="user__content">
-	        	{name
+	    <Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.sidebarContent}`}>
+	        <Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{mb: 1, position: 'relative'}}>
+	        	{name && surname
 	        	? <>
-	        		<div className="user__inner">
-		        		<NavLinkButton href={'profile'} classMore="user__img--inner">
-		        		    <img src={img ? `/assets/img/${img}.svg` : "/assets/img/1.svg"} alt="Аватарка" className="user__img" />
-		        		</NavLinkButton>
+	        		<Box className={`${gstyle.flex} ${gstyle.w100}`} sx={{mb: 1, p: '0 2rem'}}>
+		        		<LinkMui href={'profile'} className={`${gstyle.flexsh} ${gstyle.flex} ${localStyle.imgInner}`} sx={{mr: 1}}>
+		        		    <img src={img ? `/assets/img/${img}.svg` : "/assets/img/1.svg"} alt="Аватарка" className={gstyle.imgRes} />
+		        		</LinkMui>
 
-		        		<div className="user__data--inner">
-		        		    <p className="user__data--name">
+		        		<Box className={`${gstyle.flexstart} ${gstyle.w100}`}>
+		        		    <Typography component="p" variant="p" sx={{wordBreak: 'break-all'}}>
 		        		        {name + " " + surname[0] + "."}
-		        		    </p>
+		        		    </Typography>
 
-		        		    <p className="user__data--status">
+		        		    <Typography component="p" variant="p2" color="greytext.main">
 		        		        {status}
-		        		    </p>
-		        		</div>
+		        		    </Typography>
+		        		</Box>
 
-		        		<NavLinkButton text={lvl} href={'progress'} classMore="user__lvl--inner" />
-		        	</div>
+		        		<LinkMui href="profile/lvl" className={`${gstyle.flex} ${gstyle.flexsh} ${localStyle.lvl}`} sx={{color: '#fff'}}>
+		        			{lvl}
+		        		</LinkMui>
+		        	</Box>
 
-		        	<div className="user__balance--inner">
-		        		<p className="user__balance">
+		        	<Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{p: '0 2rem'}}>
+		        		<Typography component="p" variant="p">
 		        			Баланс: {balance} руб
-		        		</p>
+		        		</Typography>
 
-		        		<NavLinkButton text={'Пополнить'} href={'payment'} classMore="button white__button user__balance--button" />
-		        	</div>
+		        		<NavLinkMui href="payment" variant="outlined" className={gstyle.w100} sx={{mt: 1, p: '.5rem 2rem'}}>
+		        			Пополнить
+		        		</NavLinkMui>
+		        	</Box>
 	        	</>
 	        	: <PreloaderTop />}
-	        </div>
+	        </Box>
 
-	        <div className="sidebar__nav">
-	        	{role === 'admin' && <NavLinkButton text={'Админка'} href={'admin'} classMore="sidebar__nav--link" />}
-	        	<NavLinkButton text={'Мой профиль'} href={'profile'} classMore="sidebar__nav--link" />
-	            <NavLinkButton text={'Уведомления'} href={'notify'} classMore="sidebar__nav--link" notify notifyNotRead={notifyNotRead} />
-	            <NavLinkButton text={'Цветовая гамма'} href={'sitecolor'} classMore="sidebar__nav--link" />
-	            <button onClick={quit} className="button sidebar__button sidebar__nav--link quit__button">Выйти</button>
-	        </div>
-	    </div>
+	        <Box className={`${gstyle.flexstart} ${gstyle.w100}`}>
+	        	{role === 'admin' && <LinkMui href="admin" className={`${gstyle.w100} ${gstyle.sidebarLink}`}>
+	        		Админка
+	        	</LinkMui>}
+
+	        	<LinkMui href="profile" className={`${gstyle.w100} ${gstyle.sidebarLink}`}>
+	        		Мой профиль
+	        	</LinkMui>
+
+	            <LinkMui href="notify" className={`${gstyle.w100} ${gstyle.sidebarLink}`} notify notifyNotRead={notifyNotRead}>
+	            	Уведомления
+	            </LinkMui>
+
+	            <LinkMui href="sitecolor" className={`${gstyle.w100} ${gstyle.sidebarLink}`}>
+	            	Цветовая гамма
+	            </LinkMui>
+
+	            <Button onClick={() => setQuitModal(true)} color="error" sx={{justifyContent: 'flex-start', p: '1rem 2rem', borderRadius: 0}}
+	            className={gstyle.w100}>
+	            	Выйти
+	            </Button>
+	        </Box>
+	    </Box>
 	)
 }
 
@@ -70,4 +112,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, {quitUser})(SidebarAuth);
+export default connect(mapStateToProps, {setQuitModal})(SidebarAuth);

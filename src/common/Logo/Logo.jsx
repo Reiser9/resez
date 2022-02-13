@@ -1,11 +1,27 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link as LinkRect} from 'react-router-dom';
+import {makeStyles} from '@mui/styles';
 
-import './Logo.css';
+import Link from '@mui/material/Link';
+
+const useLocalStyles = makeStyles(theme => ({
+	logo: {
+		position: 'absolute',
+		top: 15,
+		left: 30,
+		zIndex: 10,
+		color: theme.palette.primary.main,
+		'@media (max-width: 998px)': {
+		    display: 'none'
+		},
+	}
+}));
 
 const Logo = () => {
+	const localStyle = useLocalStyles();
+	
 	return(
-		<Link to={'/'} className="logo__abs">
+		<Link component={LinkRect} to={'/'} variant="h1" className={localStyle.logo}>
 			ResEz
 		</Link>
 	)

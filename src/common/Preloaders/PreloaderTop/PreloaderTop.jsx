@@ -1,12 +1,15 @@
 import React from 'react';
 
-import './PreloaderTop.css';
+import {useStyles} from '../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
 
 const PreloaderTop = () => {
+	const gstyle = useStyles();
 	return(
-		<div className="loadertop__inner">
-			<div className="loadertop"></div>
-		</div>
+		<Box className={`${gstyle.loaderInnerTop} ${gstyle.flex} ${gstyle.w100}`}>
+			<Box className={`${gstyle.loader} ${gstyle.loaderSmall}`}></Box>
+		</Box>
 	)
 }
 

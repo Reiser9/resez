@@ -1,7 +1,10 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import './Point.css';
+import {useStyles} from '../../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import PreloaderFill from '../../../../common/Preloaders/PreloaderFill/PreloaderFill.jsx';
 import PointItem from './PointItem/PointItem.jsx';
@@ -9,25 +12,36 @@ import PointItem from './PointItem/PointItem.jsx';
 import {reqIsAuth, reqDataIsLoad, reqPointTitle, reqPointSubtitle, reqPointItems} from '../../../../redux/user-selectors.js';
 
 const Point = ({isAuth, dataIsLoad, pointTitle, pointSubtitle, pointItems}) => {
+	const gstyle = useStyles();
+
+	const [pointItemsArr, setPointItemsArr] = React.useState([]);
+
+	React.useEffect(() => {
+		setPointItemsArr(Object.keys(pointItems).map((key) => {
+			return pointItems[key];
+		}));
+	}, [pointItems]);
+
 	return(
-		<div className="point flexcenter w100">
+		<Box sx={{p: {r1360: '5rem 6rem', r1200: '3rem', r0: '2rem'}, position: 'relative'}} className={`${gstyle.flexcenter} ${gstyle.w100}`}>
 			{dataIsLoad
 			? <PreloaderFill />
 			: <>
-				<h2 className="title point__title w100">
+				<Typography sx={{textAlign: 'center'}} component="h2" variant="h2">
 				    {pointTitle}
-				</h2>
+				</Typography>
 
-				<p className="point__subtitle w100">
+				<Typography sx={{mt: 1, textAlign: 'center'}} component="p" variant="h5">
 				    {pointSubtitle}
-				</p>
+				</Typography>
 
-				<div className="point__content w100">
-					{Object.keys(pointItems).map((item, id) => <PointItem key={id} title={pointItems[item].title} text={pointItems[item].text}
-					buttonText={pointItems[item].buttonText} link={pointItems[item].link} buttonAuth={pointItems[item].buttonAuth} />)}
-				</div>
+				<Box sx={{mt: 3, display: 'grid', gap: '30px', gridTemplateColumns: {r480: 'repeat(auto-fill, minmax(350px, 1fr))',
+				r0: 'repeat(auto-fill, minmax(280px, 1fr))'}}}
+				className={gstyle.w100}>
+					{pointItemsArr?.map((d, id) => <PointItem key={id} data={d} />)}
+				</Box>
 			</>}
-		</div>
+		</Box>
 	)
 }
 

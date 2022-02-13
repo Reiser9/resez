@@ -1,42 +1,29 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import './Data.css';
+import {useStyles} from '../../../../theme/gstyle.js';
 
 import PreloaderFill from '../../../../common/Preloaders/PreloaderFill/PreloaderFill.jsx';
-import InputLocal from '../../../../common/Inputs/InputLocal/InputLocal.jsx';
-import LoadButton from '../../../../common/Buttons/LoadButton/LoadButton.jsx';
-import DataValue from '../../../../common/DataValue/DataValue.jsx';
+import LoadButtonMui from '../../../../common/Buttons/LoadButtonMui/LoadButtonMui.jsx';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 import Lvl from '../Lvl/Lvl.jsx';
-import Avatar from '../Avatar/Avatar.jsx';
+import AvatarUser from '../AvatarUser/AvatarUser.jsx';
+import DataBlock from './DataBlock/DataBlock.jsx';
 
-import {deleteAccount, editUserDataInDatabase, checkAlreadyNick} from '../../../../redux/auth-reducer.js';
+import {checkPattern} from '../../../../redux/auth-reducer.js';
 import {patternNotify} from '../../../../redux/notify-reducer.js';
 import {reqRole, reqName, reqSurname, reqNick, reqEditNickLoad, reqExp, reqLvl} from '../../../../redux/user-selectors.js';
+import {setDeleteModal} from '../../../../redux/modal-reducer.js';
 
-const Data = ({role, name, surname, nick, exp, lvl, editNickLoad, deleteAccount, editUserDataInDatabase, checkAlreadyNick, patternNotify}) => {
+const Data = ({role, name, surname, nick, exp, lvl, editNickLoad, checkPattern, patternNotify, setDeleteModal}) => {
+	const gstyle = useStyles();
+
 	const [editData, setEditData] = React.useState(false); //Редактируем ли данные сейчас
 	const [nameEdit, setNameEdit] = React.useState(""); //Записываем измененное имя
 	const [surnameEdit, setSurnameEdit] = React.useState(""); //Записываем измененную фамилию
 	const [nickEdit, setNickEdit] = React.useState(""); //Записываем измененный ник
-
-	const checkPattern = (valEdit, val, error, success = false, fieldName = false, isNick = false) => {
-		if(valEdit !== val){
-			if(valEdit === '' || valEdit.length > 50){
-				patternNotify(error);
-			}
-			else{
-				if(!isNick){
-					editUserDataInDatabase(fieldName, valEdit);
-					patternNotify(success);
-				}
-				else{
-					checkAlreadyNick(val, valEdit);
-				}
-			}
-		}
-	}
 
 	const saveData = () => {
 		setEditData(prev => !prev);
@@ -61,63 +48,35 @@ const Data = ({role, name, surname, nick, exp, lvl, editNickLoad, deleteAccount,
 
 	return(
 		<>
-			<div className="profile__content--wrapper flexstart w100">
-				<Avatar />
+			<Box className={`${gstyle.flexstart} ${gstyle.w100}`}>
+				<AvatarUser />
 
 				<Lvl exp={exp} lvl={lvl} />
 
-				<div className="profile__data--inner flexstart w100">
-					<div className="profile__data--item flexstart w100">
-						<p className="profile__data--item--name">
-							Роль:
-						</p>
+				<Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{mt: 1.5}}>
+					<DataBlock title="Роль" data={role} canEdit={false} />
 
-						<DataValue value={role} />
-					</div>
+					<DataBlock title="Имя" editData={editData} data={name} dataEdit={nameEdit} setDataEdit={setNameEdit} />
 
-					<div className="profile__data--item flexstart w100">
-						<p className="profile__data--item--name">
-							Имя:
-						</p>
+					<DataBlock title="Фамилия" editData={editData} data={surname} dataEdit={surnameEdit} setDataEdit={setSurnameEdit} />
 
-						{editData
-						? <InputLocal val={name} editSetData={setNameEdit} editDataVal={nameEdit} placeholder="Имя" />
-						: <DataValue value={name} />}
-					</div>
+					<DataBlock title="Логин" editData={editData} data={nick} dataEdit={nickEdit} setDataEdit={setNickEdit} />
+				</Box>
+			</Box>
 
-					<div className="profile__data--item flexstart w100">
-						<p className="profile__data--item--name">
-							Фамилия:
-						</p>
-
-						{editData
-						? <InputLocal val={surname} editSetData={setSurnameEdit} editDataVal={surnameEdit} placeholder="Фамилия" />
-						: <DataValue value={surname} />}
-					</div>
-
-					<div className="profile__data--item flexstart w100">
-						<p className="profile__data--item--name">
-							Логин:
-						</p>
-
-						{editData
-						? <InputLocal val={nick} editSetData={setNickEdit} editDataVal={nickEdit} placeholder="Логин" />
-						: <DataValue value={nick} />}
-					</div>
-				</div>
-			</div>
-
-			<div className="profile__content--button--inner flexstart w100">
+			<Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{mt: 3}}>
 				{editNickLoad
-				? <LoadButton margin="0" />
-				: <button className="button profile__content--button w100" onClick={saveData}>
+				? <LoadButtonMui className={gstyle.w100}>
+					Загрузка..
+				</LoadButtonMui>
+				: <Button className={gstyle.w100} variant="contained" onClick={saveData}>
 					{editData ? 'Сохранить' : 'Редактировать'}
-				</button>}
+				</Button>}
 
-				<button className="button profile__content--button delete__account w100" onClick={deleteAccount}>
+				<Button color="error" variant="contained" sx={{mt: 1}} className={gstyle.w100} onClick={() => setDeleteModal(true)}>
 					Удалить аккаунт
-				</button>
-			</div>
+				</Button>
+			</Box>
 		</>
 	)
 }
@@ -134,4 +93,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, {deleteAccount, editUserDataInDatabase, checkAlreadyNick, patternNotify})(Data);
+export default connect(mapStateToProps, {checkPattern, patternNotify, setDeleteModal})(Data);

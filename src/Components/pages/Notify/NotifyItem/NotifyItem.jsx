@@ -1,47 +1,78 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {makeStyles} from '@mui/styles';
 
-import './NotifyItem.css';
+import {useStyles} from '../../../../theme/gstyle.js';
 
-import LoadButton from '../../../../common/Buttons/LoadButton/LoadButton.jsx';
-import Button from '../../../../common/Buttons/Button/Button.jsx';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+
+import LoadButtonMui from '../../../../common/Buttons/LoadButtonMui/LoadButtonMui.jsx';
 
 import {readNotifyUser} from '../../../../redux/notify-reducer.js';
 import {reqReadNotifyLoad} from '../../../../redux/user-selectors.js';
 
-const NotifyItem = ({title, text, date, read, id, readNotifyLoad, readNotifyUser}) => {
+const useLocalStyles = makeStyles({
+	notifyItem: {
+		background: '#fff',
+		padding: '1.5rem',
+		borderRadius: 7
+	},
+	titleInner: {
+		'@media (max-width: 480px)': {
+		    flexDirection: "column-reverse",
+		    alignItems: 'flex-start'
+		},
+	},
+	title: {
+		paddingRight: '2rem',
+		'@media (max-width: 480px)': {
+		    paddingRight: 0
+		},
+	}
+});
+
+const NotifyItem = ({data, readNotifyLoad, readNotifyUser}) => {
+	const {title, text, date, read, id} = data;
+
+	const gstyle = useStyles();
+	const localStyle = useLocalStyles();
+	
 	const readNotify = () => {
 		readNotifyUser(id);
 	}
 
 	return(
-		<div className="notify__item flexstart w100">
-			<div className="notify__item--title--inner flexbet w100">
-				<p className="notify__item--title">
+		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${localStyle.notifyItem}`}>
+			<Box className={`${gstyle.flexbet} ${gstyle.w100} ${localStyle.titleInner}`}>
+				<Typography component="p" variant="h4" className={localStyle.title} sx={{fontWeight: 700, mt: {r500: 0, r0: 1}}}>
 					{title}
-				</p>
+				</Typography>
 
-				<p className="notify__item--date">
+				<Typography component="p" variant="p2" color="greytext.main">
 					{date}
-				</p>
-			</div>
+				</Typography>
+			</Box>
 
-			<p className="notify__item--text w100 mt2">
+			<Typography component="p" variant="p" className={gstyle.w100} sx={{mt: 1}}>
 				{text}
-			</p>
+			</Typography>
 
-			<div className="notify__read--inner flexbet w100 mt3">
+			<Box className={`${gstyle.flexbet} ${gstyle.w100}`} sx={{mt: 2}}>
 				{read
-				? <Button text="Прочитано" widthAuto margin={0} classMore={'disable'} />
+				? <LoadButtonMui text="Прочитано"/>
 				: <>
 					{readNotifyLoad
-					? <LoadButton margin={0} width />
-					: <Button text="Прочитать" widthAuto margin={0} onClick={readNotify} />}
+					? <LoadButtonMui text="Загрузка..." />
+					: <Button variant="contained" onClick={readNotify}>
+						Прочитать
+					</Button>}
 					
-					<div className="notify__indicator"></div>
+					<Box sx={{width: 20, height: 20, borderRadius: '50%', bgcolor: '#ff6666'}}></Box>
 				</>}
-			</div>
-		</div>
+			</Box>
+		</Box>
 	)
 }
 
@@ -51,4 +82,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, {readNotifyUser})(NotifyItem);
+export default connect(mapStateToProps, {readNotifyUser})(React.memo(NotifyItem));

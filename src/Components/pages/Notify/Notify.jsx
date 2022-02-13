@@ -1,7 +1,10 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import './Notify.css';
+import {useStyles} from '../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import PreloaderFill from '../../../common/Preloaders/PreloaderFill/PreloaderFill.jsx';
 import PageWrapper from '../../../common/PageWrappers/PageWrapper/PageWrapper.jsx';
@@ -10,39 +13,39 @@ import PrivatePageWrapper from '../../../common/PageWrappers/PrivatPageWrapper/P
 import NotifyItem from './NotifyItem/NotifyItem.jsx';
 
 import {reqNotifyBase, reqLoadDataUser} from '../../../redux/user-selectors.js';
+import {compareTime} from '../../../common/utils/sort.js';
 
 const Notify = ({notifyBase, loadDataUser}) => {
-	const notifyBaseArr = Object.keys(notifyBase).map((key) => {
-		return notifyBase[key];
-	});
+	const gstyle = useStyles();
 
-	// Сортируем уведомления по дате
-	const compare = (a, b) => {
-	    return (a.id > b.id) && -1;
-	    return (a.id < b.id) && 1;
-	    return 0;
-	}
+	const [notifyBaseArr, setNotifyBaseArr] = React.useState([]);
+	
+	React.useEffect(() => {
+		setNotifyBaseArr(Object.keys(notifyBase).map((key) => {
+			return notifyBase[key];
+		}));
+	}, [notifyBase]);
+
+	React.useEffect(() => {
+		document.title = 'ResEz - Уведомления';
+	}, []);
 
 	return(
 		<PrivatePageWrapper>
 			<PageWrapper>
-				<div className="wrapper flexsh w100">
-					<div className="wrapper__content flexcenter w100">
+				<Box className={`${gstyle.wrapper} ${gstyle.flexsh} ${gstyle.w100}`}>
+					<Box className={`${gstyle.wrapperContent} ${gstyle.flexcenter} ${gstyle.w100}`}>
 						{!loadDataUser
-						? <>
-							<h2 className="pretitle">
-								Уведомления
-							</h2>
-
-							<div className="notify__content flexcenter w100">
-								{notifyBaseArr.length > 0
-								? notifyBaseArr.sort(compare).map((d, id) => <NotifyItem key={id} title={d.title} text={d.text} date={d.date} read={d.read} id={d.id} />)
-								: 'Уведомлений нет'}
-							</div>
-						</>
+						? <Box className={gstyle.w100} sx={{display: 'grid', gap: 2}}>
+							{notifyBaseArr.length > 0
+							? notifyBaseArr?.sort(compareTime).map((d, id) => <NotifyItem key={id} data={d} />)
+							: <Typography sx={{width: '100%', textAlign: 'center'}} component="div" variant="h5">
+								Уведомлений нет
+							</Typography>}
+						</Box>
 						: <PreloaderFill />}
-					</div>
-				</div>
+					</Box>
+				</Box>
 			</PageWrapper>
 		</PrivatePageWrapper>
 	)

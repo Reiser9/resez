@@ -1,11 +1,11 @@
 .admin__users--search--inner{
-	width: 350px;
+	width: 300px;
 	position: relative;
 }
 
 .admin__users--search{
-	width: 46px;
-	height: 46px;
+	width: 41px;
+	height: 100%;
 	border-radius: 7px;
 	display: flex;
 	align-items: center;
@@ -27,12 +27,31 @@
 }
 
 .admin__users--select{
-	margin-left: 2rem;
+	margin-left: 1.5rem;
 	width: 100px;
+	text-align: center;
+	padding: 1rem;
 }
 
-.admin__users--inner{
-	display: flex;
-	align-items: flex-start;
-	flex-wrap: wrap;
+/* Адаптив */
+@media(max-width: 1300px){
+	.admin__users--filter{
+		width: 100%;
+		margin-top: 1.5rem;
+	}
+}
+@media(max-width: 680px){
+	.admin__users--search--inner{
+		width: 100%;
+	}
+}
+@media(max-width: 500px){
+	.admin__users--select{
+		padding: 0.7rem;
+	}
+
+	.admin__users--search{
+		width: 40px;
+		height: 40px;
+	}
 }

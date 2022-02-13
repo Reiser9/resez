@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
-import "firebase/database";
-import "firebase/auth";
+import firebase from 'firebase/compat/app';
+import "firebase/compat/database";
+import "firebase/compat/auth";
 import '../firebase/firebaseConfig.js';
 
 import {errorWrapper} from '../common/validate/validate.js';
@@ -42,9 +42,6 @@ const SET_ROLE = 'SET_ROLE';
 const SET_PRIVAT_PROFILE = 'SET_PRIVAT_PROFILE';
 const SET_SITECOLOR = 'SET_SITECOLOR';
 
-const SET_USERS = 'SET_USERS';
-const SET_USERS_IN_LOAD = 'SET_USERS_IN_LOAD';
-
 const initialState = {
     isAuth: false, //Авторизованы ли мы
     loadAuth: true, //Загрузка авторизации
@@ -78,10 +75,7 @@ const initialState = {
     surname: '', //Фамилия
     role: '', //Роль
     privatProfile: false,
-    sitecolor: '',
-    // Прочие данные
-    users: {},
-    usersInLoad: true,
+    sitecolor: ''
 }
 
 const authReducer = (state = initialState, action) => {
@@ -230,16 +224,6 @@ const authReducer = (state = initialState, action) => {
             return{
                 ...state,
                 sitecolor: action.value
-            }
-        case SET_USERS:
-            return{
-                ...state,
-                users: action.value
-            }
-        case SET_USERS_IN_LOAD:
-            return{
-                ...state,
-                usersInLoad: action.value
             }
         default:
             return state;
@@ -420,18 +404,6 @@ export const setSitecolor = (value) => {
         value
     }
 }
-export const setUsers = (value) => {
-    return{
-        type: SET_USERS,
-        value
-    }
-}
-export const setUsersInLoad = (value) => {
-    return{
-        type: SET_USERS_IN_LOAD,
-        value
-    }
-}
 
 // Изменение данных в input
 export const setData = (id, value) => (dispatch) => {
@@ -468,50 +440,13 @@ export const setData = (id, value) => (dispatch) => {
     }
 }
 
-// Удаление текста внутри input по нажатию на крестик
-export const setDataRemove = (id, value) => (dispatch) => {
-    switch(id){
-        case 'emailRegisterRemove':
-            dispatch(setEmailRegister(value));
-            break;
-        case 'nickRegisterRemove':
-            dispatch(setNickRegister(value));
-            break;
-        case 'nameRegisterRemove':
-            dispatch(setNameRegister(value));
-            break;
-        case 'surnameRegisterRemove':
-            dispatch(setSurnameRegister(value));
-            break;
-        case 'passwordRegisterRemove':
-            dispatch(setPasswordRegister(value));
-            break;
-        case 'confirmPasswordRegisterRemove':
-            dispatch(setConfirmPasswordRegister(value));
-            break;
-        case 'emailEnterRemove':
-            dispatch(setEmailEnter(value));
-            break;
-        case 'passwordEnterRemove':
-            dispatch(setPasswordEnter(value));
-            break;
-        case 'emailRecoveryRemove':
-            dispatch(setEmailRecovery(value));
-            break;
-        default:
-            break;
-    }
-}
-
 // Следим за состоянием авторизации
 export const authStateListener = () => async (dispatch) => {
-    await firebase.auth().onAuthStateChanged((data) => {
-        user = firebase.auth().currentUser;
-        dispatch(getUsers());
+    await firebase.auth().onAuthStateChanged(data => {
+        user = data;
         if(user){
             dispatch(loadUserData());
             dispatch(setIsAuth(true));
-            verificateEmailSucces();
         }
         else{
             dispatch(setIsAuth(false));
@@ -528,42 +463,33 @@ const loadUserData = () => async (dispatch) => {
             dispatch(quitUser());
             return;
         }
-        dispatch(setStatus(dataVal.status));
-        dispatch(setName(dataVal.name));
-        dispatch(setSurname(dataVal.surname));
-        dispatch(setImg(dataVal.img));
-        dispatch(setLvl(dataVal.lvl));
-        dispatch(setExp(dataVal.exp));
-        dispatch(setBalance(dataVal.balance));
-        dispatch(setNick(dataVal.nick));
-        dispatch(setVerificateEmail(dataVal.verificateEmail));
-        dispatch(setEmail(dataVal.email));
-        dispatch(setRole(dataVal.role));
-        dispatch(setPrivatProfile(dataVal.privatProfile));
-        dataVal.notify && dispatch(setNotifyBase(dataVal.notify));
-        dispatch(setSitecolor(dataVal.sitecolor));
+        const {status, name, surname, img, lvl, exp, balance, nick, verificateEmail, email, role, privatProfile, notify, sitecolor} = dataVal;
+        dispatch(setStatus(status));
+        dispatch(setName(name));
+        dispatch(setSurname(surname));
+        dispatch(setImg(img));
+        dispatch(setLvl(lvl));
+        dispatch(setExp(exp));
+        dispatch(setBalance(balance));
+        dispatch(setNick(nick));
+        dispatch(setVerificateEmail(verificateEmail));
+        dispatch(setEmail(email));
+        dispatch(setRole(role));
+        dispatch(setPrivatProfile(privatProfile));
+        dispatch(setSitecolor(sitecolor));
+        notify && dispatch(setNotifyBase(notify));
         dispatch(setLoadDataUser(false));
+        verificateEmailSucces();
         
-        const n = dataVal.notify;
-        if(n){
-            const notify = Object.keys(n).map((key) => {
-                return n[key];
+        if(notify){
+            const notifyTemp = Object.keys(notify).map((key) => {
+                return notify[key];
             });
-            const notifyIndex = notify.filter((d) => d.read === false).length;
+            const notifyIndex = notifyTemp.filter((d) => d.read === false).length;
             dispatch(setNotifyNotRead(notifyIndex));
         }
         else{
             dispatch(setNotifyNotRead(0));
-        }
-    });
-}
-
-// Получение всех пользователей
-export const getUsers = () => (dispatch) => {
-    firebase.database().ref('users').on('value', snapshot => {
-        dispatch(setUsersInLoad(false));
-        if(snapshot.val() !== null){
-            dispatch(setUsers(snapshot.val()));
         }
     });
 }
@@ -578,13 +504,15 @@ export const registerUser = (email, password, nick, name, surname) => (dispatch)
             errorWrapper('nickRegister', 'Данный логин уже занят');
         }
         else{
-            firebase.auth().createUserWithEmailAndPassword(email, password).then((snapshot) => {
+            firebase.auth().createUserWithEmailAndPassword(email, password).then(snapshot => {
                 dispatch(setAuthIsLoad(false));
 
+                // Обновляем displayName в пользователе
                 snapshot.user.updateProfile({
                     displayName: nick
                 });
 
+                // Добавляем данные о пользователе в бд
                 firebase.database().ref('users/' + snapshot.user.uid).set({
                     uid: snapshot.user.uid,
                     name: name,
@@ -595,7 +523,7 @@ export const registerUser = (email, password, nick, name, surname) => (dispatch)
                     exp: 0,
                     balance: 0,
                     verificateEmail: false,
-                    status: 'Новичок',
+                    status: 0,
                     img: '',
                     role: 'user',
                     privatProfile: false,
@@ -605,13 +533,16 @@ export const registerUser = (email, password, nick, name, surname) => (dispatch)
                 firebase.database().ref('nicks/' + nick).set({
                     nick: nick,
                     uid: snapshot.user.uid
+                }).then(() => {
+                    firebase.database().ref('nicks').once('value', data => {
+                        firebase.database().ref('siteData/usersValue').set(Object.keys(data.val()).length);
+                    });
                 });
 
                 dispatch(clearInput());
                 dispatch(patternNotify('register_account'));
-            }).catch((error) => {
+            }).catch(error => {
                 dispatch(setAuthIsLoad(false));
-                console.log(error.code);
                 errorCatch(error.code, 'auth/email-already-in-use', 'emailRegister', 'Адрес электронной почты уже зарегистрирован');
             });
         }
@@ -637,9 +568,8 @@ export const checkAlreadyNick = (prevNick, nick) => (dispatch) => {
                 nick,
                 uid: user.uid
             });
-            firebase.database().ref('nicks/' + prevNick).set({});
+            firebase.database().ref('nicks/' + prevNick).remove();
             dispatch(patternNotify('nick_edied'));
-            debugger;
         }
     });
 }
@@ -647,13 +577,12 @@ export const checkAlreadyNick = (prevNick, nick) => (dispatch) => {
 // Вход пользователя в аккаунт
 export const enterUser = (email, password) => async (dispatch) => {
     dispatch(setAuthIsLoad(true));
-    await firebase.auth().signInWithEmailAndPassword(email, password).then((data) => {
+    await firebase.auth().signInWithEmailAndPassword(email, password).then(data => {
         dispatch(setAuthIsLoad(false));
         dispatch(clearInput());
         dispatch(patternNotify('enter_account'));
-    }).catch((error) => {
+    }).catch(error => {
         dispatch(setAuthIsLoad(false));
-        console.log(error.code);
         errorCatch(error.code, 'auth/user-not-found', 'emailEnter', 'Неверный адрес электронной почты или пароль');
         errorCatch(error.code, 'auth/wrong-password', 'emailEnter', 'Неверный адрес электронной почты или пароль');
         errorCatch(error.code, 'auth/too-many-requests', 'allErrors', 'Слишком много запросов, попробуйте позже');
@@ -664,20 +593,22 @@ export const enterUser = (email, password) => async (dispatch) => {
 export const recoveryPassword = (email) => async (dispatch) => {
     dispatch(setAuthIsLoad(true));
     await firebase.auth().sendPasswordResetEmail(email).then(() => {
+
+    }).catch(error => {
+        //errorCatch(error.code, 'auth/user-not-found', 'emailRecovery', 'Пользователь с таким адресом электронной почты не найден');
+        //В целях безопасности пишем, якобы отправили письмо на почту о восстановлении при любом исходе,
+        //даже если пользователь с такой почтой не зарегистрирован
+    }).finally(() => {
         dispatch(setAuthIsLoad(false));
         dispatch(clearInput());
         dispatch(patternNotify('recovery_password'));
-    }).catch((error) => {
-        dispatch(setAuthIsLoad(false));
-        console.log(error.code);
-        errorCatch(error.code, 'auth/user-not-found', 'emailRecovery', 'Пользователь с таким адресом электронной почты не найден');
     });
 }
 
 // Сменить пароль
 export const editPassword = (password, setPassword, setConfirmPassword) => async (dispatch) => {
     dispatch(setEditPasswordLoad(true));
-    await user.updatePassword(password).then(function() {
+    await user.updatePassword(password).then(() => {
         dispatch(setEditPasswordLoad(false));
         dispatch(patternNotify('password_edit'));
         setPassword('');
@@ -699,14 +630,15 @@ export const confirmEmail = () => async (dispatch) => {
 }
 
 // Сменить почту
-export const editEmail = (email) => async (dispatch) => {
+export const editEmail = (email, waitMail) => async (dispatch) => {
     dispatch(setEditEmailLoad(true));
-    await user.updateEmail(email).then(function(){
+    await user.updateEmail(email).then(() => {
         dispatch(setEditEmailLoad(false));
-        dispatch(updateDataUser('email', email));
+        dispatch(editUserDataInDatabase('email', email));
         dispatch(setVerificateEmail(false));
         dispatch(patternNotify('success_edit_email'));
-    }).catch((err) => {
+        dispatch(waitMail(false));
+    }).catch(err => {
         dispatch(setEditEmailLoad(false));
         switch(err.code){
             case 'auth/requires-recent-login':
@@ -727,9 +659,9 @@ export const editEmail = (email) => async (dispatch) => {
 
 // Записываем верификацию email в бд
 export const verificateEmailSucces = async () => {
-    let verEmail = user.emailVerified;
+    const verificateEmail = user.emailVerified;
     await firebase.database().ref('users/' + user.uid).update({
-        verificateEmail: verEmail
+        verificateEmail
     });
 }
 
@@ -738,33 +670,56 @@ export const quitUser = (pattern = false) => async (dispatch) => {
     await firebase.auth().signOut().then(() => {
         dispatch(clearRedux());
         pattern && dispatch(patternNotify('quit_account'));
-    }).catch((error) => {
-        console.log(error.code);
+    }).catch(err => {
+        console.log(err.code);
     });
 }
 
 // Удалить аккаунт
 export const deleteAccount = () => (dispatch) => {
+    const tempUser = user;
     user.delete().then(() => {
         dispatch(clearRedux());
-        firebase.database().ref('users/' + user.uid).set({});
-        firebase.database().ref('nicks/' + user.displayName).set({});
+        firebase.database().ref('users/' + tempUser.uid).delete();
+        firebase.database().ref('nicks/' + tempUser.displayName).delete().then(() => {
+            firebase.database().ref('nicks').once('value', data => {
+                firebase.database().ref('siteData/usersValue').set(Object.keys(data.val()).length);
+            });
+        });
         dispatch(patternNotify('delete_account'));
-    }).catch((error) => {
-        console.log(error.code);
-    });
-}
-
-// Изменить какое-то поле пользователя, передаем название поля, к примеру nick, значение и uid пользователя, которому нужно что-то поменять
-export const updateDataUser = (id, value) => async (dispatch) => {
-    await firebase.database().ref('users/' + user.uid).update({
-        [id]: value
+    }).catch((err) => {
+        switch(err.code){
+            case 'auth/requires-recent-login':
+                dispatch(patternNotify('auth_again'));
+                dispatch(quitUser());
+                break;
+            default:
+                break;
+        }
     });
 }
 
 // Редактируем данные в базе данных
 export const editUserDataInDatabase = (name, value) => async (dispatch) => {
     await firebase.database().ref('users/' + user.uid + "/" + name).set(value);
+}
+
+// Проверка данных профиля при редактировании
+export const checkPattern = (valEdit, val, error, success = false, fieldName = false, isNick = false) => (dispatch) => {
+    if(valEdit !== val){
+        if(valEdit === '' || valEdit.length > 50){
+            dispatch(patternNotify(error));
+        }
+        else{
+            if(!isNick){
+                dispatch(editUserDataInDatabase(fieldName, valEdit));
+                dispatch(patternNotify(success));
+            }
+            else{
+                dispatch(checkAlreadyNick(val, valEdit));
+            }
+        }
+    }
 }
 
 // Очищаем redux после выхода с аккаунта, дабы не произошли баги, будто мы авторизованы
@@ -787,7 +742,8 @@ const clearRedux = () => (dispatch) => {
 
 // Очистить все поля input
 const clearInput = () => (dispatch) => {
-    inputEmpty(['emailRegister', 'nickRegister', 'passwordRegister', 'confirmPasswordRegister', 'emailEnter', 'passwordEnter', 'emailRecovery'], dispatch);
+    inputEmpty(['emailRegister', 'nickRegister', 'nameRegister', 'surnameRegister', 'passwordRegister', 'confirmPasswordRegister',
+    'emailEnter', 'passwordEnter', 'emailRecovery'], dispatch);
 }
 
 // После удачного входа, обнуляем значения полей
@@ -800,23 +756,6 @@ const inputEmpty = (arr, dispatch) => {
 // Функция обертки полей с ошибками, передаем ошибку, код ошибки, id поля и текст, который хотим увидеть на ошибке(поля авторизации, регистрации)
 const errorCatch = (error, errorCode, id, text) => {
     if(error === errorCode){errorWrapper(id, text)}
-}
-
-// Сравнить элемент с массивом, позвращает истину, если такое элемент есть
-export const compareData = (compare, array) => {
-    let alreadyUse = false;
-    let allUsers = Object.keys(array).map((key) => {
-        return array[key]
-    });
-
-    for(let i = 0; i < allUsers.length; i++){
-        if(allUsers[i].nick.toLowerCase() === compare.toLowerCase()){
-            alreadyUse = true;
-            break;
-        }
-    }
-
-    return alreadyUse;
 }
 
 export default authReducer;

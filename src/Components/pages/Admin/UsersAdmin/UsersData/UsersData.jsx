@@ -1,19 +1,24 @@
 import React from 'react';
 
-import './UsersData.css';
+import {useStyles} from '../../../../../theme/gstyle.js';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 const UsersData = ({title, value, bool = false}) => {
+	const gstyle = useStyles();
+	
 	return(
-		<div className="admin__user--data--wrapper flexstart mt1 w100">
-			<p className="admin__user--data--title">
+		<Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{mt: 1}}>
+			<Typography component="p" variant="p2" color="greytext.main">
 				{title}:
-			</p>
+			</Typography>
 
-			<p className="admin__user--data--value">
-				{bool ? value === false ? 'Нет' : 'Да' : value}
-			</p>
-		</div>
+			<Typography component="p" variant="p" sx={{wordBreak: 'break-all'}}>
+				{bool ? value ? 'Да' : 'Нет' : value}
+			</Typography>
+		</Box>
 	)
 }
 
-export default UsersData;
+export default React.memo(UsersData);
