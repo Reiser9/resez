@@ -75,7 +75,7 @@ const Footer = ({isAuth, loadAuth}) => {
 				</Box>
 
 				<Typography component="p" variant="p2" sx={{mt: 4, color: 'copy.main'}}>
-				    &copy; ResEz 2021
+				    &copy; ResEz 2022
 				</Typography>
 			</>}
 		</Box>

@@ -8,8 +8,8 @@ import Link from '@mui/material/Link';
 
 const useLocalStyles = makeStyles({
 	link: {
-		width: 40,
-		height: 40,
+		width: 35,
+		height: 35,
 		borderRadius: '50%',
 		'&:last-child': {
 			marginRight: 0
@@ -20,7 +20,7 @@ const useLocalStyles = makeStyles({
 	}
 });
 
-const Social = ({className}) => {
+const Social = () => {
 	const gstyle = useStyles();
 	const localStyle = useLocalStyles();
 	

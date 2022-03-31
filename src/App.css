@@ -90,10 +90,36 @@ textarea{
     height: 150px;
 }
 
-select {
+select{
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+input[type="color"]{
+    -webkit-appearance: none;
+    border: none;
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper{
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch{
+    border: none;
+    border-radius: 50%;
+}
+
+.color__select{
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.color__select--label{
+    margin-left: 1rem;
+    cursor: pointer;
 }
 
 a{
@@ -110,7 +136,7 @@ li{
     list-style-type: none;
 }
 
-h1, h2, h3, h4, h5, h5, p{
+h1, h2, h3, h4, h5, h6, p{
     margin: 0;
     font-weight: normal;
 }

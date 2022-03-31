@@ -3,6 +3,7 @@ import React from 'react';
 import {useStyles} from '../../theme/gstyle.js';
 
 import Box from '@mui/material/Box';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
@@ -15,11 +16,7 @@ const SwitchDefault = ({text, dataEdit, setDataEdit}) => {
 
 	return(
 		<Box className={`${gstyle.w100} ${gstyle.flexDef}`}>
-			<Switch checked={dataEdit} onChange={onChange} />
-
-			<Typography sx={{ml: .2}} component="p" variant="p">
-				{text}
-			</Typography>
+			<FormControlLabel control={<Switch checked={dataEdit} onChange={onChange} />} label={<Typography sx={{ml: .2}} component="p" variant="p">{text}</Typography>} />
 		</Box>
 	)
 }

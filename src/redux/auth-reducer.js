@@ -680,8 +680,8 @@ export const deleteAccount = () => (dispatch) => {
     const tempUser = user;
     user.delete().then(() => {
         dispatch(clearRedux());
-        firebase.database().ref('users/' + tempUser.uid).delete();
-        firebase.database().ref('nicks/' + tempUser.displayName).delete().then(() => {
+        firebase.database().ref('users/' + tempUser.uid).remove();
+        firebase.database().ref('nicks/' + tempUser.displayName).remove().then(() => {
             firebase.database().ref('nicks').once('value', data => {
                 firebase.database().ref('siteData/usersValue').set(Object.keys(data.val()).length);
             });

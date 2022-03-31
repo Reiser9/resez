@@ -182,6 +182,17 @@ export let theme = createTheme({
 				fontSize: "1.6rem"
 			}
 		},
+		h6: {
+			fontSize: '2rem',
+			fontWeight: 400,
+			lineHeight: 1.2,
+			'@media (max-width: 1360px)': {
+				fontSize: "1.8rem"
+			},
+			'@media (max-width: 768px)': {
+				fontSize: "1.6rem"
+			}
+		},
 		p: {
 			fontSize: '1.8rem',
 			fontWeight: 400,

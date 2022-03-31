@@ -6,13 +6,11 @@ import {useStyles} from '../../../theme/gstyle.js';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import PreloaderTop from '../../../common/Preloaders/PreloaderTop/PreloaderTop.jsx';
 import LinkMui from '../../../common/Buttons/LinkMui/LinkMui.jsx';
 import NavLinkMui from '../../../common/Buttons/NavLinkMui/NavLinkMui.jsx';
 
 import {reqStatus, reqName, reqSurname, reqImg, reqLvl, reqBalance, reqRole, reqNotifyNotRead} from '../../../redux/user-selectors.js';
-import {setQuitModal} from '../../../redux/modal-reducer.js';
 
 const useLocalStyles = makeStyles({
 	imgInner: {
@@ -32,7 +30,7 @@ const useLocalStyles = makeStyles({
 	}
 });
 
-const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotRead, setQuitModal}) => {
+const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotRead}) => {
 	const gstyle = useStyles();
 	const localStyle = useLocalStyles();
 	return(
@@ -85,15 +83,6 @@ const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotR
 	            <LinkMui href="notify" className={`${gstyle.w100} ${gstyle.sidebarLink}`} notify notifyNotRead={notifyNotRead}>
 	            	Уведомления
 	            </LinkMui>
-
-	            <LinkMui href="sitecolor" className={`${gstyle.w100} ${gstyle.sidebarLink}`}>
-	            	Цветовая гамма
-	            </LinkMui>
-
-	            <Button onClick={() => setQuitModal(true)} color="error" sx={{justifyContent: 'flex-start', p: '1rem 2rem', borderRadius: 0}}
-	            className={gstyle.w100}>
-	            	Выйти
-	            </Button>
 	        </Box>
 	    </Box>
 	)
@@ -112,4 +101,4 @@ const mapStateToProps = (state) => {
 	}
 }
 
-export default connect(mapStateToProps, {setQuitModal})(SidebarAuth);
+export default connect(mapStateToProps, {})(SidebarAuth);

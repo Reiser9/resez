@@ -16,7 +16,7 @@ import {convertColor} from './common/utils/functions.js';
 import Preloader from './common/Preloaders/Preloader/Preloader.jsx';
 import Notify from './common/Notify/Notify.jsx';
 import {withSuspense} from './hoc/withSuspense.js';
-import Main from './Components/pages/Main/Main.jsx';
+import Main from './pages/Main/Main.jsx';
 import ModalDefault from './common/Modal/ModalDefault/ModalDefault.jsx';
 import ModalConfirm from './common/Modal/ModalConfirm/ModalConfirm.jsx';
 import Box from '@mui/material/Box';
@@ -24,17 +24,16 @@ import Box from '@mui/material/Box';
 import {ThemeProvider} from '@mui/material/styles';
 import {theme} from './theme/theme.js';
 
-import UserBan from './Components/pages/UserBan/UserBan.jsx';
-const Login = React.lazy(() => import('./Components/pages/Login/Login.jsx'));
-const Register = React.lazy(() => import('./Components/pages/Register/Register.jsx'));
-const Recovery = React.lazy(() => import('./Components/pages/Recovery/Recovery.jsx'));
-const NotFound = React.lazy(() => import('./Components/pages/404/404.jsx'));
-const Profile = React.lazy(() => import('./Components/pages/Profile/Profile.jsx'));
-const NotifyPage = React.lazy(() => import('./Components/pages/Notify/Notify.jsx'));
-const Sitecolor = React.lazy(() => import('./Components/pages/Sitecolor/Sitecolor.jsx'));
-const Admin = React.lazy(() => import('./Components/pages/Admin/Admin.jsx'));
-const Info = React.lazy(() => import('./Components/pages/Info/Info.jsx'));
-const Tasks = React.lazy(() => import('./Components/pages/Tasks/Tasks.jsx'));
+import UserBan from './pages/UserBan/UserBan.jsx';
+const Login = React.lazy(() => import('./pages/Login/Login.jsx'));
+const Register = React.lazy(() => import('./pages/Register/Register.jsx'));
+const Recovery = React.lazy(() => import('./pages/Recovery/Recovery.jsx'));
+const NotFound = React.lazy(() => import('./pages/404/404.jsx'));
+const Profile = React.lazy(() => import('./pages/Profile/Profile.jsx'));
+const NotifyPage = React.lazy(() => import('./pages/Notify/Notify.jsx'));
+const Admin = React.lazy(() => import('./pages/Admin/Admin.jsx'));
+const Info = React.lazy(() => import('./pages/Info/Info.jsx'));
+const Tasks = React.lazy(() => import('./pages/Tasks/Tasks.jsx'));
 
 const useLocalStyles = makeStyles({
     notify: {
@@ -95,7 +94,6 @@ deleteAccount, role}) => {
         {path: '/recovery', exact: true, Component: Recovery},
         {path: '/profile', exact: false, Component: Profile},
         {path: '/notify', exact: false, Component: NotifyPage},
-        {path: '/sitecolor', exact: false, Component: Sitecolor},
         {path: '/admin', exact: false, Component: Admin},
         {path: '/info', exact: false, Component: Info},
         {path: '/tasks', exact: false, Component: Tasks},
@@ -118,15 +116,15 @@ deleteAccount, role}) => {
 
     return(
         <ThemeProvider theme={localTheme}>
+            {/* Уведомления */}
+            {notifyArr.length > 0
+            && <Box className={`${gstyle.w100} ${gstyle.flexstart} ${localStyle.notify}`}>
+                {notifyArr.map((n, id) => <Notify key={id} data={n} />)}
+            </Box>}
+
             {role === 'ban'
             ? <UserBan />
             : <Box className={gstyle.w100} sx={{display: 'flex'}}>
-                {/* Уведомления */}
-                {notifyArr.length > 0
-                && <Box className={`${gstyle.w100} ${gstyle.flexstart} ${localStyle.notify}`}>
-                    {notifyArr.map((n, id) => <Notify key={id} data={n} />)}
-                </Box>}
-
                 {/* Модальные окна */}
                 {quitModal && <ModalDefault title="Вы действительно хотите выйти с аккаунта?" textEventButton="Выйти"
                  onClick={quitAccount} cansel={() => setQuitModal(false)} open={quitModal} />}
