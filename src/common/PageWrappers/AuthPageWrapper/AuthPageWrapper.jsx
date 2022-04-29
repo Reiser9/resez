@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {Redirect} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 
 import Preloader from '../../../common/Preloaders/Preloader/Preloader.jsx';
 
@@ -13,7 +13,7 @@ const AuthPageWrapper = ({isAuth, loadAuth, children}) => {
 	}
 
 	if(isAuth){
-		return <Redirect to={'/'} />
+		return <Navigate to={'/'} />
 	}
 
 	return(

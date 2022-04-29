@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 
 import {useStyles} from '../../theme/gstyle.js';
 
@@ -21,22 +21,22 @@ const Info = () => {
 		<PageWrapper>
 			<DefaultWrapper>
 				<Box className={`${gstyle.linkInner} ${gstyle.w100}`}>
-					<NavLinkMui variant="outlined" sx={{mr: 1}} href="info/points" className={gstyle.flexsh}>
+					<NavLinkMui variant="outlined" href="info/points" className={`${gstyle.flexsh} ${gstyle.link}`}>
 						Шкала баллов
 					</NavLinkMui>
 
-					<NavLinkMui variant="outlined" href="info/useful" className={gstyle.flexsh}>
+					<NavLinkMui variant="outlined" href="info/useful" className={`${gstyle.flexsh} ${gstyle.link}`}>
 						Полезные советы
 					</NavLinkMui>
 				</Box>
 
 				<Box sx={{mt: 1}} className={`${gstyle.flexcenter} ${gstyle.w100}`}>
-					<Switch>
-						<Route exact path="/info" render={() => <Redirect to={"/info/points"} />} />
-						<Route exact path="/info/points" render={() => withSuspense(PointsInfo)} />
-						<Route exact path="/info/useful" render={() => withSuspense(UsefulInfo)} />
-						<Route path="/info/*" render={() => <Redirect to={"/404"} />}/>
-					</Switch>
+					<Routes>
+						<Route index element={<Navigate to={"points"} />} />
+						<Route path="points" element={withSuspense(PointsInfo)} />
+						<Route path="useful" element={withSuspense(UsefulInfo)} />
+						<Route path="*" element={<Navigate to={"/404"} />}/>
+					</Routes>
 				</Box>
 			</DefaultWrapper>
 		</PageWrapper>

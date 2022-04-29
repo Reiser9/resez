@@ -97,7 +97,7 @@ const PointsInfo = () => {
 		<TabContext value={tab}>
 	        <TabList sx={{minHeight: 'auto'}} classes={{flexContainer: gstyle.tabContainer, root: gstyle.tabContext}}
 	        TabIndicatorProps={{style: {display: "none"}}} onChange={handleChange}>
-	        	{tabData.map((d, id) => <Tab key={id} label={d.name} value={`${id + 1}`} sx={{mr: 1}} />)}
+	        	{tabData.map((d, id) => <Tab key={id} label={d.name} value={`${id + 1}`} className={gstyle.link} />)}
 	        </TabList>
 
 	        {tabData.map((d, id) => <TabPanel key={id} value={`${id + 1}`}>

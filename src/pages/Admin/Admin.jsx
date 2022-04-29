@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 
 import {useStyles} from '../../theme/gstyle.js';
 
@@ -27,22 +27,22 @@ const Admin = () => {
 			<PageWrapper>
 				<DefaultWrapper>
 					<Box className={`${gstyle.linkInner} ${gstyle.w100}`}>
-						<NavLinkMui variant="outlined" href="admin/notify" sx={{mr: 1}} className={gstyle.flexsh}>
+						<NavLinkMui variant="outlined" href="admin/notify" className={`${gstyle.flexsh} ${gstyle.link}`}>
 							Уведомления
 						</NavLinkMui>
 
-						<NavLinkMui variant="outlined" href="admin/users" className={gstyle.flexsh}>
+						<NavLinkMui variant="outlined" href="admin/users" className={`${gstyle.flexsh} ${gstyle.link}`}>
 							Пользователи
 						</NavLinkMui>
 					</Box>
 
 					<Box sx={{mt: 1}} className={`${gstyle.flexcenter} ${gstyle.w100}`}>
-						<Switch>
-							<Route exact path="/admin" render={() => <Redirect to={"admin/notify"} />} />
-							<Route exact path="/admin/notify" render={() => withSuspense(NotifyAdmin)} />
-							<Route exact path="/admin/users" render={() => withSuspense(UsersAdmin)} />
-							<Route path="/admin/*" render={() => <Redirect to={"/404"} />}/>
-						</Switch>
+						<Routes>
+							<Route index element={<Navigate to={"notify"} />} />
+							<Route path="notify" element={withSuspense(NotifyAdmin)} />
+							<Route path="users" element={withSuspense(UsersAdmin)} />
+							<Route path="*" element={<Navigate to={"/404"} />}/>
+						</Routes>
 					</Box>
 				</DefaultWrapper>
 			</PageWrapper>

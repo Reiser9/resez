@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {Redirect} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 
 import Preloader from '../../../common/Preloaders/Preloader/Preloader.jsx';
 
@@ -16,7 +16,7 @@ const PrivatePageWrapper = ({isAuth, loadAuth, children, role, admin = false}) =
 		if(isAuth){
 			if(role){
 				if(role !== 'admin'){
-					return <Redirect to={'/404'} />
+					return <Navigate to={'/404'} />
 				}
 			}
 			else{
@@ -24,12 +24,12 @@ const PrivatePageWrapper = ({isAuth, loadAuth, children, role, admin = false}) =
 			}
 		}
 		else{
-			return <Redirect to={'/404'} />
+			return <Navigate to={'/404'} />
 		}
 	}
 
 	if(!isAuth){
-		return <Redirect to={'/login'} />
+		return <Navigate to={'/login'} />
 	}
 
 	return(

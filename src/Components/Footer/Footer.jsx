@@ -57,9 +57,9 @@ const Footer = ({isAuth, loadAuth}) => {
 				            	Разбор заданий
 				            </LinkMui>
 
-				            {isAuth && <LinkMui href="tests" className={localStyle.link} sx={{color: '#fff', mt: 1}}>
+				            <LinkMui href="tests" className={localStyle.link} sx={{color: '#fff', mt: 1}}>
 				            	Тесты
-				        	</LinkMui>}
+				        	</LinkMui>
 				        </Box>
 				    </Box>
 

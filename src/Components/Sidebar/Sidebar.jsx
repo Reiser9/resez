@@ -20,7 +20,7 @@ const useLocalStyles = makeStyles(theme => ({
 		width: 35,
 		height: 35,
 		borderRadius: '50%',
-		display: 'none',
+		display: 'flex',
 		position: 'fixed',
 		top: 10,
 		left: 10,
@@ -35,9 +35,6 @@ const useLocalStyles = makeStyles(theme => ({
 		'&.disable': {
 			opacity: 0,
 			transform: 'translateX(-30px)'
-		},
-		'@media (max-width: 998px)': {
-		    display: 'flex'
 		}
 	},
 	close: {
@@ -53,22 +50,19 @@ const useLocalStyles = makeStyles(theme => ({
 		},
 	},
 	sidebar: {
-		maxWidth: 320,
+		maxWidth: 0,
+		flexShrink: 0,
 		background: theme.palette.lightblue.main,
 		height: '100vh',
 		overflowX: 'hidden',
 		overflowY: 'auto',
-		position: 'relative',
 		transition: '.2s linear',
-		'@media (max-width: 998px)': {
-		    position: 'fixed',
-			top: 0,
-			left: 0,
-			zIndex: 10,
-			transform: 'translateX(-100%)',
-			'&.active': {
-				transform: 'translateX(0%)'
-			}
+	    position: 'relative',
+	    '@media (max-width: 998px)': {
+		    position: 'absolute',
+		    top: 0,
+		    left: 0,
+		    zIndex: 10
 		},
 	},
 	disable: {
@@ -76,7 +70,7 @@ const useLocalStyles = makeStyles(theme => ({
 		transform: 'translateX(-30px)'
 	},
 	active: {
-		transform: 'translateX(0)'
+		maxWidth: '320px'
 	}
 }));
 
@@ -105,11 +99,11 @@ const Sidebar = ({isAuth, loadAuth}) => {
 				<img src="/assets/img/menu.svg" alt="Меню" className={gstyle.imgRes} />
 			</Box>
 			
-			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${localStyle.sidebar} ${open && localStyle.active}`}>
+			<Box className={`${gstyle.flexstart} ${localStyle.sidebar} ${open && localStyle.active}`}>
 				{loadAuth
 				? <Preloader />
 				: <>
-					<Box className={`${gstyle.w100} ${gstyle.flex} ${localStyle.logoInner}`}>
+					<Box className={`${gstyle.w100} ${gstyle.flexbet} ${localStyle.logoInner} ${gstyle.sidebarComponent}`}>
 					    <Typography component={Link} variant="h1" to={'/'} sx={{color: 'var(--mainC)'}}>
 					        ResEz
 					    </Typography>
@@ -123,7 +117,7 @@ const Sidebar = ({isAuth, loadAuth}) => {
 
 					<SidebarNoAuth />
 
-					<Box className={gstyle.w100} sx={{p: 2}}>
+					<Box className={`${gstyle.sidebarComponent}`} sx={{p: 2}}>
 						<Social />
 					</Box>
 				</>}

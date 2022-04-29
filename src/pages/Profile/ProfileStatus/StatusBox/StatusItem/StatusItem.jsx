@@ -40,8 +40,6 @@ const StatusItem = ({status, message, active = false, have = false}) => {
 	const gstyle = useStyles();
 	const localStyle = useLocalStyles();
 
-	const [open, setOpen] = React.useState(false);
-
 	return(
 		<Box className={`${gstyle.w100} ${gstyle.flexbet} ${localStyle.statusItem} ${active && localStyle.active} ${have && localStyle.disable}`}>
 			{status}

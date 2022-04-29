@@ -30,6 +30,9 @@ const useLocalStyles = makeStyles(theme => ({
 		'@media (max-width: 998px)': {
 		    width: 100,
 		    height: 100
+		},
+		'&:hover > a': {
+			opacity: 1
 		}
 	},
 	status: {
@@ -38,6 +41,18 @@ const useLocalStyles = makeStyles(theme => ({
 		padding: '0.75rem 1.5rem',
 		border: `1px solid ${theme.palette.primary.main}`,
 		background: '#fff'
+	},
+	changeAvatar: {
+		width: '100%',
+		height: '100%',
+		borderRadius: '50%!important',
+		backgroundColor: 'rgba(0, 0, 0, .5)!important',
+		position: 'absolute!important',
+		top: 0,
+		left: 0,
+		transition: '.2s linear!important',
+		color: '#fff!important',
+		opacity: 0
 	}
 }));
 
@@ -49,6 +64,10 @@ const AvatarUser = ({img, status}) => {
 		<Box className={`${gstyle.flex} ${gstyle.w100} ${localStyle.avatarInner}`}>
 			<Box className={`${gstyle.flex} ${gstyle.flexsh} ${localStyle.avatar}`}>
 				<img src={img ? `/assets/img/${img}.svg` : '/assets/img/1.svg'} alt="Аватарка" className={gstyle.imgRes} />
+
+				<NavLinkMui href="profile/avatar" className={`${gstyle.flex} ${localStyle.changeAvatar}`}>
+					Изменить
+				</NavLinkMui>
 			</Box>
 
 			<Box className={`${gstyle.flexstart} ${gstyle.w100}`}>
@@ -56,7 +75,7 @@ const AvatarUser = ({img, status}) => {
 					{status}
 				</Typography>
 
-				<NavLinkMui href="profile/status" className={gstyle.w100} sx={{mt: 1}} variant="contained">
+				<NavLinkMui href="profile/status" className={`${gstyle.w100} ${gstyle.textCenter}`} sx={{mt: 1}} variant="contained">
 					Изменить статус
 				</NavLinkMui>
 			</Box>

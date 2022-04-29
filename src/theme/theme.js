@@ -39,6 +39,12 @@ export let theme = createTheme({
 		},
 		info: {
 			main: '#00C1FD'
+		},
+		green: {
+			main: '#3ecb2d'
+		},
+		red: {
+			main: '#f10e0e'
 		}
 	},
 	spacing: 10,

@@ -11,7 +11,7 @@ import {reqIsAuth} from '../../../redux/user-selectors.js';
 const SidebarNoAuth = ({isAuth}) => {
 	const gstyle = useStyles();
 	return(
-		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.sidebarContent}`}>
+		<Box className={`${gstyle.flexstart} ${gstyle.sidebarContent} ${gstyle.sidebarComponent}`}>
 		    <Box className={`${gstyle.flexstart} ${gstyle.w100}`}>
 		    	{!isAuth && <>
 		    		<LinkMui href="login" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
@@ -22,6 +22,7 @@ const SidebarNoAuth = ({isAuth}) => {
 		    			Регистрация
 		    		</LinkMui>
 		    	</>}
+		    	
 		        <LinkMui href="info" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
 		        	Информация о ЕГЭ
 		        </LinkMui>
@@ -29,9 +30,10 @@ const SidebarNoAuth = ({isAuth}) => {
 		        <LinkMui href="tasks" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
 		        	Разбор заданий
 		        </LinkMui>
-		        {isAuth && <LinkMui href="tests" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
+
+		        <LinkMui href="tests" className={`${gstyle.w100} ${gstyle.sidebarLink}`} color="primary.main">
 		       		Тесты
-		       	</LinkMui>}
+		       	</LinkMui>
 		    </Box>
 		</Box>
 	)

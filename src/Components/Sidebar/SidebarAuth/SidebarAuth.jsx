@@ -34,7 +34,7 @@ const SidebarAuth = ({status, name, surname, img, lvl, balance, role, notifyNotR
 	const gstyle = useStyles();
 	const localStyle = useLocalStyles();
 	return(
-	    <Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.sidebarContent}`}>
+	    <Box className={`${gstyle.flexstart} ${gstyle.sidebarContent} ${gstyle.sidebarComponent}`}>
 	        <Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{mb: 1, position: 'relative'}}>
 	        	{name && surname
 	        	? <>

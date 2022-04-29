@@ -43,7 +43,7 @@ const useLocalStyles = makeStyles(theme => ({
 		borderRadius: 15,
 		padding: '3rem',
 		'@media (max-width: 1200px)': {
-		    padding: '4rem 1.5rem'
+		    padding: '2.5rem 1.5rem'
 		},
 		'@media (max-width: 700px)': {
 		    marginTop: '3rem'

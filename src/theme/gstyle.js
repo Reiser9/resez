@@ -7,6 +7,11 @@ export const useStyles = makeStyles({
     	flexDirection: 'column',
     	alignItems: 'flex-start'
     },
+    flexend: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end'
+    },
     w100: {
     	width: '100%'
     },
@@ -49,7 +54,7 @@ export const useStyles = makeStyles({
         flexWrap: 'wrap'
     },
     wrapper: {
-        padding: '6rem',
+        padding: '5.5rem',
         minHeight: '100vh',
         '@media (max-width: 1700px)': {
             padding: "4rem"
@@ -70,7 +75,7 @@ export const useStyles = makeStyles({
             padding: "2rem"
         },
         '@media (max-width: 500px)': {
-            padding: '6rem 1.5rem 1.5rem 1.5rem'
+            padding: '5.5rem 1.5rem 1.5rem 1.5rem'
         },
     },
     wrapperProfile: {
@@ -82,6 +87,7 @@ export const useStyles = makeStyles({
         display: 'flex',
         alignItems: 'center',
         overflowX: 'auto',
+        overflowY: 'hidden',
         paddingBottom: '1rem',
         '&::-webkit-scrollbar': {
             width: 0,
@@ -237,7 +243,7 @@ export const useStyles = makeStyles({
     },
     auth: {
         height: '100vh',
-        padding: '6rem 0',
+        padding: '5.5rem 0',
         overflowY: 'auto',
         display: 'block',
         alignItems: 'center',
@@ -257,7 +263,7 @@ export const useStyles = makeStyles({
         borderRadius: 15,
         background: theme.palette.lightgrey.main,
         border: '2px solid var(--mainC)',
-        padding: '4rem 6rem',
+        padding: '4rem 5.5rem',
         '@media (max-width: 590px)': {
             padding: '3rem'
         },
@@ -304,5 +310,40 @@ export const useStyles = makeStyles({
         '@media (max-width: 1520px)': {
             width: '100%'
         },
+    },
+    link: {
+        marginRight: '1rem!important',
+        '&:last-child': {
+            marginRight: '0!important'
+        }
+    },
+    taskItem: {
+        marginTop: 10,
+        borderTop: `1px solid ${theme.palette.primary.main}`
+    },
+    tasksItemNumber: {
+        background: theme.palette.primary.main,
+        padding: '1rem 2rem'
+    },
+    taskBox: {
+        marginTop: 20
+    },
+    title: {
+        marginTop: '1.5rem!important',
+        '&:first-child': {
+            marginTop: '0!important'
+        }
+    },
+    text: {
+        marginTop: '.5rem!important',
+        '&:first-child': {
+            marginTop: '0!important'
+        }
+    },
+    answerInner: {
+        marginTop: 30
+    },
+    sidebarComponent: {
+        width: '320px'
     }
 });

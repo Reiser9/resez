@@ -9,7 +9,7 @@ const DefaultWrapper = ({children}) => {
 
 	return(
 		<Box className={`${gstyle.flexsh} ${gstyle.w100} ${gstyle.wrapper}`}>
-			<Box className={`${gstyle.flexcenter} ${gstyle.w100} ${gstyle.wrapperContent}`}>
+			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.wrapperContent}`}>
 				{children}
 			</Box>
 		</Box>

@@ -41,7 +41,7 @@ const ColorEdit = ({changeSitecolor, sitecolor}) => {
 				<Box className={`${gstyle.w100} ${gstyle.flexDef}`} sx={{mt: 1}}>
 					<input type="color" value={color} onChange={changeColor} id="changeColor" className="color__select" />
 
-					<label className="color__select--label" for="changeColor">
+					<label className="color__select--label" htmlFor="changeColor">
 						Выбрать цвет
 					</label>
 				</Box>

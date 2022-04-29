@@ -5,7 +5,7 @@ import {useStyles} from '../../../theme/gstyle.js';
 import Box from '@mui/material/Box';
 
 // Локальное поле текста, без использования redux
-const InputLocal = ({val, editSetData, editDataVal, placeholder = "", password = false}) => {
+const TextareaLocal = ({val, editSetData, editDataVal, placeholder = "", password = false}) => {
 	const gstyle = useStyles();
 	
 	const [inputView, setInputView] = React.useState(false);
@@ -40,4 +40,4 @@ const InputLocal = ({val, editSetData, editDataVal, placeholder = "", password =
 	)
 }
 
-export default InputLocal;
+export default TextareaLocal;

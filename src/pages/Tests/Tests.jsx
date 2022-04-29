@@ -12,24 +12,23 @@ import DefaultWrapper from '../../common/PageWrappers/DefaultWrapper/DefaultWrap
 import NavLinkMui from '../../common/Buttons/NavLinkMui/NavLinkMui.jsx';
 
 const Russian = React.lazy(() => import('./Russian/Russian.jsx'));
-const Maths = React.lazy(() => import('./Maths/Maths.jsx'));
 
-const Tasks = () => {
+const Tests = () => {
 	const gstyle = useStyles();
 
 	React.useEffect(() => {
-		document.title = 'ResEz - Разбор заданий ЕГЭ';
+		document.title = 'ResEz - Тесты';
 	}, []);
-	
+
 	return(
 		<PageWrapper>
 			<DefaultWrapper>
 				<Box className={`${gstyle.linkInner} ${gstyle.w100}`}>
-					<NavLinkMui variant="outlined" href="tasks/russian" className={`${gstyle.flexsh} ${gstyle.link}`}>
+					<NavLinkMui variant="outlined" href="tests/russian" className={`${gstyle.flexsh} ${gstyle.link}`}>
 						Русский язык
 					</NavLinkMui>
 
-					<NavLinkMui variant="outlined" href="tasks/maths" className={`${gstyle.flexsh} ${gstyle.link}`}>
+					<NavLinkMui variant="outlined" href="tests/maths" className={`${gstyle.flexsh} ${gstyle.link}`}>
 						Математика профиль
 					</NavLinkMui>
 				</Box>
@@ -38,7 +37,6 @@ const Tasks = () => {
 					<Routes>
 						<Route index element={<Navigate to={"russian"} />}/>
 						<Route path="russian" element={withSuspense(Russian)} />
-						<Route path="maths" element={withSuspense(Maths)} />
 						<Route path="*" element={<Navigate to={"/404"} />}/>
 					</Routes>
 				</Box>
@@ -47,4 +45,4 @@ const Tasks = () => {
 	)
 }
 
-export default Tasks;
+export default Tests;

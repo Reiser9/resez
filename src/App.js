@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {makeStyles} from '@mui/styles';
 import {createTheme} from '@mui/material/styles';
@@ -34,6 +34,8 @@ const NotifyPage = React.lazy(() => import('./pages/Notify/Notify.jsx'));
 const Admin = React.lazy(() => import('./pages/Admin/Admin.jsx'));
 const Info = React.lazy(() => import('./pages/Info/Info.jsx'));
 const Tasks = React.lazy(() => import('./pages/Tasks/Tasks.jsx'));
+const Tests = React.lazy(() => import('./pages/Tests/Tests.jsx'));
+const TestSingle = React.lazy(() => import('./pages/Tests/TestSingle/TestSingle.jsx'));
 
 const useLocalStyles = makeStyles({
     notify: {
@@ -87,19 +89,6 @@ deleteAccount, role}) => {
         }));
     }, [sitecolor]);
 
-    const routes = [
-        {path: '/', exact: true, Component: Main},
-        {path: '/login', exact: true, Component: Login},
-        {path: '/register', exact: true, Component: Register},
-        {path: '/recovery', exact: true, Component: Recovery},
-        {path: '/profile', exact: false, Component: Profile},
-        {path: '/notify', exact: false, Component: NotifyPage},
-        {path: '/admin', exact: false, Component: Admin},
-        {path: '/info', exact: false, Component: Info},
-        {path: '/tasks', exact: false, Component: Tasks},
-        {path: '/404', exact: true, Component: NotFound}
-    ]
-
     const quitAccount = () => {
         quitUser(true);
         setQuitModal(false);
@@ -131,10 +120,24 @@ deleteAccount, role}) => {
                 {deleteModal && <ModalConfirm title="Вы действительно хотите удалить аккаунт?" textEventButton="Удалить"
                  onClick={deleteUserAccount} cansel={() => setDeleteModal(false)} open={deleteModal} confirmWord="ПОДТВЕРДИТЬ" />}
 
-                <Switch>
-                    {routes.map(({path, exact, Component}) => <Route key={path} exact={exact} path={path} render={() => withSuspense(Component)} />)}
-                    <Route path="*" render={() => <Redirect to={"/404"} />} />
-                </Switch>
+                <Routes>
+                    <Route path="/">
+                        <Route index element={withSuspense(Main)} />
+                        <Route path="profile/*" element={withSuspense(Profile)} />
+                        <Route path="notify" element={withSuspense(NotifyPage)} />
+                        <Route path="admin/*" element={withSuspense(Admin)} />
+                        <Route path="info/*" element={withSuspense(Info)} />
+                        <Route path="tasks/*" element={withSuspense(Tasks)} />
+                        <Route path="tests/*" element={withSuspense(Tests)} />
+                        <Route path="tests/:subject/:id" element={withSuspense(TestSingle)} />
+                        <Route path="*" element={<Navigate to={"/404"} />} />
+                    </Route>
+
+                    <Route path="login" element={withSuspense(Login)} />
+                    <Route path="register" element={withSuspense(Register)} />
+                    <Route path="recovery" element={withSuspense(Recovery)} />
+                    <Route path="404" element={withSuspense(NotFound)} />
+                </Routes>
             </Box>}
         </ThemeProvider>
     )

@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 import BanImg from '../../assets/img/BanImg.jsx';
 
@@ -14,11 +14,11 @@ import {quitUser} from '../../redux/auth-reducer.js';
 
 const UserBan = ({quitUser}) => {
 	const gstyle = useStyles();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	React.useEffect(() => {
-		history.push('/');
-	}, [history]);
+		navigate('', {replace: true});
+	}, [navigate]);
 
 	React.useEffect(() => {
 		document.title = 'ResEz - Вы заблокированы';

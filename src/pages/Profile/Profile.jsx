@@ -1,6 +1,6 @@
 import React from 'react';
 import {makeStyles} from '@mui/styles';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import {withSuspense} from '../../hoc/withSuspense.js';
 
 import {useStyles} from '../../theme/gstyle.js';
@@ -37,31 +37,32 @@ const Profile = () => {
 				<Box sx={{padding: {r1700: '6rem', r1260: '4rem', r500: '2rem', r0: '6rem 0 0 0'}}}
 				className={`${gstyle.wrapper} ${gstyle.flexsh} ${gstyle.w100} ${gstyle.flexstart}`}>
 					<Box className={`${gstyle.linkInner} ${gstyle.w100} ${localStyle.filledContainer}`}>
-						<NavLinkMui variant="outlined" sx={{mr: 1}} exact href="profile" className={gstyle.flexsh}>
-							Главная
+						<NavLinkMui variant="outlined" href="profile/info" className={`${gstyle.flexsh} ${gstyle.link}`}>
+							Профиль
 						</NavLinkMui>
 
-						<NavLinkMui variant="outlined" sx={{mr: 1}} href="profile/avatar" className={gstyle.flexsh}>
+						<NavLinkMui variant="outlined" href="profile/avatar" className={`${gstyle.flexsh} ${gstyle.link}`}>
 							Аватарка
 						</NavLinkMui>
 
-						<NavLinkMui variant="outlined" sx={{mr: 1}} href="profile/status" className={gstyle.flexsh}>
+						<NavLinkMui variant="outlined" href="profile/status" className={`${gstyle.flexsh} ${gstyle.link}`}>
 							Статус
 						</NavLinkMui>
 
-						<NavLinkMui variant="outlined" href="profile/lvl" className={gstyle.flexsh}>
+						<NavLinkMui variant="outlined" href="profile/lvl" className={`${gstyle.flexsh} ${gstyle.link}`}>
 							Уровень
 						</NavLinkMui>
 					</Box>
 
 					<Box sx={{height: '100%', mt: 2}} className={`${gstyle.flexcenter} ${gstyle.w100}`}>
-						<Switch>
-							<Route exact path="/profile" render={() => withSuspense(ProfilePage)} />} />
-							<Route exact path="/profile/avatar" render={() => withSuspense(ProfileAvatar)} />
-							<Route exact path="/profile/status" render={() => withSuspense(ProfileStatus)} />
-							<Route exact path="/profile/lvl" render={() => withSuspense(ProfileLvl)} />
-							<Route path="/info/*" render={() => <Redirect to={"/404"} />}/>
-						</Switch>
+						<Routes>
+							<Route index element={<Navigate to={"info"} />} />} />
+							<Route path="info" element={withSuspense(ProfilePage)} />} />
+							<Route path="avatar" element={withSuspense(ProfileAvatar)} />
+							<Route path="status" element={withSuspense(ProfileStatus)} />
+							<Route path="lvl" element={withSuspense(ProfileLvl)} />
+							<Route path="*" element={<Navigate to={"/404"} />}/>
+						</Routes>
 					</Box>
 				</Box>
 			</PageWrapper>

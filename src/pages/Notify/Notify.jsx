@@ -7,8 +7,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import PreloaderFill from '../../common/Preloaders/PreloaderFill/PreloaderFill.jsx';
-import PageWrapper from '../../common/PageWrappers/PageWrapper/PageWrapper.jsx';
 import PrivatePageWrapper from '../../common/PageWrappers/PrivatPageWrapper/PrivarPageWrapper.jsx';
+import PageWrapper from '../../common/PageWrappers/PageWrapper/PageWrapper.jsx';
 
 import NotifyItem from './NotifyItem/NotifyItem.jsx';
 

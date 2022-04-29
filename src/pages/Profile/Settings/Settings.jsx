@@ -31,7 +31,7 @@ const Settings = ({setDeleteModal}) => {
 				</Box>
 			</Box>
 
-			<Typography variant="p" component="p">
+			<Typography variant="p" component="p" sx={{mt: 2}}>
 				Вы можете 
 
 				<Typography sx={{ml: .5, cursor: 'pointer'}} variant="p" component="span" color="error" onClick={() => setDeleteModal(true)}>
