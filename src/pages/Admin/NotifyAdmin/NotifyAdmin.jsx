@@ -43,7 +43,7 @@ const NotifyAdmin = ({addNotifyAll, patternNotify}) => {
 					<TextareaLocal val="" editSetData={setText} editDataVal={text} placeholder="Текст" />
 
 					<Button variant="contained" sx={{mt: 1}} onClick={addNotify}>
-						Добавить
+						Отправить
 					</Button>
 				</Box>
 			</Box>

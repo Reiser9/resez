@@ -49,7 +49,7 @@ const ModalConfirm = ({title, confirmWord, textCanselButton = "Отмена", te
 						{textCanselButton}
 					</Button>
 
-					<Button onClick={onClickConfirm} variant="contained">
+					<Button onClick={onClickConfirm} variant="contained" color="error">
 						{textEventButton}
 					</Button>
 				</Box>

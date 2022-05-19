@@ -13,7 +13,7 @@ const PageWrapper = ({children}) => {
 		<>  
             <Sidebar />
 
-            <Box className={`${gstyle.flexstart} ${gstyle.w100}`} sx={{height: '100vh', overflowY: 'auto', overflowX: 'hidden'}}>
+            <Box className={`${gstyle.flexstart} ${gstyle.w100} content`} sx={{height: '100vh', overflowY: 'auto', overflowX: 'hidden'}}>
                 {children}
 
                 <Footer />

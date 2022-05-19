@@ -77,13 +77,7 @@ const useLocalStyles = makeStyles(theme => ({
 const Sidebar = ({isAuth, loadAuth}) => {
 	const gstyle = useStyles();
 	const localStyle = useLocalStyles();
-	const [open, setOpen] = React.useState(true);
-
-	React.useEffect(() => {
-		if($(window).width() < 998){
-			setOpen(false);
-		}
-	}, []);
+	const [open, setOpen] = React.useState($(window).width() < 998 ? false : true);
 
 	const showSidebar = () => {
 		setOpen(true);

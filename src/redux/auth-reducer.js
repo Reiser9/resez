@@ -74,8 +74,8 @@ const initialState = {
     name: '', //Имя
     surname: '', //Фамилия
     role: '', //Роль
-    privatProfile: false,
-    sitecolor: ''
+    privatProfile: false, //Приватность профиля
+    sitecolor: '' //Цветовая гамма
 }
 
 const authReducer = (state = initialState, action) => {
@@ -523,7 +523,7 @@ export const registerUser = (email, password, nick, name, surname) => (dispatch)
                     exp: 0,
                     balance: 0,
                     verificateEmail: false,
-                    status: 0,
+                    status: 'Новичок',
                     img: '',
                     role: 'user',
                     privatProfile: false,
@@ -659,8 +659,8 @@ export const editEmail = (email, waitMail) => async (dispatch) => {
 
 // Записываем верификацию email в бд
 export const verificateEmailSucces = async () => {
-    const verificateEmail = user.emailVerified;
-    await firebase.database().ref('users/' + user.uid).update({
+    const verificateEmail = user?.emailVerified;
+    await firebase.database().ref('users/' + user?.uid).update({
         verificateEmail
     });
 }
@@ -700,8 +700,8 @@ export const deleteAccount = () => (dispatch) => {
 }
 
 // Редактируем данные в базе данных
-export const editUserDataInDatabase = (name, value) => async (dispatch) => {
-    await firebase.database().ref('users/' + user.uid + "/" + name).set(value);
+export const editUserDataInDatabase = (name, value, userUid = user.uid) => async (dispatch) => {
+    await firebase.database().ref('users/' + userUid + "/" + name).set(value);
 }
 
 // Проверка данных профиля при редактировании

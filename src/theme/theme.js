@@ -185,7 +185,7 @@ export let theme = createTheme({
 				fontSize: "1.9rem"
 			},
 			'@media (max-width: 768px)': {
-				fontSize: "1.6rem"
+				fontSize: "1.8rem"
 			}
 		},
 		h6: {

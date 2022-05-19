@@ -318,8 +318,11 @@ export const useStyles = makeStyles({
         }
     },
     taskItem: {
-        marginTop: 10,
-        borderTop: `1px solid ${theme.palette.primary.main}`
+        marginTop: 30,
+        borderTop: `1px solid ${theme.palette.primary.main}`,
+        '&:first-child': {
+            marginTop: 0
+        }
     },
     tasksItemNumber: {
         background: theme.palette.primary.main,
@@ -341,9 +344,20 @@ export const useStyles = makeStyles({
         }
     },
     answerInner: {
-        marginTop: 30
+        marginTop: 20
     },
     sidebarComponent: {
         width: '320px'
+    },
+    mt1: {
+        marginTop: 10
+    },
+    pointLink: {
+        width: '42px!important',
+        minWidth: '42px!important',
+        height: '42px!important',
+        borderRadius: '50%!important',
+        padding: '0!important',
+
     }
 });

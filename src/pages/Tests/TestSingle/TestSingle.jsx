@@ -1,5 +1,5 @@
 import React from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import {/*useParams,*/ useNavigate} from 'react-router-dom';
 
 import {useStyles} from '../../../theme/gstyle.js';
 
@@ -14,7 +14,7 @@ import InputLocal from '../../../common/Inputs/InputLocal/InputLocal.jsx';
 const TestSingle = () => {
 	const gstyle = useStyles();
 
-	const {id} = useParams();
+	// const {id} = useParams();
 	const navigate = useNavigate();
 
 	const goBack = () => {
@@ -26,7 +26,7 @@ const TestSingle = () => {
 	return(
 		<PageWrapper>
 			<DefaultWrapper>
-				<Box className={`${gstyle.w100} ${gstyle.flexbetstart}`}>
+				<Box className={`${gstyle.w100} ${gstyle.flexbetstart} ${gstyle.wrap}`}>
 					<Button variant="contained" onClick={goBack}>
 						Назад
 					</Button>
@@ -40,7 +40,7 @@ const TestSingle = () => {
 							1 задание
 						</Typography>
 
-						<Typography component="h5" variant="h6" className={gstyle.title}>
+						<Typography component="h5" variant="h5" className={gstyle.title}>
 							Укажите варианты ответов, в которых даны верные характеристики фрагмента текста. Запишите номера этих ответов. 
 						</Typography>
 
@@ -67,7 +67,7 @@ const TestSingle = () => {
 						</Box>
 
 						<Box className={`${gstyle.answerInner} ${gstyle.flexDef}`}>
-							<InputLocal val="" editDataVal={answer} editSetData={setAnswer} placeholder="1 задание" />
+							<InputLocal val="" editDataVal={answer} editSetData={setAnswer} />
 						</Box>
 					</Box>
 
@@ -76,12 +76,12 @@ const TestSingle = () => {
 							2 задание
 						</Typography>
 
-						<Typography component="h5" variant="h6" className={gstyle.title}>
+						<Typography component="h5" variant="h5" className={gstyle.title}>
 							Самостоятельно подберите определительное местоимение, которое должно стоять на месте пропуска во втором предложении текста. Запишите это местоимение.
 						</Typography>
 
 						<Box className={`${gstyle.answerInner} ${gstyle.flexDef}`}>
-							<InputLocal val="" editDataVal={answer} editSetData={setAnswer} placeholder="2 задание" />
+							<InputLocal val="" editDataVal={answer} editSetData={setAnswer} />
 						</Box>
 					</Box>
 				</Box>

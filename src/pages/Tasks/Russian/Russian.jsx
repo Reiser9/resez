@@ -1,4 +1,5 @@
 import React from 'react';
+import $ from 'jquery';
 import {makeStyles} from '@mui/styles';
 
 import {useStyles} from '../../../theme/gstyle.js';
@@ -9,6 +10,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 const useLocalStyles = makeStyles(theme => ({
 	tasksTableItem: {
@@ -59,6 +61,14 @@ const Russian = () => {
 	    setTab(val);
 	};
 
+	React.useEffect(() => {
+	    $('.goto').on('click', function(e){
+	        e.preventDefault();
+	        let point = $(this).attr("data-point");
+	        $('.content').animate({scrollTop: $("#" + point).offset().top + $(".content").scrollTop()}, 300);
+	    });
+	}, [tab]);
+
 	return(
 		<TabContext value={tab}>
 	        <TabList sx={{minHeight: 'auto'}} classes={{flexContainer: gstyle.tabContainer, root: gstyle.tabContext}}
@@ -92,7 +102,7 @@ const Russian = () => {
 	            <Tab label="27" value="27" className={gstyle.link} />
 	        </TabList>
 
-	        <TabPanel value="1">
+	        <TabPanel value="1" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			1 задание
@@ -118,7 +128,7 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="2">
+	        <TabPanel value="2" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			2 задание
@@ -236,7 +246,7 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="3">
+	        <TabPanel value="3" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			3 задание
@@ -245,7 +255,7 @@ const Russian = () => {
 	        		<Typography component="h5" variant="h6" className={gstyle.title}>
 	        			<Typography component="span" variant="h6" sx={{fontWeight: 700}}>Формулировка задания: </Typography> Прочитайте фрагмент словарной статьи, в которой приводятся значения слова, выделенного 
 	        			в n-ом предложении текста. Определите значение, в котором это слово употреблено в тексте. Выпишите цифру, соответствующую этому значению 
-	        			в приведённом фрагменте словарной статьи.
+	        			в приведенном фрагменте словарной статьи.
 	        		</Typography>
 
 	        		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
@@ -260,7 +270,7 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="4">
+	        <TabPanel value="4" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			4 задание
@@ -272,86 +282,163 @@ const Russian = () => {
 	        		</Typography>
 
 	        		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Существительные: </Typography> агЕнт, агронОмия, агЕнтство, агОния, адАптер, адюльтЕр, айвА, акрОполь, алкогОль, алфавИт, Амфора, анАпест, анАлог, анАтом, аннЕксия, антитЕза, 
-	        				анорАк, апострОф, апОкриф, арбУз, аргумЕнт, арЕст, аристокрАтия, асимметрИя, астронОм, астронОмия, асбЕст, Атлас(карты), атлАс(ткань), аудИтор, афЕра, 
-	        				аэропОрты(в аэропортУ, об аэропОрте), аэрОграф, афИнянин, баловнИк, бАнты(бАнта), бАзис, бадьЯ, бАрмен, бахчА, батрАк, бУнгало, блАговест, бОроду, брОня(билетов), 
-	        				бронЯ(защита), бУлочная, буржуазИя, бутербрОд (тэ), бухгАлтеров, вахтЁр, ваЯтель, векселЯ, вЕрба, вЕчеря, вандАлы, вдовствО, ветеринАрия, водопровОд, газопровОд, 
-	        				мусоропровОд и т.д., вОзраст-вОзрасты-вОзрастов, вОлка, вОлки, волкОв, вОра, вОры, ворОв, ворАм, о ворАх, ворОта, ворожеЯ, гастронОмия, гегемОния, гомеопАтия, гектАр, 
-	        				гЕнезис, гравЁр, граждАнство, гренадЕр, глашАтай, граффИти, грЕнкИ, дерматИн, дЕспот(де), деспотИя, дефИс, дешевИзна, деЯние, диАгноз, диалОг, добЫча, дОгмат, договОр, 
-	        				докумЕнт, досУг, драматургИя, дремОта, духовнИк, еретИк, жерлО, житиЕ, жЁлоб, зАговор(тайное соглашение), заговОр(заклинание), заЁм, закУпорка, закУток, зевОта, 
-	        				зимОвщик, злОба, знАмение, знАхарство (знАхарка и знахАрка), знАчимость, Игрище, игУмен, иерОглиф, изобретЕние, Иконопись, Иксы, инженЕрия, индустрИя, инструмЕнт, 
-	        				инсУльт, без инструктАжа, Искра, кАмбала, каталОг, кАтарсис, катастрОфа, каучУк, квартАл, киломЕтр, кинематогрАфия, кладовАя, коклЮш, кОлледж, коллЕж, колОсс, кОмпас, 
-	        				кОнус(кОнусы) кОнусов, корЫсть, крАны, крапИва, кремЕнь, кУхонный, кулинарИя, лассО, лАцкан, лЕктор(лЕкторов), ломОта, ломОть, лОпасть, лОскут(отходы), лосКут(кусок ткани), 
-	        				лыжнЯ, мАркетинг, мастерствО, медикамЕнты, мЕстностей, мещанИн, молодЁжь, молОчник, молОх, монолОг, мусоропровОд, муштрА, мЫтарь- мытАрство, намЕрение, нарОст, недоИмка, 
-	        				нЕдруг, недУг, некролОг, немотА, нЕнависть, несессЕр, нефтепровОд, низИна, нОвости, новостЕй, нОготь( нОгтя), обеспЕчение, ортопЕдия, Отрочество, остриЁ, паралИч, пАсквиль, 
-	        				пАхота, патриархИя(патриАрхия), пепелИще, пЕтля (петлЯ), платО, пУстошь, плАнер(планЁр), портфЕль, пОручни, постамЕнт, побасЁнка, пОхороны (похорОн, на похоронАх), пОчестей, 
-	        				пЕрвенец, приговОр, придАное, призЫв, призывнИк, прИнцип, приобретЕние, прирОст, простынЯ, процЕнт, псевдонИм, пулОвер, рАкурс, ракУшка(допуст. рАкушка), ревЕнь, ремЕнь, рефлЕксия, 
-	        				рОзги, рУсло, сабО, санитарИя, сантимЕтр, свЁкла, свИтер, сИлос, синергИя, симмЕтрия(симметрИя), сиротА (сирОты), скАнер, скворЕчник(шн), слУчай, созЫв призЫв, сосредотОчение, 
-	        				соболЕзнование, срЕдство (срЕдства), стАтуя, стеногрАфия, столЯр, стрЕсс, тамОжня, танцОвщица, тендЕнция, тЕндер, тОрты, тОждество, тунИка, толИка, тУфля, твОрОг, узаконЕние, 
-	        				упрОчение, Уникум, фАбула, факсИмиле, фарфОр, фенОмен(научное явление), феномЕн(редкое явление), фетИш, филИстер, филантрОпия, флюрогрАфия, фОртель, фОрзац, хАос (допуст хаОс), 
-	        				хлОпок, хозЯин-хозЯева, ходАтайство, хОлодность, христианИн, цемЕнт, цЕнтнер, цепОчка, цыгАн, чИстильщик, черпАлка, чЕлюстей, шАрфы шАрфа шАрфы, шассИ, шАхтинцы, шинЕль(не), 
-	        				шофЁр, шпрИцы, шрИфт-шрИфта, щавЕль, щЕбень, щепА, щепОтка-щепОть, щЁлка, Экскурс, Экспорт, эскОрт, эпилОг, яИчница(шн), Ясли-Яслей
-	        			</Typography>
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Существительные
+	        				</Typography>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Глаголы на -ировать: </Typography> баллотИровать, блокИровать, дозИровать, забронИровать (забронировАть)-зависит от значения, информИровать и т.д, опломбировАть, премировАть, формировАть, 
-	        				бомбардировАть, гравировАть, гримировАть, нормировАть, сортировАть, пломбировАть, ретировАться, экипировАть
-	        			</Typography>
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						агЕнт, агронОмия, агЕнтство, агОния, адАптер, адюльтЕр, айвА, акрОполь, алкогОль, алфавИт, Амфора, анАпест, анАлог, анАтом, аннЕксия, антитЕза, 
+			        				анорАк, апострОф, апОкриф, арбУз, аргумЕнт, арЕст, аристокрАтия, асимметрИя, астронОм, астронОмия, асбЕст, Атлас(карты), атлАс(ткань), аудИтор, афЕра, 
+			        				аэропОрты(в аэропортУ, об аэропОрте), аэрОграф, афИнянин, баловнИк, бАнты(бАнта), бАзис, бадьЯ, бАрмен, бахчА, батрАк, бУнгало, блАговест, бОроду, брОня(билетов), 
+			        				бронЯ(защита), бУлочная, буржуазИя, бутербрОд (тэ), бухгАлтеров, вахтЁр, ваЯтель, векселЯ, вЕрба, вЕчеря, вандАлы, вдовствО, ветеринАрия, водопровОд, газопровОд, 
+			        				мусоропровОд и т.д., вОзраст-вОзрасты-вОзрастов, вОлка, вОлки, волкОв, вОра, вОры, ворОв, ворАм, о ворАх, ворОта, ворожеЯ, гастронОмия, гегемОния, гомеопАтия, гектАр, 
+			        				гЕнезис, гравЁр, граждАнство, гренадЕр, глашАтай, граффИти, грЕнкИ, дерматИн, дЕспот(де), деспотИя, дефИс, дешевИзна, деЯние, диАгноз, диалОг, добЫча, дОгмат, договОр, 
+			        				докумЕнт, досУг, драматургИя, дремОта, духовнИк, еретИк, жерлО, житиЕ, жЁлоб, зАговор(тайное соглашение), заговОр(заклинание), заЁм, закУпорка, закУток, зевОта, 
+			        				зимОвщик, злОба, знАмение, знАхарство (знАхарка и знахАрка), знАчимость, Игрище, игУмен, иерОглиф, изобретЕние, Иконопись, Иксы, инженЕрия, индустрИя, инструмЕнт, 
+			        				инсУльт, без инструктАжа, Искра, кАмбала, каталОг, кАтарсис, катастрОфа, каучУк, квартАл, киломЕтр, кинематогрАфия, кладовАя, коклЮш, кОлледж, коллЕж, колОсс, кОмпас, 
+			        				кОнус(кОнусы) кОнусов, корЫсть, крАны, крапИва, кремЕнь, кУхонный, кулинарИя, лассО, лАцкан, лЕктор(лЕкторов), ломОта, ломОть, лОпасть, лОскут(отходы), лосКут(кусок ткани), 
+			        				лыжнЯ, мАркетинг, мастерствО, медикамЕнты, мЕстностей, мещанИн, молодЁжь, молОчник, молОх, монолОг, мусоропровОд, муштрА, мЫтарь- мытАрство, намЕрение, нарОст, недоИмка, 
+			        				нЕдруг, недУг, некролОг, немотА, нЕнависть, несессЕр, нефтепровОд, низИна, нОвости, новостЕй, нОготь( нОгтя), обеспЕчение, ортопЕдия, Отрочество, остриЁ, паралИч, пАсквиль, 
+			        				пАхота, патриархИя(патриАрхия), пепелИще, пЕтля (петлЯ), платО, пУстошь, плАнер(планЁр), портфЕль, пОручни, постамЕнт, побасЁнка, пОхороны (похорОн, на похоронАх), пОчестей, 
+			        				пЕрвенец, приговОр, придАное, призЫв, призывнИк, прИнцип, приобретЕние, прирОст, простынЯ, процЕнт, псевдонИм, пулОвер, рАкурс, ракУшка(допуст. рАкушка), ревЕнь, ремЕнь, рефлЕксия, 
+			        				рОзги, рУсло, сабО, санитарИя, сантимЕтр, свЁкла, свИтер, сИлос, синергИя, симмЕтрия(симметрИя), сиротА (сирОты), скАнер, скворЕчник(шн), слУчай, созЫв призЫв, сосредотОчение, 
+			        				соболЕзнование, срЕдство (срЕдства), стАтуя, стеногрАфия, столЯр, стрЕсс, тамОжня, танцОвщица, тендЕнция, тЕндер, тОрты, тОждество, тунИка, толИка, тУфля, твОрОг, узаконЕние, 
+			        				упрОчение, Уникум, фАбула, факсИмиле, фарфОр, фенОмен(научное явление), феномЕн(редкое явление), фетИш, филИстер, филантрОпия, флюрогрАфия, фОртель, фОрзац, хАос (допуст хаОс), 
+			        				хлОпок, хозЯин-хозЯева, ходАтайство, хОлодность, христианИн, цемЕнт, цЕнтнер, цепОчка, цыгАн, чИстильщик, черпАлка, чЕлюстей, шАрфы шАрфа шАрфы, шассИ, шАхтинцы, шинЕль(не), 
+			        				шофЁр, шпрИцы, шрИфт-шрИфта, щавЕль, щЕбень, щепА, щепОтка-щепОть, щЁлка, Экскурс, Экспорт, эскОрт, эпилОг, яИчница(шн), Ясли-Яслей
+	        					</Typography>
+	        				</Box>
+	        			</Box>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Глаголы на -ить: </Typography> благоволИть, варИть( вАрит, вАришь, вАрят, варЯщий), включИть (включИт, включАт), вручИть (вручИт), вложИть, всполошИть, дозвонИться( звонИть, позвонИть, 
-	        				звонИт и т.д), жИться-жилОсь, запорошИть, исключИть-исключИт, наделИть-наделИт, накренИться – накренИтся, насорИть-насорИт, облегчИть-облегчИт, ободрИть, обострИть, одолжИть-одолжИт, окружИть-окружИт, 
-	        				оперИться, плодоносИть-плодонОсит-плодоносИл, повторИть-повторИт и т.д., положИть-положИл, сверлИть-сверлИт-сверлИшь, сорИть-сорИт, убыстрИть, углубИть, укрепИть-укрепИт, щемИть-щемИт, опОшлить-опОшлит, 
-	        				озлОбить, оклЕить, освЕдомить-освЕдомишь, откУпорить - закУпорить(закУпорка и т.д.) откУпоривать, отвОрит, принУдить, тЕплиться, улУчшить, оцЕнит, предвосхИтить
-	        			</Typography>
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Глаголы на -ировать
+	        				</Typography>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Глаголы на -ла: </Typography> бралА бралАсь, взялА взялАсь, влИться(влилАсь), ворвАться (ворвалАсь), вопринЯть( воспринялА), воссоздАть (воссоздалА), гнАть-гналА, гнАться-гналАсь, 
-	        				добрАть –добралА, добрАться-добралАсь, дождАться-дождалАсь, лгАть-лгалА, лить-лилАсь, надорвАться – надорвалАсь, назвАться-назвалАсь, налИть-налилА, нарвАть-нарвалА, облИться-облилАсь, обнЯться – обнялАсь, 
-	        				обогнАть-обогналА, ободрАть-ободралА, отбЫть-отбылА, отдАть-отдалА, отозвАть-отозвалА-отозвалАсь, перелИть-перелилА, позвАть-позвалА, создАть-создалА, сорвАть-сорвалА, убрАть-убралА, клАла, послАла, постлАла, 
-	        				слАла крАлась прислАла укрАла, баловАть
-	        			</Typography>
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						баллотИровать, блокИровать, дозИровать, забронИровать (забронировАть)-зависит от значения, информИровать и т.д, опломбировАть, премировАть, формировАть, 
+	        						бомбардировАть, гравировАть, гримировАть, нормировАть, сортировАть, пломбировАть, ретировАться, экипировАть
+	        					</Typography>
+	        				</Box>
+	        			</Box>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Другие глаголы: </Typography> чЕрпать -исчЕрпать, занЯть –зАнял, занялА, зАняло, зАняли, понЯть-понялА-понЯвший-понЯв, принЯть — прИнял — принялА — прИняло — прИняли; принЯвший; прИнятый; 
-	        				прИнят — принятА — прИнято — прИняты; принЯв, задАть—зАдал—задалА—зАдало—зАдали; задАвший; зАданный; зАдан—заданА—зАдано—зАданы; задАв, допИть—дОпил—допилА—дОпило—дОпили; допИвший; дОпитый; дОпит—допитА—дОпито—дОпиты;
-	        				допИв, начАть—нАчал—началА—нАчало—нАчали; начАвший; нАчатый; нАчат—начатА—нАчато—нАчаты; начАв, нажИть—нАжил—нажилА—нАжило—нАжили; нажИвший; нАжитый; нАжит—нажитА—нАжито—нАжиты; нажИв, прибЫть—прИбыл—прибылА—прИбыло—прИбыли;
-	        				прибЫвший; прибЫв, вЫлила, заперЕться- заперлАсь, заржАвЕть, началсЯ, нажИлся, багровЕть, плЕсневеть, ржАвЕть, заИндЕветь, ходАтайствовать, щЁлкать, ЮркнУть, упомянУть, разминУться, стрельнУ, премИнуть, кАшлянуть
-	        			</Typography>
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Глаголы на -ить
+	        				</Typography>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Прилагательные: </Typography> аудитОрный, балОванный, безУдЕржный, бредОвый-бредовОй, валовОй, вернА, волгодОнский, вОгнутый, гладкошЁрстный, грУшевый, давнИшний, дЕвичий (устар. девИчий, договОрный, 
-	        				зАнятый (чем-то), занятОй (человек), зубчАтый, избалОванный, кедрОвый, кожЕвенный, красИвее-красИвейший, кровоточАщий, кУхонный, ловкА, лососЁвый, лубОчный, мИзЕрный, мозаИчный, никчЁмный, неприхотлИвый, одноимЁнный,
-	        				оптОвый, пломбИруют, повАренная соль, полУденный, призывнОй(пункт, возраст), призЫвный (зовущий), прожОрлива, прозорлИва-прозорлИвый, равнО, смазлИва, суетлИва, соплемЕнный, слИвовый, Угольный, угОльный, украИнский,
-	        				флЕйтовый, характЕрный(типичный), харАктерный (актер), хОленый хОленный (но холЁный), шАхтинский, щегольскОй, юрОдивый, языковОй( язык-речь), языкОвый (орган), яИчный
-	        			</Typography>
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						благоволИть, варИть( вАрит, вАришь, вАрят, варЯщий), включИть (включИт, включАт), вручИть (вручИт), вложИть, всполошИть, дозвонИться( звонИть, позвонИть, 
+	        						звонИт и т.д), жИться-жилОсь, запорошИть, исключИть-исключИт, наделИть-наделИт, накренИться – накренИтся, насорИть-насорИт, облегчИть-облегчИт, ободрИть, обострИть, одолжИть-одолжИт, окружИть-окружИт, 
+	        						оперИться, плодоносИть-плодонОсит-плодоносИл, повторИть-повторИт и т.д., положИть-положИл, сверлИть-сверлИт-сверлИшь, сорИть-сорИт, убыстрИть, углубИть, укрепИть-укрепИт, щемИть-щемИт, опОшлить-опОшлит, 
+	        						озлОбить, оклЕить, освЕдомить-освЕдомишь, откУпорить - закУпорить(закУпорка и т.д.) откУпоривать, отвОрит, принУдить, тЕплиться, улУчшить, оцЕнит, предвосхИтить
+	        					</Typography>
+	        				</Box>
+	        			</Box>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Наречия: </Typography> вОвремя, втрИдорога, добелА, доголА, дочернА, докраснА, дОверху, дОнизу, дОсиня, дОсуха, донагА, донЕльзя, зАсветло, зАтемно, завИдно, задОлго, издавна, изредка, исстари, исподволь,
-	        				исконИ, мастерскИ, мЕльком, нАбело (допуст. набелО), надОлго, нАголо (допуст. наголО), ненадОлго, наОтмашь, неподалЁку, отчАсти
-	        			</Typography>
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Глаголы на -ла
+	        				</Typography>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Причастия: </Typography> включЁнный, заключЁнный, исключЁнный, отключЁнный, взбешЁнный, углублЁнный, укреплЁнный, вручЁнный, приручЁнный, облегчЁнный, ободрЁнный, обострЁнный, убыстрЁнный, повторЁнный,
-	        				наделЁнный, поделЁнный, приручЁнный, привнесЁнный, определЁнный, окружЁнный, возбуждЁнный, награждЁнный, накренЁнный, новорождЁнный, заселЁнный, оценЁнный, отворЁнный, одОлженный. улУчшенный, кОлотый, пОлотый, сОгнутый,
-	        				пОгнутый, изОгнутый, зАгнутый, завЁрнутый, Обнятый, пОнятый, понятОй, пОднятый, упомЯнутый, прОткнутый, предпрИнятый, нагнУтый, нАчатый, зАпертый запертА, знАчимый, обнЯвший, свЕдущий, варЯщийся, манЯщий, молЯщий, кровоточАщий,
-	        				кормЯщий, могУщий (от глагола мочь), инсценИрованный, экипирОванный, понЯвший, умЕрший
-	        			</Typography>
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						бралА бралАсь, взялА взялАсь, влИться(влилАсь), ворвАться (ворвалАсь), вопринЯть( воспринялА), воссоздАть (воссоздалА), гнАть-гналА, гнАться-гналАсь, добрАть –добралА, добрАться-добралАсь, дождАться-дождалАсь, лгАть-лгалА, лить-лилАсь, надорвАться – надорвалАсь, назвАться-назвалАсь, налИть-налилА, нарвАть-нарвалА, облИться-облилАсь, обнЯться – обнялАсь, обогнАть-обогналА, ободрАть-ободралА, отбЫть-отбылА, отдАть-отдалА, отозвАть-отозвалА-отозвалАсь, перелИть-перелилА, позвАть-позвалА, создАть-создалА, сорвАть-сорвалА, убрАть-убралА, клАла, послАла, постлАла, слАла крАлась прислАла укрАла, баловАть
+	        					</Typography>
+	        				</Box>
+	        			</Box>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Деепричастия: </Typography> балУясь, закУпорив, начАв, начАвшись, отдАв, поднЯв, понЯв, прибЫв
-	        			</Typography>
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Другие глаголы
+	        				</Typography>
 
-	        			<Typography variant="p" component="p" className={gstyle.text}>
-	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>"Ударяемые" предлоги (ударение на предлог при произношении): </Typography> нА воду, на ногу, на гору, на руку, на зиму, на год, на нос, на день, на ночь; под: пОд ноги, под руки, под гору, под вечер; по: пО морю, по полю, по лесу, по полу, по носу, по два, по три,
-	        				по сто, по двое, по трое; из: Из лесу, из дому, из носу, из виду; без: бЕз вести, без толку, без году неделя
-	        			</Typography>
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						чЕрпать -исчЕрпать, занЯть –зАнял, занялА, зАняло, зАняли, понЯть-понялА-понЯвший-понЯв, принЯть — прИнял — принялА — прИняло — прИняли; принЯвший; прИнятый; 
+			        				прИнят — принятА — прИнято — прИняты; принЯв, задАть—зАдал—задалА—зАдало—зАдали; задАвший; зАданный; зАдан—заданА—зАдано—зАданы; задАв, допИть—дОпил—допилА—дОпило—дОпили; допИвший; дОпитый; дОпит—допитА—дОпито—дОпиты;
+			        				допИв, начАть—нАчал—началА—нАчало—нАчали; начАвший; нАчатый; нАчат—начатА—нАчато—нАчаты; начАв, нажИть—нАжил—нажилА—нАжило—нАжили; нажИвший; нАжитый; нАжит—нажитА—нАжито—нАжиты; нажИв, прибЫть—прИбыл—прибылА—прИбыло—прИбыли;
+			        				прибЫвший; прибЫв, вЫлила, заперЕться- заперлАсь, заржАвЕть, началсЯ, нажИлся, багровЕть, плЕсневеть, ржАвЕть, заИндЕветь, ходАтайствовать, щЁлкать, ЮркнУть, упомянУть, разминУться, стрельнУ, премИнуть, кАшлянуть
+	        					</Typography>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Прилагательные
+	        				</Typography>
+
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						аудитОрный, балОванный, безУдЕржный, бредОвый-бредовОй, валовОй, вернА, волгодОнский, вОгнутый, гладкошЁрстный, грУшевый, давнИшний, дЕвичий (устар. девИчий, договОрный, 
+			        				зАнятый (чем-то), занятОй (человек), зубчАтый, избалОванный, кедрОвый, кожЕвенный, красИвее-красИвейший, кровоточАщий, кУхонный, ловкА, лососЁвый, лубОчный, мИзЕрный, мозаИчный, никчЁмный, неприхотлИвый, одноимЁнный,
+			        				оптОвый, пломбИруют, повАренная соль, полУденный, призывнОй(пункт, возраст), призЫвный (зовущий), прожОрлива, прозорлИва-прозорлИвый, равнО, смазлИва, суетлИва, соплемЕнный, слИвовый, Угольный, угОльный, украИнский,
+			        				флЕйтовый, характЕрный(типичный), харАктерный (актер), хОленый хОленный (но холЁный), шАхтинский, щегольскОй, юрОдивый, языковОй( язык-речь), языкОвый (орган), яИчный
+	        					</Typography>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Наречия
+	        				</Typography>
+
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						вОвремя, втрИдорога, добелА, доголА, дочернА, докраснА, дОверху, дОнизу, дОсиня, дОсуха, донагА, донЕльзя, зАсветло, зАтемно, завИдно, задОлго, издавна, изредка, исстари, исподволь,
+	        						исконИ, мастерскИ, мЕльком, нАбело (допуст. набелО), надОлго, нАголо (допуст. наголО), ненадОлго, наОтмашь, неподалЁку, отчАсти
+	        					</Typography>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Причастия
+	        				</Typography>
+
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						включЁнный, заключЁнный, исключЁнный, отключЁнный, взбешЁнный, углублЁнный, укреплЁнный, вручЁнный, приручЁнный, облегчЁнный, ободрЁнный, обострЁнный, убыстрЁнный, повторЁнный,
+			        				наделЁнный, поделЁнный, приручЁнный, привнесЁнный, определЁнный, окружЁнный, возбуждЁнный, награждЁнный, накренЁнный, новорождЁнный, заселЁнный, оценЁнный, отворЁнный, одОлженный. улУчшенный, кОлотый, пОлотый, сОгнутый,
+			        				пОгнутый, изОгнутый, зАгнутый, завЁрнутый, Обнятый, пОнятый, понятОй, пОднятый, упомЯнутый, прОткнутый, предпрИнятый, нагнУтый, нАчатый, зАпертый запертА, знАчимый, обнЯвший, свЕдущий, варЯщийся, манЯщий, молЯщий, кровоточАщий,
+			        				кормЯщий, могУщий (от глагола мочь), инсценИрованный, экипирОванный, понЯвший, умЕрший
+	        					</Typography>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					Деепричастия
+	        				</Typography>
+
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						балУясь, закУпорив, начАв, начАвшись, отдАв, поднЯв, понЯв, прибЫв
+	        					</Typography>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        				<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        					"Ударяемые" предлоги (ударение на предлог при произношении)
+	        				</Typography>
+
+	        				<Box className={`${localStyle.tasksTableContent}`}>
+	        					<Typography component="p" variant="p" className={gstyle.text}>
+	        						нА воду, на ногу, на гору, на руку, на зиму, на год, на нос, на день, на ночь; под: пОд ноги, под руки, под гору, под вечер; по: пО морю, по полю, по лесу, по полу, по носу, по два, по три,
+	        						по сто, по двое, по трое; из: Из лесу, из дому, из носу, из виду; без: бЕз вести, без толку, без году неделя
+	        					</Typography>
+	        				</Box>
+	        			</Box>
 	        		</Box>
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="5">
+	        <TabPanel value="5" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			5 задание
@@ -363,7 +450,107 @@ const Russian = () => {
 	        		</Typography>
 
 	        		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
-	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+		        		<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+		        			Список паронимов, которые нужно знать:
+		        		</Typography>
+		        	</Box>
+
+		        	<Box className={`${gstyle.linkInner} ${gstyle.w100} ${gstyle.text}`}>
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter1">
+		        			А
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter2">
+		        			Б
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter3">
+		        			В
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter4">
+		        			Г
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter5">
+		        			Д
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter6">
+		        			Е
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter7">
+		        			Ж
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter8">
+		        			З
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter9">
+		        			И
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter10">
+		        			К
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter11">
+		        			Л
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter12">
+		        			М
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter13">
+		        			Н
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter14">
+		        			О
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter15">
+		        			П
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter16">
+		        			Р
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter17">
+		        			С
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter18">
+		        			Т
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter19">
+		        			У
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter20">
+		        			Ф
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter21">
+		        			Х
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter22">
+		        			Ц
+		        		</Button>
+
+		        		<Button variant="contained" className={`${gstyle.flexsh} ${gstyle.link} ${gstyle.pointLink} goto`} data-point="letter23">
+		        			Э
+		        		</Button>
+		        	</Box>
+
+	        		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        			<Box id="letter1" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
 	        				<Typography variant="p" component="p" className={gstyle.text}>
 	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Абонемент </Typography> - право пользования чем-либо (или документ, предоставляющий это право) на определённый срок: абонемент в бассейн.
 	        				</Typography>
@@ -382,11 +569,1319 @@ const Russian = () => {
 	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Адресант </Typography> – лицо или организация, посылающие почтовое отправление (отправитель).
 	        				</Typography>
 	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Артистический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Артистичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter2" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Бедный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Бедственный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Безответный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Безответственный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Болотистый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Болотный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Благодарный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Благодарственный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Благотворительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Благотворный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Бывший </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Былой </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter3" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Вдох </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Вздох </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Вековой </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Вечный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Великий </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Величественный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Восполнить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дополнить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Заполнить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Наполнить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Переполнить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Враждебный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Вражеский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Выбирать </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Избирать </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Выгода </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Выгодность </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Выдача </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отдача </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Передача </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Раздача </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Выплата </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Оплата </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Плата </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Уплата </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Вырастить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Нарастить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отрастить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Высокий </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Высотный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter4" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гарантийный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гарантированный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гармонический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гармоничный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Глинистый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Глиняный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Годичный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Годовалый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Годовой </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гордость </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гордыня </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гуманизм </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гуманность </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гуманистический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гуманитарный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Гуманный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter5" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Двоичный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Двойной </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Двойственный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Двоякий </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сдвоенный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Удвоенный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Действенный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Действительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Действующий </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Деловитый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Деловой </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дельный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Деляческий </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Демократичный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Демократический </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Диктант </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Диктат </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дипломант </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дипломат </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дипломатический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дипломатичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Длинный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Длительный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Добротный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Добрый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Доверительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Доверчивый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дождевой </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дождливый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Драматический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Драматичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дружеский </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дружественный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Дружный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter6" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Единичный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Единственный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter7" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Желанный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Желательный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Жестокий </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Жёсткий </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Жизненный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Житейский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Жилищный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Жилой </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter8" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Загородить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Огородить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Оградить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отгородить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Перегородить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Занизить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Понизить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Снизить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Зачинатель </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Зачинщик </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Звериный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Зверский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Звуковой </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Звучный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Зрительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Зрительский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter9" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Изобретательный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Изобретательский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Информативный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Информационный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Информация </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Информированность </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Иронический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Ироничный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Искусный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Искусственный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Исполнительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Исполнительский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Исходный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Исходящий </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter10" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Каменистый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Каменный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Комфортабельный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Комфортный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Конный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Конский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Коренастый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Коренной </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Корневой </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Костный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Костяной </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Красочный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Красящий </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Крашеный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter11" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Лакированный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Лаковый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Ледовый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Ледяной </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Лесистый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Лесной </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Личностный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Личный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter12" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Микроскопический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Микроскопичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Мороженый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Морозильный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Морозный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter13" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Надеть </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Одеть </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Наличие </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Наличность </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Напоминание </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Упоминание </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Невежа </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Невежда </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Нестерпимый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Нетерпеливый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Нетерпимый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Неудачный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Неудачливый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter14" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Обвинённый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Обвинительный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Обрывок </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отрывок </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Обхватить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Охватить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Ограничить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отграничить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Разграничить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Оклик </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отклик </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Органический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Органичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отборный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отборочный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отклонение </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Уклонение </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Отличие </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Различие </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter15" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Памятливый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Памятный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Перетерпеть </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Претерпеть </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Покупательный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Покупательский </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Покупной </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Популистский </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Популярный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Почтенный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Почтительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Почтённый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Практический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Практичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Предоставить </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Представить </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Представительный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Представительский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Признанный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Признательный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Продуктивный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Продуктовый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Производительность </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Производство </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Просветительский </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Просвещённый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Публицистический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Публицистичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Пугливый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Пуганый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter16" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Раздражение </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Раздражительность </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Ритмический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Ритмичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Романтический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Романтичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter17" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Скрытный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Скрытый </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Словарный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Словесный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сопротивление </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сопротивляемость </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Соседний </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Соседский </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сравнимый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сравнительный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сценический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Сценичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter18" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Технический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Техничный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter19" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Удачливый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Удачный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Униженный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Унизительный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter20" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Фактический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Фактичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter21" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Хищнический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Хищный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter22" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Царский </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Царственный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Царствующий </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Целый </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Цельный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Целостный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box id="letter23" className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Экономический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Экономичный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Экономный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Эстетический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Эстетичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Этический </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Этичный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Эффективный </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Эффектный </Typography> – 
+	        				</Typography>
+	        			</Box>
+
+	        			<Box className={`${localStyle.tasksTableItemFull} ${gstyle.w100}`}>
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Эффективность </Typography> – 
+	        				</Typography>
+
+	        				<Typography variant="p" component="p" className={gstyle.text}>
+	        					<Typography component="span" variant="p" sx={{fontWeight: 700}}>Эффектность </Typography> – 
+	        				</Typography>
+	        			</Box>
 	        		</Box>
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="6">
+	        <TabPanel value="6" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			6 задание
@@ -412,7 +1907,7 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="7">
+	        <TabPanel value="7" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			7 задание
@@ -474,7 +1969,7 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="8">
+	        <TabPanel value="8" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			8 задание
@@ -758,7 +2253,7 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="9">
+	        <TabPanel value="9" className={gstyle.mt1}>
 	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
 	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			9 задание
@@ -1352,23 +2847,295 @@ const Russian = () => {
 	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="10">
-	        	<div className="tasks__item flexstart w100">
-	        		<div className="tasks__item--number">
+	        <TabPanel value="10" className={gstyle.mt1}>
+	        	<Box className={`${gstyle.w100} ${gstyle.flexstart} ${gstyle.taskItem}`}>
+	        		<Typography variant="p" component="p" color="white.main" className={gstyle.tasksItemNumber}>
 	        			10 задание
-	        		</div>
+	        		</Typography>
 
-	        		<div className="tasks__item--title w100">
-	        			<span className="bold">Формулировка задания: </span> Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.
-	        		</div>
+	        		<Typography component="h5" variant="h6" className={gstyle.title}>
+	        			<Typography component="span" variant="h6" sx={{fontWeight: 700}}>Формулировка задания: </Typography> Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.
+	        		</Typography>
 
-	        		<div className="tasks__item--content flexstart w100">
-	        			
-	        		</div>
-	        	</div>
+	        		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        			<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.title}>
+	        				Приставки можно разделить на следующие группы:
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				1) Неизменяемые приставки
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				2) Приставки, заканчивающиеся на -З и -С
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				3) Приставки -Пре и -При
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.title}>
+	        				Также нужно знать:
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				4) Написание Ы/И после приставок
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				5) Написание Ъ/Ь после приставок
+	        			</Typography>
+
+	        			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        				<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        					<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        						1) Незименяемые приставки
+	        					</Typography>
+
+	        					<Box className={`${localStyle.tasksTableContent}`}>
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							-в, -над, -под, -пред, -от, -за, -до, -на, -над, -о, -об, -пере, -по, -под, -про, -пра, -поза, -с
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> надломить, надкусить, надписать, позавчера, позапрошлый, проехать, проиграть, пробежать, пройти
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Приставка -ПРА употребляется в словах:</Typography> прадедушка, прабабушка, правнук, правнучка, прародитель, пращур, прародина, праязык, праисторический
+	        						</Typography>
+	        					</Box>
+	        				</Box>
+	        			</Box>
+
+	        			<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.title}>
+	        				"Наращение" приставками буквы "О"
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				Если после приставки "наращивается" буква, то это всегда "О"
+	        			</Typography>
+
+	        			<Typography variant="p" component="p" className={gstyle.text}>
+	        				<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> отОбрать, сОединить, вОплотить, обОлгать
+	        			</Typography>
+
+	        			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        				<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        					<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        						2) Приставки, заканчивающиеся на -З и -С
+	        					</Typography>
+
+	        					<Box className={`${localStyle.tasksTableContent}`}>
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							-воз/-вос, -без/-бес, -из/-ис, -вз/-вс, -низ/-нис, -раз/-рас(-роз/-рос), -чрез/-чрес(-через/-черес)
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>З</Typography> это звонкая согласная, следовательно пишется перед звонкими согласными: р, л, м, н, й, б, в, г, д, ж, з
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> разделить, взбежать, безвкусный
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>С</Typography> это глухая согласная, следовательно пишется перед глухими согласными: х, ц, ч, щ, к, п, с, т, ш, ф
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> вспотеть, обессилеть, бессовестный
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Приставка -С не входит в это правило.</Typography> Она не чередуется с приставкой -З, потому что <Typography component="span" variant="p" color="red.main" sx={{fontWeight: 700}}>приставки -З не существует.</Typography>
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> схватить, сбежать, сделать
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							Запомните слова <Typography component="span" variant="p" sx={{fontWeight: 700}}>близстоящий, близсидящий.</Typography> <Typography component="span" variant="p" color="red.main" sx={{fontWeight: 700}}>Приставок -Близ/-Блис не существует.</Typography>
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							Важно уметь различать слова с приставками <Typography component="span" variant="p" sx={{fontWeight: 700}}>-Низ/-Нис</Typography> и слова с сочетанием приставок <Typography component="span" variant="p" sx={{fontWeight: 700}}>-Не и -С</Typography>
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> Нисходящий(поток воздуха), снизойти(опускание), несгораемый, несъеденный(отрицание)
+	        						</Typography>
+	        					</Box>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        				<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        					<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        						3) Приставки -Пре и -При
+	        					</Typography>
+
+	        					<Box className={`${localStyle.tasksTableContent}`}>
+	        						<Typography variant="p" component="p" color="green.main" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Приставка -При имеет значения:
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Присоединение:</Typography> приклеить
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Близость:</Typography> приморский
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Неполное действие:</Typography> приоткрыть
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Действие, доведенное до конца:</Typography> придумать
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" color="red.main" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Приставка -Пре имеет значения:
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Очень:</Typography> премилый
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Близкое к приставке -Пере:</Typography> преобразить, преодолеть
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							Значение, неясное в слове, можно прояснить, если вспомнить, от чего оно образовано
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> пристанище от пристать, призвание от призвать, прикладной от прикладывать
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							Можно также попробовать объяснить написание слова словами или словосочетаниями, близкими по смыслу
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> преобразовать - переделать, прекратить - перестать, пререкаться - перебивать друг друга, переругиваться, превратное(мнение) - перевернутое, неприемлемый - то, что нельзя принять
+	        						</Typography>
+	        					</Box>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        				<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        					<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        						4) Написание Ы/И после приставок
+	        					</Typography>
+
+	        					<Box className={`${localStyle.tasksTableContent}`}>
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							После приставок на согласную с корнями <Typography component="span" variant="p" sx={{fontWeight: 700}}>И превращается в Ы</Typography>
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> взыскать, сыграть, предыюньский, безымянный, поиграть, выискать
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Правило не касается русских приставок -Меж и -Сверх
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> межинститутский, сверхидея
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Также правило не касается заимствованных приставок, например -Дез, -Дис, -Супер, -Транс, -Пост, -Контр
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> трансиранский, постиндустриальный
+	        						</Typography>
+	        					</Box>
+	        				</Box>
+	        			</Box>
+
+	        			<Box className={`${gstyle.flexstart} ${gstyle.w100} ${gstyle.taskBox}`}>
+	        				<Box className={`${gstyle.w100} ${localStyle.tasksTableItem}`}>
+	        					<Typography variant="p" component="p" className={localStyle.tasksTableName} sx={{fontWeight: 700}}>
+	        						5) Написание Ъ/Ь после приставок
+	        					</Typography>
+
+	        					<Box className={`${localStyle.tasksTableContent}`}>
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Ъ пишется после приставок на согласный перед буквами Е, Ё, Ю, Я
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> подъезд, подъём, предъюбилейный, объявление
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Ъ пишется в сложных словах, первую часть которых образуют числительные -Двух, -Трех, -Четырех
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> двухъярусный, трехъязычный
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Ъ пишется после иноязычных приставок, которые могут казаться частью корня
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> -Ад(адъютант), -Об(объект), -Ин(инъекция), -Суб(субъект)
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Ъ не пишется перед буквами А, О, У, Э
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> сагитировать, подоконник, сузить, сэкономить
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Ъ не пишется на стыке двух корней
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> детясли, спецемкость
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							После приставок -Меж, -Сверх и иноязычных приставок Ъ <Typography component="span" variant="p" sx={{fontWeight: 700}}>ставится.</Typography> Эти приставки не являются здесь исключением!
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" color="red.main" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Не путайте это правило с правилом И/Ы после приставок!
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> межъязыковой, сверхъестественный
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" sx={{fontWeight: 700}} className={gstyle.text}>
+	        							Ь пишется в корне слова перед буквами Е, Ё, Ю, Я, И
+	        						</Typography>
+
+	        						<Typography variant="p" component="p" className={gstyle.text}>
+	        							<Typography component="span" variant="p" sx={{fontWeight: 700}}>Примеры:</Typography> пьеса, льет, пьющий, рьяный, соловьи
+	        						</Typography>
+	        					</Box>
+	        				</Box>
+	        			</Box>
+	        		</Box>
+	        	</Box>
 	        </TabPanel>
 
-	        <TabPanel value="11">
+	        <TabPanel value="11" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			11 задание
@@ -1384,7 +3151,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="12">
+	        <TabPanel value="12" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			12 задание
@@ -1400,7 +3167,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="13">
+	        <TabPanel value="13" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			13 задание
@@ -1416,7 +3183,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="14">
+	        <TabPanel value="14" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			14 задание
@@ -1432,7 +3199,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="15">
+	        <TabPanel value="15" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			15 задание
@@ -1448,7 +3215,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="16">
+	        <TabPanel value="16" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			16 задание
@@ -1464,7 +3231,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="17">
+	        <TabPanel value="17" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			17 задание
@@ -1480,7 +3247,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="18">
+	        <TabPanel value="18" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			18 задание
@@ -1496,7 +3263,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="19">
+	        <TabPanel value="19" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			19 задание
@@ -1512,7 +3279,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="20">
+	        <TabPanel value="20" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			20 задание
@@ -1528,7 +3295,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="21">
+	        <TabPanel value="21" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			21 задание
@@ -1544,7 +3311,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="22">
+	        <TabPanel value="22" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			22 задание
@@ -1560,7 +3327,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="23">
+	        <TabPanel value="23" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			23 задание
@@ -1576,7 +3343,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="24">
+	        <TabPanel value="24" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			24 задание
@@ -1592,7 +3359,7 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="25">
+	        <TabPanel value="25" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			25 задание
@@ -1608,14 +3375,14 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="26">
+	        <TabPanel value="26" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			26 задание
 	        		</div>
 
 	        		<div className="tasks__item--title w100">
-	        			<span className="bold">Формулировка задания: </span> «Вспоминая о своей бабушке, автор передаёт отношение к ней детей с помощью такого лексического средства, как (А) _______ (в предложении 4). Стремясь воссоздать деятельный характер бабушки, Г. Галлер использует троп — (Б) _______ («как колобок» в предложении 2, «вихрем» в предложении 28), а также синтаксическое средство — (В) _______ (например, в предложениях 2, 9). Ещё один троп — (Г) _______ («оглушительный грохот» в предложении 31, «убогое укрытие» в предложении 39, «хлипкое убежище» в предложении 45) — помогает читателю составить представление об опасностях, которые приходилось преодолевать людям в суровое военное время».
+	        			<span className="bold">Формулировка задания: </span> «Вспоминая о своей бабушке, автор передает отношение к ней детей с помощью такого лексического средства, как (А) _______ (в предложении 4). Стремясь воссоздать деятельный характер бабушки, Г. Галлер использует троп — (Б) _______ («как колобок» в предложении 2, «вихрем» в предложении 28), а также синтаксическое средство — (В) _______ (например, в предложениях 2, 9). Еще один троп — (Г) _______ («оглушительный грохот» в предложении 31, «убогое укрытие» в предложении 39, «хлипкое убежище» в предложении 45) — помогает читателю составить представление об опасностях, которые приходилось преодолевать людям в суровое военное время».
 	        		</div>
 
 	        		<div className="tasks__item--content flexstart w100">
@@ -1624,16 +3391,16 @@ const Russian = () => {
 	        	</div>
 	        </TabPanel>
 
-	        <TabPanel value="27">
+	        <TabPanel value="27" className={gstyle.mt1}>
 	        	<div className="tasks__item flexstart w100">
 	        		<div className="tasks__item--number">
 	        			27 задание
 	        		</div>
 
 	        		<div className="tasks__item--title w100">
-	        			<span className="bold">Формулировка задания: </span> Напишите сочинение по прочитанному тексту. Сформулируйте одну из проблем, поставленных автором текста. Прокомментируйте сформулированную проблему. Включите в комментарий два примера-иллюстрации из прочитанного текста, которые, по Вашему мнению, важны для понимания проблемы исходного текста (избегайте чрезмерного цитирования). Дайте пояснение к каждому примеру-иллюстрации. Укажите смысловую связь между примерами-иллюстрациями и проанализируйте её.
-						Сформулируйте позицию автора (рассказчика). Сформулируйте и обоснуйте своё отношение к позиции автора (рассказчика) по проблеме исходного текста.
-						Объём сочинения — не менее 150 слов. Работа, написанная без опоры на прочитанный текст (не по данному тексту), не оценивается. Если сочинение представляет собой пересказанный или полностью переписанный исходный текст без каких бы то ни было комментариев, то такая работа оценивается 0 баллов. Сочинение пишите аккуратно, разборчивым почерком.
+	        			<span className="bold">Формулировка задания: </span> Напишите сочинение по прочитанному тексту. Сформулируйте одну из проблем, поставленных автором текста. Прокомментируйте сформулированную проблему. Включите в комментарий два примера-иллюстрации из прочитанного текста, которые, по Вашему мнению, важны для понимания проблемы исходного текста (избегайте чрезмерного цитирования). Дайте пояснение к каждому примеру-иллюстрации. Укажите смысловую связь между примерами-иллюстрациями и проанализируйте ее.
+						Сформулируйте позицию автора (рассказчика). Сформулируйте и обоснуйте свое отношение к позиции автора (рассказчика) по проблеме исходного текста.
+						Объем сочинения — не менее 150 слов. Работа, написанная без опоры на прочитанный текст (не по данному тексту), не оценивается. Если сочинение представляет собой пересказанный или полностью переписанный исходный текст без каких бы то ни было комментариев, то такая работа оценивается 0 баллов. Сочинение пишите аккуратно, разборчивым почерком.
 	        		</div>
 
 	        		<div className="tasks__item--content flexstart w100">

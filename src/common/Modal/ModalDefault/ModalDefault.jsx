@@ -23,7 +23,7 @@ const ModalDefault = ({title, textCanselButton = "Отмена", textEventButton
 						{textCanselButton}
 					</Button>
 
-					<Button onClick={onClick} variant="contained">
+					<Button onClick={onClick} variant="contained" color="error">
 						{textEventButton}
 					</Button>
 				</Box>

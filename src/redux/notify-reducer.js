@@ -264,6 +264,12 @@ export const patternNotify = (id) => (dispatch) => {
 		case 'data_changed':
 			dispatch(addNotify('Успешно!', 'Данные успешно изменены', 'success'));
 			break;
+		case 'user_baned':
+			dispatch(addNotify('Успешно!', 'Пользователь заблокирован', 'success'));
+			break;
+		case 'user_unbaned':
+			dispatch(addNotify('Успешно!', 'Пользователь разблокирован', 'success'));
+			break;
 		default:
 			break;
 	}

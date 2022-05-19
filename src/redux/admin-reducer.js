@@ -57,7 +57,7 @@ export const setUsersValue = (value) => {
 // Получение всех пользователей
 export const getUsers = (limit = 5) => (dispatch) => {
     dispatch(setUsersInLoad(true));
-    firebase.database().ref('users').limitToFirst(parseInt(limit)).once('value', snapshot => {
+    firebase.database().ref('users').limitToFirst(parseInt(limit)).on('value', snapshot => {
         dispatch(setUsersInLoad(false));
         if(snapshot.val() !== null){
             dispatch(setUsers(snapshot.val()));

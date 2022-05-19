@@ -28,7 +28,7 @@ const Admin = () => {
 				<DefaultWrapper>
 					<Box className={`${gstyle.linkInner} ${gstyle.w100}`}>
 						<NavLinkMui variant="outlined" href="admin/notify" className={`${gstyle.flexsh} ${gstyle.link}`}>
-							Уведомления
+							Уведомление
 						</NavLinkMui>
 
 						<NavLinkMui variant="outlined" href="admin/users" className={`${gstyle.flexsh} ${gstyle.link}`}>

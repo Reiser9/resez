@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import {makeStyles} from '@mui/styles';
 
 import {useStyles} from '../../../../theme/gstyle.js';
@@ -9,6 +10,9 @@ import Button from '@mui/material/Button';
 
 import UsersData from '../UsersData/UsersData.jsx';
 import Lvl from '../../../Profile/Lvl/Lvl.jsx';
+
+import {editUserDataInDatabase} from '../../../../redux/auth-reducer.js';
+import {patternNotify} from '../../../../redux/notify-reducer.js';
 
 const useLocalStyles = makeStyles({
 	userItem: {
@@ -26,13 +30,23 @@ const useLocalStyles = makeStyles({
 	}
 });
 
-const UserItem = ({data}) => {
+const UserItem = ({data, editUserDataInDatabase, patternNotify}) => {
 	const {img, email, name, surname, nick, uid, status, lvl, exp, role, balance, verificateEmail, sitecolor, privatProfile} = data;
 
 	const gstyle = useStyles();
 	const localStyle = useLocalStyles();
 
 	const [edit, setEdit] = React.useState(false);
+
+	const banUser = () => {
+		editUserDataInDatabase('role', 'ban', uid);
+		patternNotify('user_baned');
+	}
+
+	const unbanUser = () => {
+		editUserDataInDatabase('role', 'user', uid);
+		patternNotify('user_unbaned');
+	}
 
 	return(
 		<Box className={`${gstyle.flexstart} ${gstyle.w100} ${localStyle.userItem}`}>
@@ -72,12 +86,22 @@ const UserItem = ({data}) => {
 					Уведомление
 				</Button>
 
-				<Button variant="contained" color="error" className={gstyle.w100} sx={{mt: 1}}>
-					Заблокировать
+				{role === 'ban'
+				? <Button variant="contained" color="error" className={gstyle.w100} sx={{mt: 1}} onClick={unbanUser}>
+					Разблокировать
 				</Button>
+				: <Button variant="contained" color="error" className={gstyle.w100} sx={{mt: 1}} onClick={banUser}>
+					Заблокировать
+				</Button>}
 			</Box>
 		</Box>
 	)
 }
 
-export default React.memo(UserItem);
+const mapStateToProps = (state) => {
+	return{
+		
+	}
+}
+
+export default connect(mapStateToProps, {editUserDataInDatabase, patternNotify})(React.memo(UserItem));
