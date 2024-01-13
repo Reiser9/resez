@@ -1,0 +1,42 @@
+.sidebarLink {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.8rem 2.4rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 1500px) {
+    .sidebarLink {
+        padding: 0.8rem 1.6rem;
+        gap: 16px;
+    }
+}
+@media (max-width: 480px) {
+    .sidebarLink {
+        gap: 12px;
+    }
+}
+
+.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+
+.sidebarLink:hover,
+.sidebarLink.active {
+    background: var(--lighten);
+    color: var(--main);
+}
+
+.sidebarLink:hover svg path,
+.sidebarLink.active svg path {
+    stroke: var(--main);
+}
+
+.sidebarLink svg {
+    width: 24px;
+    flex-shrink: 0;
+}

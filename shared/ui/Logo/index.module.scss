@@ -1,0 +1,47 @@
+.logoInner {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 3.2rem;
+    color: var(--main);
+    line-height: 1.2;
+    position: relative;
+}
+
+.logoVersion {
+    color: var(--main);
+    font-size: 1rem;
+    text-transform: uppercase;
+    margin-top: auto;
+    font-weight: 700;
+}
+
+.newyear .logo,
+.newyear .logoVersion {
+    color: #007cee;
+}
+
+.halloween .logo,
+.halloween .logoVersion {
+    color: #ffab66;
+}
+
+.logoImg {
+    width: 24px;
+}
+
+.logoDecor {
+    position: absolute;
+    top: 0;
+    left: 2px;
+}
+
+.newyear .logoDecor {
+    top: -5px;
+    left: 5px;
+}

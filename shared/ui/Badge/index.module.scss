@@ -1,0 +1,61 @@
+.badge {
+    border-radius: 50%;
+    position: relative;
+    background: var(--lighten);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge svg{
+    width: 24px;
+}
+
+.badge svg path{
+    stroke: var(--main);
+}
+
+.badgeText {
+    color: var(--main);
+    font-weight: 500;
+    font-size: 2rem;
+    position: relative;
+    text-transform: uppercase;
+}
+
+.dot:before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--error);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 3;
+    border: 1px solid var(--white);
+}
+
+.small {
+    width: 28px;
+    height: 28px;
+}
+
+.normal {
+    width: 40px;
+    height: 40px;
+}
+
+.big {
+    width: 60px;
+    height: 60px;
+}
+
+.badgeImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}

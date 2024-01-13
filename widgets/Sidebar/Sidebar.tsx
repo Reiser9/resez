@@ -1,0 +1,124 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import cn from 'classnames';
+
+import styles from './index.module.scss';
+
+import { Code, Console, Fire, Lifebuoy, Message, Store, Telegram, Tests, Training, Vk, Youtube } from '@/shared/icons';
+import { SidebarLink } from '@/shared/ui/SidebarLink';
+import { Button } from '@/shared/ui/Button';
+import { useSidebarContext } from '@/shared/context/SidebarProvider';
+
+const Sidebar = () => {
+    const sidebarRef = React.useRef<HTMLDivElement>(null);
+    const {showSidebar, setShowSidebar} = useSidebarContext();
+
+    const outsideSidebarClick = (e: MouseEvent) => {
+        if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+            setShowSidebar(false);
+        }
+    };
+
+    React.useEffect(() => {
+        window.addEventListener('click', outsideSidebarClick);
+
+        return () => {
+            window.removeEventListener('click', outsideSidebarClick);
+        };
+    }, []);
+
+    return (
+        <aside
+            className={cn(styles.sidebar, {
+                [styles.active]: showSidebar,
+            })}
+            ref={sidebarRef}
+        >
+            <div className={styles.sidebarMenu}>
+                <SidebarLink href="/training">
+                    <Training />
+                    Тренинг
+                </SidebarLink>
+
+                <SidebarLink href="/tests">
+                    <Tests />
+                    Тесты
+                </SidebarLink>
+
+                <SidebarLink href="/messenger">
+                    <Message />
+                    Мессенджер
+                </SidebarLink>
+
+                <SidebarLink href="/info">
+                    <Fire />
+                    Полезное
+                </SidebarLink>
+
+                <SidebarLink href="/store">
+                    <Store />
+                    Магазин
+                </SidebarLink>
+
+                <SidebarLink href="/admin">
+                    <Code />
+                    Админка
+                </SidebarLink>
+
+                <SidebarLink href="/config">
+                    <Console />
+                    Конфигурация
+                </SidebarLink>
+            </div>
+
+            <div className={styles.sidebarFooter}>
+                {/* <Button variant="light" disabled href="/support">
+                    <Lifebuoy className={styles.sidebarFooterButtonIcon} />
+
+                    <span className={styles.sidebarFooterButtonText}>Обратная связь</span>
+                </Button> */}
+
+                <div className={styles.sidebarFooterSocials}>
+                    <a
+                        href={process.env.NEXT_PUBLIC_VK_LINK}
+                        target="_blanc"
+                        className={styles.sidebarFooterSocial}
+                        title="Группа vk"
+                    >
+                        <Vk />
+                    </a>
+
+                    <a
+                        href={process.env.NEXT_PUBLIC_TELEGRAM_LINK}
+                        target="_blanc"
+                        className={styles.sidebarFooterSocial}
+                        title="Телеграм"
+                    >
+                        <Telegram />
+                    </a>
+
+                    <a
+                        href={process.env.NEXT_PUBLIC_YOUTUBE_LINK}
+                        target="_blanc"
+                        className={styles.sidebarFooterSocial}
+                        title="Ютуб"
+                    >
+                        <Youtube />
+                    </a>
+                </div>
+
+                <Link href="/docs/rules" className={styles.sidebarFooterLink}>
+                    Правила проекта
+                </Link>
+
+                <Link href="/docs/publicoffer" className={styles.sidebarFooterLink}>
+                    Публичная оферта
+                </Link>
+            </div>
+        </aside>
+    );
+};
+
+export default Sidebar;

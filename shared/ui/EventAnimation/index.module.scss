@@ -1,0 +1,14 @@
+.snow{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    z-index: 9999;
+    pointer-events: none;
+    transition: .2s linear;
+}
+
+.snow.hide{
+    opacity: 0;
+}

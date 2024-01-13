@@ -1,0 +1,1 @@
+export {default as EventAnimation} from './EventAnimation';

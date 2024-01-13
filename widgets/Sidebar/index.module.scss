@@ -1,0 +1,131 @@
+.sidebar {
+    width: 100%;
+    max-width: 280px;
+    flex-shrink: 0;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    padding: 1.6rem 0;
+    -webkit-transition: 0.2s ease-in-out;
+    transition: 0.2s ease-in-out;
+    transition-property: transform, max-width;
+    transition-delay: 0.1s;
+    overflow-y: auto;
+    border-right: 1px solid var(--input);
+}
+
+.sidebarFooter {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 1.2rem;
+}
+
+@media (max-width: 1500px) {
+    .sidebar {
+        max-width: 56px;
+        position: absolute;
+        top: -1px;
+        left: 0;
+        height: calc(100% + 1px);
+        z-index: 10;
+        overflow-x: hidden;
+    }
+
+    .sidebarFooter {
+        opacity: 0;
+        transition: 0.2s linear;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+}
+
+@media (max-width: 1500px) and (any-hover: hover) {
+    .sidebar:hover {
+        max-width: 250px;
+    }
+
+    .sidebar:hover .sidebarFooter {
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
+@media (max-width: 1500px) and (any-hover: none) {
+    .sidebar.active {
+        max-width: 260px;
+    }
+
+    .sidebar.active .sidebarFooter {
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar,
+    .sidebar:hover {
+        max-width: 100%;
+    }
+
+    .sidebar {
+        transform: translateX(-110%);
+    }
+
+    .sidebar.active {
+        max-width: 100%;
+        transform: translateX(0);
+    }
+}
+
+.sidebarFooterButtonIcon {
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.sidebarFooterButtonIcon path {
+    stroke: var(--main);
+}
+
+.sidebarMenu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sidebarFooterLink {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--main);
+}
+
+.sidebarFooterSocials {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.sidebarFooterSocial {
+    width: 32px;
+    height: 32px;
+    display: flex;
+}
+
+@media (any-hover: hover) {
+    .sidebar:hover .sidebarLink {
+        gap: 8px;
+    }
+}
+@media (max-width: 480px) {
+    .sidebar:hover .sidebarLink {
+        gap: 12px;
+    }
+}

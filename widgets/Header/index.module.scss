@@ -1,0 +1,320 @@
+.header {
+    width: 100%;
+    padding: 1.2rem 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--input);
+    min-height: 65px;
+    background: var(--white);
+}
+
+@media (max-width: 1500px) {
+    .header {
+        padding: 1.2rem;
+    }
+}
+
+.headerProfileInner {
+    position: relative;
+}
+
+@media (any-hover: hover) {
+    .headerProfileInner {
+        cursor: pointer;
+    }
+
+    .headerProfileInner:hover .headerProfileArrow {
+        transform: rotate(180deg);
+    }
+
+    .headerProfileInner:hover .headerProfileMenuInner {
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
+.headerProfileWrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.headerProfileImgInner,
+.headerProfileMenuImgInner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: relative;
+    background: var(--lighten);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.unread:before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--error);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 3;
+    border: 1px solid var(--white);
+}
+
+.headerProfileImgInner svg {
+    width: 24px;
+}
+
+.headerProfileImgInner svg path {
+    stroke: var(--main);
+}
+
+.headerProfileMenuImgInner {
+    width: 44px;
+    height: 44px;
+}
+
+.headerProfileName {
+    color: var(--main);
+    font-weight: 500;
+    font-size: 2rem;
+    position: relative;
+    text-transform: uppercase;
+}
+
+.headerProfileImg,
+.headerProfileMenuImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.headerProfileNick {
+    font-weight: 600;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 440px) {
+    div.headerProfileNick {
+        display: none;
+    }
+}
+
+.headerProfileArrow {
+    width: 16px;
+    flex-shrink: 0;
+    transition: 0.2s ease-in-out;
+}
+
+@media (any-hover: none) {
+    .headerProfileArrow.active {
+        transform: rotate(180deg);
+    }
+}
+
+.headerProfileMenuInfo {
+    width: calc(100% - 2.4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0rem 1.2rem 0.8rem 1.2rem;
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.headerProfileLvl {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--main);
+    color: #fff;
+    flex-shrink: 0;
+    font-size: 1.4rem;
+}
+
+.headerProfileMenuData {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.headerProfileMenuNameInner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.headerProfileMenuName {
+    font-weight: 600;
+}
+
+.headerProfileMenuStatus {
+    color: var(--textGrey);
+}
+
+.headerProfileMenuLink {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.8rem 1.2rem;
+    transition: 0.2s linear;
+    position: relative;
+}
+
+@media (any-hover: hover) {
+    .headerProfileMenuLink {
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 440px) {
+    .headerProfileMenuLink {
+        font-size: 1.5rem;
+    }
+}
+
+.headerProfileMenuLink svg {
+    width: 24px;
+}
+
+@media (max-width: 440px) {
+    .headerProfileMenuLink svg {
+        width: 20px;
+    }
+}
+
+@media (any-hover: hover) {
+    .headerProfileMenuLink:hover {
+        background: var(--lighten);
+        color: var(--main);
+    }
+    
+    .delete:hover {
+        background: var(--errorB);
+        color: var(--error);
+    }
+
+    .headerProfileMenuLink:hover svg path, .headerProfileMenuLink:hover svg line {
+        stroke: var(--main);
+    }
+}
+
+.delete:hover svg path {
+    stroke: var(--error);
+}
+
+.headerProfileNotifyCount {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--error);
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 12px;
+    font-size: 1.4rem;
+}
+
+.headerThemeCheckbox {
+    display: none;
+}
+
+.headerThemeLabel {
+    margin-left: auto;
+    pointer-events: none;
+}
+
+.headerLogoWrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menuIconInner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--input);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+@media (min-width: 1500px) {
+    .menuIconInner {
+        display: none;
+    }
+}
+
+@media (any-hover: hover) {
+    .menuIconInner {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .menuIconInner {
+        display: flex;
+    }
+}
+
+.menuIcon,
+.crossIcon {
+    width: 24px;
+    flex-shrink: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: 0.2s ease-in-out;
+    pointer-events: none;
+}
+
+.menuIcon {
+    transform: translate(-90%, -50%);
+}
+.crossIcon {
+    transform: translate(-10%, -50%);
+}
+
+.menuIcon.active,
+.crossIcon.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(-50%, -50%);
+}
+
+.menuIcon path,
+.crossIcon path {
+    stroke: var(--main);
+}
+
+.hoverMenuWrapper {
+    display: flex;
+    position: relative;
+}

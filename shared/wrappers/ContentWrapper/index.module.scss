@@ -1,0 +1,44 @@
+.full, .default{
+    width: 100%;
+    max-width: 1600px;
+}
+
+.default{
+    max-width: 1200px;
+}
+
+.contentBackground {
+    width: 100%;
+    background: var(--input);
+    padding: 2.4rem 2.4rem 4rem 2.4rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+@media (max-width: 1500px) {
+    .contentBackground {
+        margin-left: 5.6rem;
+    }
+}
+@media (max-width: 500px) {
+    .contentBackground {
+        padding: 1.2rem 1.2rem 4rem 1.2rem;
+    }
+}
+@media (max-width: 480px) {
+    .contentBackground {
+        margin-left: 0;
+    }
+}
+
+.content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 auto;
+    flex-grow: 1;
+}

@@ -1,0 +1,93 @@
+.notifyItem{
+    width: 100%;
+    padding: 1rem 1.2rem 2rem 1.2rem;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--lighten);
+}
+
+.notifyItem svg path{
+    stroke: var(--main);
+}
+
+.notifyItem:before{
+    content: "";
+    display: block;
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--main);
+}
+
+.notifyItemIconWrapper{
+    width: 24px;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.notifyItemIconWrapper svg{
+    width: 100%;
+}
+
+.notifyItemWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.success{
+    background: var(--successB);
+}
+
+.success svg path{
+    stroke: var(--success);
+}
+
+.notifyItem.success:before{
+    background: var(--success);
+}
+
+.info{
+    background: var(--infoB);
+}
+
+.info svg path{
+    stroke: var(--info);
+}
+
+.notifyItem.info:before{
+    background: var(--info);
+}
+
+.error{
+    background: var(--errorB);
+}
+
+.error svg path{
+    stroke: var(--error);
+}
+
+.notifyItem.error:before{
+    background: var(--error);
+}
+
+.warn{
+    background: var(--warnB);
+}
+
+.warn svg path{
+    stroke: var(--warn);
+}
+
+.notifyItem.warn:before{
+    background: var(--warn);
+}
