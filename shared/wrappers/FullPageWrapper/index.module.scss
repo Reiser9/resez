@@ -5,7 +5,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 3.2rem 2.4rem 9.7rem 2.4rem;
+    padding: 3.2rem 2.4rem;
     overflow-y: auto;
 }
 
@@ -64,11 +64,11 @@
     }
 
     .fullPage {
-        padding: 2.4rem 1.2rem 8.9rem 1.2rem;
+        padding: 2.4rem 1.2rem;
     }
 }
 @media (max-width: 440px) {
     .fullPage {
-        padding: 2rem 1.2rem 8.5rem 1.2rem;
+        padding: 2rem 1.2rem;
     }
 }

@@ -3,11 +3,11 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 import { LocalNotify } from '@/entities/notify/model';
 
-type Type = {
+type NotifyStateType = {
     localNotifies: LocalNotify[];
 };
 
-const initialState: Type = {
+const initialState: NotifyStateType = {
     localNotifies: [],
 };
 

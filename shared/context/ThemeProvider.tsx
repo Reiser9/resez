@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { ChangeThemeAnimate } from '../ui/ChangeThemeAnimate';
+
 export type ThemeType = "light" | "dark";
 
 type ThemeContextProps = {
@@ -58,6 +60,8 @@ const ThemeProvider = ({children}: {children: React.ReactNode}) => {
 
     return (
         <ThemeContext.Provider value={{theme, toggleTheme, readyAnimation}}>
+            <ChangeThemeAnimate />
+
             {children}
         </ThemeContext.Provider>
     )

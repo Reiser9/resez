@@ -5,14 +5,27 @@ export type LoginData = {
 
 export type RegisterData = LoginData;
 
-export type RecoveryData = {
+export type RecoverySendCode = {
+    nickname: string;
+}
+
+export type RecoveryVerifyCode = RecoverySendCode & {
     code: string;
-} & LoginData;
+}
+
+export type RecoveryChangePassword = RecoveryVerifyCode & {
+    password: string;
+}
 
 export type VerificationCodeData = {
     code: string;
     lifetime: number;
 };
+
+export type Permission = {
+    id: number;
+    permission: string;
+}
 
 export type User = {
     id: number;
@@ -21,11 +34,16 @@ export type User = {
     isBlocked: boolean;
     avatar: string | null;
     level: number;
+    permissions: Permission[]
 };
 
-export type AuthResponse = {
-    accessToken?: string;
+export type LoginResponse = {
+    accessToken: string;
     sessionId: number;
     verificationCodeData?: VerificationCodeData;
     user: User;
+};
+
+export type RegisterResponse = LoginResponse & {
+    verificationCodeData: VerificationCodeData;
 };

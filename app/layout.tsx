@@ -5,8 +5,6 @@ import ruRU from 'antd/locale/ru_RU';
 
 import './globals.scss';
 
-import { EventAnimation } from '@/shared/ui/EventAnimation';
-import { ChangeThemeAnimate } from '@/shared/ui/ChangeThemeAnimate';
 import { ReactQueryProvider, ReduxProvider } from '@/shared/providers';
 import { EventProvider, ThemeProvider, SidebarProvider } from '@/shared/context';
 import { NotifiesWrapper } from '@/shared/wrappers/NotifiesWrapper';
@@ -30,31 +28,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={nunito.variable}>
                 <ReduxProvider>
                     <ReactQueryProvider>
-                        <InitialWrapper>
-                            <ThemeProvider>
-                                <EventProvider>
-                                    <SidebarProvider>
-                                        <NotifiesWrapper>
-                                            <ConfigProvider
-                                                locale={ruRU}
-                                                theme={{
-                                                    token: {
-                                                        // Поменять #007cee на динамический цвет
-                                                        colorPrimary: CONFIG.BASE_COLOR,
-                                                        fontFamily: 'var(--font-nunito)',
-                                                    },
-                                                }}
-                                            >
-                                                <EventAnimation />
-                                                <ChangeThemeAnimate />
-
-                                                {children}
-                                            </ConfigProvider>
-                                        </NotifiesWrapper>
-                                    </SidebarProvider>
-                                </EventProvider>
-                            </ThemeProvider>
-                        </InitialWrapper>
+                        <ThemeProvider>
+                            <EventProvider>
+                                <SidebarProvider>
+                                    <NotifiesWrapper>
+                                        <ConfigProvider
+                                            locale={ruRU}
+                                            theme={{
+                                                token: {
+                                                    // Поменять #007cee на динамический цвет
+                                                    colorPrimary: CONFIG.BASE_COLOR,
+                                                    fontFamily: 'var(--font-nunito)',
+                                                },
+                                            }}
+                                        >
+                                            <InitialWrapper>{children}</InitialWrapper>
+                                        </ConfigProvider>
+                                    </NotifiesWrapper>
+                                </SidebarProvider>
+                            </EventProvider>
+                        </ThemeProvider>
                     </ReactQueryProvider>
                 </ReduxProvider>
             </body>

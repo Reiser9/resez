@@ -1,1 +1,12 @@
-export type { LoginData, RegisterData, RecoveryData, AuthResponse, User, VerificationCodeData } from './model';
+export type {
+    LoginData,
+    RegisterData,
+    RecoverySendCode,
+    RecoveryVerifyCode,
+    RecoveryChangePassword,
+    LoginResponse,
+    RegisterResponse,
+    User,
+    VerificationCodeData,
+    Permission
+} from './model';

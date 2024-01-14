@@ -57,3 +57,4 @@ export { Stack } from './Stack';
 export { Stats } from './Stats';
 export { Snowflake } from './Snowflake';
 export { Youtube } from './images/Youtube';
+export { Blocked } from './picture/Blocked';

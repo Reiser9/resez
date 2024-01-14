@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { EventAnimation } from '../ui/EventAnimation';
+
 type EventContextProps = {
     showParticles: boolean;
     toggleShowParticles: () => void
@@ -38,6 +40,8 @@ const EventProvider = ({children}: {children: React.ReactNode}) => {
 
     return (
         <EventContext.Provider value={{showParticles, toggleShowParticles}}>
+            <EventAnimation />
+
             {children}
         </EventContext.Provider>
     )

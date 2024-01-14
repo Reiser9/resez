@@ -15,6 +15,7 @@ import { Logo } from '@/shared/ui/Logo';
 import { useEventContext } from '@/shared/context/EventProvider';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {
     empty?: boolean;
@@ -25,9 +26,10 @@ const Header: React.FC<Props> = ({ empty = false }) => {
 
     const profileMenuRef = React.useRef<HTMLDivElement>(null);
 
-    const {showParticles, toggleShowParticles} = useEventContext();
-    const {theme, toggleTheme} = useThemeContext();
-    const {showSidebar, setShowSidebar} = useSidebarContext();
+    const { showParticles, toggleShowParticles } = useEventContext();
+    const { theme, toggleTheme } = useThemeContext();
+    const { showSidebar, setShowSidebar } = useSidebarContext();
+    const { isAuth, user } = useAppSelector((state) => state.user);
 
     const closeProfileMenu = () => {
         setProfileMenu(false);
@@ -42,8 +44,6 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const toggleMenuProfile = () => {
         setProfileMenu((prev) => !prev);
     };
-
-    const isAuth = false; // replace on auth user status
 
     return (
         <header className={styles.header}>
@@ -73,8 +73,8 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                             <div className={styles.headerProfileWrap} onClick={toggleMenuProfile}>
                                 {isAuth ? (
                                     <>
-                                        <Badge image={null} text="Reiser95" dot={false} /> {/*Уведомление*/}
-                                        <Text className={styles.headerProfileNick}>Reiser95</Text>
+                                        <Badge image={user?.avatar} text={user?.nickname} dot={false} /> {/*Уведомление*/}
+                                        <Text className={styles.headerProfileNick}>{user?.nickname}</Text>
                                     </>
                                 ) : (
                                     <Badge icon={<Enter />} />
@@ -95,10 +95,10 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                             <>
                                 <div className={styles.headerProfileMenuInfo}>
                                     <div className={styles.headerProfileMenuData}>
-                                        <Badge image={null} text="Reiser95" />
+                                        <Badge image={user?.avatar} text={user?.nickname} />
 
                                         <div className={styles.headerProfileMenuNameInner}>
-                                            <Text textClassName={styles.headerProfileMenuName}>Reiser95</Text>
+                                            <Text textClassName={styles.headerProfileMenuName}>{user?.nickname}</Text>
 
                                             <Text variant="text2" textClassName={styles.headerProfileMenuStatus}>
                                                 Новичок
@@ -106,7 +106,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         </div>
                                     </div>
 
-                                    <div className={styles.headerProfileLvl}>2</div>
+                                    <div className={styles.headerProfileLvl}>{user?.level}</div>
                                 </div>
 
                                 <Link
@@ -147,7 +147,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                         <div className={styles.headerProfileMenuLink} onClick={toggleTheme}>
                             <Moon />
                             Темная тема
-                            <Switch size="small" checked={theme === "dark"} className={styles.headerThemeLabel} />
+                            <Switch size="small" checked={theme === 'dark'} className={styles.headerThemeLabel} />
                         </div>
 
                         <div className={styles.headerProfileMenuLink} onClick={toggleShowParticles}>
