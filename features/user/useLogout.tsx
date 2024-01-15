@@ -2,38 +2,32 @@
 
 import React from 'react';
 
-import axiosInstance from '@/api/axios';
-import { getAccessToken } from '@/shared/utils/getAccessToken';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, initVerificationCodeData, setIsAuth } from '@/store/slices/user';
+import { setUserData } from '@/store/slices/user';
 import useAlert from '@/shared/hooks/useAlert';
+import useRequest from '@/shared/hooks/useRequest';
 
 const useLogout = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
-    const accessToken = getAccessToken();
+    const { request } = useRequest();
 
     const logout = async (successCallback: () => void = () => {}) => {
-        setIsLoading(true);
+        try {
+            setIsLoading(true);
+            await request({ url: '/auth/logout', isAuth: true });
+            setIsLoading(false);
 
-        const data = await axiosInstance.get('/auth/logout', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
+            alertNotify('Успешно', 'Вы вышли с аккаунта', 'success');
 
-        setIsLoading(false);
-
-        alertNotify("Успешно", "Вы вышли с аккаунта", "success");
-        
-        dispatch(setIsAuth(false));
-        dispatch(initVerificationCodeData(data.data.verificationCodeData));
-        dispatch(initUser(null));
-        dispatch(initVerificationCodeData(null));
-        dispatch(initSessionId(null));
-        successCallback();
+            dispatch(setUserData());
+            localStorage.removeItem("accessToken");
+            successCallback();
+        } catch (error) {
+            console.log('Ошибка', error);
+        }
     };
 
     return { isLoading, logout };

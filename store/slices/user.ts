@@ -7,14 +7,14 @@ type UserStateType = {
     isAuth: boolean;
     user: User | null;
     verificationCodeData: VerificationCodeData | null;
-    sessiodId: number | null;
+    sessionId: number | null;
 };
 
 const initialState: UserStateType = {
     isAuth: false,
     user: null,
     verificationCodeData: null,
-    sessiodId: null,
+    sessionId: null,
 };
 
 export const userSlice = createSlice({
@@ -31,11 +31,17 @@ export const userSlice = createSlice({
             state.verificationCodeData = action.payload;
         },
         initSessionId: (state, action: PayloadAction<number | null>) => {
-            state.sessiodId = action.payload;
+            state.sessionId = action.payload;
+        },
+        setUserData: (state) => {
+            state.isAuth = false;
+            state.user = null;
+            state.verificationCodeData = null;
+            state.sessionId = null;
         },
     },
 });
 
-export const { setIsAuth, initUser, initVerificationCodeData, initSessionId } = userSlice.actions;
+export const { setIsAuth, initUser, initVerificationCodeData, initSessionId, setUserData } = userSlice.actions;
 
 export default userSlice.reducer;

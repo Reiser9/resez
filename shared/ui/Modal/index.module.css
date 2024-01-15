@@ -1,0 +1,179 @@
+.modalOverlay{
+    width: 100%;
+    height: 100dvh;
+    background: rgba(0, 0, 0, .5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: .3s ease-in-out;
+}
+
+.modalOverlay.active{
+    pointer-events: all;
+    opacity: 1;
+}
+
+.modalWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100% - 3.5rem);
+    margin: 1.75rem auto;
+}
+
+.modalWrapper.default{
+    max-width: 680px;
+}
+
+.modalWrapper.small{
+    max-width: 500px;
+}
+
+@media (max-width: 768px) {
+    .modalWrapper{
+        max-width: 520px;
+    }
+}
+@media (max-width: 520px) {
+    .modalWrapper{
+        min-height: calc(100% - 5rem);
+        margin: 5rem 0 0 0;
+        align-items: flex-end;
+    }
+
+    .modalWrapper.small{
+        max-width: 100%;
+    }
+}
+
+.modalContent{
+    width: 100%;
+    border-radius: 4px;
+    background: var(--white);
+    padding: 2.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: .3s ease-in-out;
+    transform: scale(.8);
+}
+
+.modalContent.active{
+    transform: scale(1);
+}
+
+@media (max-width: 520px) {
+    .modalContent{
+        border-radius: 4px 4px 0 0;
+        padding: 4rem 1.6rem 0 1.6rem;
+        position: relative;
+        transform: scale(1) translateY(100dvh);
+        max-height: calc(100dvh - 5rem);
+    }
+
+    .modalContent.active{
+        transform: translateY(0);
+    }
+
+    .modalContent:before{
+        content: "";
+        display: block;
+        width: 75px;
+        height: 2px;
+        border-radius: 50px;
+        background: var(--textGrey);
+        position: absolute;
+        top: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+.modalTitleInner{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.modalCrossButton{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--lighten);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+@media (max-width: 520px) {
+    .modalCrossButton{
+        display: none;
+    }
+}
+
+.modalCrossButton svg{
+    width: 22px;
+}
+
+.modalCrossButton svg path{
+    stroke: var(--main);
+}
+
+.modalTitleWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.modalDate{
+    color: var(--textGrey);
+}
+
+.modalText{
+    width: 100%;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    word-break: break-word;
+}
+
+.modalText img{
+    max-width: 100%;
+}
+
+@media (max-width: 520px) {
+    .modalText{
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    .modalText:last-child{
+        padding-bottom: 2.4rem;
+    }
+}
+
+.confirmModalButtons{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+@media (max-width: 440px) {
+    .confirmModalButtons{
+        flex-wrap: wrap;
+    }
+}

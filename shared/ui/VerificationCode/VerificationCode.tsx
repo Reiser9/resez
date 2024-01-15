@@ -18,6 +18,7 @@ import { Button } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { initUser, initVerificationCodeData } from '@/store/slices/user';
 import { useLogout, useVerificationCode } from '@/features/user';
+import { VerificationCodeData } from '@/entities/user';
 
 const ConfirmCode = () => {
     const { verificationCodeData } = useAppSelector((state) => state.user);
@@ -64,10 +65,11 @@ const ConfirmCode = () => {
 
         socket.on('verify', (data) => {
             dispatch(initUser(data.user));
+            dispatch(initVerificationCodeData(null));
             alertNotify('Успешно', 'Аккаунт верифицирован', 'success');
         });
 
-        socket.on('verify-code-updated', (data) => {
+        socket.on('verify-code-updated', (data: any) => {
             dispatch(initVerificationCodeData(data.verificationCodeData));
         });
 

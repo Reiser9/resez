@@ -29,24 +29,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <ReduxProvider>
                     <ReactQueryProvider>
                         <ThemeProvider>
-                            <EventProvider>
-                                <SidebarProvider>
-                                    <NotifiesWrapper>
-                                        <ConfigProvider
-                                            locale={ruRU}
-                                            theme={{
-                                                token: {
-                                                    // Поменять #007cee на динамический цвет
-                                                    colorPrimary: CONFIG.BASE_COLOR,
-                                                    fontFamily: 'var(--font-nunito)',
-                                                },
-                                            }}
-                                        >
-                                            <InitialWrapper>{children}</InitialWrapper>
-                                        </ConfigProvider>
-                                    </NotifiesWrapper>
-                                </SidebarProvider>
-                            </EventProvider>
+                            <InitialWrapper>
+                                <EventProvider>
+                                    <SidebarProvider>
+                                        <NotifiesWrapper>
+                                            <ConfigProvider
+                                                locale={ruRU}
+                                                theme={{
+                                                    token: {
+                                                        // Поменять #007cee на динамический цвет
+                                                        colorPrimary: CONFIG.BASE_COLOR,
+                                                        fontFamily: 'var(--font-nunito)',
+                                                    },
+                                                }}
+                                            >
+                                                {children}
+                                            </ConfigProvider>
+                                        </NotifiesWrapper>
+                                    </SidebarProvider>
+                                </EventProvider>
+                            </InitialWrapper>
                         </ThemeProvider>
                     </ReactQueryProvider>
                 </ReduxProvider>

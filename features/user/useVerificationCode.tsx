@@ -2,26 +2,31 @@
 
 import React from 'react';
 
-import axiosInstance from '@/api/axios';
-import { getAccessToken } from '@/shared/utils/getAccessToken';
+import { useAppDispatch } from '@/shared/hooks/useRedux';
+import { initVerificationCodeData } from '@/store/slices/user';
+import useRequest from '@/shared/hooks/useRequest';
+import { VerificationCodeData } from '@/entities/user';
 
 const useVerificationCode = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    const accessToken = getAccessToken();
+    const dispatch = useAppDispatch();
+    const { request } = useRequest();
 
     const sendVerificationCode = async (successCallback: () => void = () => {}) => {
-        setIsLoading(true);
+        try {
+            setIsLoading(true);
+            const data = await request<{ verificationCodeData: VerificationCodeData }>({
+                url: '/auth/send-verification-code',
+                isAuth: true,
+            });
+            setIsLoading(false);
 
-        const data = await axiosInstance.get('/auth/send-verification-code', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-
-        setIsLoading(false);
-
-        successCallback();
+            dispatch(initVerificationCodeData(data.data.verificationCodeData));
+            successCallback();
+        } catch (error) {
+            console.log('Ошибка', error);
+        }
     };
 
     return { isLoading, sendVerificationCode };

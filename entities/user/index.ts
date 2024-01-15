@@ -7,6 +7,7 @@ export type {
     LoginResponse,
     RegisterResponse,
     User,
+    UserShortInfo,
     VerificationCodeData,
     Permission
 } from './model';

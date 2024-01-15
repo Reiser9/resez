@@ -2,38 +2,27 @@
 
 import React from 'react';
 
-import axiosInstance from '@/api/axios';
-import { getAccessToken } from '@/shared/utils/getAccessToken';
-import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, initVerificationCodeData, setIsAuth } from '@/store/slices/user';
+import useRequest from '@/shared/hooks/useRequest';
 
 const useRefresh = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    const dispatch = useAppDispatch();
-    const accessToken = getAccessToken();
+    const { request } = useRequest();
 
-    const logout = async () => {
-        setIsLoading(true);
+    const getRefresh = async () => {
+        try {
+            setIsLoading(true);
+            const data = await request<{ accessToken: string }>({ url: '/auth/refresh', isAuth: true });
+            setIsLoading(false);
 
-        const data = await axiosInstance.get('/auth/refresh', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-
-        setIsLoading(false);
-
-        localStorage.setItem("accessToken", data.data.accessToken);
-        
-        dispatch(setIsAuth(false));
-        dispatch(initVerificationCodeData(data.data.verificationCodeData));
-        dispatch(initUser(null));
-        dispatch(initVerificationCodeData(null));
-        dispatch(initSessionId(null));
+            localStorage.setItem('accessToken', data.data.accessToken);
+            return data.data.accessToken;
+        } catch (error) {
+            console.log('Ошибка', error);
+        }
     };
 
-    return { isLoading, logout };
+    return { isLoading, getRefresh };
 };
 
 export default useRefresh;
