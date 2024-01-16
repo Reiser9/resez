@@ -75,7 +75,6 @@ const useRequest = () => {
         } catch (error) {
             await getHealthServer();
 
-            // console.log(e);
             throw Error('Request error');
         }
     };

@@ -58,3 +58,7 @@ export { Stats } from './Stats';
 export { Snowflake } from './Snowflake';
 export { Youtube } from './images/Youtube';
 export { Blocked } from './picture/Blocked';
+export { Desktop } from './Desktop';
+export { Mobile } from './Mobile';
+export { Tablet } from './Tablet';
+export { Tv } from './Tv';

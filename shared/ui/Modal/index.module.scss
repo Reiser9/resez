@@ -11,7 +11,7 @@
     display: block;
     opacity: 0;
     pointer-events: none;
-    transition: .3s linear;
+    transition: .2s ease-in-out;
 }
 
 .modalOverlay.active{
@@ -61,7 +61,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transition: .3s linear;
+    transition: .2s ease-in-out;
     transform: scale(.8);
 }
 

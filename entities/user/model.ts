@@ -52,3 +52,12 @@ export type LoginResponse = {
 export type RegisterResponse = LoginResponse & {
     verificationCodeData: VerificationCodeData;
 };
+
+export type ChangePassword = {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export type VerifyChangePassword = ChangePassword & {
+    code: string;
+}

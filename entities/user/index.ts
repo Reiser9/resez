@@ -9,5 +9,7 @@ export type {
     User,
     UserShortInfo,
     VerificationCodeData,
-    Permission
+    Permission,
+    VerifyChangePassword,
+    ChangePassword,
 } from './model';

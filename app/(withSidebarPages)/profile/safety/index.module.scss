@@ -1,0 +1,13 @@
+.contentBlock{
+    width: calc(100% / 2 - 40px / 2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+@media (max-width: 1100px) {
+    .contentBlock{
+        width: 100%;
+    }
+}

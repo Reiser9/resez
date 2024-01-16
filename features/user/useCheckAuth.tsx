@@ -26,12 +26,6 @@ const useCheckAuth = () => {
             dispatch(setAuthIsLoading(true));
             const refresh = await request<{ accessToken: string }>({ url: '/auth/refresh' });
 
-            if (!refresh.data.accessToken) {
-                dispatch(setUserData());
-                localStorage.removeItem('accessToken');
-                return;
-            }
-
             localStorage.setItem('accessToken', refresh.data.accessToken);
 
             const data = await request<UserShortInfo>({ url: '/user/short-info', isAuth: true });
@@ -40,6 +34,9 @@ const useCheckAuth = () => {
             dispatch(initUser(data.data.user));
             dispatch(initSessionId(data.data.sessionId));
         } catch (error) {
+            dispatch(setUserData());
+            localStorage.removeItem('accessToken');
+            
             alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
         } finally {
             dispatch(setAppIsLoading(false));

@@ -8,7 +8,7 @@ const store = configureStore({
     reducer: {
         notify: notifySlice,
         user: userSlice,
-        app: appSlice
+        app: appSlice,
     },
 });
 

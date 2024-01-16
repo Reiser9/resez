@@ -6,3 +6,4 @@ export { default as useVerificationCode } from './useVerificationCode';
 export { default as useRefresh } from './useRefresh';
 export { default as useCheckAuth } from './useCheckAuth';
 export { default as useLoginWithCode } from './useLoginWithCode';
+export { default as useChangePassword } from './useChangePassword';

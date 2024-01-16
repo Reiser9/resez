@@ -172,7 +172,10 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                             {isAuth && (
                                 <div
                                     className={`${styles.headerProfileMenuLink} ${styles.delete}`}
-                                    onClick={() => setConfirmLogout(true)}
+                                    onClick={() => {
+                                        closeProfileMenu();
+                                        setConfirmLogout(true);
+                                    }}
                                 >
                                     <Exit />
                                     Выход
