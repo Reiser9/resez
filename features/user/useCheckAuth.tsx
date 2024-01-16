@@ -3,10 +3,10 @@
 import React from 'react';
 
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, setIsAuth } from '@/store/slices/user';
-import useRequest from '@/shared/hooks/useRequest';
+import { initSessionId, initUser, setIsAuth, setUserData } from '@/store/slices/user';
 import { UserShortInfo } from '@/entities/user';
 import { setAppIsLoading } from '@/store/slices/app';
+import useRequest from '@/shared/hooks/useRequest';
 
 const useCheckAuth = () => {
     const dispatch = useAppDispatch();
@@ -22,12 +22,16 @@ const useCheckAuth = () => {
 
             dispatch(setAppIsLoading(true));
             const refresh = await request<{ accessToken: string }>({ url: '/auth/refresh' });
-            console.log(refresh);
+
+            if(!refresh.data.accessToken){
+                dispatch(setUserData());
+                localStorage.removeItem("accessToken");
+                return;
+            }
 
             localStorage.setItem('accessToken', refresh.data.accessToken);
 
             const data = await request<UserShortInfo>({ url: '/user/short-info', isAuth: true });
-            console.log(data);
 
             dispatch(setIsAuth(true));
             dispatch(initUser(data.data.user));
@@ -40,7 +44,6 @@ const useCheckAuth = () => {
     };
 
     React.useEffect(() => {
-        console.log("Ку");
         checkAuth();
     }, []);
 };

@@ -9,17 +9,17 @@ import { useAppDispatch, useAppSelector } from './useRedux';
 import useNotify from './useAlert';
 
 const useSocket = () => {
-    const {user, sessionId} = useAppSelector(state => state.user);
+    const {isAuth, user, sessionId} = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
     const {alertNotify} = useNotify();
 
     React.useEffect(() => {
-        if(!user?.id || !sessionId){
+        if(!user?.id || !sessionId || !isAuth){
             return;
         }
 
-        socket.emit("join", user?.id.toString(), sessionId.toString());
-    }, [user, sessionId]);
+        socket.emit("join", user?.id, sessionId);
+    }, [isAuth, user, sessionId]);
 
     React.useEffect(() => {
         socket.connect();

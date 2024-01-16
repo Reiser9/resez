@@ -13,7 +13,7 @@ import { ServerNotAvailable } from '@/shared/ui/ServerNotAvailable';
 const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
     useCheckAuth();
     useSocket();
-    
+
     const { user, isAuth } = useAppSelector((state) => state.user);
     const { appIsLoading, serverIsAvailable } = useAppSelector((state) => state.app);
 

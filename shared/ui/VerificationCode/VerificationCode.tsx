@@ -18,7 +18,7 @@ import { Button } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { initUser, initVerificationCodeData } from '@/store/slices/user';
 import { useLogout, useVerificationCode } from '@/features/user';
-import { VerificationCodeData } from '@/entities/user';
+import { User, VerificationCodeData } from '@/entities/user';
 
 const ConfirmCode = () => {
     const { verificationCodeData } = useAppSelector((state) => state.user);
@@ -63,7 +63,7 @@ const ConfirmCode = () => {
             sendVerificationCode();
         }
 
-        socket.on('verify', (data) => {
+        socket.on('verify', (data: {user: User}) => {
             dispatch(initUser(data.user));
             dispatch(initVerificationCodeData(null));
             alertNotify('Успешно', 'Аккаунт верифицирован', 'success');

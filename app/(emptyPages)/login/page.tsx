@@ -14,12 +14,12 @@ import { Text } from '@/shared/ui/Text';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
-import { useLogin } from '@/features/user';
+import { useLogin, useLoginWithCode } from '@/features/user';
 import type { LoginData } from '@/entities/user';
 import { socket } from '@/api/socket';
 
 const Login = () => {
-    const [uniqId, setUniqId] = React.useState<string>("")
+    const [uniqId, setUniqId] = React.useState<string>('');
 
     const {
         register,
@@ -30,27 +30,28 @@ const Login = () => {
     const { theme } = useThemeContext();
 
     const mutation = useLogin();
+    const { loginWithCode } = useLoginWithCode();
 
     const onSubmit: SubmitHandler<LoginData> = (data) => {
         mutation.mutate(data);
     };
 
     React.useEffect(() => {
-        const localUniqId = localStorage.getItem("uniqueId");
+        const localUniqId = localStorage.getItem('uniqueId');
 
-        if(localUniqId){
+        if (localUniqId) {
             setUniqId(localUniqId);
         }
     }, []);
 
     React.useEffect(() => {
-        socket.on("auth", (data) => {
-            console.log(data);
+        socket.on('auth', (data: { code: string }) => {
+            loginWithCode(data.code);
         });
 
         return () => {
-            socket.off("auth");
-        }
+            socket.off('auth');
+        };
     }, []);
 
     return (

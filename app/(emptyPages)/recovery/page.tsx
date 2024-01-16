@@ -5,30 +5,35 @@ import Link from 'next/link';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import cn from 'classnames';
 
 import auth from '@/shared/styles/auth.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import useAlert from '@/shared/hooks/useAlert';
 import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
-import useAlert from '@/shared/hooks/useAlert';
 import { BackButton } from '@/shared/ui/BackButton';
 import { recoveryChangePassword, recoverySendCode, recoveryVerifyCode } from '@/features/user/auth';
-import type { RecoveryData } from '@/entities/user';
+import type { RecoverySendCode, RecoveryVerifyCode, RecoveryChangePassword } from '@/entities/user';
 import type { Error } from '@/api/types';
 
+// Рефакторинг
 const Recovery = () => {
     const {
         register,
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm<RecoveryData>();
+    } = useForm<RecoveryChangePassword>();
+
+    const router = useRouter();
 
     const [step, setStep] = React.useState<number>(1);
+    const [showErrors, setShowErrors] = React.useState<boolean>(false);
 
     const { alertNotify } = useAlert();
 
@@ -37,6 +42,7 @@ const Recovery = () => {
         onSuccess: () => {
             alertNotify('Успешно', 'Для восстановления пароля вам отправлен код подтверждения', 'success');
             setStep(2);
+            setShowErrors(false);
         },
         onError: (error: AxiosError<Error>) => {
             alertNotify('Ошибка', error?.response?.data?.message || 'Произошла ошибка, попробуйте позже', 'error');
@@ -56,15 +62,16 @@ const Recovery = () => {
 
     const mutationChangePassword = useMutation({
         mutationFn: recoveryChangePassword,
-        onSuccess: (data) => {
-            console.log(data);
+        onSuccess: () => {
+            alertNotify('Успешно', 'Пароль изменен', 'success');
+            router.push('login');
         },
         onError: (error: AxiosError<Error>) => {
             alertNotify('Ошибка', error?.response?.data?.message || 'Произошла ошибка, попробуйте позже', 'error');
         },
     });
 
-    const onSubmit: SubmitHandler<RecoveryData> = (data) => {
+    const onSubmit: SubmitHandler<RecoveryChangePassword> = (data) => {
         if (step === 1) {
             mutationSendCode.mutate(data);
         } else if (step === 2) {
