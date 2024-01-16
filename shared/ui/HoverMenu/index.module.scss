@@ -12,7 +12,7 @@
     z-index: 3;
     opacity: 0;
     pointer-events: none;
-    transition: .2s linear;
+    transition: .3s linear;
 }
 
 .hoverMenuOverlay.big{
@@ -32,7 +32,6 @@
         display: block;
         opacity: 0;
         pointer-events: none;
-        transition: .3s ease-in-out;
     }
 
     .hoverMenuOverlay, .hoverMenuOverlay.big{
@@ -63,6 +62,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    transition: .3s linear;
 }
 
 @media (any-hover: none) and (max-width: 768px) {
@@ -71,7 +71,6 @@
         position: relative;
         padding: 4rem 0 1.6rem 0;
         transform: translateY(100dvh);
-        transition: .3s ease-in-out;
     }
 
     .hoverMenuContent:before{

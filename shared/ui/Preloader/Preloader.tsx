@@ -4,12 +4,14 @@ import cn from "classnames";
 import styles from "./index.module.scss";
 
 type Props = {
+    theme?: 'primary' | 'danger';
     small?: boolean;
     fill?: boolean;
     page?: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
 const Preloader: React.FC<Props> = ({
+    theme = 'primary',
     small = false,
     fill = false,
     page = false,
@@ -25,7 +27,7 @@ const Preloader: React.FC<Props> = ({
             {...props}
         >
             <div
-                className={cn(styles.preloader, className, {
+                className={cn(styles.preloader, className, styles[theme], {
                     [styles.small]: small,
                 })}
             ></div>

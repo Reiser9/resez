@@ -5,6 +5,7 @@ import { useAppDispatch } from '@/shared/hooks/useRedux';
 import { initSessionId, initUser, initVerificationCodeData, setIsAuth } from '@/store/slices/user';
 import type { LoginResponse } from '@/entities/user';
 import axiosInstance from '@/api/axios';
+import { setAuthIsLoading } from '@/store/slices/app';
 
 const useLoginWithCode = () => {
     const router = useRouter();
@@ -12,20 +13,27 @@ const useLoginWithCode = () => {
     const { alertNotify } = useAlert();
 
     const loginWithCode = async (code: string) => {
-        const data = await axiosInstance.post<LoginResponse>(`/auth/login/${code}`);
+        try {
+            dispatch(setAuthIsLoading(true));
+            const data = await axiosInstance.post<LoginResponse>(`/auth/login/${code}`);
 
-        dispatch(setIsAuth(true));
-        dispatch(initUser(data.data.user));
-        dispatch(initSessionId(data.data.sessionId));
+            dispatch(setIsAuth(true));
+            dispatch(initUser(data.data.user));
+            dispatch(initSessionId(data.data.sessionId));
 
-        if (data.data.verificationCodeData) {
-            dispatch(initVerificationCodeData(data.data.verificationCodeData));
+            if (data.data.verificationCodeData) {
+                dispatch(initVerificationCodeData(data.data.verificationCodeData));
+            }
+
+            localStorage.setItem('accessToken', data.data.accessToken);
+
+            alertNotify('Успешно', 'Вы авторизовались', 'success');
+            router.push('/');
+        } catch (error) {
+            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+        } finally {
+            dispatch(setAuthIsLoading(false));
         }
-
-        localStorage.setItem('accessToken', data.data.accessToken);
-
-        alertNotify('Успешно', 'Вы авторизовались', 'success');
-        router.push('/');
     };
 
     return {

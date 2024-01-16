@@ -31,7 +31,7 @@ const useLogin = () => {
             router.push('/');
         },
         onError: (error: AxiosError<Error>) => {
-            console.log(error);
+            alertNotify('Ошибка', error?.response?.data?.message || 'Произошла ошибка, попробуйте позже', 'error');
         },
     });
 };

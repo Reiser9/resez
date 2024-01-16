@@ -62,7 +62,7 @@ const Button: React.FC<Props> = ({
 
             {loading && (
                 <span className={styles.buttonPreloader}>
-                    <Preloader small />
+                    <Preloader small theme={color} />
                 </span>
             )}
         </div>

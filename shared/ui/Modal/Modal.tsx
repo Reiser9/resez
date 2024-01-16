@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 import { Cross } from '@/shared/icons';
 import { Text } from '../Text';

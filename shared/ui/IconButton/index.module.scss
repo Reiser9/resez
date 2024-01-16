@@ -1,0 +1,82 @@
+.iconButton{
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+}
+
+.iconButton.small{
+    width: 38px;
+    height: 38px;
+}
+
+@media (max-width: 440px) {
+    .iconButton{
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.full{
+    width: 100%;
+}
+
+.disabled{
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+
+.default{
+    background: var(--input);
+}
+
+.circle{
+    border-radius: 50px;
+}
+
+.default:hover{
+    background: var(--lighten);
+}
+
+.danger{
+    background: var(--errorB);
+    color: #000;
+}
+
+.warn{
+    background: var(--warnB);
+    color: #000;
+}
+
+.light{
+    background: var(--lighten);
+}
+
+.light:hover, .danger:hover, .warn:hover{
+    opacity: 0.6;
+}
+
+.iconButton svg{
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.iconButton.small svg{
+    width: 20px;
+}
+
+.iconButton svg path{
+    stroke: var(--main);
+}
+
+.iconButton.danger svg path{
+    stroke: var(--error);
+}
+
+.iconButton.warn svg path{
+    stroke: var(--warn);
+}

@@ -36,6 +36,13 @@
     height: 45px;
 }
 
+.preloader.danger{
+    border-top: 0.6em solid rgba(239, 59, 59, 0.2);
+    border-right: 0.6em solid rgba(239, 59, 59, 0.2);
+    border-bottom: 0.6em solid rgba(239, 59, 59, 0.2);
+    border-left: 0.6em solid #EF3B3B;
+}
+
 .preloader.small {
     width: 25px;
     height: 25px;

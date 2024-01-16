@@ -72,7 +72,7 @@ const useRequest = () => {
             });
 
             return response;
-        } catch (e) {
+        } catch (error) {
             await getHealthServer();
 
             // console.log(e);
@@ -82,7 +82,8 @@ const useRequest = () => {
 
     return {
         request,
-        clearLocalData
+        clearLocalData,
+        getHealthServer
     };
 };
 

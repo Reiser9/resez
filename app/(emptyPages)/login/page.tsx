@@ -9,14 +9,18 @@ import { QRCode } from 'antd';
 import auth from '@/shared/styles/auth.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import useReload from '@/shared/hooks/useReload';
 import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
 import { Text } from '@/shared/ui/Text';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { useLogin, useLoginWithCode } from '@/features/user';
-import type { LoginData } from '@/entities/user';
 import { socket } from '@/api/socket';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import { Reload } from '@/shared/icons/Reload';
+import { IconButton } from '@/shared/ui/IconButton';
+import type { LoginData } from '@/entities/user';
 
 const Login = () => {
     const [uniqId, setUniqId] = React.useState<string>('');
@@ -28,9 +32,11 @@ const Login = () => {
     } = useForm<LoginData>();
 
     const { theme } = useThemeContext();
+    const { serverIsAvailable } = useAppSelector((state) => state.app);
 
     const mutation = useLogin();
     const { loginWithCode } = useLoginWithCode();
+    const { isLoadingReload, reload } = useReload();
 
     const onSubmit: SubmitHandler<LoginData> = (data) => {
         mutation.mutate(data);
@@ -113,14 +119,26 @@ const Login = () => {
                         <span>Быстрый вход по QR‑коду</span>
                     </p>
 
-                    <QRCode
-                        color={theme === 'dark' ? '#fff' : '#000'}
-                        errorLevel="H"
-                        value={`${process.env.NEXT_PUBLIC_BOT_LINK}?start=${uniqId}`}
-                        icon="img/logo-circle.svg"
-                        size={140}
-                        iconSize={38}
-                    />
+                    {(serverIsAvailable && !isLoadingReload) ? (
+                        <QRCode
+                            color={theme === 'dark' ? '#fff' : '#000'}
+                            errorLevel="H"
+                            value={`${process.env.NEXT_PUBLIC_BOT_LINK}?start=${uniqId}`}
+                            icon="img/logo-circle.svg"
+                            size={140}
+                            iconSize={38}
+                        />
+                    ) : (
+                        <div className={auth.qrIsNotActive}>
+                            <Text variant="text2" className={auth.qrIsNotActiveText}>
+                                Ошибка при загрузке данных
+                            </Text>
+
+                            <IconButton variant="light" circle small type="button" onClick={() => reload()} disabled={isLoadingReload}>
+                                <Reload />
+                            </IconButton>
+                        </div>
+                    )}
                 </div>
 
                 <div className={auth.contentBottomInner}>

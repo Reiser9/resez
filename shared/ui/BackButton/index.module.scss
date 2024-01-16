@@ -9,6 +9,12 @@
     flex-shrink: 0;
 }
 
+.back.disabled{
+    opacity: 0.7;
+    filter: grayscale(1);
+    pointer-events: none;
+}
+
 .back:hover{
     opacity: .7;
 }

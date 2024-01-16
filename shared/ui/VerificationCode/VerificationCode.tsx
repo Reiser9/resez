@@ -31,7 +31,7 @@ const ConfirmCode = () => {
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
     const { isLoading, sendVerificationCode } = useVerificationCode();
-    const { logout } = useLogout();
+    const { isLoading: logoutLoading, logout } = useLogout();
     const { theme } = useThemeContext();
 
     const refreshQr = () => {
@@ -63,7 +63,7 @@ const ConfirmCode = () => {
             sendVerificationCode();
         }
 
-        socket.on('verify', (data: {user: User}) => {
+        socket.on('verify', (data: { user: User }) => {
             dispatch(initUser(data.user));
             dispatch(initVerificationCodeData(null));
             alertNotify('Успешно', 'Аккаунт верифицирован', 'success');
@@ -115,11 +115,14 @@ const ConfirmCode = () => {
                 />
             </div>
 
-            <a href={link}>{link}</a>
-            <div>{remainingTime}</div>
-
             <div className={auth.contentBottomInner}>
-                <Button loading={isLoading} color="danger" variant="empty" className={auth.contentButton} onClick={() => logout()}>
+                <Button
+                    loading={logoutLoading}
+                    color="danger"
+                    variant="light"
+                    className={auth.contentButton}
+                    onClick={() => logout()}
+                >
                     Выйти
                 </Button>
             </div>

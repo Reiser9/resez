@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 import { Moon, Sun } from '@/shared/icons';
 import { useThemeContext } from '@/shared/context/ThemeProvider';

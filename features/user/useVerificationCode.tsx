@@ -4,14 +4,16 @@ import React from 'react';
 
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 import { initVerificationCodeData } from '@/store/slices/user';
-import useRequest from '@/shared/hooks/useRequest';
 import { VerificationCodeData } from '@/entities/user';
+import useRequest from '@/shared/hooks/useRequest';
+import useAlert from '@/shared/hooks/useAlert';
 
 const useVerificationCode = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const dispatch = useAppDispatch();
     const { request } = useRequest();
+    const { alertNotify } = useAlert();
 
     const sendVerificationCode = async (successCallback: () => void = () => {}) => {
         try {
@@ -20,12 +22,13 @@ const useVerificationCode = () => {
                 url: '/auth/send-verification-code',
                 isAuth: true,
             });
-            setIsLoading(false);
 
             dispatch(initVerificationCodeData(data.data.verificationCodeData));
             successCallback();
         } catch (error) {
-            console.log('Ошибка', error);
+            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+        } finally {
+            setIsLoading(false);
         }
     };
 

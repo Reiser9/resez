@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 import { Modal } from '.';
 import { Button } from '../Button';
@@ -11,7 +11,8 @@ type Props = {
     text?: string;
     confirmText?: string;
     rejectText?: string;
-    callback?: () => void;
+    loading?: boolean;
+    callback?: (successCallback: () => void) => void;
 };
 
 const ConfirmModal: React.FC<Props> = ({
@@ -20,18 +21,18 @@ const ConfirmModal: React.FC<Props> = ({
     text,
     confirmText = 'Да',
     rejectText = 'Нет',
+    loading = false,
     callback = () => {},
 }) => {
     const callbackWithClose = () => {
-        callback();
-        setValue(false);
+        callback(() => setValue(false));
     };
 
     return (
         <Modal title="Подтвердите действие" value={value} setValue={setValue} text={text} size="small">
             <div className={styles.confirmModalButtons}>
                 {value ? (
-                    <Button color="danger" variant="light" onClick={callbackWithClose}>
+                    <Button color="danger" variant="light" onClick={callbackWithClose} loading={loading}>
                         {confirmText}
                     </Button>
                 ) : (

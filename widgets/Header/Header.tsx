@@ -32,7 +32,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { showParticles, toggleShowParticles } = useEventContext();
     const { theme, toggleTheme } = useThemeContext();
     const { showSidebar, setShowSidebar } = useSidebarContext();
-    const { logout } = useLogout();
+    const { isLoading, logout } = useLogout();
     const { isAuth, user } = useAppSelector((state) => state.user);
 
     const closeProfileMenu = () => {
@@ -45,8 +45,8 @@ const Header: React.FC<Props> = ({ empty = false }) => {
         setShowSidebar(!showSidebar);
     };
 
-    const logoutHandler = () => {
-        logout();
+    const logoutHandler = (successCallback = () => {}) => {
+        logout(() => successCallback());
         closeProfileMenu();
     };
 
@@ -190,6 +190,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                 rejectText="Отмена"
                 confirmText="Выйти"
                 callback={logoutHandler}
+                loading={isLoading}
             ></ConfirmModal>
         </>
     );

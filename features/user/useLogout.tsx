@@ -18,15 +18,16 @@ const useLogout = () => {
         try {
             setIsLoading(true);
             await request({ url: '/auth/logout', isAuth: true });
-            setIsLoading(false);
 
             alertNotify('Успешно', 'Вы вышли с аккаунта', 'success');
 
             dispatch(setUserData());
-            localStorage.removeItem("accessToken");
+            localStorage.removeItem('accessToken');
             successCallback();
         } catch (error) {
-            console.log('Ошибка', error);
+            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+        } finally {
+            setIsLoading(false);
         }
     };
 
