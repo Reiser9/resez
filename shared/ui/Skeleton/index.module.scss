@@ -1,0 +1,27 @@
+.skeletonContent{
+    width: 100%;
+    height: 100%;
+}
+
+.sessionItemCompact{
+    width: 100%;
+    height: 61px;
+    display: flex;
+}
+
+@media (max-width: 480px) {
+    .sessionItemCompact{
+        height: 59px;
+    }
+}
+
+@media (max-width: 375px) {
+    .sessionItemCompact{
+        height: 137px;
+    }
+}
+
+.sessionItem{
+    height: 440px;
+    display: flex;
+}

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import { ConfigProvider } from 'antd';
+import { SkeletonTheme } from 'react-loading-skeleton';
 import ruRU from 'antd/locale/ru_RU';
 
 import './globals.scss';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import { ReactQueryProvider, ReduxProvider } from '@/shared/providers';
 import { EventProvider, ThemeProvider, SidebarProvider } from '@/shared/context';
@@ -32,18 +34,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             <EventProvider>
                                 <SidebarProvider>
                                     <NotifiesWrapper>
-                                        <ConfigProvider
-                                            locale={ruRU}
-                                            theme={{
-                                                token: {
-                                                    // Поменять #007cee на динамический цвет
-                                                    colorPrimary: CONFIG.BASE_COLOR,
-                                                    fontFamily: 'var(--font-nunito)',
-                                                },
-                                            }}
-                                        >
-                                            <InitialWrapper>{children}</InitialWrapper>
-                                        </ConfigProvider>
+                                        <SkeletonTheme baseColor="var(--input)" highlightColor="var(--inputDarken)">
+                                            <ConfigProvider
+                                                locale={ruRU}
+                                                theme={{
+                                                    token: {
+                                                        // Поменять #007cee на динамический цвет
+                                                        colorPrimary: CONFIG.BASE_COLOR,
+                                                        fontFamily: 'var(--font-nunito)',
+                                                    },
+                                                }}
+                                            >
+                                                <InitialWrapper>{children}</InitialWrapper>
+                                            </ConfigProvider>
+                                        </SkeletonTheme>
                                     </NotifiesWrapper>
                                 </SidebarProvider>
                             </EventProvider>

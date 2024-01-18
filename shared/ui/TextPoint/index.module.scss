@@ -1,0 +1,15 @@
+.userPoint{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.userPointTitle{
+    color: var(--textGrey);
+}
+
+.blur{
+    filter: blur(4px);
+    user-select: none;
+}

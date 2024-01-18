@@ -7,8 +7,8 @@ export type Paggination = {
 export type Session = {
     browser: string;
     browserVersion: string;
-    city: string | null;
-    country: string | null;
+    city: string;
+    country: string;
     date: Date;
     deviceType: string;
     id: number;

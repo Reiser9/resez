@@ -4,12 +4,9 @@ import cn from 'classnames';
 import styles from './index.module.scss';
 
 import { Text } from '../Text';
-import { formatDate } from '@/shared/utils/formatDate';
 import { getDeviceByName } from '@/shared/utils/getDeviceByName';
+import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 import type { Session } from '@/entities/user/session';
-
-// import { formatDate } from '../../utils/formatDate';
-// import { getDeviceByName } from '../../utils/getDeviceByName';
 
 type Props = {
     current?: boolean;
@@ -34,7 +31,7 @@ const SessionItemCompact: React.FC<Props> = ({ current = false, data, ...props }
 
                     {date && (
                         <Text variant="text2" className={styles.sessionItemDate}>
-                            {formatDate(date)}
+                            {getFormattedDate(date)}
                         </Text>
                     )}
                 </div>

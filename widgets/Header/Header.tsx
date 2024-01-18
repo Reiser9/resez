@@ -45,8 +45,8 @@ const Header: React.FC<Props> = ({ empty = false }) => {
         setShowSidebar(!showSidebar);
     };
 
-    const logoutHandler = (successCallback = () => {}) => {
-        logout(() => successCallback());
+    const logoutHandler = () => {
+        logout();
         closeProfileMenu();
     };
 

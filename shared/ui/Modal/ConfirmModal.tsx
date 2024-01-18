@@ -12,7 +12,7 @@ type Props = {
     confirmText?: string;
     rejectText?: string;
     loading?: boolean;
-    callback?: (successCallback: () => void) => void;
+    callback?: () => void;
 };
 
 const ConfirmModal: React.FC<Props> = ({
@@ -25,7 +25,8 @@ const ConfirmModal: React.FC<Props> = ({
     callback = () => {},
 }) => {
     const callbackWithClose = () => {
-        callback(() => setValue(false));
+        callback();
+        setValue(false);
     };
 
     return (

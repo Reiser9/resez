@@ -17,7 +17,8 @@ type Props = {
     color?: 'primary' | 'danger';
     variant?: 'fill' | 'outline' | 'empty' | 'light';
     children: React.ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement> & AnchorHTMLAttributes<HTMLAnchorElement>;
+} & ButtonHTMLAttributes<HTMLButtonElement> &
+    AnchorHTMLAttributes<HTMLAnchorElement>;
 
 const Button: React.FC<Props> = ({
     auto = false,
@@ -36,6 +37,14 @@ const Button: React.FC<Props> = ({
             [styles.disabled]: disabled || loading,
             [styles.small]: small,
         });
+
+        if (disabled) {
+            return(
+                <button className={defaultClasses}>
+                    {!loading && children}
+                </button>
+            )
+        }
 
         if (href) {
             return (

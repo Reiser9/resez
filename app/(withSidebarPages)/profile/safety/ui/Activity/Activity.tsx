@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import styles from '../../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -14,62 +15,79 @@ import { Reload } from '@/shared/icons/Reload';
 import { SessionItemMini } from '@/shared/ui/SessionItem';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
+import { SessionItemMiniSkeleton } from '@/shared/ui/Skeleton';
 import useSessions from '@/features/user/useSessions';
 
 const Activity = () => {
     const [confirmEndAllSessions, setConfirmEndAllSessions] = React.useState<boolean>(false);
 
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
     const { isLoading, getSessions, endAllSessions } = useSessions();
+    const router = useRouter();
 
-    const { data, isFetching, error } = useQuery({ queryKey: ['sessions'], queryFn: getSessions });
+    const { data, isFetching, error } = useQuery({ queryKey: ['sessions_short'], queryFn: getSessions });
 
-    const endAllSessionsHandler = (successCallback = () => {}) => {
-        endAllSessions(successCallback);
-        queryClient.invalidateQueries({queryKey: ['sessions']});
-    }
+    const revalidateSessions = () => {
+        queryClient.invalidateQueries({ queryKey: ['sessions_short'] });
+    };
+
+    const endAllSessionsHandler = () => {
+        endAllSessions(revalidateSessions);
+    };
 
     return (
         <div className={styles.contentBlock}>
             <div className={base.titleInner}>
                 <Text variant="h3">Активность</Text>
 
-                <IconButton circle small>
+                <IconButton circle small onClick={revalidateSessions} disabled={isFetching}>
                     <Reload />
                 </IconButton>
             </div>
 
-            {isFetching ? (
-                <p>Загрузка..</p>// <SessionsSkeleton />
-            ) : error ? (
+            {error ? (
                 <NotContent text="Ошибка при загрузке сеансов" icon={<Cross />} danger />
             ) : (
                 <>
                     <div className={base.baseWrapperGap8}>
                         <Text>Текущий сеанс</Text>
 
-                        <SessionItemMini
-                            current
-                            data={data?.data.current}
-                        />
+                        {isFetching ? (
+                            <SessionItemMiniSkeleton />
+                        ) : (
+                            <SessionItemMini
+                                current
+                                data={data?.current}
+                                onClick={() => router.push('safety/sessions')}
+                            />
+                        )}
 
-                        <Button variant="empty" color="danger" onClick={() => setConfirmEndAllSessions(true)}>
+                        <Button
+                            disabled={isFetching}
+                            variant="empty"
+                            color="danger"
+                            onClick={() => setConfirmEndAllSessions(true)}
+                        >
                             Завершить другие сеансы
                         </Button>
                     </div>
 
-                    {/* Скелетоны, проверки, что есть сессии и т.п */}
                     <div className={base.baseWrapperGap8}>
-                        <Text>Все сеансы ({data?.data.totalCount})</Text>
+                        <Text>Все сеансы {!isFetching && `(${data?.totalCount})`}</Text>
 
-                        {data?.data.other.slice(0, 3).map((data) => (
-                            <SessionItemMini
-                                key={data.id}
-                                data={data}
-                            />
-                        ))}
+                        {isFetching
+                            ? [...Array(3)].map((_, id) => <SessionItemMiniSkeleton key={id} />)
+                            : data?.other
+                                  .slice(0, 3)
+                                  .map((data) => (
+                                      <SessionItemMini
+                                          key={data.id}
+                                          data={data}
+                                          onClick={() => router.push('safety/sessions')}
+                                      />
+                                  ))}
 
-                        {true && (
+                        {(data?.totalCount || 0) >= 3 && (
                             <Button variant="empty" href="safety/sessions">
                                 Показать все
                             </Button>
