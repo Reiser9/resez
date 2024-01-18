@@ -30,7 +30,7 @@ const useSessions = () => {
     const endAllSessions = async (successCallback = () => {}) => {
         try {
             setIsLoading(true);
-            const response = await request<Session>({ url: '/session/end-all', isAuth: true, method: 'PATCH' });
+            await request<Session>({ url: '/session/end-all', isAuth: true, method: 'PATCH' });
 
             successCallback();
 
@@ -45,7 +45,7 @@ const useSessions = () => {
     const endSessionById = async (id: number, successCallback = () => {}) => {
         try {
             setSessionsIsLoading((prev) => [...prev, id]);
-            const response = await request<Session>({ url: `/session/end/${id}`, isAuth: true, method: 'PATCH' });
+            await request<Session>({ url: `/session/end/${id}`, isAuth: true, method: 'PATCH' });
 
             alertNotify('Успешно', 'Сессия завершена', 'success');
             successCallback();
