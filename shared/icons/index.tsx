@@ -62,3 +62,8 @@ export { Desktop } from './Desktop';
 export { Mobile } from './Mobile';
 export { Tablet } from './Tablet';
 export { Tv } from './Tv';
+export { Tools } from './Tools';
+export { Added } from './Added';
+export { News } from './News';
+export { Gift } from './Gift';
+export { Vote } from './Vote';

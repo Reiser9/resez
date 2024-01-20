@@ -3,6 +3,10 @@ export type LoginData = {
     password: string;
 };
 
+export type LoginWithQRData = {
+    code: string;
+};
+
 export type RegisterData = LoginData;
 
 export type RecoverySendCode = {
@@ -56,8 +60,8 @@ export type RegisterResponse = LoginResponse & {
 export type ChangePassword = {
     oldPassword: string;
     newPassword: string;
-}
+};
 
 export type VerifyChangePassword = ChangePassword & {
     code: string;
-}
+};

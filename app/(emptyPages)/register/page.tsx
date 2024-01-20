@@ -23,10 +23,10 @@ const Login = () => {
         formState: { errors },
     } = useForm<RegisterData>();
 
-    const mutation = useRegister();
+    const { isLoading, register: registerUser } = useRegister();
 
     const onSubmit: SubmitHandler<RegisterData> = (data) => {
-        mutation.mutate(data);
+        registerUser(data);
     };
 
     return (
@@ -96,7 +96,7 @@ const Login = () => {
                 </Text>
 
                 <div className={auth.contentBottomInner}>
-                    <Button loading={mutation.isPending} className={auth.contentButton}>
+                    <Button loading={isLoading} className={auth.contentButton}>
                         Зарегистрироваться
                     </Button>
 

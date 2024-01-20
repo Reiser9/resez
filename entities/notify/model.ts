@@ -1,3 +1,5 @@
+import { Paggination } from "../pagination";
+
 export type TypesLocalNotify = 'success' | 'info' | 'warn' | 'error';
 type TypesNotify = 'Сессия' | 'Информация' | 'Подарок' | 'Голосование' | 'Добавление';
 
@@ -19,3 +21,7 @@ export type Notify = {
     type: TypesNotify;
     isRead: boolean;
 };
+
+export type Notifies = Paggination & {
+    notifies: Notify[]
+}

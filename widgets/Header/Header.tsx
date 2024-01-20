@@ -83,7 +83,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <div className={styles.headerProfileWrap} onClick={toggleMenuProfile}>
                                     {isAuth ? (
                                         <>
-                                            <Badge image={user?.avatar} text={user?.nickname} dot={false} />{' '}
+                                            <Badge image={user?.avatar} text={user?.nickname} dot={false} />
                                             {/*Уведомление*/}
                                             <Text className={styles.headerProfileNick}>{user?.nickname}</Text>
                                         </>
@@ -132,7 +132,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                     </Link>
 
                                     <Link
-                                        href="/notifies"
+                                        href="/notify"
                                         className={styles.headerProfileMenuLink}
                                         onClick={closeProfileMenu}
                                     >

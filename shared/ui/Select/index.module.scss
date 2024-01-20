@@ -1,0 +1,21 @@
+.selectInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.select{
+    width: 100%;
+}
+
+.selectNotfound{
+    width: 100%;
+    text-align: center;
+    padding: 1.6rem 1.2rem;
+}
+
+.loader{
+    position: relative;
+}

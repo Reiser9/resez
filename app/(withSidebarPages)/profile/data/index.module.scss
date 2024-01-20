@@ -1,0 +1,91 @@
+div.dataItem {
+    width: calc(100% / 2 - 12px / 2);
+}
+
+@media (max-width: 1100px) {
+    div.dataItem {
+        width: 100%;
+    }
+}
+
+.dataButton {
+    margin: auto auto 0 auto;
+}
+
+.dataWrapper{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .dataWrapper{
+        flex-direction: column;
+    }
+}
+
+.dataAvatar{
+    width: 100%;
+    max-width: 200px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.4rem 1.2rem 1.2rem 1.2rem;
+    background: var(--input);
+    border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+    .dataAvatar{
+        max-width: 100%;
+    }
+}
+
+.dataAvatarOutline{
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--main);
+}
+
+.dataAvatarBackground{
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--lighten);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--main);
+    font-size: 4.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+
+.dataAvatarText{
+    text-align: center;
+    color: var(--grey);
+    margin-top: 0.8rem;
+}
+
+.dataAvatarActions{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 1.2rem;
+}
+
+@media (max-width: 900px) {
+    .dataAvatarActions{
+        max-width: 200px;
+    }
+}

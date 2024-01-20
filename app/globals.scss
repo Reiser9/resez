@@ -216,6 +216,10 @@ input::placeholder {
     font-size: 1.6rem !important;
 }
 
+.ant-select-single{
+    height: auto;
+}
+
 .ant-color-picker-input-container .ant-select-selection-item {
     font-size: unset !important;
     line-height: unset !important;
@@ -302,6 +306,7 @@ input::placeholder {
 
 .ant-select-arrow{
     margin-top: 0!important;
+    transform: translateY(-50%);
 }
 
 .ant-select .ant-select-clear {

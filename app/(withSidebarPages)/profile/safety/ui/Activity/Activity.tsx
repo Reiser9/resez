@@ -8,15 +8,14 @@ import styles from '../../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
+import { IconButton, Button } from '@/shared/ui/Button';
 import { ConfirmModal } from '@/shared/ui/Modal';
-import { IconButton } from '@/shared/ui/IconButton';
 import { Reload } from '@/shared/icons/Reload';
 import { SessionItemMini } from '@/shared/ui/SessionItem';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { SessionItemMiniSkeleton } from '@/shared/ui/Skeleton';
-import useSessions from '@/features/user/useSessions';
+import { useSessions } from '@/features/user';
 
 const Activity = () => {
     const [confirmEndAllSessions, setConfirmEndAllSessions] = React.useState<boolean>(false);

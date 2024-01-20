@@ -5,6 +5,7 @@ import Link from 'next/link';
 import cn from 'classnames';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { QRCode } from 'antd';
+import { useSearchParams } from 'next/navigation';
 
 import auth from '@/shared/styles/auth.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -12,14 +13,13 @@ import base from '@/shared/styles/base.module.scss';
 import useReload from '@/shared/hooks/useReload';
 import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
+import { IconButton, Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
-import { useLogin, useLoginWithCode } from '@/features/user';
+import { useLogin } from '@/features/user';
 import { socket } from '@/api/socket';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { Reload } from '@/shared/icons/Reload';
-import { IconButton } from '@/shared/ui/IconButton';
 import type { LoginData } from '@/entities/user';
 
 const Login = () => {
@@ -30,16 +30,17 @@ const Login = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<LoginData>();
+    const param = useSearchParams();
+    const callUrl = param.get('callUrl');
 
     const { theme } = useThemeContext();
-    const { serverIsAvailable } = useAppSelector((state) => state.app);
+    const serverIsAvailable = useAppSelector((state) => state.app.serverIsAvailable);
 
-    const mutation = useLogin();
-    const { loginWithCode } = useLoginWithCode();
+    const { isLoading, login } = useLogin();
     const { isLoadingReload, reload } = useReload();
 
     const onSubmit: SubmitHandler<LoginData> = (data) => {
-        mutation.mutate(data);
+        login(data, callUrl || '/');
     };
 
     React.useEffect(() => {
@@ -52,7 +53,7 @@ const Login = () => {
 
     React.useEffect(() => {
         socket.on('auth', (data: { code: string }) => {
-            loginWithCode(data.code);
+            login(data, callUrl || '/', true);
         });
 
         return () => {
@@ -119,7 +120,7 @@ const Login = () => {
                         <span>Быстрый вход по QR‑коду</span>
                     </p>
 
-                    {(serverIsAvailable && !isLoadingReload) ? (
+                    {serverIsAvailable && !isLoadingReload ? (
                         <QRCode
                             color={theme === 'dark' ? '#fff' : '#000'}
                             errorLevel="H"
@@ -134,7 +135,14 @@ const Login = () => {
                                 Ошибка при загрузке данных
                             </Text>
 
-                            <IconButton variant="light" circle small type="button" onClick={() => reload()} disabled={isLoadingReload}>
+                            <IconButton
+                                variant="light"
+                                circle
+                                small
+                                type="button"
+                                onClick={() => reload()}
+                                disabled={isLoadingReload}
+                            >
                                 <Reload />
                             </IconButton>
                         </div>
@@ -142,7 +150,7 @@ const Login = () => {
                 </div>
 
                 <div className={auth.contentBottomInner}>
-                    <Button loading={mutation.isPending} className={auth.contentButton}>
+                    <Button loading={isLoading} className={auth.contentButton}>
                         Войти
                     </Button>
 

@@ -50,6 +50,7 @@ const useSessions = () => {
             alertNotify('Успешно', 'Сессия завершена', 'success');
             successCallback();
         } catch {
+            alertNotify('Ошибка', 'Не удалось завершить сессию, попробуйте позже', 'error');
         } finally {
             setSessionsIsLoading((prev) => prev.filter((item) => item !== id));
         }

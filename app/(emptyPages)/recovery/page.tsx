@@ -4,22 +4,18 @@ import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 import auth from '@/shared/styles/auth.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import useAlert from '@/shared/hooks/useAlert';
 import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 import { BackButton } from '@/shared/ui/BackButton';
-import { recoveryChangePassword, recoverySendCode, recoveryVerifyCode } from '@/features/user/auth';
 import type { RecoverySendCode, RecoveryVerifyCode, RecoveryChangePassword } from '@/entities/user';
-import type { Error } from '@/api/types';
+import useRecovery from '@/features/user/auth/useRecovery';
 
 const RememberedPassword = () => {
     return (
@@ -49,62 +45,33 @@ const Recovery = () => {
     const [nickname, setNickname] = React.useState<string>('');
     const [code, setCode] = React.useState<string>('');
 
-    const { alertNotify } = useAlert();
+    const { isLoading, sendCode, verifyCode, changePassword } = useRecovery();
 
-    const mutationSendCode = useMutation({
-        mutationFn: recoverySendCode,
-        onSuccess: () => {
-            alertNotify('Успешно', 'Для восстановления пароля вам отправлен код подтверждения', 'success');
+    const onSubmitSendCode: SubmitHandler<RecoverySendCode> = (data) => {
+        sendCode(data, () => {
             setStep(2);
             setNickname(watch('nickname'));
             reset();
-        },
-        onError: (error: AxiosError<Error>) => {
-            alertNotify('Ошибка', error?.response?.data?.message || 'Произошла ошибка, попробуйте позже', 'error');
-        },
-    });
-
-    const mutationVerifyCode = useMutation({
-        mutationFn: recoveryVerifyCode,
-        onSuccess: () => {
-            alertNotify('Успешно', 'Придумайте новый пароль', 'success');
-            setStep(3);
-            setCode(watch('code'));
-            reset();
-        },
-        onError: (error: AxiosError<Error>) => {
-            alertNotify('Ошибка', error?.response?.data?.message || 'Произошла ошибка, попробуйте позже', 'error');
-        },
-    });
-
-    const mutationChangePassword = useMutation({
-        mutationFn: recoveryChangePassword,
-        onSuccess: () => {
-            alertNotify('Успешно', 'Пароль изменен', 'success');
-            router.push('login');
-        },
-        onError: (error: AxiosError<Error>) => {
-            alertNotify('Ошибка', error?.response?.data?.message || 'Произошла ошибка, попробуйте позже', 'error');
-        },
-    });
-
-    const onSubmitSendCode: SubmitHandler<RecoverySendCode> = (data) => {
-        mutationSendCode.mutate(data);
+        });
     };
 
     const onSubmitVerifyCode: SubmitHandler<RecoveryVerifyCode> = (data) => {
-        mutationVerifyCode.mutate({ ...data, nickname });
+        verifyCode({ ...data, nickname }, () => {
+            setStep(3);
+            setCode(watch('code'));
+            reset();
+        });
     };
 
     const onSubmitChangePassword: SubmitHandler<RecoveryChangePassword> = (data) => {
-        mutationChangePassword.mutate({ ...data, nickname, code });
+        changePassword({ ...data, nickname, code }, () => router.push('login'));
     };
 
     return (
         <AuthFormsWrapper>
             <div className={auth.form}>
                 <div className={auth.titleInner}>
-                    {step > 1 && <BackButton disabled={mutationVerifyCode.isPending || mutationChangePassword.isPending} onClick={() => setStep(1)} />}
+                    {step > 1 && <BackButton disabled={isLoading} onClick={() => setStep(1)} />}
 
                     <Text variant="h2">Восстановление пароля</Text>
                 </div>
@@ -134,7 +101,7 @@ const Recovery = () => {
                         </div>
 
                         <div className={auth.contentBottomInner}>
-                            <Button loading={mutationSendCode.isPending} className={auth.contentButton}>
+                            <Button loading={isLoading} className={auth.contentButton}>
                                 Восстановить
                             </Button>
 
@@ -165,7 +132,7 @@ const Recovery = () => {
                         </div>
 
                         <div className={auth.contentBottomInner}>
-                            <Button loading={mutationVerifyCode.isPending} className={auth.contentButton}>
+                            <Button loading={isLoading} className={auth.contentButton}>
                                 Отправить
                             </Button>
 
@@ -203,7 +170,7 @@ const Recovery = () => {
                         </div>
 
                         <div className={auth.contentBottomInner}>
-                            <Button loading={mutationChangePassword.isPending} className={auth.contentButton}>
+                            <Button loading={isLoading} className={auth.contentButton}>
                                 Изменить пароль
                             </Button>
 

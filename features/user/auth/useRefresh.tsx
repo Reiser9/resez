@@ -13,12 +13,13 @@ const useRefresh = () => {
         try {
             setIsLoading(true);
             const data = await request<{ accessToken: string }>({ url: '/auth/refresh', isAuth: true });
-            setIsLoading(false);
 
             localStorage.setItem('accessToken', data.data.accessToken);
             return data.data.accessToken;
         } catch (error) {
             console.log('Ошибка', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 

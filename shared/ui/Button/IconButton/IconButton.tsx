@@ -4,7 +4,7 @@ import cn from 'classnames';
 
 import styles from './index.module.scss';
 
-type Props = {
+export type IconButtonProps = {
     variant?: 'default' | 'light' | 'danger' | 'warn';
     disabled?: boolean;
     full?: boolean;
@@ -12,11 +12,11 @@ type Props = {
     circle?: boolean;
     href?: string;
     className?: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement> &
     AnchorHTMLAttributes<HTMLAnchorElement>;
 
-const IconButton: React.FC<Props> = ({
+const IconButton: React.FC<IconButtonProps> = ({
     variant = 'default',
     disabled = false,
     full = false,

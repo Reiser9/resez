@@ -15,7 +15,7 @@ const useChangePassword = () => {
     const changePassword = async (data: ChangePassword, successCallback: () => void = () => {}) => {
         try {
             setIsLoading(true);
-            const response = await request({
+            await request({
                 url: '/user/send-change-password-code',
                 isAuth: true,
                 data,
@@ -25,7 +25,6 @@ const useChangePassword = () => {
             alertNotify('Подтверждение', 'Вам выслан код подтверждения, пожалуйста, введите его', 'info');
             successCallback();
         } catch (err) {
-
             alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
         } finally {
             setIsLoading(false);
@@ -35,7 +34,7 @@ const useChangePassword = () => {
     const verifyChangePassword = async (data: VerifyChangePassword, successCallback: () => void = () => {}) => {
         try {
             setIsLoading(true);
-            const response = await request({
+            await request({
                 url: '/user/verify-change-password-code',
                 isAuth: true,
                 data,

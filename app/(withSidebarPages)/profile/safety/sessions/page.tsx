@@ -1,21 +1,20 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
 import { BackButton } from '@/shared/ui/BackButton';
 import { Text } from '@/shared/ui/Text';
 import { SessionItem } from '@/shared/ui/SessionItem';
-import useSessions from '@/features/user/useSessions';
+import { useSessions } from '@/features/user';
 import { Reload } from '@/shared/icons/Reload';
-import { IconButton } from '@/shared/ui/IconButton';
+import { IconButton, Button } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { useLogout } from '@/features/user';
 import { SessionItemSkeleton } from '@/shared/ui/Skeleton';
-import { Button } from '@/shared/ui/Button';
 
 const ProfileSessions = () => {
     const { sessionsIsLoading, getPaginationSessions, endSessionById } = useSessions();
@@ -28,7 +27,7 @@ const ProfileSessions = () => {
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage.isLast ? allPages.length : undefined;
-            
+
             return nextPage;
         },
     });
@@ -86,9 +85,11 @@ const ProfileSessions = () => {
                 </div>
             )}
 
-            {hasNextPage && <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                Показать еще
-            </Button>}
+            {hasNextPage && (
+                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
+                    Показать еще
+                </Button>
+            )}
         </div>
     );
 };

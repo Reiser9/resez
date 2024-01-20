@@ -1,7 +1,7 @@
 import moment from 'moment';
 import 'moment/locale/ru';
 
-export const formatDate = (date: Date, format = "D MMMM в HH:mm") => {
+export const formatDate = (date?: Date, format = "D MMMM в HH:mm") => {
     if(!date){
         return date;
     }

@@ -1,8 +1,4 @@
-export type Paggination = {
-    elementsCount: number;
-    totalCount: number;
-    isLast: boolean;
-}
+import { Paggination } from "../pagination";
 
 export type Session = {
     browser: string;
