@@ -74,6 +74,8 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                             [styles.error]: isError,
                         })}
                         maxLength={lengthLimit}
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
                         {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
                     ></textarea>
                 );
@@ -90,6 +92,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     maxLength={lengthLimit}
                     placeholder={placeholder}
                     type={show ? 'text' : type}
+                    value={value}
                     onChange={(e) => setValue(e.target.value)}
                     {...(props as InputHTMLAttributes<HTMLInputElement>)}
                 />

@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export type LoginData = {
     nickname: string;
     password: string;
@@ -31,6 +33,11 @@ export type Permission = {
     permission: string;
 };
 
+export type Settings = {
+    isPrivateAccount?: boolean;
+    isHideAvatars?: boolean;
+};
+
 export type User = {
     id: number;
     nickname: string;
@@ -39,6 +46,16 @@ export type User = {
     avatar: string | null;
     level: number;
     permissions: Permission[];
+    unreadNotifiesCount: number;
+    settings: Settings;
+};
+
+export type ProfileInfo = {
+    birthDate: Dayjs | null;
+    id?: number;
+    firstName: string | null;
+    lastName: string | null;
+    gender: 'Мужской' | 'Женский' | null;
 };
 
 export type UserShortInfo = {

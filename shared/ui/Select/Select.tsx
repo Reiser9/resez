@@ -16,8 +16,8 @@ type Option = {
 
 type Props = {
     placeholder?: string;
-    value: boolean | null;
-    setValue: (value: boolean) => void;
+    value: "Мужской" | "Женский" | null;
+    setValue: (value: "Мужской" | "Женский") => void;
     options: Option[];
     loading?: boolean;
     showSearch?: boolean;

@@ -12,5 +12,7 @@ export type {
     Permission,
     VerifyChangePassword,
     ChangePassword,
-    LoginWithQRData
+    LoginWithQRData,
+    Settings,
+    ProfileInfo,
 } from './model';

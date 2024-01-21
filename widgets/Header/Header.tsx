@@ -34,6 +34,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const { isLoading, logout } = useLogout();
     const { isAuth, user } = useAppSelector((state) => state.user);
+    const { avatar, level, nickname, unreadNotifiesCount } = user || {};
 
     const closeProfileMenu = () => {
         setProfileMenu(false);
@@ -83,9 +84,9 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <div className={styles.headerProfileWrap} onClick={toggleMenuProfile}>
                                     {isAuth ? (
                                         <>
-                                            <Badge image={user?.avatar} text={user?.nickname} dot={false} />
-                                            {/*Уведомление*/}
-                                            <Text className={styles.headerProfileNick}>{user?.nickname}</Text>
+                                            <Badge image={avatar} text={nickname} dot={!!unreadNotifiesCount} />
+
+                                            <Text className={styles.headerProfileNick}>{nickname}</Text>
                                         </>
                                     ) : (
                                         <Badge icon={<Enter />} />
@@ -106,12 +107,10 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <>
                                     <div className={styles.headerProfileMenuInfo}>
                                         <div className={styles.headerProfileMenuData}>
-                                            <Badge image={user?.avatar} text={user?.nickname} />
+                                            <Badge image={avatar} text={nickname} />
 
                                             <div className={styles.headerProfileMenuNameInner}>
-                                                <Text textClassName={styles.headerProfileMenuName}>
-                                                    {user?.nickname}
-                                                </Text>
+                                                <Text textClassName={styles.headerProfileMenuName}>{nickname}</Text>
 
                                                 <Text variant="text2" textClassName={styles.headerProfileMenuStatus}>
                                                     Новичок
@@ -119,7 +118,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                             </div>
                                         </div>
 
-                                        <div className={styles.headerProfileLvl}>{user?.level}</div>
+                                        <div className={styles.headerProfileLvl}>{level}</div>
                                     </div>
 
                                     <Link
@@ -138,7 +137,11 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                     >
                                         <Notify />
                                         Уведомления
-                                        <span className={styles.headerProfileNotifyCount}>2</span>
+                                        {!!unreadNotifiesCount && (
+                                            <span className={styles.headerProfileNotifyCount}>
+                                                {unreadNotifiesCount}
+                                            </span>
+                                        )}
                                     </Link>
 
                                     <Link
@@ -171,7 +174,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
 
                             {isAuth && (
                                 <div
-                                    className={`${styles.headerProfileMenuLink} ${styles.delete}`}
+                                    className={cn(styles.headerProfileMenuLink, styles.delete)}
                                     onClick={() => {
                                         closeProfileMenu();
                                         setConfirmLogout(true);

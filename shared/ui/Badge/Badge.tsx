@@ -21,7 +21,7 @@ const Badge: React.FC<Props> = ({ text, image, icon, dot = false, size = 'normal
             {...props}
         >
             {image ? (
-                <Image src={image} alt="Аватар" className={styles.badgeImg} />
+                <Image src={image} alt="Аватар" className={styles.badgeImg} fill />
             ) : (
                 text && <p className={styles.badgeText}>{text ? text[0] : 'No'}</p>
             )}
