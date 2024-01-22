@@ -59,9 +59,8 @@ const ProfileData = () => {
                 formData.append('avatar', e.target.files[0]);
             }
 
-            updateAvatar(formData, () => {
-                e.target.value = '';
-            });
+            updateAvatar(formData);
+            e.target.value = '';
         };
     };
 

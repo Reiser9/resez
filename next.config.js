@@ -6,6 +6,15 @@ const nextConfig = {
         includePaths: [path.join(__dirname, 'styles')],
     },
     reactStrictMode: false,
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '8080'
+            },
+        ],
+    },
 };
 
 module.exports = nextConfig;
