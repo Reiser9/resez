@@ -1,4 +1,5 @@
-import { Dayjs } from "dayjs";
+import { Dayjs } from 'dayjs';
+import { Paggination } from '../pagination';
 
 export type LoginData = {
     nickname: string;
@@ -48,6 +49,35 @@ export type User = {
     permissions: Permission[];
     unreadNotifiesCount: number;
     settings: Settings;
+};
+
+export type Role = {
+    id: number;
+    role: string;
+    textColor: string;
+    backgroundColor: string;
+};
+
+export type UserAdmin = {
+    id: number;
+    nickname: string;
+    isVerified: boolean;
+    isBlocked: boolean;
+    avatar: string | null;
+    level: number;
+    firstName: string;
+    lastName: string;
+    registrationDate: Date;
+    isOnline: boolean;
+    lastActivity: Date;
+    status: string;
+    xp: number;
+    xpLimit: number;
+    roles: Role[];
+};
+
+export type UsersAdmin = Paggination & {
+    users: UserAdmin[];
 };
 
 export type ProfileInfo = {

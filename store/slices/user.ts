@@ -43,6 +43,11 @@ export const userSlice = createSlice({
                 state.user.settings = { ...state.user.settings, ...action.payload };
             }
         },
+        setUserBlocked: (state, action: PayloadAction<boolean>) => {
+            if (state.user) {
+                state.user.isBlocked = action.payload;
+            }
+        },
         setUserData: (state) => {
             state.isAuth = false;
             state.user = null;
@@ -60,6 +65,7 @@ export const {
     initVerificationCodeData,
     initSessionId,
     setUserSettings,
+    setUserBlocked,
     setUserData,
 } = userSlice.actions;
 

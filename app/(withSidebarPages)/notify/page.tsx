@@ -11,7 +11,7 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { NotifyItem } from '@/shared/ui/Notify';
 import useNotify from '@/features/notify/useNotify';
-import NotifyItemSkeleton from '@/shared/ui/Skeleton/NotifyItemSkeleton';
+import { NotifyItemSkeleton } from '@/shared/ui/Skeleton';
 
 const NotifyPage = () => {
     const { notifyIsLoading, getPaginationNotifies, readNotifyById } = useNotify();

@@ -8,6 +8,7 @@ import { socket } from '@/api/socket';
 import { useAppDispatch, useAppSelector } from './useRedux';
 import useNotify from './useAlert';
 import useRequest from './useRequest';
+import { setUserBlocked } from '@/store/slices/user';
 
 const useSocket = () => {
     const { isAuth, user, sessionId } = useAppSelector((state) => state.user);
@@ -32,18 +33,18 @@ const useSocket = () => {
         //     alertNotify("Информация", "Новое уведомление", "info", "/notifies", 4000);
         // });
 
-        socket.on('endSession', () => {
+        socket.on('end-session', () => {
             clearLocalData();
             alertNotify('Сессия завершена', 'Кто-то завершил вашу сессию', 'error');
         });
 
-        // socket.on("blocked", () => {
-        //     dispatch(setUserBlocked(true));
-        // });
+        socket.on("blocked", () => {
+            dispatch(setUserBlocked(true));
+        });
 
-        // socket.on("unblocked", () => {
-        //     dispatch(setUserBlocked(false));
-        // });
+        socket.on("unblocked", () => {
+            dispatch(setUserBlocked(false));
+        });
 
         // socket.on("new-permissions", (data) => {
         //     dispatch(updatePermissions(data.permissions));

@@ -30,3 +30,30 @@
     display: flex;
     height: 145px;
 }
+
+.userAdminItem{
+    width: calc(100% / 3 - 24px / 3);
+    height: 320px;
+    display: flex;
+}
+
+@media (max-width: 1230px) {
+    .userAdminItem{
+        width: calc(100% / 2 - 12px / 2);
+    }
+}
+@media (max-width: 950px) {
+    .userAdminItem{
+        width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .userAdminItem{
+        width: calc(100% / 2 - 12px / 2);
+    }
+}
+@media (max-width: 700px) {
+    .userAdminItem{
+        width: 100%;
+    }
+}

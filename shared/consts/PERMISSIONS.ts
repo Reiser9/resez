@@ -2,7 +2,7 @@ export const PERMISSIONS = {
     ADMIN: 'Админка',
     USERS: 'Пользователи',
     BLOCK_USERS: 'Блокировка пользователей',
-    NOTIFIES: 'Отпрака уведомлений',
+    NOTIFIES: 'Отправка уведомлений',
     ROLES: 'Роли',
     CREATE_ROLES: 'Создание ролей',
     UPDATE_ROLES: 'Редактирование ролей',

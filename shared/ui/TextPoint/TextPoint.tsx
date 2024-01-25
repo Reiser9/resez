@@ -9,7 +9,7 @@ import { Text } from '../Text';
 
 type Props = {
     title: string;
-    text: string;
+    text?: string;
     blur?: boolean;
     className?: string;
     children?: React.ReactNode

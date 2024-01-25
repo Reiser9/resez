@@ -15,7 +15,7 @@ import { Button } from '@/shared/ui/Button';
 import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
-import { Editor } from '@/shared/ui/Editor';
+// import { Editor } from '@/shared/ui/Editor';
 
 const AdminNotifies = () => {
     const [title, setTitle] = React.useState<string>('');
@@ -203,8 +203,7 @@ const AdminNotifies = () => {
                     })}
                 />*/}
 
-                {/* @ts-ignore */}
-                <Editor placeholder="Сообщение" ref={editorRef} id="notifyEditor" />
+                {/* <Editor placeholder="Сообщение" ref={editorRef} id="notifyEditor" /> */}
             </div>
         </div>
     );

@@ -80,3 +80,5 @@ export { Lvl75 } from './achievements/Lvl75';
 export { Lvl100 } from './achievements/Lvl100';
 export { Task10 } from './achievements/Task10';
 export { Paintbruh } from './Paintbruh';
+export { Verified } from './Verified';
+export { Stop } from './Stop';

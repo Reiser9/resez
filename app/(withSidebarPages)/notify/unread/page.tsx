@@ -11,7 +11,7 @@ import { Cross } from '@/shared/icons';
 import { Button } from '@/shared/ui/Button';
 import { NotifyItem } from '@/shared/ui/Notify';
 import useNotify from '@/features/notify/useNotify';
-import NotifyItemSkeleton from '@/shared/ui/Skeleton/NotifyItemSkeleton';
+import { NotifyItemSkeleton } from '@/shared/ui/Skeleton';
 
 const UnreadNotifyPage = () => {
     const { isLoading, notifyIsLoading, getPaginationNotifies, readNotifyById, readAllNotifies } = useNotify();
@@ -44,7 +44,7 @@ const UnreadNotifyPage = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Уведомления{' '}
+                    Уведомления
                     {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
