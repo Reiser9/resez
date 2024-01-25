@@ -2,30 +2,33 @@
 
 import React from 'react';
 
-import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { setUserData } from '@/store/slices/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useLogout = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController, clearLocalData } = useRequest();
 
-    const logout = async (successCallback: () => void = () => {}) => {
+    const logout = async (successCallback: () => void = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            await request({ url: '/auth/logout', isAuth: true });
+            const response = await request({
+                url: '/auth/logout',
+                isAuth: true,
+            });
+
+            if (catchRequestError(response)) {
+                return errorController(response, () => logout(successCallback));
+            }
 
             alertNotify('Успешно', 'Вы вышли с аккаунта', 'success');
 
-            dispatch(setUserData());
-            localStorage.removeItem('accessToken');
+            clearLocalData();
             successCallback();
         } catch (error) {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }

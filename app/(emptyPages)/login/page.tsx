@@ -5,7 +5,6 @@ import Link from 'next/link';
 import cn from 'classnames';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { QRCode } from 'antd';
-import { useSearchParams } from 'next/navigation';
 
 import auth from '@/shared/styles/auth.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -30,8 +29,6 @@ const Login = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<LoginData>();
-    const param = useSearchParams();
-    const callUrl = param.get('callUrl');
 
     const { theme } = useThemeContext();
     const serverIsAvailable = useAppSelector((state) => state.app.serverIsAvailable);
@@ -40,7 +37,7 @@ const Login = () => {
     const { isLoadingReload, reload } = useReload();
 
     const onSubmit: SubmitHandler<LoginData> = (data) => {
-        login(data, callUrl || '/');
+        login(data);
     };
 
     React.useEffect(() => {
@@ -53,7 +50,7 @@ const Login = () => {
 
     React.useEffect(() => {
         socket.on('auth', (data: { code: string }) => {
-            login(data, callUrl || '/', true);
+            login(data, '', true);
         });
 
         return () => {

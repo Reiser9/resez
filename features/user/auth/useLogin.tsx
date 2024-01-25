@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 import useAlert from '@/shared/hooks/useAlert';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
@@ -12,12 +12,11 @@ import type { LoginData, LoginResponse, LoginWithQRData } from '@/entities/user'
 const useLogin = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    const router = useRouter();
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
 
-    const login = async (data?: LoginData | LoginWithQRData, callUrl = '/', withQr = false) => {
+    const login = async (data?: LoginData | LoginWithQRData, callUrl = '/', withQr = false): Promise<void> => {
         try {
             setIsLoading(true);
 
@@ -34,20 +33,26 @@ const useLogin = () => {
                 });
             }
 
-            dispatch(setIsAuth(true));
-            dispatch(initUser(response.data.user));
-            dispatch(initSessionId(response.data.sessionId));
-
-            if (response.data.verificationCodeData) {
-                dispatch(initVerificationCodeData(response.data.verificationCodeData));
+            if (catchRequestError(response)) {
+                return errorController(response);
             }
 
-            localStorage.setItem('accessToken', response.data.accessToken);
+            if ('data' in response) {
+                dispatch(setIsAuth(true));
+                dispatch(initUser(response.data.user));
+                dispatch(initSessionId(response.data.sessionId));
+
+                if (response.data.verificationCodeData) {
+                    dispatch(initVerificationCodeData(response.data.verificationCodeData));
+                }
+
+                localStorage.setItem('accessToken', response.data.accessToken);
+            }
 
             alertNotify('Успешно', 'Вы авторизовались', 'success');
-            router.push(callUrl);
+            redirect(callUrl);
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }

@@ -3,18 +3,17 @@
 import React from 'react';
 
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, setIsAuth, setUserData } from '@/store/slices/user';
+import { initSessionId, initUser, setIsAuth } from '@/store/slices/user';
 import { UserShortInfo } from '@/entities/user';
 import { setAppIsLoading, setAuthIsLoading } from '@/store/slices/app';
 import useRequest from '@/shared/hooks/useRequest';
-import useAlert from '@/shared/hooks/useAlert';
 
 const useCheckAuth = () => {
     const dispatch = useAppDispatch();
-    const { request, clearLocalData, getHealthServer } = useRequest();
-    const { alertNotify } = useAlert();
+    const { request, clearLocalData, getHealthServer, catchRequestError, errorController } = useRequest();
 
-    const checkAuth = async () => {
+    // Refactoring
+    const checkAuth = async (): Promise<void> => {
         try {
             await getHealthServer();
             const accessToken = localStorage.getItem('accessToken');
@@ -26,18 +25,27 @@ const useCheckAuth = () => {
             dispatch(setAuthIsLoading(true));
             const refresh = await request<{ accessToken: string }>({ url: '/auth/refresh' });
 
-            localStorage.setItem('accessToken', refresh.data.accessToken);
+            if (catchRequestError(refresh)) {
+                return errorController(refresh, checkAuth, '', clearLocalData);
+            }
+
+            if ('data' in refresh) {
+                localStorage.setItem('accessToken', refresh.data.accessToken);
+            }
 
             const data = await request<UserShortInfo>({ url: '/user/short-info', isAuth: true });
 
-            dispatch(setIsAuth(true));
-            dispatch(initUser(data.data.user));
-            dispatch(initSessionId(data.data.sessionId));
+            if (catchRequestError(data)) {
+                return errorController(data, checkAuth, '', clearLocalData);
+            }
+
+            if ('data' in data) {
+                dispatch(setIsAuth(true));
+                dispatch(initUser(data.data.user));
+                dispatch(initSessionId(data.data.sessionId));
+            }
         } catch (error) {
-            dispatch(setUserData());
-            localStorage.removeItem('accessToken');
-            
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             dispatch(setAppIsLoading(false));
             dispatch(setAuthIsLoading(false));

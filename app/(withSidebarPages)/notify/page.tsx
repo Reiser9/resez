@@ -22,7 +22,7 @@ const NotifyPage = () => {
         queryFn: getPaginationNotifies,
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage.isLast ? allPages.length : undefined;
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
 
             return nextPage;
         },
@@ -44,7 +44,8 @@ const NotifyPage = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Уведомления {!isPending && data?.pages[0].totalCount !== 0 && `(${data?.pages[0].totalCount})`}
+                    Уведомления
+                    {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -58,12 +59,12 @@ const NotifyPage = () => {
                 </div>
             ) : error ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data?.pages[0].totalCount === 0 ? (
+            ) : data?.pages[0]?.totalCount === 0 ? (
                 <NotContent text="Уведомлений не найдено" />
             ) : (
                 <div className={base.contentItems}>
                     {data?.pages.map((session) =>
-                        session.notifies.map((data) => (
+                        session?.notifies.map((data) => (
                             <NotifyItem
                                 key={data.id}
                                 data={data}

@@ -10,63 +10,72 @@ const useRecovery = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const { alertNotify } = useAlert();
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
 
-    const sendCode = async (data: RecoverySendCode, successCallback = () => {}) => {
+    const sendCode = async (data: RecoverySendCode, successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            await request<RecoverySendCode>({
+            const response = await request<RecoverySendCode>({
                 url: '/auth/send-recovery-password-code',
                 isAuth: true,
                 method: 'POST',
                 data,
             });
 
-            successCallback();
+            if (catchRequestError(response)) {
+                return errorController(response, () => sendCode(data, successCallback));
+            }
 
+            successCallback();
             alertNotify('Успешно', 'Для восстановления пароля вам отправлен код подтверждения', 'success');
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }
     };
 
-    const verifyCode = async (data: RecoveryVerifyCode, successCallback = () => {}) => {
+    const verifyCode = async (data: RecoveryVerifyCode, successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            await request<RecoveryVerifyCode>({
+            const response = await request<RecoveryVerifyCode>({
                 url: '/auth/verify-recovery-password-code',
                 isAuth: true,
                 method: 'POST',
                 data,
             });
 
-            successCallback();
+            if (catchRequestError(response)) {
+                return errorController(response, () => verifyCode(data, successCallback));
+            }
 
+            successCallback();
             alertNotify('Успешно', 'Придумайте новый пароль', 'success');
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }
     };
 
-    const changePassword = async (data: RecoveryChangePassword, successCallback = () => {}) => {
+    const changePassword = async (data: RecoveryChangePassword, successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            await request<RecoveryChangePassword>({
+            const response = await request<RecoveryChangePassword>({
                 url: '/auth/recovery-password',
                 isAuth: true,
                 method: 'PATCH',
                 data,
             });
 
-            successCallback();
+            if (catchRequestError(response)) {
+                return errorController(response, () => changePassword(data, successCallback));
+            }
 
+            successCallback();
             alertNotify('Успешно', 'Пароль изменен', 'success');
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }

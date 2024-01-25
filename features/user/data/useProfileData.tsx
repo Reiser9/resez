@@ -14,26 +14,33 @@ const useProfileData = () => {
 
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
 
-    const getProfileData = async (successCallback = () => {}) => {
+    const getProfileData = async (successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            const data = await request<{ user: ProfileInfo }>({
+            const response = await request<{ user: ProfileInfo }>({
                 url: '/user/profile-info',
                 isAuth: true,
             });
 
+            if (catchRequestError(response)) {
+                return errorController(response, () => getProfileData(successCallback));
+            }
+
+            if ('data' in response) {
+                dispatch(initProfileInfo(response.data.user));
+            }
+
             successCallback();
-            dispatch(initProfileInfo(data.data.user));
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }
     };
 
-    const saveProfileData = async (data: ProfileInfo, successCallback = () => {}) => {
+    const saveProfileData = async (data: ProfileInfo, successCallback = () => {}): Promise<void> => {
         try {
             setDataIsSaving(true);
             const response = await request<{ user: ProfileInfo }>({
@@ -43,11 +50,18 @@ const useProfileData = () => {
                 data,
             });
 
+            if (catchRequestError(response)) {
+                return errorController(response, () => saveProfileData(data, successCallback));
+            }
+
+            if ('data' in response) {
+                dispatch(initProfileInfo(response.data.user));
+            }
+
             successCallback();
-            dispatch(initProfileInfo(response.data.user));
             alertNotify('Успешно', 'Данные сохранены', 'success');
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setDataIsSaving(false);
         }

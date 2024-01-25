@@ -21,9 +21,9 @@ const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
         return <Preloader />;
     }
 
-    // if (!serverIsAvailable) {
-    //     return <ServerNotAvailable />;
-    // }
+    if (!serverIsAvailable) {
+        return <ServerNotAvailable />;
+    }
 
     if (user?.isBlocked) {
         return <Ban />;

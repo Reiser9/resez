@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import useAlert from '@/shared/hooks/useAlert';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 import useRequest from '@/shared/hooks/useRequest';
 import { Settings } from '@/entities/user';
@@ -12,10 +11,9 @@ const useSettings = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const dispatch = useAppDispatch();
-    const { request } = useRequest();
-    const { alertNotify } = useAlert();
+    const { request, catchRequestError, errorController } = useRequest();
 
-    const updateSettings = async (data: Settings) => {
+    const updateSettings = async (data: Settings): Promise<void> => {
         try {
             setIsLoading(true);
             const response = await request<{ settings: Settings }>({
@@ -25,9 +23,15 @@ const useSettings = () => {
                 data,
             });
 
-            dispatch(setUserSettings(response.data.settings));
+            if (catchRequestError(response)) {
+                return errorController(response, () => updateSettings(data));
+            }
+
+            if ('data' in response) {
+                dispatch(setUserSettings(response.data.settings));
+            }
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }

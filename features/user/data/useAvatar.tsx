@@ -11,11 +11,11 @@ import useRequest from '@/shared/hooks/useRequest';
 const useAvatar = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
     const dispatch = useAppDispatch();
 
-    const updateAvatar = async (formData: FormData, successCallback = () => {}) => {
+    const updateAvatar = async (formData: FormData, successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
             const response = await request<{ user: User }>({
@@ -28,17 +28,24 @@ const useAvatar = () => {
                 },
             });
 
+            if (catchRequestError(response)) {
+                return errorController(response, () => updateAvatar(formData, successCallback));
+            }
+
+            if ('data' in response) {
+                dispatch(initUser(response.data.user));
+            }
+
             successCallback();
-            dispatch(initUser(response.data.user));
             alertNotify('Успешно', 'Изображение загружено', 'success');
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }
     };
 
-    const deleteAvatar = async (successCallback = () => {}) => {
+    const deleteAvatar = async (successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
             const response = await request<{ user: User }>({
@@ -47,11 +54,18 @@ const useAvatar = () => {
                 method: 'DELETE',
             });
 
+            if (catchRequestError(response)) {
+                return errorController(response, () => deleteAvatar(successCallback));
+            }
+
+            if ('data' in response) {
+                dispatch(initUser(response.data.user));
+            }
+
             successCallback();
-            dispatch(initUser(response.data.user));
             alertNotify('Успешно', 'Аватарка удалена', 'success');
         } catch {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }

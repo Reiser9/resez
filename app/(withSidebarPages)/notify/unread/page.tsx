@@ -22,7 +22,7 @@ const UnreadNotifyPage = () => {
         queryFn: (data) => getPaginationNotifies(data, true),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage.isLast ? allPages.length : undefined;
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
 
             return nextPage;
         },
@@ -44,7 +44,8 @@ const UnreadNotifyPage = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Уведомления {!isPending && data?.pages[0].totalCount !== 0 && `(${data?.pages[0].totalCount})`}
+                    Уведомления{' '}
+                    {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
                 <Button
@@ -52,7 +53,7 @@ const UnreadNotifyPage = () => {
                     variant="light"
                     onClick={readAllNotifiesHandler}
                     loading={isLoading}
-                    disabled={!data?.pages[0].totalCount}
+                    disabled={!data?.pages[0]?.totalCount}
                 >
                     Прочитать все
                 </Button>
@@ -66,12 +67,12 @@ const UnreadNotifyPage = () => {
                 </div>
             ) : error ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data?.pages[0].totalCount === 0 ? (
+            ) : data?.pages[0]?.totalCount === 0 ? (
                 <NotContent text="Уведомлений не найдено" />
             ) : (
                 <div className={base.contentItems}>
                     {data?.pages.map((session) =>
-                        session.notifies.map((data) => (
+                        session?.notifies.map((data) => (
                             <NotifyItem
                                 key={data.id}
                                 data={data}

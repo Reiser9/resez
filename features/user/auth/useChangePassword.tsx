@@ -10,41 +10,52 @@ const useChangePassword = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     const { alertNotify } = useAlert();
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
 
-    const changePassword = async (data: ChangePassword, successCallback: () => void = () => {}) => {
+    const changePassword = async (data: ChangePassword, successCallback: () => void = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            await request({
+            const response = await request({
                 url: '/user/send-change-password-code',
                 isAuth: true,
                 data,
                 method: 'POST',
             });
 
+            if (catchRequestError(response)) {
+                return errorController(response, () => changePassword(data, successCallback));
+            }
+
             alertNotify('Подтверждение', 'Вам выслан код подтверждения, пожалуйста, введите его', 'info');
             successCallback();
         } catch (err) {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }
     };
 
-    const verifyChangePassword = async (data: VerifyChangePassword, successCallback: () => void = () => {}) => {
+    const verifyChangePassword = async (
+        data: VerifyChangePassword,
+        successCallback: () => void = () => {},
+    ): Promise<void> => {
         try {
             setIsLoading(true);
-            await request({
+            const response = await request({
                 url: '/user/verify-change-password-code',
                 isAuth: true,
                 data,
                 method: 'PATCH',
             });
 
+            if (catchRequestError(response)) {
+                return errorController(response, () => verifyChangePassword(data, successCallback));
+            }
+
             alertNotify('Успешно', 'Пароль изменен', 'success');
             successCallback();
         } catch (err) {
-            alertNotify('Ошибка', 'Произошла ошибка, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }

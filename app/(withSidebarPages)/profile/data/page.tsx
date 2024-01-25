@@ -1,7 +1,8 @@
 'use client';
 
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import dayjs, { Dayjs } from 'dayjs';
 
 import base from '@/shared/styles/base.module.scss';
@@ -9,21 +10,21 @@ import styles from './index.module.scss';
 
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
+import { Button, IconButton } from '@/shared/ui/Button';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { Select } from '@/shared/ui/Select';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import useProfileData from '@/features/user/data/useProfileData';
+import { useProfileData, useAvatar } from '@/features/user';
 import { Preloader } from '@/shared/ui/Preloader';
-import useAvatar from '@/features/user/data/useAvatar';
+import { Upload, Delete, Paintbruh } from '@/shared/icons';
+import { File } from '@/shared/ui/File';
 
 const ProfileData = () => {
     const [name, setName] = React.useState<string>('');
     const [surname, setSurname] = React.useState<string>('');
     const [birthday, setBirthday] = React.useState<Dayjs | null>(null);
     const [sex, setSex] = React.useState<'Мужской' | 'Женский' | null>(null);
-    const [img, setImg] = React.useState<File | null>(null);
-    const [imgPreview, setImgPreview] = React.useState<string | ArrayBuffer | null>(null);
+    const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
 
     const { isLoading, dataIsSaving, getProfileData, saveProfileData } = useProfileData();
     const { isLoading: avatarLoading, deleteAvatar, updateAvatar } = useAvatar();
@@ -40,29 +41,13 @@ const ProfileData = () => {
         });
     };
 
-    const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || !e.target.files[0]) {
-            return;
-        }
-
-        setImg(e.target.files[0]);
-
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(e.target.files[0]);
-
-        fileReader.onloadend = () => {
-            setImgPreview(fileReader.result);
-
+    React.useEffect(() => {
+        if (avatarFile) {
             let formData = new FormData();
-
-            if (e.target.files) {
-                formData.append('avatar', e.target.files[0]);
-            }
-
+            formData.append('avatar', avatarFile);
             updateAvatar(formData);
-            e.target.value = '';
-        };
-    };
+        }
+    }, [avatarFile]);
 
     React.useEffect(() => {
         if (profileInfo) {
@@ -85,13 +70,27 @@ const ProfileData = () => {
 
     return (
         <div className={base.baseWrapperGap16}>
-            <Text variant="h3">Личные данные</Text>
+            <div className={base.titleInner}>
+                <Text variant="h3">Личные данные</Text>
+
+                <Button auto variant="light" loading={dataIsSaving} onClick={saveData}>
+                    Сохранить
+                </Button>
+            </div>
 
             <div className={styles.dataWrapper}>
                 <div className={styles.dataAvatar}>
                     <div className={styles.dataAvatarOutline}>
                         <div className={styles.dataAvatarBackground}>
-                            {avatar ? <Image src={avatar} alt="Аватар" fill /> : nickname ? nickname[0] : 'No'}
+                            {avatar ? (
+                                <Image src={avatar} alt="Аватар" fill className={styles.dataAvatarImg} />
+                            ) : nickname ? (
+                                nickname[0]
+                            ) : (
+                                'No'
+                            )}
+
+                            {avatarLoading && <Preloader small />}
                         </div>
                     </div>
 
@@ -100,86 +99,111 @@ const ProfileData = () => {
                     </Text>
 
                     <div className={styles.dataAvatarActions}>
-                        <input
-                            id="avatar"
-                            type="file"
-                            className={styles.file}
-                            accept={'image/png, image/jpeg, image/svg+xml'}
-                            onChange={onInputChange}
-                        />
+                        <File id="avatar" setFile={setAvatarFile} />
 
                         {avatarLoading ? (
-                            <Button loading small variant="light">
-                                Загрузить
-                            </Button>
+                            <>
+                                <Button loading small variant="light" className={styles.dataAvatarActionDesktop}>
+                                    Загрузить
+                                </Button>
+
+                                <IconButton disabled small circle className={styles.dataAvatarAction}>
+                                    <Upload />
+                                </IconButton>
+                            </>
                         ) : (
-                            <label htmlFor="avatar" className={styles.avatarLoadButton}>
-                                Загрузить
-                            </label>
+                            <>
+                                <label htmlFor="avatar" className={styles.avatarLoadButton}>
+                                    <span>Загрузить</span>
+
+                                    <Upload />
+                                </label>
+                            </>
                         )}
 
                         {avatar && (
-                            <Button
-                                small
-                                variant="light"
-                                color="danger"
-                                loading={avatarLoading}
-                                onClick={() => deleteAvatar()}
-                            >
-                                Удалить
-                            </Button>
+                            <>
+                                <Button
+                                    small
+                                    variant="light"
+                                    color="danger"
+                                    loading={avatarLoading}
+                                    onClick={() => deleteAvatar()}
+                                    className={styles.dataAvatarActionDesktop}
+                                >
+                                    Удалить
+                                </Button>
+
+                                <IconButton
+                                    disabled={avatarLoading}
+                                    small
+                                    circle
+                                    variant="danger"
+                                    className={styles.dataAvatarAction}
+                                    onClick={() => deleteAvatar()}
+                                >
+                                    <Delete />
+                                </IconButton>
+                            </>
                         )}
                     </div>
                 </div>
 
-                <div className={base.contentItems}>
-                    <Input
-                        value={name}
-                        setValue={setName}
-                        wrapperClass={styles.dataItem}
-                        title="Имя"
-                        placeholder="Введите имя"
-                        lengthLimit={20}
-                        trackLength
-                    />
-                    <Input
-                        value={surname}
-                        setValue={setSurname}
-                        wrapperClass={styles.dataItem}
-                        title="Фамилия"
-                        placeholder="Введите фамилию"
-                        lengthLimit={30}
-                        trackLength
-                    />
-                    <DatePicker
-                        title="Дата рождения"
-                        value={birthday}
-                        setValue={setBirthday}
-                        wrapperClass={styles.dataItem}
-                    />
-                    <Select
-                        title="Пол"
-                        placeholder="Выберите пол"
-                        value={sex}
-                        setValue={setSex}
-                        wrapperClass={styles.dataItem}
-                        options={[
-                            {
-                                label: 'Мужской',
-                                value: 'Мужской',
-                            },
-                            {
-                                label: 'Женский',
-                                value: 'Женский',
-                            },
-                        ]}
-                    />
+                <div className={base.baseWrapperGap12}>
+                    <div className={styles.dataBanner}>
+                        <Image src="/img/banner.jpg" alt="Аватар" fill className={styles.dataBannerImg} />
+
+                        <Link href="/personalization" className={styles.dataPersonalizationButton}>
+                            <Paintbruh />
+                            Персонализация
+                        </Link>
+                    </div>
+
+                    <div className={base.contentItems}>
+                        <Input
+                            value={name}
+                            setValue={setName}
+                            wrapperClass={styles.dataItem}
+                            title="Имя"
+                            placeholder="Введите имя"
+                            lengthLimit={20}
+                            trackLength
+                        />
+                        <Input
+                            value={surname}
+                            setValue={setSurname}
+                            wrapperClass={styles.dataItem}
+                            title="Фамилия"
+                            placeholder="Введите фамилию"
+                            lengthLimit={30}
+                            trackLength
+                        />
+                        <DatePicker
+                            title="Дата рождения"
+                            value={birthday}
+                            setValue={setBirthday}
+                            wrapperClass={styles.dataItem}
+                        />
+                        <Select
+                            title="Пол"
+                            placeholder="Выберите пол"
+                            value={sex}
+                            setValue={setSex}
+                            wrapperClass={styles.dataItem}
+                            options={[
+                                {
+                                    label: 'Мужской',
+                                    value: 'Мужской',
+                                },
+                                {
+                                    label: 'Женский',
+                                    value: 'Женский',
+                                },
+                            ]}
+                        />
+                    </div>
                 </div>
             </div>
-
-            <Button auto className={styles.dataButton} loading={dataIsSaving} onClick={saveData}>
-                Сохранить
-            </Button>
         </div>
     );
 };

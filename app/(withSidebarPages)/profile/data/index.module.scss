@@ -8,10 +8,6 @@ div.dataItem {
     }
 }
 
-.dataButton {
-    margin: auto auto 0 auto;
-}
-
 .dataWrapper{
     width: 100%;
     display: flex;
@@ -19,7 +15,7 @@ div.dataItem {
     gap: 12px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1030px) {
     .dataWrapper{
         flex-direction: column;
     }
@@ -37,15 +33,27 @@ div.dataItem {
     border-radius: 4px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1030px) {
     .dataAvatar{
         max-width: 100%;
+        flex-direction: row;
+        padding: 1.2rem;
+        justify-content: space-between;
+        gap: 12px;
+    }
+}
+@media (max-width: 430px) {
+    .dataAvatar{
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
     }
 }
 
 .dataAvatarOutline{
     width: 104px;
     height: 104px;
+    flex-shrink: 0;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -53,9 +61,17 @@ div.dataItem {
     border: 1px dashed var(--main);
 }
 
+@media (max-width: 1030px) {
+    .dataAvatarOutline{
+        width: 90px;
+        height: 90px;
+    }
+}
+
 .dataAvatarBackground{
-    width: 96px;
-    height: 96px;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    flex-shrink: 0;
     border-radius: 50%;
     background: var(--lighten);
     display: flex;
@@ -73,7 +89,13 @@ div.dataItem {
 .dataAvatarText{
     text-align: center;
     color: var(--grey);
-    margin-top: 0.8rem;
+    margin: 0.8rem 0 1.2rem 0;
+}
+
+@media (max-width: 1030px) {
+    .dataAvatarText{
+        margin: 0;
+    }
 }
 
 .dataAvatarActions{
@@ -81,17 +103,33 @@ div.dataItem {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 1.2rem;
+    margin-top: auto;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1030px) {
     .dataAvatarActions{
-        max-width: 200px;
+        width: auto;
+        flex-direction: row;
+        margin-top: 0;
     }
 }
 
-.file{
-    display: none;
+.dataAvatarAction{
+    display: none!important;
+}
+
+@media (max-width: 1030px) {
+    .dataAvatarActionDesktop{
+        display: none!important;
+    }
+
+    .dataAvatarAction{
+        display: flex!important;
+    }
+}
+
+.dataAvatarImg, .dataBannerImg{
+    object-fit: cover;
 }
 
 .avatarLoadButton{
@@ -112,4 +150,72 @@ div.dataItem {
 
 .avatarLoadButton:hover{
     opacity: 0.7;
+}
+
+.avatarLoadButton svg{
+    display: none;
+}
+
+@media (max-width: 1030px) {
+    .avatarLoadButton{
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .avatarLoadButton span{
+        display: none;
+    }
+
+    .avatarLoadButton svg{
+        width: 20px;
+        display: flex;
+        flex-shrink: 0;
+    }
+
+    .avatarLoadButton svg path, .avatarLoadButton svg polyline, .avatarLoadButton svg line{
+        stroke: var(--main);
+    }
+}
+
+.dataBanner{
+    width: 100%;
+    border-radius: 4px;
+    background: var(--input);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    min-height: 165px;
+}
+
+.dataPersonalizationButton{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 0, 0, .36);
+    padding: 0.6rem 1.2rem;
+    color: #fff;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border-radius: 4px;
+    font-size: 1.4rem;
+}
+
+.dataPersonalizationButton:hover{
+    background: rgba(0, 0, 0, .5);
+}
+
+.dataPersonalizationButton svg{
+    width: 18px;
+    flex-shrink: 0;
+}
+
+.dataPersonalizationButton svg path{
+    stroke: #fff;
 }

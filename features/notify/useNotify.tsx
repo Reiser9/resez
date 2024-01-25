@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 
@@ -10,42 +10,66 @@ const useNotify = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [notifyIsLoading, setNotifyIsLoading] = React.useState<number[]>([]);
 
-    const { request } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationNotifies = async ({ pageParam }: { pageParam: number }, unread = false) => {
+    const getPaginationNotifies = async (
+        { pageParam }: { pageParam: number },
+        unread = false,
+    ): Promise<Notifies | void> => {
         const limit = 6;
         const response = await request<Notifies>({
             url: `/notify?offset=${pageParam * 6}&limit=${limit}&unread=${unread}`,
             isAuth: true,
         });
 
-        return response.data;
+        if (catchRequestError(response)) {
+            return errorController(response, () => getPaginationNotifies({ pageParam }));
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
     };
 
-    const readAllNotifies = async (successCallback = () => {}) => {
+    const readAllNotifies = async (successCallback = () => {}): Promise<void> => {
         try {
             setIsLoading(true);
-            await request<Notify>({ url: '/notify/read-all', isAuth: true, method: 'PATCH' });
+            const response = await request<Notify>({
+                url: '/notify/read-all',
+                isAuth: true,
+                method: 'PATCH',
+            });
+
+            if (catchRequestError(response)) {
+                return errorController(response, () => readAllNotifies(successCallback));
+            }
 
             successCallback();
-
             alertNotify('Успешно', 'Уведомления прочитаны', 'success');
         } catch {
-            alertNotify('Ошибка', 'Не удалось прочитать уведомления, попробуйте позже', 'error');
+            // Error..
         } finally {
             setIsLoading(false);
         }
     };
 
-    const readNotifyById = async (id: number, successCallback = () => {}) => {
+    const readNotifyById = async (id: number, successCallback = () => {}): Promise<void> => {
         try {
             setNotifyIsLoading((prev) => [...prev, id]);
-            await request<Notify>({ url: `/notify/read/${id}`, isAuth: true, method: 'PATCH' });
+            const response = await request<Notify>({
+                url: `/notify/read/${id}`,
+                isAuth: true,
+                method: 'PATCH',
+            });
+
+            if (catchRequestError(response)) {
+                return errorController(response, () => readNotifyById(id, successCallback));
+            }
 
             successCallback();
         } catch {
-            console.log('Ошибка прочтения сообщения');
+            // Error..
         } finally {
             setNotifyIsLoading((prev) => prev.filter((item) => item !== id));
         }

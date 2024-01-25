@@ -3,15 +3,18 @@ import React from 'react';
 import { Button } from '@/shared/ui/Button';
 import { FullPageWrapper } from '@/shared/wrappers/FullPageWrapper';
 import { Server } from '@/shared/icons/picture/Server';
+import useReload from '@/shared/hooks/useReload';
 
 const ServerNotAvailable = () => {
+    const {isLoadingReload, reload} = useReload();
+
     return (
         <FullPageWrapper
             icon={<Server />}
             code="<span>5</span>00"
             text="Сервер временно недоступен, вернитесь на сайт позже."
         >
-            <Button auto variant="outline" style={{marginTop: 24, minWidth: 160}}>
+            <Button auto variant="outline" style={{minWidth: 170}} loading={isLoadingReload} onClick={reload}>
                 Перезагрузить
             </Button>
         </FullPageWrapper>

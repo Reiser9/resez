@@ -69,14 +69,14 @@
     width: 20px;
 }
 
-.iconButton svg path{
+.iconButton svg path, .iconButton svg polyline, .iconButton svg line{
     stroke: var(--main);
 }
 
-.iconButton.danger svg path{
+.iconButton.danger svg path, .iconButton.danger svg polyline, .iconButton.danger svg line{
     stroke: var(--error);
 }
 
-.iconButton.warn svg path{
+.iconButton.warn svg path, .iconButton.warn svg polyline, .iconButton.warn svg line{
     stroke: var(--warn);
 }

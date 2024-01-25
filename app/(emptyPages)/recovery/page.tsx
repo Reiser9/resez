@@ -13,7 +13,7 @@ import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
-import { BackButton } from '@/shared/ui/BackButton';
+import { BackButton } from '@/shared/ui/Button';
 import type { RecoverySendCode, RecoveryVerifyCode, RecoveryChangePassword } from '@/entities/user';
 import useRecovery from '@/features/user/auth/useRecovery';
 

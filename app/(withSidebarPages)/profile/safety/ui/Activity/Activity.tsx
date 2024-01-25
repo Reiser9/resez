@@ -61,30 +61,36 @@ const Activity = () => {
                             />
                         )}
 
-                        <Button
-                            disabled={isFetching}
-                            variant="empty"
-                            color="danger"
-                            onClick={() => setConfirmEndAllSessions(true)}
-                        >
-                            Завершить другие сеансы
-                        </Button>
+                        {!!data?.other.length && (
+                            <Button
+                                disabled={isFetching}
+                                variant="empty"
+                                color="danger"
+                                onClick={() => setConfirmEndAllSessions(true)}
+                            >
+                                Завершить другие сеансы
+                            </Button>
+                        )}
                     </div>
 
                     <div className={base.baseWrapperGap8}>
-                        <Text>Все сеансы {!isFetching && `(${data?.totalCount})`}</Text>
+                        <Text>Другие сеансы {!isFetching && `(${data?.totalCount})`}</Text>
 
-                        {isFetching
-                            ? [...Array(3)].map((_, id) => <SessionItemMiniSkeleton key={id} />)
-                            : data?.other
-                                  .slice(0, 3)
-                                  .map((data) => (
-                                      <SessionItemMini
-                                          key={data.id}
-                                          data={data}
-                                          onClick={() => router.push('safety/sessions')}
-                                      />
-                                  ))}
+                        {isFetching ? (
+                            [...Array(3)].map((_, id) => <SessionItemMiniSkeleton key={id} />)
+                        ) : !!data?.other.length ? (
+                            data?.other
+                                .slice(0, 3)
+                                .map((data) => (
+                                    <SessionItemMini
+                                        key={data.id}
+                                        data={data}
+                                        onClick={() => router.push('safety/sessions')}
+                                    />
+                                ))
+                        ) : (
+                            <NotContent text="Других сеансов не найдено" />
+                        )}
 
                         {(data?.totalCount || 0) >= 3 && (
                             <Button variant="empty" href="safety/sessions">

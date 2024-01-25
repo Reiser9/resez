@@ -10,10 +10,14 @@ import { Code, Console, Fire, Lifebuoy, Message, Store, Telegram, Tests, Trainin
 import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { Button } from '@/shared/ui/Button';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import { checkPermission } from '@/shared/utils/checkPermissions';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 const Sidebar = () => {
     const sidebarRef = React.useRef<HTMLDivElement>(null);
     const {showSidebar, setShowSidebar} = useSidebarContext();
+    const permissions = useAppSelector(state => state.user.user?.permissions);
 
     const outsideSidebarClick = (e: MouseEvent) => {
         if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
@@ -62,15 +66,15 @@ const Sidebar = () => {
                     Магазин
                 </SidebarLink>
 
-                <SidebarLink href="/admin">
+                {checkPermission(permissions, [PERMISSIONS.ADMIN]) && <SidebarLink href="/admin">
                     <Code />
                     Админка
-                </SidebarLink>
+                </SidebarLink>}
 
-                <SidebarLink href="/config">
+                {/* <SidebarLink href="/config">
                     <Console />
                     Конфигурация
-                </SidebarLink>
+                </SidebarLink> */}
             </div>
 
             <div className={styles.sidebarFooter}>

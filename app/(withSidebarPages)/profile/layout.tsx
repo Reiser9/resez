@@ -1,4 +1,5 @@
 import React from 'react';
+import { Metadata } from 'next';
 
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
@@ -6,6 +7,10 @@ import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { InnerPageSidebar } from '@/shared/ui/InnerPageSidebar';
 import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { AuthWrapper } from '@/shared/wrappers/AuthWrapper';
+
+export const metadata: Metadata = {
+    title: 'ResEz - Профиль'
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -18,7 +23,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <SidebarLink href="/profile" end>
                             Профиль
                         </SidebarLink>
-                        <SidebarLink href="/profile/appearance">Внешний вид</SidebarLink>
                         <SidebarLink href="/profile/data">Личные данные</SidebarLink>
                         <SidebarLink href="/profile/safety">Безопасность</SidebarLink>
                         <SidebarLink href="/profile/achievements">Достижения</SidebarLink>

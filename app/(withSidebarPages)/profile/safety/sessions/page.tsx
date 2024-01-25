@@ -5,7 +5,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { BackButton } from '@/shared/ui/BackButton';
+import { BackButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { SessionItem } from '@/shared/ui/SessionItem';
 import { useSessions } from '@/features/user';
@@ -21,17 +21,6 @@ const ProfileSessions = () => {
     const { isLoading, logout } = useLogout();
     const queryClient = useQueryClient();
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['sessions'],
-        queryFn: getPaginationSessions,
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
-    });
-
     const revalidateSessions = () => {
         queryClient.invalidateQueries({ queryKey: ['sessions'] });
     };
@@ -39,6 +28,18 @@ const ProfileSessions = () => {
     const resetRequest = () => {
         queryClient.resetQueries({ queryKey: ['sessions'] });
     };
+
+    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+        queryKey: ['sessions'],
+        queryFn: (data) => getPaginationSessions(data, revalidateSessions),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
+
+            return nextPage;
+        },
+        
+    });
 
     const endSessionByIdHandler = (id: number) => {
         endSessionById(id, revalidateSessions);
@@ -51,7 +52,7 @@ const ProfileSessions = () => {
                     <BackButton />
 
                     <Text variant="h3">
-                        Сеансы {!isPending && data?.pages[0].totalCount && `(${data?.pages[0].totalCount})`}
+                        Сеансы {!isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount + 1})`}
                     </Text>
                 </div>
 
@@ -70,10 +71,10 @@ const ProfileSessions = () => {
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : (
                 <div className={base.contentItems}>
-                    <SessionItem current data={data?.pages[0].current} callback={logout} loading={isLoading} />
+                    <SessionItem current data={data?.pages[0]?.current} callback={logout} loading={isLoading} />
 
                     {data?.pages.map((session) =>
-                        session.other.map((data) => (
+                        session?.other.map((data) => (
                             <SessionItem
                                 key={data.id}
                                 data={data}
