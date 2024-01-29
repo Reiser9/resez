@@ -26,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </SidebarLink>
                         <SidebarLink href="/admin/notifies">Уведомления</SidebarLink>
                         <SidebarLink href="/admin/users">Пользователи</SidebarLink>
+                        <SidebarLink href="/admin/roles">Роли</SidebarLink>
                         <SidebarLink href="/admin/warns">Жалобы</SidebarLink>
                     </InnerPageSidebar>
                 </div>

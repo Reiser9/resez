@@ -38,7 +38,6 @@ const ProfileSessions = () => {
 
             return nextPage;
         },
-        
     });
 
     const endSessionByIdHandler = (id: number) => {
@@ -71,10 +70,12 @@ const ProfileSessions = () => {
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : (
                 <div className={base.contentItems}>
-                    <SessionItem current data={data?.pages[0]?.current} callback={logout} loading={isLoading} />
+                    {data?.pages[0]?.current && (
+                        <SessionItem current data={data?.pages[0]?.current} callback={logout} loading={isLoading} />
+                    )}
 
                     {data?.pages.map((session) =>
-                        session?.other.map((data) => (
+                        session?.other?.map((data) => (
                             <SessionItem
                                 key={data.id}
                                 data={data}

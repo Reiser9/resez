@@ -18,7 +18,8 @@ import { TextPoint } from '../TextPoint';
 import { Notify, Stop, Verified } from '@/shared/icons';
 import { LoaderForItem } from '../Preloader';
 import { Text } from '../Text';
-import { ConfirmModal } from '../Modal';
+import { ConfirmModal, Modal } from '../Modal';
+import { Input } from '../Input';
 
 type Props = {
     data?: UserAdmin;
@@ -54,8 +55,9 @@ const UserItem: React.FC<Props> = ({
         isOnline,
         lastActivity,
     } = data || {};
-    const [confirmBlock, setConfirmBlock] = React.useState(false);
-    const [confirmUnblock, setConfirmUnblock] = React.useState(false);
+    const [confirmBlock, setConfirmBlock] = React.useState<boolean>(false);
+    const [confirmUnblock, setConfirmUnblock] = React.useState<boolean>(false);
+    const [blockReason, setBlockReason] = React.useState<string>('');
 
     const { copyTextWithNotify } = useCopyText();
 
@@ -64,7 +66,7 @@ const UserItem: React.FC<Props> = ({
             <div className={styles.userItem}>
                 <div className={styles.userInfoInner}>
                     <div className={styles.userAvatarInner}>
-                        <Badge size='big' image={avatar} text={nickname} />
+                        <Badge size="big" image={avatar} text={nickname} />
 
                         {isOnline ? (
                             <Tooltip title="Онлайн">
@@ -168,10 +170,8 @@ const UserItem: React.FC<Props> = ({
                     </div>
 
                     <div className={styles.userItemButtons}>
-                        <Button variant="light">
-                            Подробнее
-                        </Button>
-                        
+                        <Button variant="light">Подробнее</Button>
+
                         {!isBlocked && (notify || block) && (
                             <>
                                 {notify && (
@@ -200,7 +200,7 @@ const UserItem: React.FC<Props> = ({
 
                 {isBlocked && (
                     <div className={styles.userItemBlock}>
-                        <Text className={styles.userItemBlockText}>Пользователь заблокирован</Text>
+                        <Text textClassName={styles.userItemBlockText}>Пользователь заблокирован</Text>
 
                         <Button onClick={() => setConfirmUnblock(true)}>Разблокировать</Button>
                     </div>
@@ -209,14 +209,30 @@ const UserItem: React.FC<Props> = ({
                 {loading && <LoaderForItem />}
             </div>
 
-            <ConfirmModal
-                value={confirmBlock}
-                setValue={setConfirmBlock}
-                text={`Вы действительно хотите заблокировать пользователя ${nickname || ''}`}
-                confirmText="Заблокировать"
-                rejectText="Отмена"
-                callback={userBlock}
-            />
+            <Modal value={confirmBlock} setValue={setConfirmBlock} size="small" title="Подтвердите действие">
+                <Text>Вы действительно хотите заблокировать пользователя {nickname || ''}?</Text>
+
+                <Input
+                    value={blockReason}
+                    setValue={setBlockReason}
+                    placeholder="Введите текст"
+                    title="Причина блокировки"
+                    variant="textarea"
+                    trackLength
+                    lengthLimit={75}
+                />
+
+                <Button
+                    variant="light"
+                    color="danger"
+                    onClick={() => {
+                        userBlock();
+                        setConfirmBlock(false);
+                    }}
+                >
+                    Заблокировать
+                </Button>
+            </Modal>
 
             <ConfirmModal
                 value={confirmUnblock}

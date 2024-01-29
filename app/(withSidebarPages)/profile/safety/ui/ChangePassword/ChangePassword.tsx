@@ -51,6 +51,7 @@ const ChangePassword = () => {
         verifyChangePassword({ ...data, oldPassword, newPassword }, () => {
             setPasswordChangeStep(1);
             reset();
+            setNewPasswordAgain('');
         });
     };
 

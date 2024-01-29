@@ -23,6 +23,7 @@ interface InputsProps {
     errorMessage?: string;
     infoText?: string;
     commentText?: string;
+    children?: React.ReactNode;
 }
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> &
@@ -57,6 +58,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             commentText,
             wrapperClass,
             className,
+            children,
             ...props
         }: Props,
         ref: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>,
@@ -133,6 +135,8 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                             </div>
                         </Tooltip>
                     )}
+
+                    {children && children}
                 </div>
 
                 {isError && errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}

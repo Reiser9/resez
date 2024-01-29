@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Nunito } from 'next/font/google';
 import { ConfigProvider } from 'antd';
 import { SkeletonTheme } from 'react-loading-skeleton';
@@ -22,6 +22,13 @@ const nunito = Nunito({
 export const metadata: Metadata = {
     title: 'ResEz',
     description: 'ResEz - Подготовки к ЕГЭ и учебе',
+};
+
+export const viewport: Viewport = {
+    initialScale: 1,
+    width: 'device-width',
+    maximumScale: 1,
+    userScalable: false
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

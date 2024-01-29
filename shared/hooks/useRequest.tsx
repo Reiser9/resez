@@ -67,8 +67,6 @@ const useRequest = () => {
                 return;
             case 403:
                 return alertNotify('Ошибка', 'Доступ ограничен', 'error');
-            case 401:
-                return await noAuthController(() => callback());
             case 429:
                 return alertNotify('Чуть помедленнее', 'Слишком много запросов, пожалуйста, подождите', 'warn');
             default:
@@ -86,17 +84,17 @@ const useRequest = () => {
         }
     };
 
-    const noAuthController = async (callback = () => {}): Promise<void> => {
-        const token = await request<{ accessToken: string }>({ url: '/auth/refresh', isAuth: true });
+    // const noAuthController = async (callback = () => {}): Promise<void> => {
+    //     const token = await request<{ accessToken: string }>({ url: '/auth/refresh', isAuth: true });
 
-        if (!('data' in token)) {
-            return clearLocalData();
-        }
+    //     if (!('data' in token)) {
+    //         return clearLocalData();
+    //     }
 
-        localStorage.setItem('accessToken', token.data.accessToken);
+    //     localStorage.setItem('accessToken', token.data.accessToken);
 
-        callback();
-    };
+    //     callback();
+    // };
 
     const catchRequestError = (response: AxiosResponse | AxiosError<Error>): boolean => {
         if (!('data' in response)) {

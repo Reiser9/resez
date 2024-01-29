@@ -34,7 +34,8 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const { isLoading, logout } = useLogout();
     const { isAuth, user } = useAppSelector((state) => state.user);
-    const { avatar, level, nickname, unreadNotifiesCount } = user || {};
+    const { avatar, levelInfo, nickname, unreadNotifiesCount } = user || {};
+    const { level } = levelInfo || {};
 
     const closeProfileMenu = () => {
         setProfileMenu(false);

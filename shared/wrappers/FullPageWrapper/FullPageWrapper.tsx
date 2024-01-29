@@ -1,9 +1,9 @@
 import React from 'react';
 import parse from 'html-react-parser';
-import cn from 'classnames';
 
 import styles from './index.module.scss';
-import typography from '@/shared/styles/typography.module.scss';
+
+import { Text } from '@/shared/ui/Text';
 
 type Props = {
     icon: React.ReactNode;
@@ -20,7 +20,9 @@ const FullPage: React.FC<Props> = ({ icon, code, text, children }) => {
 
                 <h2 className={styles.fullPageTitle}>{parse(code)}</h2>
 
-                <p className={cn(typography.h4, styles.fullPageText)}>{text}</p>
+                <Text variant="h4" className={styles.fullPageText}>
+                    {text}
+                </Text>
 
                 {children}
             </div>

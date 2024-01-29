@@ -11,7 +11,7 @@ const NotFound = () => {
             code="4<span>0</span>4"
             text="К сожалению, запрашиваемая страница не найдена. Возможно, вы ошиблись при вводе адреса или страница была удалена."
         >
-            <Button auto variant="outline" href="/" style={{marginTop: 24, minWidth: 160}}>
+            <Button auto variant="outline" href="/" style={{ minWidth: 160 }}>
                 На главную
             </Button>
         </FullPageWrapper>

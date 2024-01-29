@@ -4,7 +4,7 @@ import React from 'react';
 
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import { UserAdmin, UsersAdmin } from '@/entities/user/model';
+import type { UserAdmin, UsersAdmin } from '@/entities/user';
 
 const useNotify = () => {
     const [usersIsLoading, setUsersIsLoading] = React.useState<number[]>([]);
@@ -15,7 +15,7 @@ const useNotify = () => {
     const getPaginationUsers = async ({ pageParam }: { pageParam: number }): Promise<UsersAdmin | void> => {
         const limit = 6;
         const response = await request<UsersAdmin>({
-            url: `/admin/user?offset=${pageParam * 6}&limit=${limit}`,
+            url: `/admin/user?offset=${pageParam * limit}&limit=${limit}`,
             isAuth: true,
         });
 
@@ -28,19 +28,22 @@ const useNotify = () => {
         }
     };
 
-    const blockUser = async (id: number, successCallback = () => {}): Promise<void> => {
+    const blockUser = async (id: number, reason?: string, successCallback = () => {}): Promise<void> => {
         setUsersIsLoading((prev) => [...prev, id]);
 
         const response = await request<UserAdmin>({
             url: `/admin/user/${id}/block`,
             isAuth: true,
             method: 'PATCH',
+            data: {
+                reason,
+            },
         });
 
         setUsersIsLoading((prev) => prev.filter((item) => item !== id));
 
         if (catchRequestError(response)) {
-            return errorController(response, () => blockUser(id, successCallback));
+            return errorController(response, () => blockUser(id, reason, successCallback));
         }
 
         alertNotify('Успешно', 'Пользователь заблокирован', 'success');

@@ -30,8 +30,9 @@ const useSessions = () => {
         revalidate = () => {},
     ): Promise<Sessions | void> => {
         const limit = pageParam === 0 ? 5 : 6;
+        const offset = pageParam * limit === 0 ? 0 : pageParam * limit - 1;
         const response = await request<Sessions>({
-            url: `/session?offset=${pageParam * 5}&limit=${limit}`,
+            url: `/session?offset=${offset}&limit=${limit}`,
             isAuth: true,
         });
 

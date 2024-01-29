@@ -48,6 +48,11 @@ export const userSlice = createSlice({
                 state.user.isBlocked = action.payload;
             }
         },
+        setUserBlockReason: (state, action: PayloadAction<string | null>) => {
+            if (state.user) {
+                state.user.blockReason = action.payload;
+            }
+        },
         setUserData: (state) => {
             state.isAuth = false;
             state.user = null;
@@ -66,6 +71,7 @@ export const {
     initSessionId,
     setUserSettings,
     setUserBlocked,
+    setUserBlockReason,
     setUserData,
 } = userSlice.actions;
 

@@ -23,7 +23,7 @@ const useChangePassword = () => {
             });
 
             if (catchRequestError(response)) {
-                return errorController(response, () => changePassword(data, successCallback));
+                return errorController(response);
             }
 
             alertNotify('Подтверждение', 'Вам выслан код подтверждения, пожалуйста, введите его', 'info');
@@ -49,7 +49,7 @@ const useChangePassword = () => {
             });
 
             if (catchRequestError(response)) {
-                return errorController(response, () => verifyChangePassword(data, successCallback));
+                return errorController(response);
             }
 
             alertNotify('Успешно', 'Пароль изменен', 'success');

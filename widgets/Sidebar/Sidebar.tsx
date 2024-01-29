@@ -25,6 +25,10 @@ const Sidebar = () => {
         }
     };
 
+    const closeSidebar = () => {
+        setShowSidebar(false);
+    }
+
     React.useEffect(() => {
         window.addEventListener('click', outsideSidebarClick);
 
@@ -41,32 +45,32 @@ const Sidebar = () => {
             ref={sidebarRef}
         >
             <div className={styles.sidebarMenu}>
-                <SidebarLink href="/training">
+                <SidebarLink href="/training" onClick={closeSidebar}>
                     <Training />
                     Тренинг
                 </SidebarLink>
 
-                <SidebarLink href="/tests">
+                <SidebarLink href="/tests" onClick={closeSidebar}>
                     <Tests />
                     Тесты
                 </SidebarLink>
 
-                <SidebarLink href="/messenger">
+                <SidebarLink href="/messenger" onClick={closeSidebar}>
                     <Message />
                     Мессенджер
                 </SidebarLink>
 
-                <SidebarLink href="/info">
+                <SidebarLink href="/info" onClick={closeSidebar}>
                     <Fire />
                     Полезное
                 </SidebarLink>
 
-                <SidebarLink href="/store">
+                <SidebarLink href="/store" onClick={closeSidebar}>
                     <Store />
                     Магазин
                 </SidebarLink>
 
-                {checkPermission(permissions, [PERMISSIONS.ADMIN]) && <SidebarLink href="/admin">
+                {checkPermission(permissions, [PERMISSIONS.ADMIN]) && <SidebarLink href="/admin" onClick={closeSidebar}>
                     <Code />
                     Админка
                 </SidebarLink>}

@@ -1,5 +1,6 @@
 import { Dayjs } from 'dayjs';
 import { Paggination } from '../pagination';
+import { Role } from '../role';
 
 export type LoginData = {
     nickname: string;
@@ -44,18 +45,16 @@ export type User = {
     nickname: string;
     isVerified: boolean;
     isBlocked: boolean;
+    blockReason: string | null;
     avatar: string | null;
-    level: number;
+    levelInfo: {
+        level: number;
+        xp: number;
+        limit: number;
+    }
     permissions: Permission[];
     unreadNotifiesCount: number;
     settings: Settings;
-};
-
-export type Role = {
-    id: number;
-    role: string;
-    textColor: string;
-    backgroundColor: string;
 };
 
 export type UserAdmin = {
@@ -63,6 +62,7 @@ export type UserAdmin = {
     nickname: string;
     isVerified: boolean;
     isBlocked: boolean;
+    blockReason: string | null;
     avatar: string | null;
     level: number;
     firstName: string;

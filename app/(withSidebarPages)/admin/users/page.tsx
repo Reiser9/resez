@@ -33,7 +33,7 @@ const AdminUsers = () => {
         },
     });
 
-    const revalidateNotify = () => {
+    const revalidateUsers = () => {
         queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
     };
 
@@ -69,8 +69,8 @@ const AdminUsers = () => {
                             <UserItem
                                 key={data.id}
                                 data={data}
-                                userBlock={() => blockUser(data.id, () => revalidateNotify())}
-                                userUnblock={() => unblockUser(data.id, () => revalidateNotify())}
+                                userBlock={() => blockUser(data.id, 'Нецензурная брань', () => revalidateUsers())}
+                                userUnblock={() => unblockUser(data.id, () => revalidateUsers())}
                                 notify={checkPermission(permissions, [PERMISSIONS.NOTIFIES])}
                                 block={checkPermission(permissions, [PERMISSIONS.BLOCK_USERS])}
                                 loading={usersIsLoading.includes(data.id)}

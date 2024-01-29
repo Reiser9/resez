@@ -6,7 +6,7 @@ import { Server } from '@/shared/icons/picture/Server';
 import useReload from '@/shared/hooks/useReload';
 
 const ServerNotAvailable = () => {
-    const {isLoadingReload, reload} = useReload();
+    const { isLoadingReload, reload } = useReload();
 
     return (
         <FullPageWrapper
@@ -14,7 +14,7 @@ const ServerNotAvailable = () => {
             code="<span>5</span>00"
             text="Сервер временно недоступен, вернитесь на сайт позже."
         >
-            <Button auto variant="outline" style={{minWidth: 170}} loading={isLoadingReload} onClick={reload}>
+            <Button auto variant="outline" style={{ minWidth: 170 }} loading={isLoadingReload} onClick={reload}>
                 Перезагрузить
             </Button>
         </FullPageWrapper>

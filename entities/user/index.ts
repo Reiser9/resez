@@ -15,4 +15,6 @@ export type {
     LoginWithQRData,
     Settings,
     ProfileInfo,
+    UserAdmin,
+    UsersAdmin,
 } from './model';

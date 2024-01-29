@@ -8,7 +8,7 @@ import { socket } from '@/api/socket';
 import { useAppDispatch, useAppSelector } from './useRedux';
 import useNotify from './useAlert';
 import useRequest from './useRequest';
-import { setUserBlocked } from '@/store/slices/user';
+import { setUserBlockReason, setUserBlocked } from '@/store/slices/user';
 
 const useSocket = () => {
     const { isAuth, user, sessionId } = useAppSelector((state) => state.user);
@@ -38,11 +38,13 @@ const useSocket = () => {
             alertNotify('Сессия завершена', 'Кто-то завершил вашу сессию', 'error');
         });
 
-        socket.on("blocked", () => {
+        socket.on('blocked', (data: { reason: string | null }) => {
+            alertNotify('Ваш аккаунт заблокирован', 'По всем вопросам можете обращаться в группу в вк', 'warn');
             dispatch(setUserBlocked(true));
+            dispatch(setUserBlockReason(data.reason));
         });
 
-        socket.on("unblocked", () => {
+        socket.on('unblocked', () => {
             dispatch(setUserBlocked(false));
         });
 
@@ -51,14 +53,13 @@ const useSocket = () => {
         //     alertNotify("Ваша роль обновлена", "Кто-то изменил вашу роль", "info", "", 4000);
         // });
 
-        // return () => {
-        //     socket.off("notify");
-        //     socket.off("message");
-        //     socket.off("blocked");
-        //     socket.off("unblocked");
-        //     socket.off("endSession");
-        //     socket.off("new-permissions");
-        // };
+        return () => {
+            // socket.off("notify");
+            socket.off("end-session");
+            socket.off("blocked");
+            socket.off("unblocked");
+            // socket.off("new-permissions");
+        };
     }, []);
 };
 
