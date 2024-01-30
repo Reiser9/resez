@@ -18,30 +18,25 @@ const useRegister = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const register = async (data: RegisterData): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<RegisterResponse>({ url: '/auth/register', method: 'POST', data });
+        setIsLoading(true);
+        const response = await request<RegisterResponse>({ url: '/auth/register', method: 'POST', data });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response);
-            }
-
-            if ('data' in response) {
-                dispatch(setIsAuth(true));
-                dispatch(initUser(response.data.user));
-                dispatch(initSessionId(response.data.sessionId));
-                dispatch(initVerificationCodeData(response.data.verificationCodeData));
-                localStorage.setItem('accessToken', response.data.accessToken);
-            }
-
-            alertNotify('Успешно', 'Вы зарегистрировались', 'success');
-
-            router.push('/');
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        if ('data' in response) {
+            dispatch(setIsAuth(true));
+            dispatch(initUser(response.data.user));
+            dispatch(initSessionId(response.data.sessionId));
+            dispatch(initVerificationCodeData(response.data.verificationCodeData));
+            localStorage.setItem('accessToken', response.data.accessToken);
+        }
+
+        alertNotify('Успешно', 'Вы зарегистрировались', 'success');
+
+        router.push('/');
     };
 
     return {

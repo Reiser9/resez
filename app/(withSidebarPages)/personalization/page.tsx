@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Personalization = () => {
-    return <div>Personalization</div>;
+const PersonalizationPage = () => {
+    return <div>PersonalizationPage</div>;
 };
 
-export default Personalization;
+export default PersonalizationPage;

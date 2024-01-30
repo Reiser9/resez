@@ -1,0 +1,58 @@
+.trainingItem{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 1.2rem;
+    border-radius: 4px;
+    background: var(--input);
+    border: 1px solid transparent;
+}
+
+@media (any-hover: hover) {
+    .trainingItemArrow svg{
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    .trainingItem:hover svg{
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.trainingItem:hover{
+    border: 1px solid var(--main);
+}
+
+.trainingItem.disabled{
+    filter: grayscale(1);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.trainingItemTitleInner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.trainingItemTitle{
+    font-weight: 600;
+}
+
+.trainingItemArrow{
+    display: flex;
+}
+
+.trainingItemArrow svg{
+    width: 24px;
+    flex-shrink: 0;
+    transition: .2s linear;
+}
+
+.trainingItemArrow svg path{
+    stroke: var(--main);
+}

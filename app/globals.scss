@@ -455,6 +455,16 @@ input::placeholder {
 }
 
 /* Custom tree ant */
+.ant-tree .ant-tree-checkbox .ant-tree-checkbox-inner:after {
+    border: 2px solid var(--main) !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+}
+
+.ant-tree .ant-tree-checkbox-disabled.ant-tree-checkbox-indeterminate .ant-tree-checkbox-inner::after{
+    background: var(--main)!important;
+}
+
 .ant-tree {
     width: 100%;
     background: var(--input);
@@ -472,12 +482,6 @@ input::placeholder {
 
 .ant-tree-switcher-icon svg path {
     fill: var(--text);
-}
-
-.ant-tree .ant-tree-checkbox .ant-tree-checkbox-inner:after {
-    border: 2px solid var(--main) !important;
-    border-top: 0 !important;
-    border-left: 0 !important;
 }
 
 .ant-tree .ant-tree-checkbox + span:hover {
@@ -750,6 +754,75 @@ ol .cdx-list__item {
 }
 
 .mq-editable-field .mq-latex-command-input, .mq-math-mode .mq-text-mode.mq-hasCursor {
+    border-radius: 4px;
+    border: none !important;
+    background: var(--input);
+    box-shadow: none !important;
+}
+
+.mq-math-mode .mq-empty {
+    background: var(--hover) !important;
+}
+
+.mq-math-mode .mq-empty.mq-root-block {
+    background: transparent !important;
+}
+
+p.mathquill {
+    width: 100%;
+}
+
+/* Custom file tool */
+.chooseFileInner {
+    width: 100%;
+    display: flex;
+    gap: 4px;
+}
+
+.chooseFileButton {
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    background: var(--lighten);
+    color: var(--main);
+    font-size: 1.4rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.chooseFileNameInput {
+    width: 100%;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.4rem;
+    background: var(--white);
+}
+
+/* Custom math tool */
+.custom-math-block,
+.chooseFileInner {
+    padding: 0.4em 0;
+}
+
+.mq-editable-field {
+    width: 100%;
+    border: none !important;
+    background: var(--white);
+    border-radius: 4px;
+    padding: 1.2rem 1.6rem;
+}
+
+.mq-focused {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.mq-cursor {
+    width: 1.5px;
+    height: 18px;
+    border-color: var(--text) !important;
+}
+
+.mq-editable-field .mq-latex-command-input,
+.mq-math-mode .mq-text-mode.mq-hasCursor {
     border-radius: 4px;
     border: none !important;
     background: var(--input);

@@ -51,7 +51,7 @@ export type User = {
         level: number;
         xp: number;
         limit: number;
-    }
+    };
     permissions: Permission[];
     unreadNotifiesCount: number;
     settings: Settings;
@@ -71,8 +71,11 @@ export type UserAdmin = {
     isOnline: boolean;
     lastActivity: Date;
     status: string;
-    xp: number;
-    xpLimit: number;
+    levelInfo: {
+        level: number;
+        xp: number;
+        limit: number;
+    };
     roles: Role[];
 };
 

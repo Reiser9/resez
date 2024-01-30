@@ -19,12 +19,13 @@ import useCopyText from '@/features/utils/useCopyText';
 import { Badge } from '@/shared/ui/Badge';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 
-const Profile = () => {
+const ProfilePage = () => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState<boolean>(false);
 
     const { user, profileInfo } = useAppSelector((state) => state.user);
-    const { avatar, nickname } = user || {};
+    const { avatar, nickname, levelInfo } = user || {};
     const { firstName, lastName } = profileInfo || {};
+    const { level, limit, xp } = levelInfo || {};
 
     const { getProfileData } = useProfileData();
     const { copyTextWithNotify } = useCopyText();
@@ -133,23 +134,25 @@ const Profile = () => {
             <div className={styles.profileWrapper}>
                 <div className={styles.profileSidebar}>
                     <div className={styles.profileSidebarLvlContent}>
-                        <p className={styles.profileSidebarLvlValue}>3</p>
+                        <p className={styles.profileSidebarLvlValue}>{level}</p>
 
-                        <div className={styles.profileSidebarLvl}>
-                            <div className={styles.profileSidebarLvlBar}>
-                                <div className={styles.profileSidebarLvlProgress} style={{ width: `30%` }}></div>
+                        <Tooltip title={`Опыта до нового уровня: ${(limit || 0) - (xp || 0)}`}>
+                            <div className={styles.profileSidebarLvl}>
+                                <div className={styles.profileSidebarLvlBar}>
+                                    <div className={styles.profileSidebarLvlProgress} style={{ width: `${(xp || 0) / (limit || 1)}%` }}></div>
+                                </div>
+
+                                <div className={styles.profileSidebarLvlValues}>
+                                    <Text variant="text3" className={styles.profileSidebarLvlExpValue}>
+                                        {xp}
+                                    </Text>
+
+                                    <Text variant="text3" className={styles.profileSidebarLvlExpValue}>
+                                        {limit}
+                                    </Text>
+                                </div>
                             </div>
-
-                            <div className={styles.profileSidebarLvlValues}>
-                                <Text variant="text3" className={styles.profileSidebarLvlExpValue}>
-                                    100
-                                </Text>
-
-                                <Text variant="text3" className={styles.profileSidebarLvlExpValue}>
-                                    1500
-                                </Text>
-                            </div>
-                        </div>
+                        </Tooltip>
                     </div>
 
                     <div className={base.baseWrapperGap12}>
@@ -217,7 +220,10 @@ const Profile = () => {
 
                         <div className={styles.profileSidebarAchievementList}>
                             <div className={styles.profileSidebarAchievementItem}>
-                                <Tooltip className={styles.profileSidebarAchievementInner} title="За помощь в развитии проекта">
+                                <Tooltip
+                                    className={styles.profileSidebarAchievementInner}
+                                    title="За помощь в развитии проекта"
+                                >
                                     <Handshake />
                                 </Tooltip>
                             </div>
@@ -241,4 +247,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default ProfilePage;

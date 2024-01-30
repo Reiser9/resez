@@ -18,6 +18,7 @@ import { Preloader } from '@/shared/ui/Preloader';
 import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { usePermissions, useRoles } from '@/features/role';
 import { Permissions } from '@/entities/role';
+import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
 
 export type TreePermission = {
     title: string;
@@ -118,21 +119,11 @@ const AdminCreateRole = () => {
             </div>
 
             <div className={base.form}>
-                <div className={styles.rolePreview}>
-                    <Text variant="text2">Предпросмотр:</Text>
-
-                    <div
-                        className={styles.rolePreviewItem}
-                        style={{
-                            color: textHexString,
-                            background: backgroundColorAuto
-                                ? convertHexToOpacityHex(textHexString)
-                                : backgroundHexString,
-                        }}
-                    >
-                        {name ? name : 'Название роли'}
-                    </div>
-                </div>
+                <RolePreview
+                    name={name}
+                    textColor={textHexString}
+                    backgroundColor={backgroundColorAuto ? convertHexToOpacityHex(textHexString) : backgroundHexString}
+                />
 
                 <Input
                     value={name}
@@ -167,7 +158,7 @@ const AdminCreateRole = () => {
                     />
                 )}
 
-                <div className={styles.roleTree}>
+                <div style={{width: "100%", display: "flex"}}>
                     <Tree
                         selectable={false}
                         checkable

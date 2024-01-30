@@ -47,6 +47,7 @@
     "@editorjs/simple-image": "1.6.0",
     "@editorjs/table": "2.3.0",
     "@types/axios": "0.14.0",
+    "@types/editorjs__header": "2.6.3",
     "@types/node": "20",
     "@types/react": "18",
     "@types/react-dom": "18",

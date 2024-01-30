@@ -1,3 +1,5 @@
+// 'use client';
+
 // import React from 'react';
 // import { createReactEditorJS } from 'react-editor-js';
 // import Embed from '@editorjs/embed';
@@ -11,14 +13,22 @@
 // import CheckList from '@editorjs/checklist';
 // import InlineCode from '@editorjs/inline-code';
 // import SimpleImage from '@editorjs/simple-image';
-// // import { CustomMath } from './CustomMathTool';
-// // import { CustomFiles } from './CustomFiles';
+// import { CustomMath } from './CustomMathTool';
+// import { CustomFiles } from './CustomFiles';
+// import { ToolConstructable } from '@editorjs/editorjs/types/tools/index';
+// import { ToolSettings } from '@editorjs/editorjs/types/tools/tool-settings';
 
 // import styles from './index.module.scss';
 
 // const ReactEditorJS = createReactEditorJS();
 
-// const Editor = React.forwardRef(({ placeholder = '', id = '', minHeight = 60, ...props }, ref) => {
+// type Props = {
+//     placeholder?: string;
+//     id?: string | undefined;
+//     minHeight?: number;
+// };
+
+// const Editor = React.forwardRef(({ placeholder = '', id = '', minHeight = 60, ...props }: Props, ref) => {
 //     // const {uploadImageOnServerFile, uploadImageOnServerUrl, uploadFile} = useAdmin();
 
 //     const handleInitialize = React.useCallback((instance) => {
@@ -43,7 +53,7 @@
 //         // return await uploadFile(formData);
 //     };
 
-//     const EDITOR_TOOLS = {
+//     const EDITOR_TOOLS: { [toolName: string]: ToolConstructable | ToolSettings } = {
 //         embed: Embed,
 //         header: {
 //             class: Header,
@@ -66,13 +76,13 @@
 //         checklist: CheckList,
 //         inlineCode: InlineCode,
 //         simpleImage: SimpleImage,
-//         // math: CustomMath,
-//         // files: {
-//         //     class: CustomFiles,
-//         //     config: {
-//         //         uploadRequest: uploadFileHandler,
-//         //     },
-//         // },
+//         math: CustomMath,
+//         files: {
+//             class: CustomFiles,
+//             config: {
+//                 uploadRequest: uploadFileHandler,
+//             },
+//         },
 //     };
 
 //     const localLang = {

@@ -33,7 +33,7 @@ const AdminRoles = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['roles'],
-        queryFn: (data) => getPaginationRoles(data, revalidateRoles),
+        queryFn: getPaginationRoles,
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -75,7 +75,9 @@ const AdminRoles = () => {
                             <RoleItem
                                 key={data.id}
                                 data={data}
+                                // @ts-ignore
                                 deleteRole={() => deleteRole(data.id, revalidateRoles)}
+                                // @ts-ignore
                                 loading={rolesIsLoading.includes(data.id)}
                                 edit={checkPermission(permissions, [PERMISSIONS.UPDATE_ROLES])}
                                 remove={checkPermission(permissions, [PERMISSIONS.DELETE_ROLES])}

@@ -39,7 +39,7 @@ const useSocket = () => {
         });
 
         socket.on('blocked', (data: { reason: string | null }) => {
-            alertNotify('Ваш аккаунт заблокирован', 'По всем вопросам можете обращаться в группу в вк', 'warn');
+            alertNotify('Ваш аккаунт заблокирован', 'По всем вопросам можете обращаться в группу в вк', 'warn', "", 5000);
             dispatch(setUserBlocked(true));
             dispatch(setUserBlockReason(data.reason));
         });

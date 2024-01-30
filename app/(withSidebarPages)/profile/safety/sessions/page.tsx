@@ -31,7 +31,7 @@ const ProfileSessions = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['sessions'],
-        queryFn: (data) => getPaginationSessions(data, revalidateSessions),
+        queryFn: getPaginationSessions,
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

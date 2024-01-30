@@ -20,6 +20,7 @@ import { LoaderForItem } from '../Preloader';
 import { Text } from '../Text';
 import { ConfirmModal, Modal } from '../Modal';
 import { Input } from '../Input';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {
     data?: UserAdmin;
@@ -42,9 +43,7 @@ const UserItem: React.FC<Props> = ({
         avatar,
         isBlocked,
         isVerified,
-        level,
-        xp,
-        xpLimit,
+        levelInfo,
         nickname,
         roles,
         id,
@@ -55,18 +54,21 @@ const UserItem: React.FC<Props> = ({
         isOnline,
         lastActivity,
     } = data || {};
+    const {level, limit, xp} = levelInfo || {};
     const [confirmBlock, setConfirmBlock] = React.useState<boolean>(false);
     const [confirmUnblock, setConfirmUnblock] = React.useState<boolean>(false);
     const [blockReason, setBlockReason] = React.useState<string>('');
 
     const { copyTextWithNotify } = useCopyText();
+    const isHideAvatars = useAppSelector((state) => state.user.user?.settings.isHideAvatars);
+    const userId = useAppSelector((state) => state.user.user?.id);
 
     return (
         <>
             <div className={styles.userItem}>
                 <div className={styles.userInfoInner}>
                     <div className={styles.userAvatarInner}>
-                        <Badge size="big" image={avatar} text={nickname} />
+                        <Badge size="big" image={isHideAvatars && id !== userId ? '' : avatar} text={nickname} />
 
                         {isOnline ? (
                             <Tooltip title="Онлайн">
@@ -158,11 +160,11 @@ const UserItem: React.FC<Props> = ({
                         <div className={styles.userLvlProgressTotal}>
                             <div
                                 className={styles.userLvlProgressLine}
-                                style={{ width: `${((xp || 0) / (xpLimit || 1)) * 100}%` }}
+                                style={{ width: `${((xp || 0) / (limit || 1)) * 100}%` }}
                             ></div>
 
                             <Text variant="text3" className={styles.userLvlExp}>
-                                {xp || 0} / {xpLimit || 0}
+                                {xp || 0} / {limit || 0}
                             </Text>
                         </div>
 

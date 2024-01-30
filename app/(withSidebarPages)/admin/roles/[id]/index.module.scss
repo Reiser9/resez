@@ -1,0 +1,20 @@
+.roleContent{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.roleInfo{
+    width: calc(100% / 2 - 24px / 2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+@media (max-width: 998px) {
+    .roleInfo{
+        width: 100%;
+    }
+}

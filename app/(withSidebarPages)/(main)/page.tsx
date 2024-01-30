@@ -7,7 +7,7 @@ import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { Text } from '@/shared/ui/Text';
 import { Block } from './ui/Block';
 
-const Main = () => {
+const MainPage = () => {
     return (
         <ContentWrapper type="full">
             <div className={styles.mainBlocks}>
@@ -80,4 +80,4 @@ const Main = () => {
     );
 };
 
-export default Main;
+export default MainPage;

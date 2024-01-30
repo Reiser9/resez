@@ -54,7 +54,6 @@ const useRequest = () => {
 
     const errorController = async (
         response: AxiosResponse | AxiosError<Error>,
-        callback = () => {},
         errorMessage = '',
         customLogic?: () => void,
     ): Promise<void> => {

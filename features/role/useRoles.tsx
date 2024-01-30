@@ -4,20 +4,17 @@ import React from 'react';
 
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { EditRoleDTO, Role, RoleCreateDTO, RoleDTO, Roles } from '@/entities/role';
+import type { EditRoleDTO, RoleCreateDTO, RoleDTO, Roles } from '@/entities/role';
 
 const useRoles = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [roleIsLoading, setRoleIsLoading] = React.useState<boolean>(false);
-    const [rolesIsLoading, setRolesIsLoading] = React.useState<number[]>([]);
+    const [rolesIsLoading, setRolesIsLoading] = React.useState<string[]>([]);
 
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationRoles = async (
-        { pageParam }: { pageParam: number },
-        revalidate = () => {},
-    ): Promise<Roles | void> => {
+    const getPaginationRoles = async ({ pageParam }: { pageParam: number }): Promise<Roles | void> => {
         const limit = 8;
         const response = await request<Roles>({
             url: `/admin/role?offset=${pageParam * limit}&limit=${limit}`,
@@ -25,7 +22,7 @@ const useRoles = () => {
         });
 
         if (catchRequestError(response)) {
-            return errorController(response, revalidate);
+            return errorController(response);
         }
 
         if ('data' in response) {
@@ -43,7 +40,7 @@ const useRoles = () => {
         setRoleIsLoading(false);
 
         if (catchRequestError(response)) {
-            return errorController(response, () => getCurrentRole(id));
+            return errorController(response);
         }
 
         if ('data' in response) {
@@ -52,6 +49,14 @@ const useRoles = () => {
     };
 
     const createRole = async (data: RoleCreateDTO, successCallback = () => {}): Promise<void> => {
+        const { role, permissions } = data;
+
+        if (!role) {
+            return alertNotify('Предупреждение', 'Название роли должно быть заполнено', 'warn');
+        } else if (permissions.length === 0) {
+            return alertNotify('Предупреждение', 'У роли должна быть хотя бы одна привилегия', 'warn');
+        }
+
         setIsLoading(true);
         const response = await request<RoleDTO>({
             url: '/admin/role',
@@ -62,7 +67,7 @@ const useRoles = () => {
         setIsLoading(false);
 
         if (catchRequestError(response)) {
-            return errorController(response, () => createRole(data, successCallback));
+            return errorController(response);
         }
 
         successCallback();
@@ -80,14 +85,14 @@ const useRoles = () => {
         setIsLoading(false);
 
         if (catchRequestError(response)) {
-            return errorController(response, () => editRole(id, data, successCallback));
+            return errorController(response);
         }
 
         successCallback();
         alertNotify('Успешно', 'Роль изменена', 'success');
     };
 
-    const deleteRole = async (id: number, successCallback = () => {}): Promise<void> => {
+    const deleteRole = async (id: string, successCallback = () => {}): Promise<void> => {
         setRolesIsLoading((prev) => [...prev, id]);
         const response = await request<RoleDTO>({
             url: `/admin/role/${id}/archive`,
@@ -97,7 +102,7 @@ const useRoles = () => {
         setRolesIsLoading((prev) => prev.filter((item) => item !== id));
 
         if (catchRequestError(response)) {
-            return errorController(response, () => deleteRole(id, successCallback));
+            return errorController(response);
         }
 
         alertNotify('Успешно', 'Роль удалена', 'success');

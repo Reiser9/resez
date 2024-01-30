@@ -14,27 +14,22 @@ const useVerificationCode = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const sendVerificationCode = async (successCallback: () => void = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<{ verificationCodeData: VerificationCodeData }>({
-                url: '/auth/send-verification-code',
-                isAuth: true,
-            });
+        setIsLoading(true);
+        const response = await request<{ verificationCodeData: VerificationCodeData }>({
+            url: '/auth/send-verification-code',
+            isAuth: true,
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => sendVerificationCode(successCallback));
-            }
-
-            if ('data' in response) {
-                dispatch(initVerificationCodeData(response.data.verificationCodeData));
-            }
-
-            successCallback();
-        } catch (error) {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        if ('data' in response) {
+            dispatch(initVerificationCodeData(response.data.verificationCodeData));
+        }
+
+        successCallback();
     };
 
     return { isLoading, sendVerificationCode };

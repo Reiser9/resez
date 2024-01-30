@@ -17,54 +17,44 @@ const useProfileData = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const getProfileData = async (successCallback = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<{ user: ProfileInfo }>({
-                url: '/user/profile-info',
-                isAuth: true,
-            });
+        setIsLoading(true);
+        const response = await request<{ user: ProfileInfo }>({
+            url: '/user/profile-info',
+            isAuth: true,
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => getProfileData(successCallback));
-            }
-
-            if ('data' in response) {
-                dispatch(initProfileInfo(response.data.user));
-            }
-
-            successCallback();
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        if ('data' in response) {
+            dispatch(initProfileInfo(response.data.user));
+        }
+
+        successCallback();
     };
 
     const saveProfileData = async (data: ProfileInfo, successCallback = () => {}): Promise<void> => {
-        try {
-            setDataIsSaving(true);
-            const response = await request<{ user: ProfileInfo }>({
-                url: '/user/profile-info',
-                isAuth: true,
-                method: 'PATCH',
-                data,
-            });
+        setDataIsSaving(true);
+        const response = await request<{ user: ProfileInfo }>({
+            url: '/user/profile-info',
+            isAuth: true,
+            method: 'PATCH',
+            data,
+        });
+        setDataIsSaving(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => saveProfileData(data, successCallback));
-            }
-
-            if ('data' in response) {
-                dispatch(initProfileInfo(response.data.user));
-            }
-
-            successCallback();
-            alertNotify('Успешно', 'Данные сохранены', 'success');
-        } catch {
-            // Error..
-        } finally {
-            setDataIsSaving(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        if ('data' in response) {
+            dispatch(initProfileInfo(response.data.user));
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Данные сохранены', 'success');
     };
 
     return {

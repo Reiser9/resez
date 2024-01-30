@@ -38,7 +38,9 @@ const Notify: React.FC<Props> = ({ data }) => {
     };
 
     React.useEffect(() => {
-        notifyTimeout.current = window.setTimeout(remove, time);
+        if (time !== -1) {
+            notifyTimeout.current = window.setTimeout(remove, time);
+        }
 
         return () => window.clearTimeout(notifyTimeout.current);
     }, [remove, time]);

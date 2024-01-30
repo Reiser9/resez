@@ -20,6 +20,7 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { TreePermission } from '../../create/page';
 import { Permissions } from '@/entities/role';
+import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
 
 const AdminEditRole = () => {
     const { id } = useParams();
@@ -97,7 +98,9 @@ const AdminEditRole = () => {
         setBackgroundColor(backgroundColor);
 
         const perm = permissions.filter((data) => data.isActive).map((data) => data.id.toString());
+        const permHalf = permissions.filter((data) => !data.isActive).map((data) => data.id.toString());
         setPermission(perm);
+        setPermissionHalf(permHalf);
     };
 
     React.useEffect(() => {
@@ -138,21 +141,11 @@ const AdminEditRole = () => {
             </div>
 
             <div className={base.form}>
-                <div className={styles.rolePreview}>
-                    <Text variant="text2">Предпросмотр:</Text>
-
-                    <div
-                        className={styles.rolePreviewItem}
-                        style={{
-                            color: textHexString,
-                            background: backgroundColorAuto
-                                ? convertHexToOpacityHex(textHexString)
-                                : backgroundHexString,
-                        }}
-                    >
-                        {name ? name : 'Название роли'}
-                    </div>
-                </div>
+                <RolePreview
+                    name={name}
+                    textColor={textHexString}
+                    backgroundColor={backgroundColorAuto ? convertHexToOpacityHex(textHexString) : backgroundHexString}
+                />
 
                 <Input
                     value={name}
@@ -187,7 +180,7 @@ const AdminEditRole = () => {
                     />
                 )}
 
-                <div className={styles.roleTree}>
+                <div style={{ width: '100%', display: 'flex' }}>
                     <Tree
                         selectable={false}
                         checkable

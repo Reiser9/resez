@@ -16,59 +16,49 @@ const useAvatar = () => {
     const dispatch = useAppDispatch();
 
     const updateAvatar = async (formData: FormData, successCallback = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<{ user: User }>({
-                url: '/user/avatar',
-                isAuth: true,
-                method: 'POST',
-                data: formData,
-                headers: {
-                    'Content-type': 'multipart/form-data',
-                },
-            });
+        setIsLoading(true);
+        const response = await request<{ user: User }>({
+            url: '/user/avatar',
+            isAuth: true,
+            method: 'POST',
+            data: formData,
+            headers: {
+                'Content-type': 'multipart/form-data',
+            },
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => updateAvatar(formData, successCallback));
-            }
-
-            if ('data' in response) {
-                dispatch(initUser(response.data.user));
-            }
-
-            successCallback();
-            alertNotify('Успешно', 'Изображение загружено', 'success');
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        if ('data' in response) {
+            dispatch(initUser(response.data.user));
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Изображение загружено', 'success');
     };
 
     const deleteAvatar = async (successCallback = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<{ user: User }>({
-                url: '/user/avatar',
-                isAuth: true,
-                method: 'DELETE',
-            });
+        setIsLoading(true);
+        const response = await request<{ user: User }>({
+            url: '/user/avatar',
+            isAuth: true,
+            method: 'DELETE',
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => deleteAvatar(successCallback));
-            }
-
-            if ('data' in response) {
-                dispatch(initUser(response.data.user));
-            }
-
-            successCallback();
-            alertNotify('Успешно', 'Аватарка удалена', 'success');
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        if ('data' in response) {
+            dispatch(initUser(response.data.user));
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Аватарка удалена', 'success');
     };
 
     return {

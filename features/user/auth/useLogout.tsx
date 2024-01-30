@@ -12,26 +12,21 @@ const useLogout = () => {
     const { request, catchRequestError, errorController, clearLocalData } = useRequest();
 
     const logout = async (successCallback: () => void = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request({
-                url: '/auth/logout',
-                isAuth: true,
-            });
+        setIsLoading(true);
+        const response = await request({
+            url: '/auth/logout',
+            isAuth: true,
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => logout(successCallback));
-            }
-
-            alertNotify('Успешно', 'Вы вышли с аккаунта', 'success');
-
-            clearLocalData();
-            successCallback();
-        } catch (error) {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        alertNotify('Успешно', 'Вы вышли с аккаунта', 'success');
+
+        clearLocalData();
+        successCallback();
     };
 
     return { isLoading, logout };

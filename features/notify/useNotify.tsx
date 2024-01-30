@@ -24,7 +24,7 @@ const useNotify = () => {
         });
 
         if (catchRequestError(response)) {
-            return errorController(response, () => getPaginationNotifies({ pageParam }));
+            return errorController(response);
         }
 
         if ('data' in response) {
@@ -33,46 +33,36 @@ const useNotify = () => {
     };
 
     const readAllNotifies = async (successCallback = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<Notify>({
-                url: '/notify/read-all',
-                isAuth: true,
-                method: 'PATCH',
-            });
+        setIsLoading(true);
+        const response = await request<Notify>({
+            url: '/notify/read-all',
+            isAuth: true,
+            method: 'PATCH',
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => readAllNotifies(successCallback));
-            }
-
-            successCallback();
-            alertNotify('Успешно', 'Уведомления прочитаны', 'success');
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        successCallback();
+        alertNotify('Успешно', 'Уведомления прочитаны', 'success');
     };
 
     const readNotifyById = async (id: number, successCallback = () => {}): Promise<void> => {
-        try {
-            setNotifyIsLoading((prev) => [...prev, id]);
-            const response = await request<Notify>({
-                url: `/notify/read/${id}`,
-                isAuth: true,
-                method: 'PATCH',
-            });
+        setNotifyIsLoading((prev) => [...prev, id]);
+        const response = await request<Notify>({
+            url: `/notify/read/${id}`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+        setNotifyIsLoading((prev) => prev.filter((item) => item !== id));
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => readNotifyById(id, successCallback));
-            }
-
-            successCallback();
-        } catch {
-            // Error..
-        } finally {
-            setNotifyIsLoading((prev) => prev.filter((item) => item !== id));
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        successCallback();
     };
 
     return {

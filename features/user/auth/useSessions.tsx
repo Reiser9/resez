@@ -25,10 +25,7 @@ const useSessions = () => {
         }
     };
 
-    const getPaginationSessions = async (
-        { pageParam }: { pageParam: number },
-        revalidate = () => {},
-    ): Promise<Sessions | void> => {
+    const getPaginationSessions = async ({ pageParam }: { pageParam: number }): Promise<Sessions | void> => {
         const limit = pageParam === 0 ? 5 : 6;
         const offset = pageParam * limit === 0 ? 0 : pageParam * limit - 1;
         const response = await request<Sessions>({
@@ -37,7 +34,7 @@ const useSessions = () => {
         });
 
         if (catchRequestError(response)) {
-            return errorController(response, revalidate);
+            return errorController(response);
         }
 
         if ('data' in response) {
@@ -46,48 +43,38 @@ const useSessions = () => {
     };
 
     const endAllSessions = async (successCallback = () => {}): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<Session>({
-                url: '/session/end-all',
-                isAuth: true,
-                method: 'PATCH',
-                callback: () => endAllSessions(successCallback),
-            });
+        setIsLoading(true);
+        const response = await request<Session>({
+            url: '/session/end-all',
+            isAuth: true,
+            method: 'PATCH',
+            callback: () => endAllSessions(successCallback),
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => endAllSessions(successCallback));
-            }
-
-            successCallback();
-            alertNotify('Успешно', 'Все сессии, кроме текущей, завершены', 'success');
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        successCallback();
+        alertNotify('Успешно', 'Все сессии, кроме текущей, завершены', 'success');
     };
 
     const endSessionById = async (id: number, successCallback = () => {}): Promise<void> => {
-        try {
-            setSessionsIsLoading((prev) => [...prev, id]);
-            const response = await request<Session>({
-                url: `/session/end/${id}`,
-                isAuth: true,
-                method: 'PATCH',
-            });
+        setSessionsIsLoading((prev) => [...prev, id]);
+        const response = await request<Session>({
+            url: `/session/end/${id}`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+        setSessionsIsLoading((prev) => prev.filter((item) => item !== id));
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => endSessionById(id, successCallback));
-            }
-
-            alertNotify('Успешно', 'Сессия завершена', 'success');
-            successCallback();
-        } catch {
-            // Error..
-        } finally {
-            setSessionsIsLoading((prev) => prev.filter((item) => item !== id));
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
+
+        alertNotify('Успешно', 'Сессия завершена', 'success');
+        successCallback();
     };
 
     return {

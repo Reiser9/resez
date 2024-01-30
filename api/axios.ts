@@ -68,6 +68,8 @@ axiosInstance.interceptors.request.use(
             } catch (error) {
                 console.error('2', error);
                 // local logout
+                const accessToken = localStorage.getItem('accessToken');
+                req.headers.Authorization = `Bearer ${accessToken}`;
 
                 return req;
             }

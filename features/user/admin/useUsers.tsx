@@ -20,7 +20,7 @@ const useNotify = () => {
         });
 
         if (catchRequestError(response)) {
-            return errorController(response, () => getPaginationUsers({ pageParam }));
+            return errorController(response);
         }
 
         if ('data' in response) {
@@ -30,7 +30,6 @@ const useNotify = () => {
 
     const blockUser = async (id: number, reason?: string, successCallback = () => {}): Promise<void> => {
         setUsersIsLoading((prev) => [...prev, id]);
-
         const response = await request<UserAdmin>({
             url: `/admin/user/${id}/block`,
             isAuth: true,
@@ -39,11 +38,10 @@ const useNotify = () => {
                 reason,
             },
         });
-
         setUsersIsLoading((prev) => prev.filter((item) => item !== id));
 
         if (catchRequestError(response)) {
-            return errorController(response, () => blockUser(id, reason, successCallback));
+            return errorController(response);
         }
 
         alertNotify('Успешно', 'Пользователь заблокирован', 'success');
@@ -52,17 +50,15 @@ const useNotify = () => {
 
     const unblockUser = async (id: number, successCallback = () => {}): Promise<void> => {
         setUsersIsLoading((prev) => [...prev, id]);
-
         const response = await request<UserAdmin>({
             url: `/admin/user/${id}/unblock`,
             isAuth: true,
             method: 'PATCH',
         });
-
         setUsersIsLoading((prev) => prev.filter((item) => item !== id));
 
         if (catchRequestError(response)) {
-            return errorController(response, () => unblockUser(id, successCallback));
+            return errorController(response);
         }
 
         alertNotify('Успешно', 'Пользователь разблокирован', 'success');

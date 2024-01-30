@@ -14,26 +14,21 @@ const useSettings = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const updateSettings = async (data: Settings): Promise<void> => {
-        try {
-            setIsLoading(true);
-            const response = await request<{ settings: Settings }>({
-                url: '/user/settings',
-                isAuth: true,
-                method: 'PATCH',
-                data,
-            });
+        setIsLoading(true);
+        const response = await request<{ settings: Settings }>({
+            url: '/user/settings',
+            isAuth: true,
+            method: 'PATCH',
+            data,
+        });
+        setIsLoading(false);
 
-            if (catchRequestError(response)) {
-                return errorController(response, () => updateSettings(data));
-            }
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
 
-            if ('data' in response) {
-                dispatch(setUserSettings(response.data.settings));
-            }
-        } catch {
-            // Error..
-        } finally {
-            setIsLoading(false);
+        if ('data' in response) {
+            dispatch(setUserSettings(response.data.settings));
         }
     };
 

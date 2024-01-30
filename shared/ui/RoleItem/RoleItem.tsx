@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -33,9 +34,9 @@ const RoleItem: React.FC<Props> = ({ data, loading = false, deleteRole = () => {
         <>
             <div className={`${base.item4} ${styles.roleItem}`}>
                 {role && (
-                    <p className={styles.roleItemName} style={{ background: backgroundColor, color: textColor }}>
+                    <Link href={`roles/${id}`} className={styles.roleItemName} style={{ background: backgroundColor, color: textColor }}>
                         {role}
-                    </p>
+                    </Link>
                 )}
 
                 <TextPoint title="Используют" text={usersCount || 0} />
