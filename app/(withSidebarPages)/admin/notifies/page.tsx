@@ -3,6 +3,7 @@
 import React from 'react';
 import { Checkbox } from 'antd';
 import { Dayjs } from 'dayjs';
+import dynamic from 'next/dynamic';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -15,7 +16,10 @@ import { Button } from '@/shared/ui/Button';
 import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
-// import { Editor } from '@/shared/ui/Editor';
+
+const EditorNoSSR = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
+    ssr: false,
+});
 
 const AdminNotifies = () => {
     const [title, setTitle] = React.useState<string>('');
@@ -203,7 +207,7 @@ const AdminNotifies = () => {
                     })}
                 />*/}
 
-                {/* <Editor placeholder="Сообщение" ref={editorRef} id="notifyEditor" /> */}
+                <EditorNoSSR placeholder="Сообщение" ref={editorRef} id="notifyEditor" />
             </div>
         </div>
     );
