@@ -9,10 +9,21 @@
     position: absolute;
     top: 100%;
     right: 0;
-    z-index: 3;
+    z-index: 10;
     opacity: 0;
     pointer-events: none;
     transition: .2s ease-in-out;
+}
+
+.hoverMenuOverlay.right{
+    right: auto;
+    left: 0;
+}
+
+.hoverMenuOverlay.center{
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .hoverMenuOverlay.big{
@@ -125,6 +136,7 @@
 
 .hoverMenuLink svg{
     width: 22px;
+    flex-shrink: 0;
 }
 
 .hoverMenuLink:hover svg path{

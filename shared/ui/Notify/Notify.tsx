@@ -53,6 +53,8 @@ const Notify: React.FC<Props> = ({ data }) => {
                 <Text variant="h4">{title}</Text>
                 <Text variant="text2">{text}</Text>
             </div>
+            
+            <audio src="/img/notify.mp3" autoPlay />
         </div>
     );
 };

@@ -10,10 +10,11 @@ type Props = {
     text?: string;
     icon?: React.ReactNode;
     danger?: boolean;
+    small?: boolean;
     children?: React.ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-const NotContent: React.FC<Props> = ({ text, icon, danger = false, children, ...props }) => {
+const NotContent: React.FC<Props> = ({ text, icon, danger = false, small = false, children, ...props }) => {
     return (
         <div
             className={cn(styles.emptyContent, {
@@ -21,7 +22,9 @@ const NotContent: React.FC<Props> = ({ text, icon, danger = false, children, ...
             })}
             {...props}
         >
-            <div className={styles.emptyImgInner}>{icon ? icon : <Data />}</div>
+            <div className={cn(styles.emptyImgInner, {
+                [styles.small]: small
+            })}>{icon ? icon : <Data />}</div>
 
             {text && <Text variant="text2">{text}</Text>}
 

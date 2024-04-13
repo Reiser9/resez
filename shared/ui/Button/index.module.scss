@@ -19,7 +19,11 @@
     justify-content: center;
     text-align: center;
     gap: 4px;
-    word-break: break-word;
+}
+
+.button svg{
+    width: 24px;
+    flex-shrink: 0;
 }
 
 .small {

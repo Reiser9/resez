@@ -25,7 +25,7 @@ export const appSlice = createSlice({
         },
         setAuthIsLoading: (state, action: PayloadAction<boolean>) => {
             state.authIsLoading = action.payload;
-        },
+        }
     },
 });
 

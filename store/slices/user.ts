@@ -48,7 +48,7 @@ export const userSlice = createSlice({
                 state.user.isBlocked = action.payload;
             }
         },
-        setUserBlockReason: (state, action: PayloadAction<string | null>) => {
+        setUserBlockReason: (state, action: PayloadAction<string>) => {
             if (state.user) {
                 state.user.blockReason = action.payload;
             }

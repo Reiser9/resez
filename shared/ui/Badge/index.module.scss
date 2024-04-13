@@ -59,3 +59,21 @@
     border-radius: 50%;
     object-fit: cover;
 }
+
+.badgeIndicator{
+    width: 16px;
+    height: 16px;
+    font-size: 1.1rem;
+    padding: 0.4rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-align: center;
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    color: #fff;
+    background: var(--main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

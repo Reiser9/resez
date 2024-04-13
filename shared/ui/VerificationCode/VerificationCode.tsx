@@ -107,7 +107,7 @@ const ConfirmCode = () => {
                 <QRCode
                     errorLevel="H"
                     value={link}
-                    icon="img/logo-circle.svg"
+                    icon="/img/logo-circle.svg"
                     iconSize={38}
                     color={theme === 'dark' ? '#fff' : '#000'}
                     status={isLoading ? 'loading' : qrExpired ? 'expired' : 'active'}

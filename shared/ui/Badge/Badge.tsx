@@ -10,9 +10,10 @@ type Props = {
     dot?: boolean;
     icon?: React.ReactNode;
     size?: 'small' | 'normal' | 'big';
+    indicator?: string | number;
 } & HTMLAttributes<HTMLDivElement>;
 
-const Badge: React.FC<Props> = ({ text, image, icon, dot = false, size = 'normal', className, ...props }) => {
+const Badge: React.FC<Props> = ({ text, image, icon, dot = false, size = 'normal', indicator, className, ...props }) => {
     return (
         <div
             className={cn(styles.badge, styles[size], className, {
@@ -27,6 +28,8 @@ const Badge: React.FC<Props> = ({ text, image, icon, dot = false, size = 'normal
             )}
 
             {icon && icon}
+
+            {!!indicator && <div className={styles.badgeIndicator}>{indicator}</div>}
         </div>
     );
 };

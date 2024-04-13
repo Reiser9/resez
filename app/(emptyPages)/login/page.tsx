@@ -122,7 +122,7 @@ const Login = () => {
                             color={theme === 'dark' ? '#fff' : '#000'}
                             errorLevel="H"
                             value={`${process.env.NEXT_PUBLIC_BOT_LINK}?start=${uniqId}`}
-                            icon="img/logo-circle.svg"
+                            icon="/img/logo-circle.svg"
                             size={140}
                             iconSize={38}
                         />

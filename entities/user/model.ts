@@ -45,8 +45,8 @@ export type User = {
     nickname: string;
     isVerified: boolean;
     isBlocked: boolean;
-    blockReason: string | null;
-    avatar: string | null;
+    blockReason: string;
+    avatar: string;
     levelInfo: {
         level: number;
         xp: number;
@@ -62,8 +62,8 @@ export type UserAdmin = {
     nickname: string;
     isVerified: boolean;
     isBlocked: boolean;
-    blockReason: string | null;
-    avatar: string | null;
+    blockReason: string;
+    avatar: string;
     level: number;
     firstName: string;
     lastName: string;
@@ -86,8 +86,8 @@ export type UsersAdmin = Paggination & {
 export type ProfileInfo = {
     birthDate: Dayjs | null;
     id?: number;
-    firstName: string | null;
-    lastName: string | null;
+    firstName: string;
+    lastName: string;
     gender: 'Мужской' | 'Женский' | null;
 };
 
@@ -115,3 +115,21 @@ export type ChangePassword = {
 export type VerifyChangePassword = ChangePassword & {
     code: string;
 };
+
+export type UserSearch = {
+    id: number;
+    nickname: string;
+    avatar: string;
+};
+
+export type UsersSearch = Paggination & {
+    users: UserSearch[];
+};
+
+export type UserProfile = {
+    id: number;
+    nickname: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
+}

@@ -8,6 +8,7 @@ import { ArrowBottom, Cross } from '@/shared/icons';
 import { Preloader } from '../Preloader';
 import { NotContent } from '../NotContent';
 import { Text } from '../Text';
+import { SelectProps } from 'antd/lib';
 
 type Option = {
     label: string;
@@ -26,7 +27,7 @@ type Props = {
     title?: string;
     wrapperClass?: string;
     className?: string;
-};
+} & SelectProps;
 
 const Select: React.FC<Props> = ({
     placeholder,

@@ -4,7 +4,7 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { ProfileInfo } from '@/entities/user';
+import { ProfileInfo, UserProfile } from '@/entities/user';
 import { initProfileInfo } from '@/store/slices/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 
@@ -57,11 +57,29 @@ const useProfileData = () => {
         alertNotify('Успешно', 'Данные сохранены', 'success');
     };
 
+    const getUserProfile = async (userId: string | number, successCallback = () => {}) => {
+        const response = await request<{ user: UserProfile }>({
+            url: `/user/${userId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data.user;
+        }
+    }
+
     return {
         isLoading,
         dataIsSaving,
         getProfileData,
         saveProfileData,
+        getUserProfile
     };
 };
 

@@ -40,9 +40,9 @@ const AdminNotifies = () => {
     const [delayedSend, setDelayedSend] = React.useState(false);
 
     // const { isLoading, searchUsersLoading, notifyTypesIsLoading, sendNotify, searchUsers, getNotifyTypes } = useAdmin();
-    // const { alertNotify } = useAlert();
+    const { alertNotify } = useAlert();
 
-    // const searchUsersRef = React.useRef(null);
+    const searchUsersRef = React.useRef(null);
     const editorRef = React.useRef(null);
 
     // const createNotify = async () => {
@@ -157,9 +157,9 @@ const AdminNotifies = () => {
                         maxTagCount="responsive"
                         notContentText="Пользователей не найдено"
                         loading={searchUsersLoading}
-                        onSearch={(value) => setSearchValue(value.trim())}
+                        onSearch={(value: string) => setSearchValue(value.trim())}
                         onDropdownVisibleChange={handleDropdownVisibleUsersChange}
-                        onChange={(value) => setUserIDs(value)}
+                        onChange={(value: number[]) => setUserIDs(value)}
                         filterOption={false}
                         options={userOptions.map((data) => {
                             return {

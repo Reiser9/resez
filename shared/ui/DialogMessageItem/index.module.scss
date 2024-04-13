@@ -1,0 +1,50 @@
+.messangerDialogItem{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: .2s linear;
+    padding: 0.8rem 2.4rem;
+}
+
+@media (any-hover: hover) {
+    .messangerDialogItem{
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+    .messangerDialogItem{
+        padding: 0.8rem 1.2rem;
+    }
+}
+
+.selected{
+    background: var(--lighten);
+}
+
+.messangerDialogItemName{
+    font-weight: 600;
+}
+
+@media (any-hover: hover) {
+    .messangerDialogItemName:hover{
+        color: var(--main);
+    }
+}
+
+.messangerDialogItemTime{
+    font-size: 1.4rem;
+    color: var(--textGrey);
+}
+
+.messangerDialogItemEvent{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.messangerDialogItemMessage span{
+    font-size: 1.4rem;
+    color: var(--textGrey);
+}

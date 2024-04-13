@@ -18,6 +18,7 @@ import { useSidebarContext } from '@/shared/context/SidebarProvider';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useLogout } from '@/features/user';
 import { ConfirmModal } from '@/shared/ui/Modal';
+import { getHolidayEvent } from '@/shared/utils/getHolidayEvent';
 
 type Props = {
     empty?: boolean;
@@ -29,6 +30,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
 
     const profileMenuRef = React.useRef<HTMLDivElement>(null);
 
+    const holidayEventName = getHolidayEvent().name;
     const { showParticles, toggleShowParticles } = useEventContext();
     const { theme, toggleTheme } = useThemeContext();
     const { showSidebar, setShowSidebar } = useSidebarContext();
@@ -167,11 +169,11 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <Switch size="small" checked={theme === 'dark'} className={styles.headerThemeLabel} />
                             </div>
 
-                            <div className={styles.headerProfileMenuLink} onClick={toggleShowParticles}>
+                            {holidayEventName === 'newyear' && <div className={styles.headerProfileMenuLink} onClick={toggleShowParticles}>
                                 <Snowflake />
                                 Снег
                                 <Switch size="small" checked={showParticles} className={styles.headerThemeLabel} />
-                            </div>
+                            </div>}
 
                             {isAuth && (
                                 <div

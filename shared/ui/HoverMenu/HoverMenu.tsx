@@ -8,10 +8,11 @@ type Props = {
     setValue: (value: boolean) => void;
     button: React.ReactNode;
     big?: boolean;
+    placement?: 'left' | 'center' | 'right';
     children?: React.ReactNode;
 };
 
-const HoverMenu: React.FC<Props> = ({ value, setValue, button, big = false, children, ...props }) => {
+const HoverMenu: React.FC<Props> = ({ value, setValue, button, big = false, placement = 'left', children, ...props }) => {
     const menuRef = React.useRef<HTMLDivElement>(null);
 
     const closeMenu = () => {
@@ -37,7 +38,7 @@ const HoverMenu: React.FC<Props> = ({ value, setValue, button, big = false, chil
             {button}
 
             <div
-                className={cn(styles.hoverMenuOverlay, {
+                className={cn(styles.hoverMenuOverlay, styles[placement], {
                     [styles.active]: value,
                     [styles.big]: big,
                 })}

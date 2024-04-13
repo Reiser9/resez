@@ -8,7 +8,7 @@ if(typeof window !== "undefined"){
     localStorage.setItem("uniqueId", uniqueId);
 }
 
-export const socket: Socket = io(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8080", {
+export const socket: Socket = io(process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8081", {
     withCredentials: true,
     forceNew: true,
     reconnectionAttempts: Infinity,

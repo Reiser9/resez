@@ -20,7 +20,7 @@ import { Badge } from '@/shared/ui/Badge';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 
 const ProfilePage = () => {
-    const [moreProfileMenu, setMoreProfileMenu] = React.useState<boolean>(false);
+    const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
 
     const { user, profileInfo } = useAppSelector((state) => state.user);
     const { avatar, nickname, levelInfo } = user || {};
@@ -46,13 +46,7 @@ const ProfilePage = () => {
                     </Link>
 
                     <div className={styles.profileAvatarInner}>
-                        {avatar ? (
-                            <Image src={avatar} alt="avatar" className={styles.profileAvatar} fill />
-                        ) : (
-                            <Text variant="h1" className={styles.profileAvatarEmpty}>
-                                {nickname && nickname[0]}
-                            </Text>
-                        )}
+                        <Badge image={avatar} text={nickname} style={{width: 92, height: 92}} />
 
                         <Link href="profile/data" className={styles.profileAvatarLink}>
                             Изменить
@@ -139,7 +133,10 @@ const ProfilePage = () => {
                         <Tooltip title={`Опыта до нового уровня: ${(limit || 0) - (xp || 0)}`}>
                             <div className={styles.profileSidebarLvl}>
                                 <div className={styles.profileSidebarLvlBar}>
-                                    <div className={styles.profileSidebarLvlProgress} style={{ width: `${(xp || 0) / (limit || 1)}%` }}></div>
+                                    <div
+                                        className={styles.profileSidebarLvlProgress}
+                                        style={{ width: `${(xp || 0) / (limit || 1)}%` }}
+                                    ></div>
                                 </div>
 
                                 <div className={styles.profileSidebarLvlValues}>

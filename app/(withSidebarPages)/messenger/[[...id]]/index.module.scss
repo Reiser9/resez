@@ -1,0 +1,27 @@
+div.messangerWrapper{
+    padding: 1.6rem 1.6rem 1.6rem 0;
+    position: relative;
+}
+
+@media (max-width: 998px) {
+    div.messangerWrapper{
+        padding: 1.6rem 0;
+    }
+}
+@media (max-width: 500px) {
+    div.messangerWrapper{
+        padding: .8rem 0;
+    }
+}
+
+.messanger{
+    width: 100%;
+    display: flex;
+    height: calc(100dvh - 65px - 64px - 32px);
+}
+
+@media (max-width: 500px) {
+    .messanger{
+        height: calc(100dvh - 65px - 52px - 16px);
+    }
+}

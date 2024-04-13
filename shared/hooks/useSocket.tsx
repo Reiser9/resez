@@ -1,4 +1,7 @@
+"use client";
+
 import React from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { socket } from '@/api/socket';
 
@@ -9,12 +12,20 @@ import { useAppDispatch, useAppSelector } from './useRedux';
 import useNotify from './useAlert';
 import useRequest from './useRequest';
 import { setUserBlockReason, setUserBlocked } from '@/store/slices/user';
+import { Message } from '@/entities/messenger';
 
 const useSocket = () => {
     const { isAuth, user, sessionId } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const { alertNotify } = useNotify();
     const { clearLocalData } = useRequest();
+
+    const queryClient = useQueryClient();
+
+    const revalidateChatById = () => {
+        queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
+        queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+    };
 
     React.useEffect(() => {
         if (!user?.id || !sessionId || !isAuth) {
@@ -38,7 +49,7 @@ const useSocket = () => {
             alertNotify('Сессия завершена', 'Кто-то завершил вашу сессию', 'error');
         });
 
-        socket.on('blocked', (data: { reason: string | null }) => {
+        socket.on('blocked', (data: { reason: string }) => {
             alertNotify('Ваш аккаунт заблокирован', 'По всем вопросам можете обращаться в группу в вк', 'warn', "", 5000);
             dispatch(setUserBlocked(true));
             dispatch(setUserBlockReason(data.reason));
@@ -46,6 +57,11 @@ const useSocket = () => {
 
         socket.on('unblocked', () => {
             dispatch(setUserBlocked(false));
+        });
+
+        socket.on('message', (message: Message) => {
+            revalidateChatById();
+            alertNotify(message.sender.nickname, message.message, 'success', `/messenger/${message.chatId}`, 10000);
         });
 
         // socket.on("new-permissions", (data) => {
@@ -58,6 +74,7 @@ const useSocket = () => {
             socket.off("end-session");
             socket.off("blocked");
             socket.off("unblocked");
+            socket.off('message');
             // socket.off("new-permissions");
         };
     }, []);
