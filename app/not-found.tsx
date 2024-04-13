@@ -3,6 +3,11 @@ import React from 'react';
 import { Button } from '@/shared/ui/Button';
 import { FullPageWrapper } from '@/shared/wrappers/FullPageWrapper';
 import { NotFoundIcon } from '@/shared/icons';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'ResEz - Страница не найдена',
+};
 
 const NotFound = () => {
     return (
