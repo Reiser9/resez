@@ -84,7 +84,7 @@ export type UsersAdmin = Paggination & {
 };
 
 export type ProfileInfo = {
-    birthDate: Dayjs | null;
+    birthDate: Dayjs | undefined | null;
     id?: number;
     firstName: string;
     lastName: string;

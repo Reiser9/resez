@@ -18,7 +18,7 @@ type Props = {
     children?: React.ReactNode;
     wrapperClass?: string;
     className?: string;
-    value?: Dayjs;
+    value?: Dayjs | null;
     setValue: (value: Dayjs | undefined | null) => void;
 } & DatePickerProps;
 

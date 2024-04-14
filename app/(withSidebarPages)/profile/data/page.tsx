@@ -22,7 +22,7 @@ import { File } from '@/shared/ui/File';
 const ProfileData = () => {
     const [name, setName] = React.useState<string>('');
     const [surname, setSurname] = React.useState<string>('');
-    const [birthday, setBirthday] = React.useState<Dayjs | null>(null);
+    const [birthday, setBirthday] = React.useState<Dayjs | null>();
     const [sex, setSex] = React.useState<'Мужской' | 'Женский' | null>(null);
     const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
 
@@ -55,7 +55,7 @@ const ProfileData = () => {
 
             setName(firstName || '');
             setSurname(lastName || '');
-            setBirthday(birthDate ? dayjs(birthDate) : null);
+            setBirthday(birthDate ? dayjs(birthDate) : undefined);
             setSex(gender || null);
         }
     }, [profileInfo]);
