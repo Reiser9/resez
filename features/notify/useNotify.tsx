@@ -7,16 +7,13 @@ import { Notifies, Notify } from '@/entities/notify';
 import useAlert from '@/shared/hooks/useAlert';
 
 const useNotify = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [notifyIsLoading, setNotifyIsLoading] = React.useState<number[]>([]);
 
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationNotifies = async (
-        { pageParam }: { pageParam: number },
-        unread = false,
-    ): Promise<Notifies | void> => {
+    const getPaginationNotifies = async ({ pageParam }: { pageParam: number }, unread = false) => {
         const limit = 6;
         const response = await request<Notifies>({
             url: `/notify?offset=${pageParam * 6}&limit=${limit}&unread=${unread}`,
@@ -32,7 +29,7 @@ const useNotify = () => {
         }
     };
 
-    const readAllNotifies = async (successCallback = () => {}): Promise<void> => {
+    const readAllNotifies = async (successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<Notify>({
             url: '/notify/read-all',
@@ -49,7 +46,7 @@ const useNotify = () => {
         alertNotify('Успешно', 'Уведомления прочитаны', 'success');
     };
 
-    const readNotifyById = async (id: number, successCallback = () => {}): Promise<void> => {
+    const readNotifyById = async (id: number, successCallback = () => {}) => {
         setNotifyIsLoading((prev) => [...prev, id]);
         const response = await request<Notify>({
             url: `/notify/read/${id}`,
@@ -65,12 +62,55 @@ const useNotify = () => {
         successCallback();
     };
 
+    const sendNotify = async (
+        title: string,
+        sender: string,
+        userIDs: number[] | string[],
+        date: string,
+        content: string,
+        type = 1,
+        successCallback = () => {},
+    ) => {
+        const titleTrim = title?.trim();
+        const senderTrim = sender?.trim();
+
+        if (!titleTrim) {
+            return alertNotify('Предупреждение', 'Заголовок не может быть пустым', 'warn');
+        }
+
+        setIsLoading(true);
+
+        const response = await request({
+            url: 'admin/notify',
+            method: 'POST',
+            isAuth: true,
+            data: {
+                title,
+                sender: senderTrim,
+                userIDs: userIDs || [],
+                date,
+                content,
+                notifyTypeId: type,
+            },
+        });
+
+        setIsLoading(false);
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        alertNotify('Успешно', 'Уведомление отправлено', 'success');
+        successCallback();
+    };
+
     return {
         isLoading,
         notifyIsLoading,
         getPaginationNotifies,
         readAllNotifies,
         readNotifyById,
+        sendNotify,
     };
 };
 

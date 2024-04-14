@@ -69,9 +69,9 @@ const UserProfilePage = () => {
                         <Image src="/img/banner.jpg" alt="banner" className={styles.profileBanner} fill />
 
                         {/* <Link href="/personalization" className={styles.dataPersonalizationButton}>
-                        <Paintbruh />
-                        Персонализация
-                    </Link> */}
+                            <Paintbruh />
+                            Персонализация
+                        </Link> */}
 
                         <div className={styles.profileAvatarInner}>
                             <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />

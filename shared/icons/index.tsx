@@ -94,3 +94,4 @@ export { Mute } from './Mute';
 export { Pin } from './Pin';
 export { Photo } from './Photo';
 export { Check } from './Check';
+export { Clock } from './Clock';

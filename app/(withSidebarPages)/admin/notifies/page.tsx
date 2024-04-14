@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Checkbox } from 'antd';
+import { Checkbox, Select, TimePicker } from 'antd';
 import { Dayjs } from 'dayjs';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -11,80 +11,89 @@ import base from '@/shared/styles/base.module.scss';
 import useAlert from '@/shared/hooks/useAlert';
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
-import { Select } from '@/shared/ui/Select';
 import { Button } from '@/shared/ui/Button';
 import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
+import { Clock } from '@/shared/icons';
+import useNotify from '@/features/notify/useNotify';
 
-const EditorNoSSR = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
-    ssr: false,
-});
+// const EditorNoSSR = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
+//     ssr: false,
+// });
 
 const AdminNotifies = () => {
     const [title, setTitle] = React.useState<string>('');
     const [author, setAuthor] = React.useState<string>('');
-    const [date, setDate] = React.useState<Dayjs | undefined>();
-    const [time, setTime] = React.useState<Dayjs | undefined>();
+    const [date, setDate] = React.useState<Dayjs>();
+    const [time, setTime] = React.useState<Dayjs>();
 
     const [searchValue, setSearchValue] = React.useState<string>('');
     const [userSelectOpen, setUserSelectOpen] = React.useState<boolean>(false);
     const [userOptions, setUserOptions] = React.useState<string[]>([]);
     const [userIDs, setUserIDs] = React.useState<number[]>([]);
 
-    const [type, setType] = React.useState(null);
+    const [type, setType] = React.useState(1);
     const [typeOptions, setTypeOptions] = React.useState([]);
 
     const [sendAnonim, setSendAnonim] = React.useState(false);
     const [sendForOne, setSendForOne] = React.useState(false);
     const [delayedSend, setDelayedSend] = React.useState(false);
 
-    // const { isLoading, searchUsersLoading, notifyTypesIsLoading, sendNotify, searchUsers, getNotifyTypes } = useAdmin();
+    const { sendNotify } = useNotify();
     const { alertNotify } = useAlert();
 
-    const searchUsersRef = React.useRef(null);
-    const editorRef = React.useRef(null);
+    // const searchUsersRef = React.useRef(null);
+    // const editorRef = React.useRef(null);
 
-    // const createNotify = async () => {
-    //     if ((!date || !time) && delayedSend) {
-    //         return alertNotify('Ошибка', 'Укажите время и дату', 'error');
-    //     }
+    const createNotify = async () => {
+        if ((!date || !time) && delayedSend) {
+            return alertNotify('Ошибка', 'Укажите время и дату', 'error');
+        }
 
-    //     if (delayedSend && !isDateTimePast(date, time)) {
-    //         return alertNotify('Ошибка', 'Нельзя отправить уведомление в прошедшую дату', 'error');
-    //     }
+        if (delayedSend && !isDateTimePast(date, time)) {
+            return alertNotify('Ошибка', 'Нельзя отправить уведомление в прошедшую дату', 'error');
+        }
 
-    //     if (delayedSend) {
-    //         var newDate = formatDate(
-    //             `${date?.format('YYYY-MM-DD')}T${time?.format('HH:mm:ss')}`,
-    //             'YYYY-MM-DDTHH:mm:ss.SSSZ',
-    //         );
-    //     }
+        if (delayedSend) {
+            var newDate = formatDate(
+                new Date(`${date?.format('YYYY-MM-DD')}T${time?.format('HH:mm:ss')}`),
+                'YYYY-MM-DDTHH:mm:ss.SSSZ',
+            );
+        }
 
-    //     const savedData = await editorRef.current?.save();
-    //     const content = getHtmlInEditor(savedData.blocks);
+        // const savedData = await editorRef.current?.save();
+        // const content = getHtmlInEditor(savedData.blocks);
 
-    //     sendNotify(title, author, userIDs, newDate, content, type, () => navigate('/'));
-    // };
+        sendNotify(title, author, userIDs, newDate ?? "", "content", type, () => {
+            setTitle("");
+            setAuthor("");
+            setDate(undefined);
+            setTime(undefined);
+            setSendAnonim(false);
+            setSendForOne(false);
+            setDelayedSend(false);
+        });
+    };
 
-    // const searchUsersHandler = () => {
-    //     setUserOptions([]);
-    //     searchUsers(searchValue, true).then((users) => {
-    //         if (!users) {
-    //             return;
-    //         }
+    const searchUsersHandler = () => {
+        setUserOptions([]);
+        // searchUsers(searchValue, true).then((users) => {
+        //     if (!users) {
+        //         return;
+        //     }
 
-    //         setUserOptions(users.users);
-    //     });
-    // };
+        //     setUserOptions(users.users);
+        // });
+    };
 
-    // const handleDropdownVisibleUsersChange = (open) => {
-    //     setUserSelectOpen(open);
+    const handleDropdownVisibleUsersChange = (open: boolean) => {
+        setUserSelectOpen(open);
 
-    //     if (open && userOptions.length === 0) {
-    //         searchUsersHandler();
-    //     }
-    // };
+        if (open && userOptions.length === 0) {
+            searchUsersHandler();
+        }
+    };
 
     // const handleDropdownVisibleTypeChange = (open) => {
     //     if (open && typeOptions.length === 0) {
@@ -115,7 +124,7 @@ const AdminNotifies = () => {
             <div className={base.titleInner}>
                 <Text variant="h3">Отправка уведомления</Text>
 
-                <Button auto variant="light">
+                <Button auto variant="light" onClick={createNotify}>
                     Отправить
                 </Button>
             </div>
@@ -149,49 +158,51 @@ const AdminNotifies = () => {
                     Отправить пользователю
                 </Checkbox>
 
-                {/* {sendForOne && (
+                {sendForOne && (
                     <Select
                         showSearch
                         placeholder="Пользователь"
                         mode="multiple"
                         maxTagCount="responsive"
-                        notContentText="Пользователей не найдено"
-                        loading={searchUsersLoading}
+                        // notContentText="Пользователей не найдено"
+                        loading={false}
                         onSearch={(value: string) => setSearchValue(value.trim())}
                         onDropdownVisibleChange={handleDropdownVisibleUsersChange}
                         onChange={(value: number[]) => setUserIDs(value)}
                         filterOption={false}
-                        options={userOptions.map((data) => {
-                            return {
-                                label: data.nickname,
-                                value: data.id,
-                            };
-                        })}
+                        // options={userOptions.map((data) => {
+                        //     return {
+                        //         label: data.nickname,
+                        //         value: data.id,
+                        //     };
+                        // })}
                     />
-                )} */}
+                )}
 
                 <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
                     Отложенная отправка
                 </Checkbox>
 
-                {/* {delayedSend && (
+                {delayedSend && (
                     <div className={styles.notifiesDelayInner}>
                         <DatePicker
                             disablePrevDate
                             placeholder="Выберите дату"
-                            className={styles.notifiesDelayItem}
+                            wrapperClass={styles.notifiesDelayItem}
                             value={date}
-                            onChange={(e) => setDate(e)}
+                            // @ts-ignore
+                            setValue={setDate}
                         />
                         <TimePicker
                             placeholder="Выберите время"
                             format="HH:mm"
                             className={styles.notifiesDelayItem}
                             value={time}
-                            onChange={(e) => setTime(e)}
+                            onChange={(e) => setTime(e ?? undefined)}
+                            suffixIcon={<Clock style={{width: 18, color: "var(--text)"}} />}
                         />
                     </div>
-                )} */}
+                )}
 
                 {/* <Select
                     placeholder="Тип уведомления"
@@ -207,7 +218,7 @@ const AdminNotifies = () => {
                     })}
                 />*/}
 
-                <EditorNoSSR placeholder="Сообщение" ref={editorRef} id="notifyEditor" />
+                {/* <EditorNoSSR placeholder="Сообщение" ref={editorRef} id="notifyEditor" /> */}
             </div>
         </div>
     );

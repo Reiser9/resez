@@ -8,6 +8,7 @@ import styles from './index.module.scss';
 
 import { Date } from '@/shared/icons';
 import { Text } from '../Text';
+import { DatePickerProps } from 'antd/lib';
 
 type Props = {
     format?: string;
@@ -17,9 +18,9 @@ type Props = {
     children?: React.ReactNode;
     wrapperClass?: string;
     className?: string;
-    value: Dayjs | null;
-    setValue: (value: Dayjs | null) => void;
-};
+    value?: Dayjs;
+    setValue: (value: Dayjs | undefined | null) => void;
+} & DatePickerProps;
 
 const DatePicker: React.FC<Props> = ({
     format = 'DD.MM.YYYY',

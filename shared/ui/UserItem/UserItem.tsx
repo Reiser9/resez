@@ -21,6 +21,7 @@ import { Text } from '../Text';
 import { ConfirmModal, Modal } from '../Modal';
 import { Input } from '../Input';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import Link from 'next/link';
 
 type Props = {
     data?: UserAdmin;
@@ -54,7 +55,7 @@ const UserItem: React.FC<Props> = ({
         isOnline,
         lastActivity,
     } = data || {};
-    const {level, limit, xp} = levelInfo || {};
+    const { level, limit, xp } = levelInfo || {};
     const [confirmBlock, setConfirmBlock] = React.useState<boolean>(false);
     const [confirmUnblock, setConfirmUnblock] = React.useState<boolean>(false);
     const [blockReason, setBlockReason] = React.useState<string>('');
@@ -68,7 +69,9 @@ const UserItem: React.FC<Props> = ({
             <div className={styles.userItem}>
                 <div className={styles.userInfoInner}>
                     <div className={styles.userAvatarInner}>
-                        <Badge size="big" image={isHideAvatars && id !== userId ? '' : avatar} text={nickname} />
+                        <Link href={`/user/${id}`}>
+                            <Badge size="big" image={isHideAvatars && id !== userId ? '' : avatar} text={nickname} />
+                        </Link>
 
                         {isOnline ? (
                             <Tooltip title="Онлайн">
@@ -91,7 +94,9 @@ const UserItem: React.FC<Props> = ({
 
                     <div className={styles.userInfo}>
                         {firstName && lastName && (
-                            <Text className={styles.userInfoName}>{`${firstName} ${lastName}`}</Text>
+                            <Link href={`/user/${id}`}>
+                                <Text className={styles.userInfoName}>{`${firstName} ${lastName}`}</Text>
+                            </Link>
                         )}
 
                         {nickname && (
