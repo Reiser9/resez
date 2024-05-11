@@ -23,13 +23,13 @@ import useNotify from '@/features/notify/useNotify';
 // });
 
 const AdminNotifies = () => {
-    const [title, setTitle] = React.useState<string>('');
-    const [author, setAuthor] = React.useState<string>('');
+    const [title, setTitle] = React.useState('');
+    const [author, setAuthor] = React.useState('');
     const [date, setDate] = React.useState<Dayjs>();
     const [time, setTime] = React.useState<Dayjs>();
 
-    const [searchValue, setSearchValue] = React.useState<string>('');
-    const [userSelectOpen, setUserSelectOpen] = React.useState<boolean>(false);
+    const [searchValue, setSearchValue] = React.useState('');
+    const [userSelectOpen, setUserSelectOpen] = React.useState(false);
     const [userOptions, setUserOptions] = React.useState<string[]>([]);
     const [userIDs, setUserIDs] = React.useState<number[]>([]);
 
@@ -65,9 +65,9 @@ const AdminNotifies = () => {
         // const savedData = await editorRef.current?.save();
         // const content = getHtmlInEditor(savedData.blocks);
 
-        sendNotify(title, author, userIDs, newDate ?? "", "content", type, () => {
-            setTitle("");
-            setAuthor("");
+        sendNotify(title, author, userIDs, newDate ?? '', 'content', type, () => {
+            setTitle('');
+            setAuthor('');
             setDate(undefined);
             setTime(undefined);
             setSendAnonim(false);
@@ -123,10 +123,6 @@ const AdminNotifies = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">Отправка уведомления</Text>
-
-                <Button auto variant="light" onClick={createNotify}>
-                    Отправить
-                </Button>
             </div>
 
             <div className={base.formMedium}>
@@ -199,7 +195,7 @@ const AdminNotifies = () => {
                             className={styles.notifiesDelayItem}
                             value={time}
                             onChange={(e) => setTime(e ?? undefined)}
-                            suffixIcon={<Clock style={{width: 18, color: "var(--text)"}} />}
+                            suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
                         />
                     </div>
                 )}
@@ -220,6 +216,10 @@ const AdminNotifies = () => {
 
                 {/* <EditorNoSSR placeholder="Сообщение" ref={editorRef} id="notifyEditor" /> */}
             </div>
+
+            <Button auto onClick={createNotify} levitation>
+                Отправить
+            </Button>
         </div>
     );
 };

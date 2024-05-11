@@ -1,0 +1,274 @@
+.addCardCollectionWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.addCardCollectionForm{
+    max-width: 600px;
+    margin: 0 auto;
+    align-items: center;
+}
+
+.addCardCollectionPairWrap{
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    position: relative;
+}
+
+@media (max-width: 560px) {
+    .addCardCollectionPairWrap{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+.addCardCollectionPairSwap{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--lighten);
+}
+
+@media (max-width: 560px) {
+    .addCardCollectionPairSwap{
+        transform: translate(-50%, -50%) rotate(90deg);
+    }
+}
+
+.addCardCollectionPairSwap.disable{
+    pointer-events: none;
+    opacity: .5;
+}
+
+.addCardCollectionPairSwap svg{
+    width: 20px;
+}
+
+.addCardCollectionPairSwap svg path{
+    stroke: var(--main);
+}
+
+.addCardCollectionPair{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.addCardCollectionPair:nth-last-child(2) .addCardCollectionPairDelete{
+    filter: grayscale(1);
+}
+
+.addCardCollectionPairInput{
+    width: calc(100% / 2 - 20px / 2);
+}
+
+.addCardCollectionPairDelete{
+    flex-shrink: 0;
+}
+
+@media (max-width: 560px) {
+    .addCardCollectionPair{
+        flex-wrap: wrap;
+    }
+
+    .addCardCollectionPairInput, .addCardCollectionPair .addCardCollectionPairDelete{
+        width: 100%;
+    }
+}
+
+.cardCollectionWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    background: var(--input);
+    border-radius: 4px;
+    padding: 1.2rem;
+}
+
+.cardCollectionItem{
+    width: 100%;
+    background: var(--white);
+    padding: 1.2rem;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1px solid transparent;
+}
+
+.cardCollectionItem.error{
+    border: 1px solid var(--error);
+}
+
+.cardCollectionItemNumberInner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.cardCollectionItemNumber{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--main);
+    background: var(--lighten);
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+.cardCollectionItemContent{
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    position: relative;
+}
+
+.cardCollectionItemHalf{
+    width: calc(100% / 2 - 24px / 2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.cardCollectionItemHalfImage{
+    width: 100%;
+    border-radius: 4px;
+    min-height: 100px;
+    border: 1px dashed var(--main);
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.cardCollectionItemHalfImage.imageFill{
+    border: 1px solid var(--main);
+}
+
+.cardCollectionItemHalfImage > svg{
+    width: 28px;
+    color: var(--main);
+}
+
+@media (any-hover: hover) {
+    .cardCollectionItemHalfImage{
+        cursor: pointer;
+    }
+}
+
+.cardCollectionItemHalfImage img{
+    object-fit: contain;
+}
+
+.cardCollectionItemImageDelete{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.cardCollectionExcelInfo{
+    width: 100%;
+    border-radius: 4px;
+    padding: 1.2rem;
+    background: var(--input);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardCollectionExcelWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.cardCollectionExcelImg{
+    width: 100%;
+    max-width: 200px;
+    aspect-ratio: 0.72 / 1;
+    position: relative;
+}
+
+.cardCollectionExcelPoints{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.cardCollectionExcelPoint{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cardCollectionExcelPointNumber{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--lighten);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--main);
+    flex-shrink: 0;
+}
+
+.cardCollectionExcelButton{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--successB);
+    color: var(--success);
+    padding: .8rem 1.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: .2s linear;
+    margin: 0 auto;
+}
+
+.cardCollectionExcelButton svg{
+    width: 24px;
+}
+
+@media (any-hover: hover) {
+    .cardCollectionExcelButton{
+        cursor: pointer;
+    }
+
+    .cardCollectionExcelButton:hover{
+        opacity: 0.7;
+    }
+}

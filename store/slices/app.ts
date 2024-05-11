@@ -10,7 +10,7 @@ type AppStateType = {
 const initialState: AppStateType = {
     serverIsAvailable: true,
     appIsLoading: true,
-    authIsLoading: false
+    authIsLoading: false,
 };
 
 export const appSlice = createSlice({
@@ -25,7 +25,7 @@ export const appSlice = createSlice({
         },
         setAuthIsLoading: (state, action: PayloadAction<boolean>) => {
             state.authIsLoading = action.payload;
-        }
+        },
     },
 });
 

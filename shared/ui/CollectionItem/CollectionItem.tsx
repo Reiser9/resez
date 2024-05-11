@@ -16,17 +16,23 @@ import { HoverMenu, MenuLink } from '../HoverMenu';
 import { IconButton } from '../Button';
 import { LoaderForItem } from '../Preloader';
 import { Badge } from '../Badge';
+import { useRouter } from 'next/navigation';
+import { ConfirmModal } from '../Modal';
 
 type Props = {
     data: Collection;
     loading?: boolean;
+    deleteCallback?: () => void;
 };
 
-const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
+const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {} }) => {
     const { id, collection, description, isPrivate, pairsCount, user } = data || {};
     const { avatar, nickname } = user || {};
 
-    const [collectionItemMenu, setCollectionItemMenu] = React.useState<boolean>(false);
+    const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
+    const [deleteCollectionModal, setDeleteCollectionModal] = React.useState(false);
+
+    const router = useRouter();
 
     return (
         <div className={cn(base.item3, styles.collectionItem)}>
@@ -60,7 +66,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
 
             <div className={styles.collectionItemBottom}>
                 <Link href={`/user/${nickname}`} className={styles.collectionItemAuthor}>
-                    <Badge image={avatar} text={nickname} />
+                    <Badge isUserAvatar image={avatar} text={nickname} />
 
                     <p className={styles.collectionItemAuthorName}>{nickname}</p>
                 </Link>
@@ -74,12 +80,15 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
                     value={collectionItemMenu}
                     setValue={setCollectionItemMenu}
                 >
-                    <MenuLink>
+                    <MenuLink onClick={() => router.push(`/training/memory/edit/${id}`)}>
                         <Edit />
                         Редактировать
                     </MenuLink>
 
-                    <MenuLink danger>
+                    <MenuLink danger onClick={() => {
+                        setCollectionItemMenu(false);
+                        setDeleteCollectionModal(true);
+                    }}>
                         <Delete />
                         Удалить
                     </MenuLink>
@@ -87,6 +96,14 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
             </div>
 
             {loading && <LoaderForItem />}
+
+            <ConfirmModal
+                text="Вы действительно хотите удалить коллекцию?"
+                confirmText="Удалить"
+                value={deleteCollectionModal}
+                setValue={setDeleteCollectionModal}
+                callback={deleteCallback}
+            />
         </div>
     );
 };

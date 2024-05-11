@@ -386,7 +386,11 @@
     justify-content: center;
 }
 
-.tag svg {
+.tagElementIcon{
+    padding: .6rem .7rem;
+}
+
+.tag svg, .tagElementIcon svg {
     width: 20px;
 }
 

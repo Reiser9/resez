@@ -14,6 +14,7 @@ export type Collection = {
     pairsCount: number;
     createdAt: Date;
     updatedAt: Date;
+    likesCount: number;
     user: {
         id: number;
         nickname: string;
@@ -21,12 +22,79 @@ export type Collection = {
     };
 };
 
-export type QAPair = {
+export type Pair = {
     id: number;
-    question: string;
-    answer: string;
+    questionText: string;
+    questionPicture: string;
+    answerText: string;
+    answerPicture: string;
+};
+
+export type PairDTO = {
+    questionText?: string;
+    questionPicture?: string;
+    answerText?: string;
+    answerPicture?: string;
 };
 
 export type CollectionSingle = Collection & {
-    QAPairs?: QAPair[];
+    pairs: Pair[];
+};
+
+export type Excel = {
+    A: string;
+    B: string;
+};
+
+export type CollectionSettings = {
+    shuffleCards: boolean;
+    cardsAnswerOnFront: boolean;
+    shuffleMemorization: boolean;
+    showAnswerImmediately: boolean;
+    maxQuestions: number;
+    shuffleTest: boolean;
+    testAnswerOnFront: boolean;
+    answerChoiceMode: boolean;
+    trueFalseMode: boolean;
+    writeMode: boolean;
+};
+
+export type CollectionWrite = {
+    id: number;
+    mode: 'WRITE';
+    questionText: string;
+    questionPicture: string;
+    answerText: string;
+};
+
+export type CollectionValidation = {
+    id: number;
+    mode: 'VALIDATION';
+    questionText: string;
+    questionPicture: string;
+    answerText: string;
+    answerPicture: string;
+    isCorrect: boolean;
+};
+
+type Choice = {
+    id: number;
+    answerText: string;
+    answerPicture: string;
+    isCorrect: boolean;
+};
+
+export type CollectionChoice = {
+    id: number;
+    mode: 'CHOICE';
+    questionText: string;
+    questionPicture: string;
+    choices: Choice[];
+};
+
+export type MatchItem = {
+    id: string;
+    text: string;
+    picture: string;
+    answerId: string;
 };

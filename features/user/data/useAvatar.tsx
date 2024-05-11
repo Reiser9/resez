@@ -9,19 +9,19 @@ import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useAvatar = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
     const dispatch = useAppDispatch();
 
-    const updateAvatar = async (formData: FormData, successCallback = () => {}): Promise<void> => {
+    const updateAvatar = async (data: FormData, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ user: User }>({
             url: '/user/avatar',
             isAuth: true,
             method: 'POST',
-            data: formData,
+            data,
             headers: {
                 'Content-type': 'multipart/form-data',
             },
@@ -40,7 +40,7 @@ const useAvatar = () => {
         alertNotify('Успешно', 'Изображение загружено', 'success');
     };
 
-    const deleteAvatar = async (successCallback = () => {}): Promise<void> => {
+    const deleteAvatar = async (successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ user: User }>({
             url: '/user/avatar',

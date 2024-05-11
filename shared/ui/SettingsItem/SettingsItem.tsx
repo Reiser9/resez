@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Switch } from 'antd';
+import cn from 'classnames';
 
 import styles from './index.module.scss';
 
@@ -12,8 +13,10 @@ type Props = {
     text?: string;
     checked: boolean;
     name: string;
+    fullWidth?: boolean;
     loading?: boolean;
     callback?: (data: Settings) => Promise<void>;
+    setValue?: (value: boolean) => void;
 };
 
 const SettingsItem: React.FC<Props> = ({
@@ -22,7 +25,9 @@ const SettingsItem: React.FC<Props> = ({
     checked,
     name,
     loading = false,
-    callback = () => {},
+    fullWidth = false,
+    callback,
+    setValue,
     ...props
 }) => {
     const callbackHandler = () => {
@@ -31,16 +36,19 @@ const SettingsItem: React.FC<Props> = ({
                 [name]: !checked,
             };
 
-            callback(data);
+            callback && callback(data);
+            setValue && setValue(!checked);
         }
     };
 
     return (
-        <div className={styles.settingsBlock} {...props}>
+        <div className={cn(styles.settingsBlock, {
+            [styles.fullWidth]: fullWidth
+        })} {...props}>
             <div className={styles.settingsBlockWrapper} onClick={callbackHandler}>
                 <p className={styles.settingsBlockName}>{title}</p>
 
-                <Switch size="small" checked={checked} loading={loading} />
+                <Switch size="small" checked={checked} loading={loading} onChange={setValue ? (value) => setValue(value) : undefined} />
             </div>
 
             <p className={styles.settingsBlockDescription}>{text}</p>

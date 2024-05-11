@@ -51,6 +51,10 @@
     outline: none;
 }
 
+.input.white, .textarea.white{
+    background: var(--white);
+}
+
 .disabled {
     opacity: 0.6;
     pointer-events: none;
@@ -81,8 +85,8 @@
     max-width: 24px;
 }
 
-.infoIcon svg path{
-    stroke: var(--main);
+.infoIcon svg{
+    color: var(--main);
 }
 
 .inputTitleWrapper {

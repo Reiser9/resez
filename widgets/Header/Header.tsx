@@ -87,7 +87,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <div className={styles.headerProfileWrap} onClick={toggleMenuProfile}>
                                     {isAuth ? (
                                         <>
-                                            <Badge image={avatar} text={nickname} dot={!!unreadNotifiesCount} />
+                                            <Badge isUserAvatar image={avatar} text={nickname} dot={!!unreadNotifiesCount} />
 
                                             <Text className={styles.headerProfileNick}>{nickname}</Text>
                                         </>
@@ -110,7 +110,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <>
                                     <div className={styles.headerProfileMenuInfo}>
                                         <div className={styles.headerProfileMenuData}>
-                                            <Badge image={avatar} text={nickname} />
+                                            <Badge isUserAvatar image={avatar} text={nickname} />
 
                                             <div className={styles.headerProfileMenuNameInner}>
                                                 <Text textClassName={styles.headerProfileMenuName}>{nickname}</Text>

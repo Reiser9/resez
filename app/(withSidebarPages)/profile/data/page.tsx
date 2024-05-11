@@ -72,10 +72,6 @@ const ProfileData = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">Личные данные</Text>
-
-                <Button auto variant="light" loading={dataIsSaving} onClick={saveData}>
-                    Сохранить
-                </Button>
             </div>
 
             <div className={styles.dataWrapper}>
@@ -204,6 +200,10 @@ const ProfileData = () => {
                     </div>
                 </div>
             </div>
+
+            <Button auto loading={dataIsSaving} onClick={saveData} levitation>
+                Сохранить
+            </Button>
         </div>
     );
 };

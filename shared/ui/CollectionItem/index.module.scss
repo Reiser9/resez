@@ -92,7 +92,11 @@
     stroke: var(--main);
 }
 
-.collectionItemDescription {
+.collectionItemDescription{
+    width: 100%;
+}
+
+.collectionItemDescription p {
     width: 100%;
     overflow: hidden;
     display: -webkit-box;

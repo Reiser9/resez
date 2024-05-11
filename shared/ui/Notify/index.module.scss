@@ -11,8 +11,8 @@
     background: var(--lighten);
 }
 
-.notifyItem svg path{
-    stroke: var(--main);
+.notifyItem svg{
+    color: var(--main);
 }
 
 .notifyItem:before{
@@ -48,8 +48,8 @@
     background: var(--successB);
 }
 
-.success svg path{
-    stroke: var(--success);
+.success svg{
+    color: var(--success);
 }
 
 .notifyItem.success:before{
@@ -60,8 +60,8 @@
     background: var(--infoB);
 }
 
-.info svg path{
-    stroke: var(--info);
+.info svg{
+    color: var(--info);
 }
 
 .notifyItem.info:before{
@@ -72,8 +72,8 @@
     background: var(--errorB);
 }
 
-.error svg path{
-    stroke: var(--error);
+.error svg{
+    color: var(--error);
 }
 
 .notifyItem.error:before{
@@ -84,8 +84,8 @@
     background: var(--warnB);
 }
 
-.warn svg path{
-    stroke: var(--warn);
+.warn svg{
+    color: var(--warn);
 }
 
 .notifyItem.warn:before{

@@ -60,7 +60,7 @@ const Sidebar = () => {
                     Мессенджер
                 </SidebarLink>
 
-                <SidebarLink href="/info" onClick={closeSidebar}>
+                <SidebarLink href="/useful" onClick={closeSidebar}>
                     <Fire />
                     Полезное
                 </SidebarLink>

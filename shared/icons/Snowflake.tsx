@@ -1,4 +1,4 @@
-export const Snowflake = () => {
+export const Snowflake = ({ ...props }) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -6,10 +6,11 @@ export const Snowflake = () => {
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--text)"
+            stroke="currentColor"
             strokeWidth="1"
             strokeLinecap="round"
             strokeLinejoin="round"
+            {...props}
         >
             <line x1="2" x2="22" y1="12" y2="12" />
             <line x1="12" x2="12" y1="2" y2="22" />

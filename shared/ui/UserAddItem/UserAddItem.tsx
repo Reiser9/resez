@@ -21,7 +21,7 @@ const UserAddItem: React.FC<Props> = ({ data, active = false, ...props }) => {
     return (
         <div className={styles.messangerNewChatUserItem} {...props}>
             <div className={styles.messangerNewChatUserItemWrapper}>
-                <Badge text={nickname} image={avatar} />
+                <Badge isUserAvatar text={nickname} image={avatar} />
 
                 <div className={styles.messangerNewChatUserItemInfo}>
                     {/* <Text className={styles.messangerNewChatUserItemName}>{name}</Text> */}

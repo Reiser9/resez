@@ -34,10 +34,7 @@
 .dialogItemMute{
     width: 20px;
     flex-shrink: 0;
-}
-
-.dialogItemMute path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .dialogItemMore{
@@ -53,10 +50,7 @@
 
 .dialogItemMore svg{
     width: 20px;
-}
-
-.dialogItemMore svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .dialogItemActions{

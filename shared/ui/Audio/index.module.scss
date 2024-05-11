@@ -36,10 +36,7 @@
 
 .voicePlay svg{
     width: 18px;
-}
-
-.voicePlay svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .voiceLine{

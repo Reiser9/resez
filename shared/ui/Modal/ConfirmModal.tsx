@@ -13,6 +13,8 @@ type Props = {
     rejectText?: string;
     loading?: boolean;
     callback?: () => void;
+    rejectCallback?: () => void;
+    children?: React.ReactNode;
 };
 
 const ConfirmModal: React.FC<Props> = ({
@@ -23,6 +25,8 @@ const ConfirmModal: React.FC<Props> = ({
     rejectText = 'Нет',
     loading = false,
     callback = () => {},
+    rejectCallback = () => {},
+    children,
 }) => {
     const callbackWithClose = () => {
         callback();
@@ -31,7 +35,19 @@ const ConfirmModal: React.FC<Props> = ({
 
     return (
         <Modal title="Подтвердите действие" value={value} setValue={setValue} text={text} size="small">
+            {children && children}
+
             <div className={styles.confirmModalButtons}>
+                <Button
+                    variant="light"
+                    onClick={() => {
+                        rejectCallback();
+                        setValue(false);
+                    }}
+                >
+                    {rejectText}
+                </Button>
+
                 {value ? (
                     <Button color="danger" variant="light" onClick={callbackWithClose} loading={loading}>
                         {confirmText}
@@ -41,9 +57,6 @@ const ConfirmModal: React.FC<Props> = ({
                         {confirmText}
                     </Button>
                 )}
-                <Button variant="light" onClick={() => setValue(false)}>
-                    {rejectText}
-                </Button>
             </div>
         </Modal>
     );

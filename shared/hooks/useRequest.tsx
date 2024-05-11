@@ -26,7 +26,7 @@ const useRequest = () => {
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
 
-    const clearLocalData = (): void => {
+    const clearLocalData = () => {
         if (user && sessionId) {
             socket.emit('leave', user.id, sessionId);
         }
@@ -36,7 +36,7 @@ const useRequest = () => {
         dispatch(setUserData());
     };
 
-    const getHealthServer = async (): Promise<boolean> => {
+    const getHealthServer = async () => {
         try {
             await axiosInstance.get('/health', {
                 timeout: 3000,
@@ -56,14 +56,14 @@ const useRequest = () => {
         response: AxiosResponse | AxiosError<Error>,
         errorMessage = '',
         customLogic?: () => void,
-    ): Promise<void> => {
+    ) => {
         if ('data' in response) {
             return;
         }
 
         switch (response.response?.status) {
-            case 500:
-                return;
+            // case 500:
+            //     return;
             case 403:
                 return alertNotify('Ошибка', 'Доступ ограничен', 'error');
             case 429:
@@ -83,7 +83,7 @@ const useRequest = () => {
         }
     };
 
-    // const noAuthController = async (callback = () => {}): Promise<void> => {
+    // const noAuthController = async (callback = () => {}) => {
     //     const token = await request<{ accessToken: string }>({ url: '/auth/refresh', isAuth: true });
 
     //     if (!('data' in token)) {
@@ -95,7 +95,7 @@ const useRequest = () => {
     //     callback();
     // };
 
-    const catchRequestError = (response: AxiosResponse | AxiosError<Error>): boolean => {
+    const catchRequestError = (response: AxiosResponse | AxiosError<Error>) => {
         if (!('data' in response)) {
             return true;
         }

@@ -4,7 +4,7 @@ export const Tv = ({ ...props }) => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--main)"
+            stroke="currentColor"
             strokeWidth="1.2"
             strokeLinecap="round"
             strokeLinejoin="round"

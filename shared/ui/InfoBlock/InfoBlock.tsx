@@ -9,10 +9,11 @@ type Props = {
     title?: string;
     text?: string;
     image?: React.ReactNode;
+    button?: React.ReactNode;
     children?: React.ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-const InfoBlock: React.FC<Props> = ({ title, text, icon, image, children, className, ...props }) => {
+const InfoBlock: React.FC<Props> = ({ title, text, icon, image, children, button, className, ...props }) => {
     return (
         <div className={cn(styles.testWelcomeWrapper, className)} {...props}>
             <div className={styles.testWelcome}>
@@ -23,7 +24,9 @@ const InfoBlock: React.FC<Props> = ({ title, text, icon, image, children, classN
 
                     {text && <p className={typography.text2}>{text}</p>}
 
-                    {children}
+                    {children && children}
+
+                    {button && button}
                 </div>
 
                 {image && <div className={styles.testWelcomeIcon}>{image}</div>}

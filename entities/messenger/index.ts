@@ -1,1 +1,1 @@
-export type { ChatItem, ChatsDTO, Message } from './model';
+export type { ChatItem, ChatsDTO, Message, ChatInfo, ChatUser, ChatUsersPaggination } from './model';

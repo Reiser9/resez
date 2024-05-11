@@ -17,7 +17,7 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'resez.online',
+                hostname: 'resez.ru',
             },
         ],
     },

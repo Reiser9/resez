@@ -1,19 +1,20 @@
 'use client';
 
 import React from 'react';
+import { Tooltip } from 'antd';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Text } from '@/shared/ui/Text';
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { RoleItem } from '@/shared/ui/RoleItem';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross } from '@/shared/icons';
+import { Cross, Plus } from '@/shared/icons';
 import { useRoles } from '@/features/role';
 import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
 
@@ -54,9 +55,11 @@ const AdminRoles = () => {
                 </div>
 
                 {checkPermission(permissions, [PERMISSIONS.CREATE_ROLES]) && (
-                    <Button variant="light" auto href="roles/create">
-                        Создать
-                    </Button>
+                    <Tooltip title="Создать">
+                        <IconButton href="roles/create" variant="light" small circle>
+                            <Plus />
+                        </IconButton>
+                    </Tooltip>
                 )}
             </div>
 
@@ -68,23 +71,23 @@ const AdminRoles = () => {
                 </div>
             ) : error ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : (
+            ) : data.pages[0]?.totalCount ? (
                 <div className={base.contentItems}>
                     {data?.pages.map((role) =>
                         role?.roles?.map((data) => (
                             <RoleItem
                                 key={data.id}
                                 data={data}
-                                // @ts-ignore
-                                deleteRole={() => deleteRole(data.id, revalidateRoles)}
-                                // @ts-ignore
-                                loading={rolesIsLoading.includes(data.id)}
+                                deleteRole={() => deleteRole(String(data.id), revalidateRoles)}
+                                loading={rolesIsLoading.includes(String(data.id))}
                                 edit={checkPermission(permissions, [PERMISSIONS.UPDATE_ROLES])}
                                 remove={checkPermission(permissions, [PERMISSIONS.DELETE_ROLES])}
                             />
                         )),
                     )}
                 </div>
+            ) : (
+                <NotContent text="Ролей не найдено" />
             )}
 
             {hasNextPage && (

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import cn from 'classnames';
@@ -12,27 +12,29 @@ type Props = {
     text?: string | number;
     blur?: boolean;
     className?: string;
-    children?: React.ReactNode
-}
+    children?: React.ReactNode;
+};
 
-const TextPoint: React.FC<Props> = ({
-    title,
-    text,
-    blur = false,
-    className,
-    children
-}) => {
+const TextPoint: React.FC<Props> = ({ title, text, blur = false, className, children }) => {
     return (
-        <div className={cn(styles.userPoint, className, {
-            [styles.blur]: blur
-        })}>
-            <Text variant="text2" className={styles.userPointTitle}>{title}</Text>
+        <div
+            className={cn(styles.userPoint, className)}
+        >
+            <Text variant="text2" className={styles.userPointTitle}>
+                {title}
+            </Text>
 
-            {text && <Text>{blur ? "#######" : text}</Text>}
+            <div
+                className={cn(styles.userPointContent, {
+                    [styles.blur]: blur,
+                })}
+            >
+                {text && <Text>{blur ? '#######' : text}</Text>}
 
-            {children}
+                {children}
+            </div>
         </div>
-    )
-}
+    );
+};
 
 export default TextPoint;

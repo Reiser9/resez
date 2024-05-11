@@ -41,10 +41,7 @@
 
 .sessionItemIcon svg{
     width: 28px;
-}
-
-.sessionItemIcon svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .sessionItemPoints{
@@ -161,10 +158,7 @@
 
 .sessionItemCompactIcon svg{
     width: 100%;
-}
-
-.sessionItemCompactIcon svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .sessionItemWrapper{

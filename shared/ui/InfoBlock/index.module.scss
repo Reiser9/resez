@@ -40,10 +40,7 @@
 
 .testWelcomeIconInner svg{
     width: 24px;
-}
-
-.testWelcomeIconInner svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .testWelcomeTextInner{
