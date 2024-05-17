@@ -122,7 +122,7 @@ const MainPage = () => {
                         title="Мессенджер"
                         text="Добавляй в друзья, общайся с утра до ночи, весело проводи время, готовься к экзаменам, задавай вопросы и весело проводи время, все это в одном месте."
                         smallPadding
-                        href="/messanger"
+                        href="/messenger"
                         buttonText="Общаться"
                         icon={<Messenger />}
                     />

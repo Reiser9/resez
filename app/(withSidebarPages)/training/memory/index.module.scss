@@ -42,12 +42,6 @@
     background: var(--lighten);
 }
 
-@media (max-width: 560px) {
-    .addCardCollectionPairSwap{
-        transform: translate(-50%, -50%) rotate(90deg);
-    }
-}
-
 .addCardCollectionPairSwap.disable{
     pointer-events: none;
     opacity: .5;

@@ -87,14 +87,14 @@ const MemoryEdit = () => {
         }
 
         updateCollection(data.id, name, withDescription ? description : '', privateCollection, newPairs, () =>
-            router.push(`/training/memory/${data.id}`),
+            router.replace(`/training/memory/${data.id}`),
         );
     };
 
     React.useEffect(() => {
         if (data) {
             if(data.user.id !== userId){
-                return router.push("/training/memo");
+                return router.replace("/training/memo");
             }
 
             const { collection, description, isPrivate, pairs } = data;
@@ -121,7 +121,7 @@ const MemoryEdit = () => {
 
     React.useEffect(() => {
         if(error){
-            return router.push("/training/memo");
+            return router.replace("/training/memo");
         }
     }, [error]);
 

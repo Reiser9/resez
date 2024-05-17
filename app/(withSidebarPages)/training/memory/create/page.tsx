@@ -79,7 +79,7 @@ const MemoryCreate = () => {
             return;
         }
 
-        router.push(`/training/memory/${newCollection.id}`);
+        router.replace(`/training/memory/${newCollection.id}`);
     };
 
     return (

@@ -17,7 +17,7 @@ type Props = {
 };
 
 const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showResult }) => {
-    const { questionText, questionPicture, id } = data;
+    const { questionText, questionPicture, id, answerText } = data;
 
     const [inputAnswer, setInputAnswer] = React.useState('');
 
@@ -50,7 +50,16 @@ const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showRe
             <div className={styles.testItemBottom}>
                 <Text fontWeight={600}>Введите ответ:</Text>
 
-                <Input color="white" value={inputAnswer} setValue={setInputAnswer} onBlur={checkAnswer} />
+                {showResult && "Правильный ответ: " + answerText}
+
+                <Input
+                    disabled={showResult}
+                    isError={showResult && answerText.toLowerCase() !== inputAnswer.toLowerCase()}
+                    color="white"
+                    value={inputAnswer}
+                    setValue={setInputAnswer}
+                    onBlur={checkAnswer}
+                />
             </div>
         </div>
     );

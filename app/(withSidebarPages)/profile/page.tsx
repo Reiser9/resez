@@ -156,7 +156,7 @@ const ProfilePage = () => {
                         <div className={styles.profileSidebarValues}>
                             <p className={styles.profileSidebarValueTitle}>Друзья (102)</p>
 
-                            <Link href="/friends" className={styles.profileSidebarValueLink}>
+                            <Link href="/" className={styles.profileSidebarValueLink}>
                                 Все
                             </Link>
                         </div>
@@ -180,7 +180,7 @@ const ProfilePage = () => {
                         <div className={styles.profileSidebarValues}>
                             <p className={styles.profileSidebarValueTitle}>Достижения (41)</p>
 
-                            <Link href="/friends" className={styles.profileSidebarValueLink}>
+                            <Link href="/" className={styles.profileSidebarValueLink}>
                                 Все
                             </Link>
                         </div>
@@ -210,7 +210,7 @@ const ProfilePage = () => {
                         <div className={styles.profileSidebarValues}>
                             <p className={styles.profileSidebarValueTitle}>Награды (4)</p>
 
-                            <Link href="/friends" className={styles.profileSidebarValueLink}>
+                            <Link href="/" className={styles.profileSidebarValueLink}>
                                 Все
                             </Link>
                         </div>

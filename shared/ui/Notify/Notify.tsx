@@ -54,7 +54,7 @@ const Notify: React.FC<Props> = ({ data }) => {
                 <Text variant="text2">{text}</Text>
             </div>
             
-            <audio src="/img/notify.mp3" autoPlay />
+            {/* <audio src="/img/notify.mp3" autoPlay /> */}
         </div>
     );
 };

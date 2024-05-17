@@ -68,6 +68,8 @@ const useRequest = () => {
                 return alertNotify('Ошибка', 'Доступ ограничен', 'error');
             case 429:
                 return alertNotify('Чуть помедленнее', 'Слишком много запросов, пожалуйста, подождите', 'warn');
+            case 413:
+                return alertNotify('Ошибка', 'Размер файла не должен превышать 1 МБ', 'error');
             default:
                 if (customLogic) {
                     return customLogic();

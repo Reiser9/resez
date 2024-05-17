@@ -40,7 +40,7 @@ const AdminArchiveSubjects = () => {
     });
 
     return (
-        <div className={base.baseWrapperGap16} style={{height: "100%"}}>
+        <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
                     <Text variant="h3">

@@ -23,9 +23,10 @@ type Props = {
     data: Collection;
     loading?: boolean;
     deleteCallback?: () => void;
+    style?: React.CSSProperties;
 };
 
-const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {} }) => {
+const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {}, style }) => {
     const { id, collection, description, isPrivate, pairsCount, user } = data || {};
     const { avatar, nickname } = user || {};
 
@@ -35,7 +36,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
     const router = useRouter();
 
     return (
-        <div className={cn(base.item3, styles.collectionItem)}>
+        <div className={cn(base.item3, styles.collectionItem)} style={style}>
             <Link href={`memory/${id}`} className={styles.collectionItemInfoInner}>
                 <span className={styles.collectionItemInfo}>
                     <p className={styles.collectionItemName}>{collection}</p>

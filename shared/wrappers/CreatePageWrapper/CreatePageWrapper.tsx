@@ -13,6 +13,18 @@ type Props = {
 };
 
 const CreatePageDefault: React.FC<Props> = ({ title, button, rightButton, children }) => {
+    React.useEffect(() => {
+        const handleWindowClose = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+        };
+
+        window.addEventListener('beforeunload', handleWindowClose);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleWindowClose);
+        };
+    }, []);
+
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>

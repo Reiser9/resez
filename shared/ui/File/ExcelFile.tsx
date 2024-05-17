@@ -37,7 +37,6 @@ const ExcelFile: React.FC<Props> = ({ id, accept, setData }) => {
             const worksheet = workbook.Sheets[firstSheetName];
 
             const excelData: Excel[] = utils.sheet_to_json(worksheet, { header: 'A' });
-            console.log(excelData);
 
             if (excelData.length > 100) {
                 return setData(excelData.slice(0, 100));
