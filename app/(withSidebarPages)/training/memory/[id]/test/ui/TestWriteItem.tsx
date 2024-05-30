@@ -5,14 +5,16 @@ import Image from 'next/image';
 
 import styles from '../index.module.scss';
 
-import type { CollectionChoice, CollectionValidation, CollectionWrite } from '@/entities/collection';
+import type { CollectionWrite } from '@/entities/collection';
 import { Text } from '@/shared/ui/Text';
 import { Input } from '@/shared/ui/Input';
+import { percentCorrectAnswer } from '@/shared/utils/levenshteinDistance';
+import { generateCorrectPhrase, generateWrongPhrase } from '@/shared/utils/generatePhrase';
 
 type Props = {
     data: CollectionWrite;
     number: number;
-    handleTestResult: (id: number, answer: string, data: CollectionWrite) => void;
+    handleTestResult: (id: number, correct: boolean) => void;
     showResult: boolean;
 };
 
@@ -20,9 +22,20 @@ const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showRe
     const { questionText, questionPicture, id, answerText } = data;
 
     const [inputAnswer, setInputAnswer] = React.useState('');
+    const [answerIsCorrect, setAnswerIsCorrect] = React.useState(false);
 
     const checkAnswer = () => {
-        handleTestResult(id, inputAnswer, data);
+        let isCorrectAnswer = false;
+        const hasNumber = /\d/;
+        if (hasNumber.test(answerText) || hasNumber.test(inputAnswer)) {
+            isCorrectAnswer = answerText === inputAnswer;
+            setAnswerIsCorrect(isCorrectAnswer);
+        } else {
+            isCorrectAnswer = percentCorrectAnswer(answerText, inputAnswer) > 85;
+            setAnswerIsCorrect(isCorrectAnswer);
+        }
+
+        handleTestResult(id, isCorrectAnswer);
     };
 
     return (
@@ -48,17 +61,32 @@ const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showRe
             </div>
 
             <div className={styles.testItemBottom}>
-                <Text fontWeight={600}>Введите ответ:</Text>
+                {showResult ? (
+                    answerIsCorrect ? (
+                        <Text fontWeight={600} color="success">
+                            {generateCorrectPhrase()}
+                        </Text>
+                    ) : (
+                        <>
+                            <Text fontWeight={600} color="error">
+                                {generateWrongPhrase()}
+                            </Text>
 
-                {showResult && "Правильный ответ: " + answerText}
+                            <Text fontWeight={600}>Правильный ответ: {answerText}</Text>
+                        </>
+                    )
+                ) : (
+                    <Text fontWeight={600}>Введите ответ:</Text>
+                )}
 
                 <Input
                     disabled={showResult}
-                    isError={showResult && answerText.toLowerCase() !== inputAnswer.toLowerCase()}
                     color="white"
                     value={inputAnswer}
                     setValue={setInputAnswer}
                     onBlur={checkAnswer}
+                    isSuccess={showResult && answerIsCorrect}
+                    isError={showResult && !answerIsCorrect}
                 />
             </div>
         </div>

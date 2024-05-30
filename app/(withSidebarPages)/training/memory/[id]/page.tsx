@@ -17,6 +17,7 @@ import {
     Delete,
     DotsHorizontal,
     Edit,
+    Heart,
     Lock,
     Settings,
     TypesCards,
@@ -25,7 +26,7 @@ import {
     TypesTest,
 } from '@/shared/icons';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { BackButton, IconButton } from '@/shared/ui/Button';
+import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { ConfirmModal } from '@/shared/ui/Modal';
 import { Text } from '@/shared/ui/Text';
 import { formatDate } from '@/shared/utils/formatDate';
@@ -54,7 +55,7 @@ const MemoryCardInfo = () => {
         enabled: !!id,
     });
 
-    const { collection: collectionName, pairs, isPrivate, pairsCount, description, user, createdAt } = data || {};
+    const { collection: collectionName, pairs, isPrivate, pairsCount, description, user, createdAt, likesCount } = data || {};
     const { id: authorId, avatar, nickname } = user || {};
 
     const deleteCollectionHandler = () => {
@@ -87,6 +88,12 @@ const MemoryCardInfo = () => {
                         </div>
 
                         <div className={styles.memoCollectionActions}>
+                            <Button small variant='light' color='danger' className={styles.memoCollectionActionLike}>
+                                <Heart />
+
+                                {likesCount}
+                            </Button>
+
                             <HoverMenu
                                 value={actionMenu}
                                 setValue={setActionMenu}

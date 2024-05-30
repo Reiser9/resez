@@ -34,8 +34,8 @@
 }
 
 .testItemNumber{
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50px;
     background: var(--lighten);
     color: var(--main);
@@ -44,7 +44,7 @@
     justify-content: center;
     text-align: center;
     flex-shrink: 0;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 500;
 }
 
@@ -169,4 +169,22 @@
 
 .testItemTopBlockImage img{
     object-fit: contain;
+}
+
+.testConfettiWrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.testResultContent{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }

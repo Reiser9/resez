@@ -7,12 +7,13 @@ import cn from 'classnames';
 import styles from '../index.module.scss';
 
 import { Text } from '@/shared/ui/Text';
-import type { CollectionChoice, CollectionValidation, CollectionWrite } from '@/entities/collection';
+import type { CollectionValidation } from '@/entities/collection';
+import { generateCorrectPhrase, generateWrongPhrase } from '@/shared/utils/generatePhrase';
 
 type Props = {
     data: CollectionValidation;
     number: number;
-    handleTestResult: (id: number, answer: boolean, data: CollectionValidation) => void;
+    handleTestResult: (id: number, correct: boolean) => void;
     showResult: boolean;
 };
 
@@ -22,13 +23,13 @@ const TestValidationItem: React.FC<Props> = ({ data, number, handleTestResult, s
     const [trueAnswer, setTrueAnswer] = React.useState<boolean | null>(null);
 
     const chooseVariant = (answer: boolean) => {
-        if(showResult){
+        if (showResult) {
             return;
         }
 
         setTrueAnswer(answer);
 
-        handleTestResult(id, !!trueAnswer, data);
+        handleTestResult(id, answer === isCorrect);
     };
 
     return (
@@ -70,15 +71,29 @@ const TestValidationItem: React.FC<Props> = ({ data, number, handleTestResult, s
             </div>
 
             <div className={styles.testItemBottom}>
-                <Text fontWeight={600}>Выберите ответ:</Text>
+                {showResult ? (
+                    trueAnswer === isCorrect ? (
+                        <Text fontWeight={600} color="success">
+                            {generateCorrectPhrase()}
+                        </Text>
+                    ) : (
+                        <Text fontWeight={600} color="error">
+                            {generateWrongPhrase()}
+                        </Text>
+                    )
+                ) : (
+                    <Text fontWeight={600}>Выберите ответ:</Text>
+                )}
+
+                {showResult && !isCorrect && <Text fontWeight={600}>Правильное определение: </Text>}
 
                 <div className={styles.testItemVariants}>
                     <button
                         className={cn(styles.testItemVariant, {
                             [styles.choosed]: trueAnswer,
-                            [styles.success]: showResult && trueAnswer && isCorrect,
+                            [styles.success]: showResult && isCorrect,
                             [styles.error]: showResult && trueAnswer && trueAnswer !== isCorrect,
-                            [styles.disabled]: showResult
+                            [styles.disabled]: showResult,
                         })}
                         onClick={() => chooseVariant(true)}
                     >
@@ -88,9 +103,9 @@ const TestValidationItem: React.FC<Props> = ({ data, number, handleTestResult, s
                     <button
                         className={cn(styles.testItemVariant, {
                             [styles.choosed]: !trueAnswer && trueAnswer !== null,
-                            [styles.success]: showResult && !trueAnswer && !isCorrect,
+                            [styles.success]: showResult && !isCorrect,
                             [styles.error]: showResult && !trueAnswer && trueAnswer !== isCorrect,
-                            [styles.disabled]: showResult
+                            [styles.disabled]: showResult,
                         })}
                         onClick={() => chooseVariant(false)}
                     >

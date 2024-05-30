@@ -33,6 +33,14 @@
     color: var(--error);
 }
 
+.success, .success:focus{
+    border: 1px solid var(--success);
+}
+
+.success:focus{
+    color: var(--success);
+}
+
 .errorMessage{
     font-size: 1.4rem;
     color: var(--error);

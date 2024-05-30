@@ -14,7 +14,7 @@ type Position = {
     rotate: number;
 };
 
-const offsetTranslateCard = 125;
+const offsetTranslateCard = 100;
 
 type Props = {
     data: {

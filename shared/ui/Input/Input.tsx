@@ -20,6 +20,7 @@ interface InputsProps {
     lengthLimit?: number;
     wrapperClass?: string;
     isError?: boolean;
+    isSuccess?: boolean;
     errorMessage?: string;
     infoText?: string;
     commentText?: string;
@@ -54,11 +55,12 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             disabled = false,
             trackLength = false,
             isError = false,
+            isSuccess = false,
             errorMessage,
             lengthLimit = 9999,
             infoText,
             commentText,
-            color = "default",
+            color = 'default',
             wrapperClass,
             onChange,
             className,
@@ -78,6 +80,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                         className={cn(styles.input, styles.textarea, styles[color], className, {
                             [styles.disabled]: disabled,
                             [styles.error]: isError,
+                            [styles.success]: isSuccess,
                         })}
                         maxLength={lengthLimit}
                         value={value}
@@ -94,6 +97,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                         [styles.password]: type === 'password' || infoText,
                         [styles.disabled]: disabled,
                         [styles.error]: isError,
+                        [styles.success]: isSuccess,
                     })}
                     maxLength={lengthLimit}
                     placeholder={placeholder}

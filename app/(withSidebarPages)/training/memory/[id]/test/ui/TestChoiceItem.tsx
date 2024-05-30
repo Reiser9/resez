@@ -8,11 +8,12 @@ import styles from '../index.module.scss';
 
 import { Text } from '@/shared/ui/Text';
 import type { CollectionChoice } from '@/entities/collection';
+import { generateCorrectPhrase, generateWrongPhrase } from '@/shared/utils/generatePhrase';
 
 type Props = {
     data: CollectionChoice;
     number: number;
-    handleTestResult: (id: number, answer: number, data: CollectionChoice) => void;
+    handleTestResult: (id: number, correct: boolean) => void;
     showResult: boolean;
 };
 
@@ -20,15 +21,17 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
     const { questionText, questionPicture, choices, id } = data;
 
     const [activeId, setActiveId] = React.useState<number>();
+    const [answerIsCorrect, setAnswerIsCorrect] = React.useState(false);
 
-    const chooseVariant = (choiceId: number, id: number) => {
-        if(showResult){
+    const chooseVariant = (isCorrect: boolean, variantId: number, id: number) => {
+        if (showResult) {
             return;
         }
 
-        setActiveId(choiceId);
+        setActiveId(variantId);
 
-        handleTestResult(id, choiceId, data);
+        handleTestResult(id, isCorrect);
+        setAnswerIsCorrect(isCorrect);
     };
 
     return (
@@ -54,7 +57,19 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
             </div>
 
             <div className={styles.testItemBottom}>
-                <Text fontWeight={600}>Выберите ответ:</Text>
+                {showResult ? (
+                    answerIsCorrect ? (
+                        <Text fontWeight={600} color="success">
+                            {generateCorrectPhrase()}
+                        </Text>
+                    ) : (
+                        <Text fontWeight={600} color="error">
+                            {generateWrongPhrase()}
+                        </Text>
+                    )
+                ) : (
+                    <Text fontWeight={600}>Выберите ответ:</Text>
+                )}
 
                 <div className={styles.testItemVariants}>
                     {choices.map((data) => (
@@ -64,9 +79,9 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
                                 [styles.choosed]: activeId === data.id,
                                 [styles.success]: showResult && data.isCorrect,
                                 [styles.error]: showResult && activeId === data.id && !data.isCorrect,
-                                [styles.disabled]: showResult
+                                [styles.disabled]: showResult,
                             })}
-                            onClick={() => chooseVariant(data.id, id)}
+                            onClick={() => chooseVariant(data.isCorrect, data.id, id)}
                         >
                             {data.answerText}
                         </button>

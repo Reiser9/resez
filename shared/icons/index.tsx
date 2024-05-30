@@ -103,3 +103,4 @@ export { Pencil } from './Pencil';
 export { Restore } from './Restore';
 export { Swap } from './Swap';
 export { Excel } from './images/Excel';
+export { Heart } from './Heart';

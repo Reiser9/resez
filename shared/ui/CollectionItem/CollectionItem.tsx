@@ -10,7 +10,7 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Collection } from '@/entities/collection';
-import { ArrowRightLong, Delete, DotsHorizontal, Edit, Lock } from '@/shared/icons';
+import { ArrowRightLong, Delete, DotsHorizontal, Edit, Heart, Lock } from '@/shared/icons';
 import { Text } from '../Text';
 import { HoverMenu, MenuLink } from '../HoverMenu';
 import { IconButton } from '../Button';
@@ -27,7 +27,7 @@ type Props = {
 };
 
 const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {}, style }) => {
-    const { id, collection, description, isPrivate, pairsCount, user } = data || {};
+    const { id, collection, description, isPrivate, pairsCount, user, likesCount } = data || {};
     const { avatar, nickname } = user || {};
 
     const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
@@ -43,6 +43,12 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
 
                     <span className={styles.collectionItemTags}>
                         <p className={styles.collectionItemNumber}>Терминов: {pairsCount}</p>
+
+                        <p className={styles.collectionItemLikes}>
+                            <Heart />
+
+                            {likesCount}
+                        </p>
 
                         {isPrivate && (
                             <Tooltip title="Скрыта">

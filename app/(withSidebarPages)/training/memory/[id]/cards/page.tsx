@@ -11,7 +11,7 @@ import base from '@/shared/styles/base.module.scss';
 import Card from './Card';
 import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
-import { Cross, Return } from '@/shared/icons';
+import { Check, Cross, Return } from '@/shared/icons';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
@@ -133,8 +133,16 @@ const MemoryCards = () => {
                             [styles.active]: isProcessPlaying,
                         })}
                     >
+                        <IconButton small variant='danger' onClick={wrongAnswer}>
+                            <Cross />
+                        </IconButton>
+
                         <IconButton small onClick={returnPrevSlide} disabled={currentCardNumber <= 0}>
                             <Return />
+                        </IconButton>
+
+                        <IconButton small variant='success' onClick={correctAnswer}>
+                            <Check />
                         </IconButton>
                     </div>
                 </>

@@ -21,6 +21,17 @@ const useHandlers = () => {
         );
     };
 
+    const scrollTop = () => {
+        setTimeout(
+            () =>
+                scrollBlock.current?.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                }),
+            100,
+        );
+    };
+
     const removePair = (
         id: number,
         pairs: PairDTO[],
@@ -86,6 +97,7 @@ const useHandlers = () => {
 
     return {
         scrollBottom,
+        scrollTop,
         removePair,
         validateHandler,
     };
