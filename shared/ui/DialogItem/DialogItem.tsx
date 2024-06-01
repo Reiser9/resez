@@ -123,7 +123,12 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                         <Tooltip title="Вернуться в чат">
                                             <IconButton
                                                 small
-                                                onClick={() => returnInChat(id, () => router.push(`/messenger/${id}`))}
+                                                onClick={() =>
+                                                    returnInChat(id, () => {
+                                                        revalidateChat();
+                                                        router.push(`/messenger/${id}`);
+                                                    })
+                                                }
                                             >
                                                 <Enter />
                                             </IconButton>

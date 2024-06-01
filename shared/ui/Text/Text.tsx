@@ -8,7 +8,7 @@ type Props = {
     icon?: React.ReactNode;
     variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'text' | 'text2' | 'text3';
     textClassName?: string;
-    color?: '' | 'success' | 'error';
+    color?: '' | 'success' | 'error' | 'grey' | 'warn';
     center?: boolean;
     fontWeight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
     children: React.ReactNode;

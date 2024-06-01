@@ -120,6 +120,8 @@ const MemoryCreate = () => {
                     Скрыть от других пользователей
                 </Checkbox>
 
+                Всего элементов: {pairs.length + 1}
+
                 <div className={styles.cardCollectionWrapper}>
                     {pairs.map((data, id) => (
                         <PairItem

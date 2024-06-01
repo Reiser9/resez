@@ -17,10 +17,10 @@ type Props = {
     showResult: boolean;
 };
 
-const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showResult }) => {
+const TestChoiceItem = React.forwardRef(({ data, number, handleTestResult, showResult }: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
     const { questionText, questionPicture, choices, id } = data;
 
-    const [activeId, setActiveId] = React.useState<number>();
+    const [activeId, setActiveId] = React.useState<number | null>(null);
     const [answerIsCorrect, setAnswerIsCorrect] = React.useState(false);
 
     const chooseVariant = (isCorrect: boolean, variantId: number, id: number) => {
@@ -34,8 +34,14 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
         setAnswerIsCorrect(isCorrect);
     };
 
+    React.useEffect(() => {
+        if(!showResult){
+            setActiveId(null);
+        }
+    }, [showResult]);
+
     return (
-        <div key={data.id} className={styles.testItem}>
+        <div className={styles.testItem} ref={ref}>
             <div className={styles.testItemNumber}>{number}</div>
 
             <div className={styles.testItemTop}>
@@ -62,6 +68,10 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
                         <Text fontWeight={600} color="success">
                             {generateCorrectPhrase()}
                         </Text>
+                    ) : activeId === null ? (
+                        <Text fontWeight={600} color='grey'>
+                            Вернитесь к этому вопросу позже!
+                        </Text>
                     ) : (
                         <Text fontWeight={600} color="error">
                             {generateWrongPhrase()}
@@ -77,8 +87,9 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
                             key={data.id}
                             className={cn(styles.testItemVariant, {
                                 [styles.choosed]: activeId === data.id,
-                                [styles.success]: showResult && data.isCorrect,
-                                [styles.error]: showResult && activeId === data.id && !data.isCorrect,
+                                [styles.success]: showResult && activeId !== null && data.isCorrect,
+                                [styles.error]: showResult && activeId !== null && activeId === data.id && !data.isCorrect,
+                                [styles.grey]: showResult && activeId === null && data.isCorrect,
                                 [styles.disabled]: showResult,
                             })}
                             onClick={() => chooseVariant(data.isCorrect, data.id, id)}
@@ -90,6 +101,8 @@ const TestChoiceItem: React.FC<Props> = ({ data, number, handleTestResult, showR
             </div>
         </div>
     );
-};
+});
+
+TestChoiceItem.displayName = 'TestChoiceItem';
 
 export default TestChoiceItem;

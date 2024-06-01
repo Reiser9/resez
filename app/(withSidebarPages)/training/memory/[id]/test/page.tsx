@@ -4,7 +4,6 @@ import React from 'react';
 import cn from 'classnames';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import Confetti from 'react-confetti';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -18,10 +17,12 @@ import { Text } from '@/shared/ui/Text';
 import TestValidationItem from './ui/TestValidationItem';
 import TestChoiceItem from './ui/TestChoiceItem';
 import TestWriteItem from './ui/TestWriteItem';
+import { LinkBlock } from '@/shared/ui/LinkBlock';
+import { ConfettiBlock } from '@/shared/ui/Confetti';
 
 type TestResult = {
     id: number;
-    correct: boolean
+    correct: boolean;
 };
 
 const MemoryTest = () => {
@@ -29,6 +30,7 @@ const MemoryTest = () => {
     const [showResults, setShowResults] = React.useState(false);
     const [correctCount, setCorrectCount] = React.useState(0);
     const [wrongCount, setWrongCount] = React.useState(0);
+    const questionRefs = React.useRef<(HTMLDivElement | null)[]>([]);
 
     const { getTestCollection } = useCollections();
     const { scrollTop } = useHandlers();
@@ -45,7 +47,7 @@ const MemoryTest = () => {
     const handleTestResult = (id: number, correct: boolean) => {
         const newObj = {
             id,
-            correct
+            correct,
         };
 
         setTestResult((prevObjects) => {
@@ -58,20 +60,33 @@ const MemoryTest = () => {
                 return [...prevObjects, newObj];
             }
         });
-    };
 
-    const checkTestResults = () => {
-        if(!test){
+        if (!test) {
             return;
         }
 
-        const totalCorrect = testResult.filter(item => !!item.correct).length;
+        const unansweredQuestion = test.find(
+            (q, index) =>
+                index > test.findIndex((q) => q.id === id) && !testResult.some((result) => result.id === q.id),
+        );
+
+        if (unansweredQuestion) {
+            questionRefs.current[unansweredQuestion.id]?.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    const checkTestResults = () => {
+        if (!test) {
+            return;
+        }
+
+        const totalCorrect = testResult.filter((item) => !!item.correct).length;
         const totalWrong = test.length - totalCorrect;
 
         setCorrectCount(totalCorrect);
         setWrongCount(totalWrong);
         setShowResults(true);
-        scrollTop();  
+        scrollTop();
     };
 
     const resetTest = async () => {
@@ -81,7 +96,7 @@ const MemoryTest = () => {
         setShowResults(false);
         setCorrectCount(0);
         setWrongCount(0);
-    }
+    };
 
     if (isLoading) {
         return <Preloader page small />;
@@ -105,17 +120,37 @@ const MemoryTest = () => {
                 <>
                     {showResults && (
                         <>
-                            <div className={styles.testConfettiWrapper}>
-                                <Confetti gravity={0.05} recycle={false} numberOfPieces={600} tweenDuration={20000} />
-                            </div>
+                            <ConfettiBlock />
+
+                            <Text variant="h3">Результат решения теста:</Text>
 
                             <div className={styles.testResultContent}>
-                                <Text center color='success' fontWeight={600} variant='h3'>Правильно: {correctCount}</Text>
-                                <Text center color='error' fontWeight={600} variant='h3'>Неправильно: {wrongCount}</Text>
+                                <Text center color="success" fontWeight={600} variant="h3">
+                                    Правильно: {correctCount}
+                                </Text>
+                                <Text center color="error" fontWeight={600} variant="h3">
+                                    Неправильно: {wrongCount}
+                                </Text>
 
-                                <Button variant='light' auto onClick={resetTest} loading={isFetching}>
+                                <Button variant="light" auto onClick={resetTest} loading={isFetching}>
                                     Начать тест сначала
                                 </Button>
+                            </div>
+
+                            <Text variant="h3">Попробуйте также другой тип запоминания:</Text>
+
+                            <div className={styles.testMoreContent}>
+                                <LinkBlock title="Карточки" href={`cards`} className={base.item4}>
+                                    <Text variant="text2">С одной стороны термин, с другой определение</Text>
+                                </LinkBlock>
+
+                                <LinkBlock title="Заучивание" href={`learn`} className={base.item4} disabled>
+                                    <Text variant="text2">Выучи то, что плохо запоминаешь</Text>
+                                </LinkBlock>
+
+                                <LinkBlock title="Подбор" href={`selection`} className={base.item4} disabled>
+                                    <Text variant="text2">Выбирай пары определение - термин</Text>
+                                </LinkBlock>
                             </div>
 
                             <Text variant="h3">Ваши ответы:</Text>
@@ -127,6 +162,7 @@ const MemoryTest = () => {
                             data.mode === 'VALIDATION' ? (
                                 <TestValidationItem
                                     key={data.id}
+                                    ref={(el) => (questionRefs.current[data.id] = el)}
                                     data={data}
                                     number={id + 1}
                                     handleTestResult={handleTestResult}
@@ -135,6 +171,7 @@ const MemoryTest = () => {
                             ) : data.mode === 'CHOICE' ? (
                                 <TestChoiceItem
                                     key={data.id}
+                                    ref={(el) => (questionRefs.current[data.id] = el)}
                                     data={data}
                                     number={id + 1}
                                     handleTestResult={handleTestResult}
@@ -143,6 +180,7 @@ const MemoryTest = () => {
                             ) : (
                                 <TestWriteItem
                                     key={data.id}
+                                    ref={(el) => (questionRefs.current[data.id] = el)}
                                     data={data}
                                     number={id + 1}
                                     handleTestResult={handleTestResult}

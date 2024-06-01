@@ -15,6 +15,7 @@ export type Collection = {
     createdAt: Date;
     updatedAt: Date;
     likesCount: number;
+    isLiked: boolean;
     user: {
         id: number;
         nickname: string;
@@ -75,6 +76,7 @@ export type CollectionValidation = {
     answerText: string;
     answerPicture: string;
     isCorrect: boolean;
+    correctAnswer?: string;
 };
 
 type Choice = {

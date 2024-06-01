@@ -40,14 +40,14 @@ const Card: React.FC<Props> = ({
     correctCallback = () => {},
     wrongCallback = () => {},
 }) => {
-    const [rotate, setRotate] = React.useState<boolean>(false);
-    const [isDragging, setIsDragging] = React.useState<boolean>(false);
-    const [isSwipingInClick, setIsSwipingInClick] = React.useState<boolean>(false);
+    const [rotate, setRotate] = React.useState(false);
+    const [isDragging, setIsDragging] = React.useState(false);
+    const [isSwipingInClick, setIsSwipingInClick] = React.useState(false);
     const [position, setPosition] = React.useState<Position>({ x: 0, y: 0, rotate: 0 });
-    const [correct, setCorrect] = React.useState<number>(0);
-    const [wrong, setWrong] = React.useState<number>(0);
+    const [correct, setCorrect] = React.useState(0);
+    const [wrong, setWrong] = React.useState(0);
 
-    const [positive, setPositive] = React.useState<boolean>(false);
+    const [positive, setPositive] = React.useState(false);
 
     const clearCard = () => {
         setPosition({

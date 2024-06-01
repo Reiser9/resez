@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import cn from 'classnames';
 
 import styles from '../index.module.scss';
 
@@ -18,13 +19,17 @@ type Props = {
     showResult: boolean;
 };
 
-const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showResult }) => {
+const TestWriteItem = React.forwardRef(({ data, number, handleTestResult, showResult }: Props, ref: React.ForwardedRef<HTMLDivElement>) => {
     const { questionText, questionPicture, id, answerText } = data;
 
     const [inputAnswer, setInputAnswer] = React.useState('');
     const [answerIsCorrect, setAnswerIsCorrect] = React.useState(false);
 
     const checkAnswer = () => {
+        if(!inputAnswer.trim()){
+            return;
+        }
+
         let isCorrectAnswer = false;
         const hasNumber = /\d/;
         if (hasNumber.test(answerText) || hasNumber.test(inputAnswer)) {
@@ -38,8 +43,14 @@ const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showRe
         handleTestResult(id, isCorrectAnswer);
     };
 
+    React.useEffect(() => {
+        if(!showResult){
+            setInputAnswer("");
+        }
+    }, [showResult]);
+
     return (
-        <div className={styles.testItem}>
+        <div className={styles.testItem} ref={ref}>
             <div className={styles.testItemNumber}>{number}</div>
 
             <div className={styles.testItemTop}>
@@ -66,31 +77,41 @@ const TestWriteItem: React.FC<Props> = ({ data, number, handleTestResult, showRe
                         <Text fontWeight={600} color="success">
                             {generateCorrectPhrase()}
                         </Text>
+                    ) : !inputAnswer ? (
+                        <Text fontWeight={600} color='grey'>
+                            Вернитесь к этому вопросу позже!
+                        </Text>
                     ) : (
-                        <>
-                            <Text fontWeight={600} color="error">
-                                {generateWrongPhrase()}
-                            </Text>
-
-                            <Text fontWeight={600}>Правильный ответ: {answerText}</Text>
-                        </>
+                        <Text fontWeight={600} color="error">
+                            {generateWrongPhrase()}
+                        </Text>
                     )
                 ) : (
                     <Text fontWeight={600}>Введите ответ:</Text>
                 )}
 
-                <Input
+                {showResult && <Text fontWeight={600}>Правильный ответ: {answerText}</Text>}
+
+                {showResult
+                ? <div className={cn(styles.testItemAnswer, {
+                    [styles.success]: inputAnswer.trim() && answerIsCorrect,
+                    [styles.error]: inputAnswer.trim() && !answerIsCorrect,
+                    [styles.grey]: !inputAnswer.trim()
+                })}>
+                    {inputAnswer ? inputAnswer : "Нет ответа"}
+                </div>
+                : <Input
                     disabled={showResult}
                     color="white"
                     value={inputAnswer}
                     setValue={setInputAnswer}
                     onBlur={checkAnswer}
-                    isSuccess={showResult && answerIsCorrect}
-                    isError={showResult && !answerIsCorrect}
-                />
+                />}
             </div>
         </div>
     );
-};
+});
+
+TestWriteItem.displayName = 'TestWriteItem';
 
 export default TestWriteItem;

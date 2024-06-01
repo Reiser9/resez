@@ -121,6 +121,11 @@ div.memoSettingsQuestionInput{
     gap: 8px;
 }
 
+.memoCollectionActionLike svg{
+    width: 20px;
+    flex-shrink: 0;
+}
+
 .memoCollectionActionLike.active svg{
     fill: var(--error);
 }

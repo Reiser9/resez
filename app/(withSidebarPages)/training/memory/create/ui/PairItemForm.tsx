@@ -142,7 +142,7 @@ const PairItemForm: React.FC<Props> = ({
                         onKeyDown={(e) => enterNewPair(e)}
                         title="Вопрос"
                         variant="textarea"
-                        lengthLimit={150}
+                        lengthLimit={750}
                         trackLength
                         value={questionText}
                         setValue={setQuestionText}
@@ -177,7 +177,7 @@ const PairItemForm: React.FC<Props> = ({
                         onKeyDown={(e) => enterNewPair(e)}
                         title="Ответ"
                         variant="textarea"
-                        lengthLimit={150}
+                        lengthLimit={750}
                         trackLength
                         value={answerText}
                         setValue={setAnswerText}

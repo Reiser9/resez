@@ -4,7 +4,7 @@ import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -20,6 +20,7 @@ import {
     Heart,
     Lock,
     Settings,
+    Share,
     TypesCards,
     TypesLearn,
     TypesSelection,
@@ -37,6 +38,7 @@ import { LinkBlock } from '@/shared/ui/LinkBlock';
 import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
 import CollectionSettings from './CollectionSettings';
+import { Copy } from '@/shared/icons/Copy';
 
 const MemoryCardInfo = () => {
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -45,7 +47,7 @@ const MemoryCardInfo = () => {
     const [settingsModal, setSettingsModal] = React.useState(false);
 
     const { id } = useParams();
-    const { getCollectionById, deleteCollectionById, getCollectionSettings, updateSettings } = useCollections();
+    const { getCollectionById, deleteCollectionById, getCollectionSettings, updateSettings, likeCollection } = useCollections();
     const userId = useAppSelector((state) => state.user.user?.id);
     const router = useRouter();
 
@@ -55,12 +57,32 @@ const MemoryCardInfo = () => {
         enabled: !!id,
     });
 
-    const { collection: collectionName, pairs, isPrivate, pairsCount, description, user, createdAt, likesCount } = data || {};
+    const queryClient = useQueryClient();
+
+    const revalidateCollection = async () => {
+        await queryClient.invalidateQueries({ queryKey: ['collection_by_id'] });
+    };
+
+    const {
+        collection: collectionName,
+        pairs,
+        isPrivate,
+        pairsCount,
+        description,
+        user,
+        createdAt,
+        likesCount,
+        isLiked
+    } = data || {};
     const { id: authorId, avatar, nickname } = user || {};
 
     const deleteCollectionHandler = () => {
         deleteCollectionById(String(id), () => router.push('/training/memory'));
     };
+
+    const likeCollectionHandler = () => {
+        likeCollection(String(id), revalidateCollection);
+    }
 
     if (isLoading) {
         return <Preloader page />;
@@ -88,7 +110,9 @@ const MemoryCardInfo = () => {
                         </div>
 
                         <div className={styles.memoCollectionActions}>
-                            <Button small variant='light' color='danger' className={styles.memoCollectionActionLike}>
+                            <Button small variant="light" color="danger" className={cn(styles.memoCollectionActionLike, {
+                                [styles.active]: isLiked
+                            })} onClick={likeCollectionHandler}>
                                 <Heart />
 
                                 {likesCount}
@@ -126,6 +150,26 @@ const MemoryCardInfo = () => {
                                         </MenuLink>
                                     </>
                                 )}
+
+                                <MenuLink
+                                    onClick={() => {
+                                        setActionMenu(false);
+                                    }}
+                                    disabled
+                                >
+                                    <Share />
+                                    Поделиться
+                                </MenuLink>
+
+                                <MenuLink
+                                    onClick={() => {
+                                        setActionMenu(false);
+                                    }}
+                                    disabled
+                                >
+                                    <Copy />
+                                    Дублировать
+                                </MenuLink>
                             </HoverMenu>
                         </div>
                     </div>
@@ -163,11 +207,11 @@ const MemoryCardInfo = () => {
                             <TypesTest />
                         </LinkBlock>
 
-                        <LinkBlock title="Заучивание" href="learn" disabled className={base.item4}>
+                        <LinkBlock title="Заучивание" href={`${id}/learn`} disabled className={base.item4}>
                             <TypesLearn />
                         </LinkBlock>
 
-                        <LinkBlock title="Подбор" href="selection" disabled className={base.item4}>
+                        <LinkBlock title="Подбор" href={`${id}/selection`} disabled className={base.item4}>
                             <TypesSelection />
                         </LinkBlock>
                     </div>
@@ -187,7 +231,7 @@ const MemoryCardInfo = () => {
                         <div className={base.contentItems}>
                             {pairs?.map((data) => (
                                 <div key={data.id} className={cn(base.item2, styles.memoCollectionPair)}>
-                                    <TextPoint title="Вопрос">
+                                    <TextPoint title="Термин">
                                         {data.questionPicture && (
                                             <div className={styles.memoCollectionPairImage}>
                                                 <Image src={data.questionPicture} alt="image" fill />
@@ -199,7 +243,7 @@ const MemoryCardInfo = () => {
                                         </Text>
                                     </TextPoint>
 
-                                    <TextPoint blur={!showAnswers} title="Ответ">
+                                    <TextPoint blur={!showAnswers} title="Определение">
                                         {data.answerPicture && (
                                             <div className={styles.memoCollectionPairImage}>
                                                 <Image src={data.answerPicture} alt="image" fill />

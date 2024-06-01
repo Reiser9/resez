@@ -195,7 +195,7 @@ const useCollections = () => {
 
     const getPairsCollection = async (id: string | number) => {
         const response = await request<{ cards: Pair[] }>({
-            url: `/memory-ms/collection/${id}/cards`,
+            url: `/memory-ms/collection/${id}/cards?limit=500`,
             isAuth: true,
         });
 
@@ -238,6 +238,19 @@ const useCollections = () => {
         }
     };
 
+    const likeCollection = async (id: string | number, successCallback = () => {}) => {
+        const response = await request({
+            url: `/memory-ms/like/${id}`,
+            isAuth: true
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+    }
+
     return {
         isLoading,
         collectionIsLoading,
@@ -252,7 +265,8 @@ const useCollections = () => {
         getCollectionSettings,
         updateSettings,
         getTestCollection,
-        getMatchesCollection
+        getMatchesCollection,
+        likeCollection
     };
 };
 
