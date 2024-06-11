@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .memoCollectionTextInner{
     width: 100%;
     display: flex;
@@ -128,4 +129,136 @@ div.memoSettingsQuestionInput{
 
 .memoCollectionActionLike.active svg{
     fill: var(--error);
+=======
+.memoCollectionTextInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.memoCollectionTags{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.memoCollectionTitleInner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.memoCollectionActions{
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.memoCollectionDateInner{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.4rem;
+    color: var(--textGrey);
+}
+
+.memoCollectionDateInner svg{
+    width: 20px;
+}
+
+.memoCollectionDateInner svg path{
+    stroke: var(--main);
+}
+
+.memoCollectionPair{
+    padding: 1.2rem 1.2rem 2rem 1.2rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--input);
+}
+
+.memoCollectionTypes, .memoCollectionPairsInner{
+    margin-top: 2.4rem;
+}
+
+@media (max-width: 480px) {
+    .memoCollectionTypes, .memoCollectionPairsInner{
+        margin-top: .8rem;
+    }
+}
+
+.memoCollectionsShowAnswers{
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--main);
+}
+
+.memoCollectionPairImage{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    margin: 0.4rem 0 0 0;
+}
+
+.memoCollectionPairImage img{
+    object-fit: contain;
+}
+
+.memoSettingsContent{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.memoSettingsItem{
+    width: 100%;
+    border-radius: 4px;
+    background: var(--input);
+    padding: 1.6rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.memoSettingsQuestion{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+div.memoSettingsQuestionInput{
+    width: 80px;
+}
+
+.memoSettingsQuestionInput input{
+    text-align: right;
+}
+
+.memoModsInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.memoCollectionActionLike svg{
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.memoCollectionActionLike.active svg{
+    fill: var(--error);
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }

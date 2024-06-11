@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .messangerDialogItem{
     width: 100%;
     display: flex;
@@ -89,4 +90,97 @@
     .messangerDialogItemActionButton:hover{
         opacity: 0.6;
     }
+=======
+.messangerDialogItem{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: .2s linear;
+    padding: 0.8rem 2.4rem;
+}
+
+@media (any-hover: hover) {
+    .messangerDialogItem{
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 768px) {
+    .messangerDialogItem{
+        padding: 0.8rem 1.2rem;
+    }
+}
+
+.selected{
+    background: var(--lighten);
+}
+
+.notReaded{
+    background: var(--hover);
+}
+
+.messangerDialogItemName{
+    font-weight: 600;
+}
+
+@media (any-hover: hover) {
+    .messangerDialogItemName:hover{
+        color: var(--main);
+    }
+}
+
+.messangerDialogItemTime{
+    font-size: 1.4rem;
+    color: var(--textGrey);
+}
+
+.messangerDialogItemEvent{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.messangerDialogItemMessage span{
+    font-size: 1.4rem;
+    color: var(--textGrey);
+}
+
+.messangerDialogItemActionsWrapper{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.messangerDialogItemActions{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.messangerDialogItemActionButton{
+    padding: 0;
+    display: flex;
+}
+
+.messangerDialogItemActions svg{
+    width: 18px;
+    color: var(--main);
+}
+
+@media (any-hover: hover) {
+    .messangerDialogItemActions{
+        transition: .2s linear;
+        opacity: 0;
+    }
+
+    .messangerDialogItem:hover .messangerDialogItemActions{
+        opacity: 1;
+    }
+
+    .messangerDialogItemActionButton:hover{
+        opacity: 0.6;
+    }
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }

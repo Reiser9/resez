@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .settingsBlock{
     width: calc(100% / 2 - 24px / 2);
     display: flex;
@@ -43,4 +44,51 @@
 .settingsBlockDescription{
     font-size: 1.4rem;
     color: var(--textGrey);
+=======
+.settingsBlock{
+    width: calc(100% / 2 - 24px / 2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.settingsBlock.fullWidth{
+    width: 100%;
+}
+
+@media (max-width: 1100px) {
+    .settingsBlock{
+        width: 100%;
+    }
+}
+
+.settingsBlockWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+@media (any-hover: hover) {
+    .settingsBlockWrapper{
+        cursor: pointer;
+    }
+}
+
+.settingsBlockName{
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .settingsBlockName{
+        font-size: 1.5rem;
+    }
+}
+
+.settingsBlockDescription{
+    font-size: 1.4rem;
+    color: var(--textGrey);
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }

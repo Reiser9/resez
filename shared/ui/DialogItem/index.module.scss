@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .dialogItem{
     width: 100%;
     border-radius: 4px;
@@ -127,4 +128,135 @@
     white-space: nowrap;
     overflow-x: hidden;
     text-overflow: ellipsis;
+=======
+.dialogItem{
+    width: 100%;
+    border-radius: 4px;
+    padding: 0.8rem 1.2rem;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: .2s linear;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+@media (any-hover: hover) {
+    .dialogItem{
+        cursor: pointer;
+    }
+}
+
+.dialogItem.active{
+    border: 1px solid var(--main);
+}
+
+.dialogItemDate{
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--textGrey);
+}
+
+.dialogItemName{
+    font-weight: 600;
+}
+
+.dialogItemMute{
+    width: 20px;
+    flex-shrink: 0;
+    color: var(--main);
+}
+
+.dialogItemMore{
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--lighten);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dialogItemMore svg{
+    width: 20px;
+    color: var(--main);
+}
+
+.dialogItemActions{
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--white);
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: .3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 998px) {
+    .dialogItem, .dialogItemActions{
+        background: var(--input);
+    }
+}
+
+.dialogItemActions button{
+    transform: scale(.5);
+    opacity: 0;
+}
+
+.dialogItemActions button:nth-child(2){
+    transition-delay: .05s;
+}
+
+.dialogItemActions button:nth-child(3){
+    transition-delay: .1s;
+}
+
+.dialogItemActions button:nth-child(4){
+    transition-delay: .15s;
+}
+
+.dialogItemMoreInner:hover .dialogItemActions{
+    opacity: 1;
+    pointer-events: all;
+}
+
+.dialogItemMoreInner:hover .dialogItemActions button{
+    transform: scale(1);
+    opacity: 1;
+}
+
+.dialogItemTextInner{
+    width: calc(100% - 58px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.dialogItemMessageInner{
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: hidden;
+    min-height: 28px;
+}
+
+.dialogItemMessage{
+    max-width: 100%;
+    font-size: 1.4rem;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }

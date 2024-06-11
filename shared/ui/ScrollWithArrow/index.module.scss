@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .subjectsTags{
     width: 100%;
     position: relative;
@@ -86,4 +87,94 @@
 .subjectsTagsArrow svg{
     width: 24px;
     color: var(--main);
+=======
+.subjectsTags{
+    width: 100%;
+    position: relative;
+}
+
+.subjectsTagsContent{
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.subjectsTagsArrowInner{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    top: 0;
+    z-index: 3;
+    transition: .2s linear;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.next{
+    right: -18px;
+}
+
+.prev{
+    left: -18px;
+}
+
+@media (max-width: 440px) {
+    .next{
+        right: -8px;
+    }
+    
+    .prev{
+        left: -8px;
+    }
+}
+
+.arrowFade{
+    opacity: 1;
+    pointer-events: all;
+}
+
+.subjectsTagsArrowInner:before{
+    content: "";
+    display: block;
+    width: 90px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.subjectsTagsArrowInner.next:before{
+    background: linear-gradient(to right, transparent, var(--white));
+    right: 0;
+}
+
+.subjectsTagsArrowInner.prev:before{
+    background: linear-gradient(to left, transparent, var(--white));
+    left: 0;
+}
+
+.subjectsTagsArrow{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+@media (any-hover: hover) {
+    .subjectsTagsArrow{
+        cursor: pointer;
+    }
+}
+
+.subjectsTagsArrow svg{
+    width: 24px;
+    color: var(--main);
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }

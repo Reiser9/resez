@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { HTMLAttributes } from 'react';
 import cn from 'classnames';
 
@@ -36,3 +37,43 @@ const InfoBlock: React.FC<Props> = ({ title, text, icon, image, children, button
 };
 
 export default InfoBlock;
+=======
+import React, { HTMLAttributes } from 'react';
+import cn from 'classnames';
+
+import styles from './index.module.scss';
+import typography from '@/shared/styles/typography.module.scss';
+
+type Props = {
+    icon?: React.ReactNode;
+    title?: string;
+    text?: string;
+    image?: React.ReactNode;
+    button?: React.ReactNode;
+    children?: React.ReactNode;
+} & HTMLAttributes<HTMLDivElement>;
+
+const InfoBlock: React.FC<Props> = ({ title, text, icon, image, children, button, className, ...props }) => {
+    return (
+        <div className={cn(styles.testWelcomeWrapper, className)} {...props}>
+            <div className={styles.testWelcome}>
+                {icon && <div className={styles.testWelcomeIconInner}>{icon}</div>}
+
+                <div className={styles.testWelcomeTextInner}>
+                    {title && <p className={typography.h4}>{title}</p>}
+
+                    {text && <p className={typography.text2}>{text}</p>}
+
+                    {children && children}
+
+                    {button && button}
+                </div>
+
+                {image && <div className={styles.testWelcomeIcon}>{image}</div>}
+            </div>
+        </div>
+    );
+};
+
+export default InfoBlock;
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018

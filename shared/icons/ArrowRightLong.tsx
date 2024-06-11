@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export const ArrowRightLong = () => {
     return (
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -10,3 +11,17 @@ export const ArrowRightLong = () => {
         </svg>
     );
 };
+=======
+export const ArrowRightLong = () => {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M17.25 8.25L21 12M21 12L17.25 15.75M21 12H3"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+};
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018

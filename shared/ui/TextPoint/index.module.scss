@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .userPoint, .userPointContent{
     width: 100%;
     display: flex;
@@ -20,4 +21,28 @@
 .blur{
     filter: blur(4px);
     user-select: none;
+=======
+.userPoint, .userPointContent{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.userPointContent p{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+            line-clamp: 5;
+    -webkit-box-orient: vertical;
+}
+
+.userPointTitle{
+    color: var(--textGrey);
+}
+
+.blur{
+    filter: blur(4px);
+    user-select: none;
+>>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }
