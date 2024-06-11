@@ -68,10 +68,7 @@
     transform: translateY(-50%);
     left: 7px;
     pointer-events: none;
-}
-
-.searchInputIcon path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .searchInputButton{
@@ -95,10 +92,7 @@
 
 .searchInputButton svg{
     width: 20px;
-}
-
-.searchInputButton svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .messangerSidebarDialogsContent{
@@ -231,4 +225,27 @@
 
 input.messangerNewChatSearchInput{
     background: var(--white);
+}
+
+.messangerChatAvatarWrapper{
+    position: relative;
+}
+
+.messangerChatAvatarDelete{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    background: var(--errorB);
+    color: var(--error);
+}
+
+.messangerChatAvatarDelete svg{
+    width: 16px;
+    flex-shrink: 0;
 }

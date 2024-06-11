@@ -4,6 +4,7 @@ import notifySlice from './slices/notify';
 import userSlice from './slices/user';
 import appSlice from './slices/app';
 import roleSlice from './slices/role';
+import messengerSlice from './slices/messenger';
 
 const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
         user: userSlice,
         app: appSlice,
         role: roleSlice,
+        messenger: messengerSlice,
     },
 });
 

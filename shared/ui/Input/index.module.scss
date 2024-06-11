@@ -33,6 +33,14 @@
     color: var(--error);
 }
 
+.success, .success:focus{
+    border: 1px solid var(--success);
+}
+
+.success:focus{
+    color: var(--success);
+}
+
 .errorMessage{
     font-size: 1.4rem;
     color: var(--error);
@@ -49,6 +57,10 @@
     resize: none;
     height: 120px;
     outline: none;
+}
+
+.input.white, .textarea.white{
+    background: var(--white);
 }
 
 .disabled {
@@ -81,8 +93,8 @@
     max-width: 24px;
 }
 
-.infoIcon svg path{
-    stroke: var(--main);
+.infoIcon svg{
+    color: var(--main);
 }
 
 .inputTitleWrapper {

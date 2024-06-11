@@ -7,3 +7,23 @@
 .textInner svg{
     width: 20px;
 }
+
+.center{
+    text-align: center;
+}
+
+.success{
+    color: var(--success);
+}
+
+.error{
+    color: var(--error);
+}
+
+.grey{
+    color: var(--grey);
+}
+
+.warn{
+    color: var(--warn);
+}

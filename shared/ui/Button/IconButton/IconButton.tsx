@@ -5,7 +5,7 @@ import cn from 'classnames';
 import styles from './index.module.scss';
 
 export type IconButtonProps = {
-    variant?: 'default' | 'light' | 'danger' | 'warn';
+    variant?: 'default' | 'light' | 'danger' | 'warn' | 'success';
     disabled?: boolean;
     full?: boolean;
     small?: boolean;

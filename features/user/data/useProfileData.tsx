@@ -16,7 +16,7 @@ const useProfileData = () => {
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const getProfileData = async (successCallback = () => {}): Promise<void> => {
+    const getProfileData = async (successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ user: ProfileInfo }>({
             url: '/user/profile-info',
@@ -35,7 +35,7 @@ const useProfileData = () => {
         successCallback();
     };
 
-    const saveProfileData = async (data: ProfileInfo, successCallback = () => {}): Promise<void> => {
+    const saveProfileData = async (data: ProfileInfo, successCallback = () => {}) => {
         setDataIsSaving(true);
         const response = await request<{ user: ProfileInfo }>({
             url: '/user/profile-info',

@@ -42,18 +42,15 @@
 .notifyItemIconInner svg{
     width: 24px;
     flex-shrink: 0;
-}
-
-.notifyItemIconInner svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 .notifyItemIconInner.session{
     background: var(--notifyRed);
 }
 
-.notifyItemIconInner.session svg path{
-    stroke: var(--error);
+.notifyItemIconInner.session svg{
+    color: var(--error);
 }
 
 .notifyItemTitleInner{

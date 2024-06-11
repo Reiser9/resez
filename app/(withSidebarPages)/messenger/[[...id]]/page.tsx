@@ -7,11 +7,14 @@ import styles from './index.module.scss';
 
 import { MessengerSidebar } from '@/widgets/MessengerSidebar';
 import { MessengerDialog } from '@/widgets/MessengerDialog';
+import { useAppDispatch } from '@/shared/hooks/useRedux';
+import { setCurrentDialogId } from '@/store/slices/messenger';
 
 const MessengerPage = ({ params }: { params: { id: string[] | undefined } }) => {
     const [dialogId, setDialogId] = React.useState<string | undefined>(undefined);
 
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const { id } = params || {};
 
     React.useEffect(() => {
@@ -20,6 +23,11 @@ const MessengerPage = ({ params }: { params: { id: string[] | undefined } }) => 
         }
 
         setDialogId(String(id));
+        dispatch(setCurrentDialogId(String(id)));
+
+        return () => {
+            dispatch(setCurrentDialogId(null));
+        };
     }, [id]);
 
     return (

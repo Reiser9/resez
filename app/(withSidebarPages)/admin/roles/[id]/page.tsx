@@ -70,7 +70,7 @@ const AdminRolePage = () => {
 
     React.useEffect(() => {
         if (id) {
-            getCurrentRoleHandler(id as string);
+            getCurrentRoleHandler(String(id));
         }
     }, [id]);
 

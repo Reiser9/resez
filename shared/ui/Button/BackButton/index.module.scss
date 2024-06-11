@@ -9,6 +9,13 @@
     flex-shrink: 0;
 }
 
+@media (max-width: 480px) {
+    .back{
+        width: 32px;
+        height: 32px;
+    }
+}
+
 .back.disabled{
     opacity: 0.7;
     filter: grayscale(1);
@@ -22,8 +29,5 @@
 .back svg{
     width: 20px;
     flex-shrink: 0;
-}
-
-.back svg path{
-    stroke: var(--main);
+    color: var(--main);
 }

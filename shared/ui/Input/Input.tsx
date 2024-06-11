@@ -20,16 +20,19 @@ interface InputsProps {
     lengthLimit?: number;
     wrapperClass?: string;
     isError?: boolean;
+    isSuccess?: boolean;
     errorMessage?: string;
     infoText?: string;
     commentText?: string;
+    color?: 'default' | 'white';
+    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement>) => void;
     children?: React.ReactNode;
 }
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> &
     InputsProps & {
         variant?: 'input';
-        type?: 'text' | 'password';
+        type?: 'text' | 'password' | 'number';
     };
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> &
@@ -52,11 +55,14 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             disabled = false,
             trackLength = false,
             isError = false,
+            isSuccess = false,
             errorMessage,
             lengthLimit = 9999,
             infoText,
             commentText,
+            color = 'default',
             wrapperClass,
+            onChange,
             className,
             children,
             ...props
@@ -71,13 +77,14 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     <textarea
                         ref={ref as React.Ref<HTMLTextAreaElement>}
                         placeholder={placeholder}
-                        className={cn(styles.input, styles.textarea, className, {
+                        className={cn(styles.input, styles.textarea, styles[color], className, {
                             [styles.disabled]: disabled,
                             [styles.error]: isError,
+                            [styles.success]: isSuccess,
                         })}
                         maxLength={lengthLimit}
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={onChange ? onChange : (e) => setValue(e.target.value)}
                         {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
                     ></textarea>
                 );
@@ -86,16 +93,17 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             return (
                 <input
                     ref={ref as React.Ref<HTMLInputElement>}
-                    className={cn(styles.input, className, {
+                    className={cn(styles.input, styles[color], className, {
                         [styles.password]: type === 'password' || infoText,
                         [styles.disabled]: disabled,
                         [styles.error]: isError,
+                        [styles.success]: isSuccess,
                     })}
                     maxLength={lengthLimit}
                     placeholder={placeholder}
                     type={show ? 'text' : type}
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={onChange ? onChange : (e) => setValue(e.target.value)}
                     {...(props as InputHTMLAttributes<HTMLInputElement>)}
                 />
             );

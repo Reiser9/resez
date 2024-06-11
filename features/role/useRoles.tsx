@@ -14,7 +14,7 @@ const useRoles = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationRoles = async ({ pageParam }: { pageParam: number }): Promise<Roles | void> => {
+    const getPaginationRoles = async ({ pageParam }: { pageParam: number }) => {
         const limit = 8;
         const response = await request<Roles>({
             url: `/admin/role?offset=${pageParam * limit}&limit=${limit}`,
@@ -30,7 +30,7 @@ const useRoles = () => {
         }
     };
 
-    const getCurrentRole = async (id: string | number): Promise<EditRoleDTO | void> => {
+    const getCurrentRole = async (id: string | number) => {
         setRoleIsLoading(true);
         const response = await request<EditRoleDTO>({
             url: `/admin/role/${id}`,
@@ -48,7 +48,7 @@ const useRoles = () => {
         }
     };
 
-    const createRole = async (data: RoleCreateDTO, successCallback = () => {}): Promise<void> => {
+    const createRole = async (data: RoleCreateDTO, successCallback = () => {}) => {
         const { role, permissions } = data;
 
         if (!role) {
@@ -74,7 +74,7 @@ const useRoles = () => {
         alertNotify('Успешно', 'Роль создана', 'success');
     };
 
-    const editRole = async (id: string | number, data: RoleCreateDTO, successCallback = () => {}): Promise<void> => {
+    const editRole = async (id: string | number, data: RoleCreateDTO, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<RoleDTO>({
             url: `/admin/role/${id}`,
@@ -92,7 +92,7 @@ const useRoles = () => {
         alertNotify('Успешно', 'Роль изменена', 'success');
     };
 
-    const deleteRole = async (id: string, successCallback = () => {}): Promise<void> => {
+    const deleteRole = async (id: string, successCallback = () => {}) => {
         setRolesIsLoading((prev) => [...prev, id]);
         const response = await request<RoleDTO>({
             url: `/admin/role/${id}/archive`,

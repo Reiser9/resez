@@ -1,13 +1,19 @@
 .messangerContent{
-    width: 100%;
+    width: calc(100% - 420px);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     transition: .3s ease-in-out;
 }
 
+@media (max-width: 1100px) {
+    .messangerContent{
+        width: calc(100% - 340px);
+    }
+}
 @media (max-width: 998px) {
     .messangerContent{
+        width: 100%;
         opacity: 0;
         pointer-events: none;
         position: relative;
@@ -29,6 +35,7 @@
     justify-content: space-between;
     padding: 0 2.4rem .8rem 2.4rem;
     border-bottom: 1px solid var(--input);
+    position: relative;
 }
 
 @media (max-width: 768px) {
@@ -52,9 +59,6 @@
 
 .messangerTopBarOnline svg{
     width: 16px;
-}
-
-.messangerTopBarOnline svg path{
     stroke: var(--textGrey);
 }
 
@@ -73,6 +77,8 @@
 .messangerDialogSendInner{
     width: 100%;
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
     padding: 0.8rem 2.4rem 0 2.4rem;
     border-top: 1px solid var(--input);
@@ -82,6 +88,12 @@
     .messangerDialogSendInner{
         padding: 0.8rem .8rem 0 .8rem;
     }
+}
+
+.messangerDialogSendWrapper{
+    width: 100%;
+    display: flex;
+    gap: 8px;
 }
 
 .messangerDialogSendInner button{
@@ -126,10 +138,7 @@
 .selectedMessages svg{
     width: 22px;
     flex-shrink: 0;
-}
-
-.selectedMessages svg path{
-    stroke: var(--main);
+    color: var(--main);
 }
 
 button.dialogBack{
@@ -176,6 +185,11 @@ button.dialogBack{
     gap: 2px;
 }
 
+.infoModalAvatarInner{
+    position: relative;
+    display: flex;
+}
+
 .infoModalInfoName{
     text-align: center;
     margin-top: 0.8rem;
@@ -196,6 +210,9 @@ button.dialogBack{
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    background: var(--input);
+    padding: 1.2rem;
+    border-radius: 4px;
 }
 
 .messangerUsersList{
@@ -204,7 +221,24 @@ button.dialogBack{
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    // padding-right: 0.8rem;
 }
+
+// .messangerUsersList::-webkit-scrollbar{
+//     width: 4px;
+// }
+
+// .messangerUsersList::-webkit-scrollbar-track{
+//     background: var(--white);
+//     border-radius: 50px;
+// }
+
+// .messangerUsersList::-webkit-scrollbar-thumb{
+//     background: var(--main);
+//     border-radius: 50px;
+// }
 
 .messangerTopBarWrapper{
     display: flex;
@@ -214,4 +248,131 @@ button.dialogBack{
 
 .messangerTopBarMute{
     width: 16px;
+}
+
+.messangerDialogReply{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.messangerDialogReplyInfo{
+    width: calc(100% - 38px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.messangerDialogReplyMessageWrapper{
+    width: 100%;
+    overflow: hidden;
+}
+
+.messangerDialogReplyMessage{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.chatUserItem{
+    width: 100%;
+    border-radius: 4px;
+    background: var(--white);
+    padding: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.chatUserItemWrapper{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.infoModalChatLink{
+    width: 100%;
+    padding: 0.8rem 4.4rem .8rem 1.6rem;
+    border-radius: 4px;
+    background: var(--lighten);
+    color: var(--main);
+    position: relative;
+    text-align: left;
+}
+
+.infoModalChatLink svg{
+    width: 20px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
+}
+
+@media (any-hover: hover) {
+    .infoModalChatLink{
+        cursor: pointer;
+    }
+}
+
+.infoModalAvatarActions{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(7px, 7px);
+}
+
+.infoModalAvatarAction{
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main);
+    background: var(--input);
+    padding: 0;
+}
+
+.infoModalAvatarAction svg{
+    width: 16px;
+}
+
+.infoModalAvatarAction.danger{
+    background: var(--errorB);
+    color: var(--error);
+}
+
+@media (any-hover: hover) {
+    .infoModalAvatarAction{
+        cursor: pointer;
+    }
+
+    .infoModalAvatarAction{
+        opacity: 0;
+        transition: .2s linear;
+    }
+
+    .infoModalAvatarInner:hover .infoModalAvatarAction{
+        opacity: 1;
+    }
+}
+
+.messangerDialogSendKick{
+    min-height: 44px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.messangerDialogSendKick svg{
+    width: 24px;
+    color: var(--error);
 }

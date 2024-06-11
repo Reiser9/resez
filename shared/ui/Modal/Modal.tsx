@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import ReactDOM from 'react-dom';
 import cn from 'classnames';
 
 import styles from './index.module.scss';
@@ -33,7 +36,7 @@ const Modal: React.FC<Props> = ({ value, setValue, title, subtitle, text, size =
         };
     }, [value]);
 
-    return (
+    return ReactDOM.createPortal(
         <div
             className={cn(styles.modalOverlay, {
                 [styles.active]: value,
@@ -72,7 +75,8 @@ const Modal: React.FC<Props> = ({ value, setValue, title, subtitle, text, size =
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body,
     );
 };
 

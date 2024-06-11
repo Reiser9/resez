@@ -19,6 +19,7 @@ import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { usePermissions, useRoles } from '@/features/role';
 import { Permissions } from '@/entities/role';
 import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
+import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
 
 export type TreePermission = {
     title: string;
@@ -105,19 +106,14 @@ const AdminCreateRole = () => {
     }
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <BackButton />
-
-                    <Text variant="h3">Создание роли</Text>
-                </div>
-
-                <Button variant="light" auto onClick={createRoleHandler} loading={isLoading}>
+        <CreatePageDefault
+            title="Создание роли"
+            button={
+                <Button auto onClick={createRoleHandler} loading={isLoading} levitation>
                     Создать
                 </Button>
-            </div>
-
+            }
+        >
             <div className={base.form}>
                 <RolePreview
                     name={name}
@@ -158,7 +154,7 @@ const AdminCreateRole = () => {
                     />
                 )}
 
-                <div style={{width: "100%", display: "flex"}}>
+                <div style={{ width: '100%', display: 'flex' }}>
                     <Tree
                         selectable={false}
                         checkable
@@ -169,7 +165,7 @@ const AdminCreateRole = () => {
                     />
                 </div>
             </div>
-        </div>
+        </CreatePageDefault>
     );
 };
 

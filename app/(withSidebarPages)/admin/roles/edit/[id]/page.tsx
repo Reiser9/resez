@@ -10,7 +10,7 @@ import { TreeProps } from 'antd/lib';
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { BackButton, Button } from '@/shared/ui/Button';
+import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { ColorPickerInput, Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
@@ -21,6 +21,8 @@ import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { TreePermission } from '../../create/page';
 import { Permissions } from '@/entities/role';
 import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
+import { Plus } from '@/shared/icons';
+import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
 
 const AdminEditRole = () => {
     const { id } = useParams();
@@ -127,19 +129,14 @@ const AdminEditRole = () => {
     }
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <BackButton />
-
-                    <Text variant="h3">Редактирование роли</Text>
-                </div>
-
-                <Button variant="light" auto onClick={editRoleHandler} loading={isLoading}>
+        <CreatePageDefault
+            title="Редактирование роли"
+            button={
+                <Button auto onClick={editRoleHandler} loading={isLoading} levitation>
                     Сохранить
                 </Button>
-            </div>
-
+            }
+        >
             <div className={base.form}>
                 <RolePreview
                     name={name}
@@ -191,7 +188,7 @@ const AdminEditRole = () => {
                     />
                 </div>
             </div>
-        </div>
+        </CreatePageDefault>
     );
 };
 

@@ -13,9 +13,11 @@ type Props = {
     loading?: boolean;
     disabled?: boolean;
     small?: boolean;
+    levitation?: boolean;
     href?: string;
     color?: 'primary' | 'danger';
     variant?: 'fill' | 'outline' | 'empty' | 'light';
+    wrapperStyle?: React.CSSProperties;
     children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement> &
     AnchorHTMLAttributes<HTMLAnchorElement>;
@@ -25,9 +27,11 @@ const Button: React.FC<Props> = ({
     loading = false,
     disabled = false,
     small = false,
+    levitation = false,
     href,
     color = 'primary',
     variant = 'fill',
+    wrapperStyle,
     className,
     children,
     ...props
@@ -39,11 +43,7 @@ const Button: React.FC<Props> = ({
         });
 
         if (disabled) {
-            return(
-                <button className={defaultClasses}>
-                    {!loading && children}
-                </button>
-            )
+            return <button className={defaultClasses}>{!loading && children}</button>;
         }
 
         if (href) {
@@ -65,7 +65,9 @@ const Button: React.FC<Props> = ({
         <div
             className={cn(styles.buttonInner, className, {
                 [styles.auto]: auto,
+                [styles.levitation]: levitation,
             })}
+            style={wrapperStyle}
         >
             {content()}
 

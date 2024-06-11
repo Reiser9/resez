@@ -14,7 +14,7 @@ type Props = {
     children?: React.ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-const NotContent: React.FC<Props> = ({ text, icon, danger = false, small = false, children, ...props }) => {
+const NotContent: React.FC<Props> = ({ text, icon, danger = false, small = true, children, ...props }) => {
     return (
         <div
             className={cn(styles.emptyContent, {
@@ -26,7 +26,7 @@ const NotContent: React.FC<Props> = ({ text, icon, danger = false, small = false
                 [styles.small]: small
             })}>{icon ? icon : <Data />}</div>
 
-            {text && <Text variant="text2">{text}</Text>}
+            {text && <Text center variant="text2">{text}</Text>}
 
             {children}
         </div>

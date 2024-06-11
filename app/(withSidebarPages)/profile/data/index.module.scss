@@ -182,6 +182,13 @@ div.dataItem {
         stroke: var(--main);
     }
 }
+@media (max-width: 440px) {
+    .avatarLoadButton{
+        width: 32px;
+        height: 32px;
+        min-height: unset;
+    }
+}
 
 .dataBanner{
     width: 100%;
@@ -214,8 +221,5 @@ div.dataItem {
 .dataPersonalizationButton svg{
     width: 18px;
     flex-shrink: 0;
-}
-
-.dataPersonalizationButton svg path{
-    stroke: #fff;
+    color: #fff;
 }

@@ -7,6 +7,7 @@
     align-items: flex-start;
     gap: 16px;
     position: relative;
+    min-height: 240px;
 }
 
 .collectionItemInfoInner {
@@ -66,12 +67,29 @@
     flex-wrap: wrap;
 }
 
-.collectionItemNumber {
+.collectionItemNumber, .collectionItemLikes {
     padding: 0.4rem 0.8rem;
     border-radius: 2px;
     background: var(--lighten);
     color: var(--main);
     font-size: 1.4rem;
+}
+
+.collectionItemLikes{
+    color: var(--error);
+    background: var(--errorB);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.collectionItemLikes svg{
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.collectionItemLikes.isLiked svg{
+    fill: var(--error);
 }
 
 .collectionItemLock {
@@ -92,7 +110,11 @@
     stroke: var(--main);
 }
 
-.collectionItemDescription {
+.collectionItemDescription{
+    width: 100%;
+}
+
+.collectionItemDescription p {
     width: 100%;
     overflow: hidden;
     display: -webkit-box;

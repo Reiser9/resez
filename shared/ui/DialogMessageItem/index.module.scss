@@ -23,6 +23,10 @@
     background: var(--lighten);
 }
 
+.notReaded{
+    background: var(--hover);
+}
+
 .messangerDialogItemName{
     font-weight: 600;
 }
@@ -42,9 +46,47 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    text-align: center;
 }
 
 .messangerDialogItemMessage span{
     font-size: 1.4rem;
     color: var(--textGrey);
+}
+
+.messangerDialogItemActionsWrapper{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.messangerDialogItemActions{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.messangerDialogItemActionButton{
+    padding: 0;
+    display: flex;
+}
+
+.messangerDialogItemActions svg{
+    width: 18px;
+    color: var(--main);
+}
+
+@media (any-hover: hover) {
+    .messangerDialogItemActions{
+        transition: .2s linear;
+        opacity: 0;
+    }
+
+    .messangerDialogItem:hover .messangerDialogItemActions{
+        opacity: 1;
+    }
+
+    .messangerDialogItemActionButton:hover{
+        opacity: 0.6;
+    }
 }

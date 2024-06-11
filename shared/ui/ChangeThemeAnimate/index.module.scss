@@ -78,6 +78,14 @@
     transition: .4s ease-in-out;
 }
 
+.light .themeAnimateIcon{
+    color: #232229;
+}
+
+.dark .themeAnimateIcon{
+    color: #F5F7FA;
+}
+
 .light .iconSun{
     transform: translate(calc(-50% - 60px), -50%);
     opacity: 0;
@@ -106,12 +114,4 @@
 .light .activeIcons .iconMoon{
     transform: translate(calc(-50% + 60px), -50%);
     opacity: 0;
-}
-
-.light .themeAnimateIcon path{
-    stroke: #232229;
-}
-
-.dark .themeAnimateIcon path{
-    stroke: #F5F7FA;
 }

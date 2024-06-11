@@ -6,6 +6,7 @@
     align-items: center;
     justify-content: center;
     padding: 0.8rem;
+    color: var(--main);
 }
 
 .iconButton.small{
@@ -17,6 +18,11 @@
     .iconButton{
         width: 40px;
         height: 40px;
+    }
+
+    .iconButton.small{
+        width: 32px;
+        height: 32px;
     }
 }
 
@@ -44,16 +50,21 @@
 
 .danger{
     background: var(--errorB);
-    color: #000;
+    color: var(--error);
 }
 
 .warn{
     background: var(--warnB);
-    color: #000;
+    color: var(--warn);
 }
 
 .light{
     background: var(--lighten);
+}
+
+.success{
+    background: var(--successB);
+    color: var(--success);
 }
 
 .light:hover, .danger:hover, .warn:hover{
@@ -67,16 +78,4 @@
 
 .iconButton.small svg{
     width: 20px;
-}
-
-.iconButton svg path, .iconButton svg polyline, .iconButton svg line{
-    stroke: var(--main);
-}
-
-.iconButton.danger svg path, .iconButton.danger svg polyline, .iconButton.danger svg line{
-    stroke: var(--error);
-}
-
-.iconButton.warn svg path, .iconButton.warn svg polyline, .iconButton.warn svg line{
-    stroke: var(--warn);
 }

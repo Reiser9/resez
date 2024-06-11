@@ -10,7 +10,20 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { Block, Delete, DotsHorizontal, Edit, Lvl20, Lvl30, Lvl75, Message, Paintbruh, Qr, Send, User } from '@/shared/icons';
+import {
+    Block,
+    Delete,
+    DotsHorizontal,
+    Edit,
+    Lvl20,
+    Lvl30,
+    Lvl75,
+    Message,
+    Paintbruh,
+    Qr,
+    Send,
+    User,
+} from '@/shared/icons';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
@@ -22,44 +35,44 @@ import { useProfileData } from '@/features/user';
 import { Modal } from '@/shared/ui/Modal';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { Input } from '@/shared/ui/Input';
-import { useDialogs } from '@/features/messenger';
+import { useDialog } from '@/features/messenger';
 
 const UserProfilePage = () => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
     const [qrModal, setQrModal] = React.useState(false);
     const [messageModal, setMessageModal] = React.useState(false);
-    const [message, setMessage] = React.useState("");
+    const [message, setMessage] = React.useState('');
     const [sendMessageIsLoading, setSendMessageIsLoading] = React.useState(false);
 
-    const { id } = useParams();
+    const { nickname } = useParams();
     const router = useRouter();
     const queryClient = useQueryClient();
 
     const { copyTextWithNotify } = useCopyText();
     const { getUserProfile } = useProfileData();
-    const { sendStartMessageUser } = useDialogs();
+    const { sendStartMessageUser } = useDialog();
     const { theme } = useThemeContext();
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ['user_profile_by_id', id],
-        queryFn: () => getUserProfile(String(id)),
-        enabled: !!id,
+        queryKey: ['user_profile_by_id', nickname],
+        queryFn: () => getUserProfile(String(nickname)),
+        enabled: !!nickname,
     });
 
     const sendMessage = async () => {
         setSendMessageIsLoading(true);
-        const data = await sendStartMessageUser(String(id), message, () => {
+        const data = await sendStartMessageUser(String(userId), message, () => {
             setMessageModal(false);
-            setMessage("");
+            setMessage('');
         });
         setSendMessageIsLoading(false);
 
-        if(data){
+        if (data) {
             router.push(`/messenger/${data.chatId}`);
         }
-    }
+    };
 
-    const { avatar, firstName, lastName, nickname } = data || {};
+    const { id: userId, avatar, firstName, lastName, nickname: userNickname } = data || {};
 
     return (
         <>
@@ -74,7 +87,7 @@ const UserProfilePage = () => {
                         </Link> */}
 
                         <div className={styles.profileAvatarInner}>
-                            <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
+                            <Badge isUserAvatar image={avatar} text={userNickname} style={{ width: 92, height: 92 }} />
 
                             <Link href="/profile/data" className={styles.profileAvatarLink}>
                                 Изменить
@@ -101,7 +114,7 @@ const UserProfilePage = () => {
                                 <Text
                                     variant="text2"
                                     className={styles.profileInfoNick}
-                                    onClick={() => copyTextWithNotify(nickname, 'Имя пользователя скопировано')}
+                                    onClick={() => copyTextWithNotify(userNickname, 'Имя пользователя скопировано')}
                                 >
                                     {nickname}
                                 </Text>
@@ -294,9 +307,9 @@ const UserProfilePage = () => {
 
             <Modal title="Написать сообщение" value={messageModal} setValue={setMessageModal} size="small">
                 <div className={styles.profileMessageModal}>
-                    <Input value={message} setValue={setMessage} placeholder="Введите сообщение" variant='textarea' />
+                    <Input value={message} setValue={setMessage} placeholder="Введите сообщение" variant="textarea" />
 
-                    <Button variant='light' onClick={sendMessage} loading={sendMessageIsLoading}>
+                    <Button variant="light" onClick={sendMessage} loading={sendMessageIsLoading}>
                         Отправить
                     </Button>
                 </div>

@@ -6,7 +6,7 @@ export const Lock = ({ ...props }) => {
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth="1"
-            stroke="var(--text)"
+            stroke="currentColor"
         >
             <path
                 strokeLinecap="round"

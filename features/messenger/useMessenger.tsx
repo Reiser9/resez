@@ -3,11 +3,9 @@
 import useRequest from '@/shared/hooks/useRequest';
 import { ChatsDTO, Message } from '@/entities/messenger';
 import { ChatInfo, ChatItem } from '@/entities/messenger/model';
-import useAlert from '@/shared/hooks/useAlert';
 
-const useDialogs = () => {
+const useMessenger = () => {
     const { request, catchRequestError, errorController } = useRequest();
-    const { alertNotify } = useAlert();
 
     const getDialogs = async () => {
         const response = await request<ChatsDTO>({ url: '/messenger/chat?limit=20', isAuth: true });
@@ -21,14 +19,14 @@ const useDialogs = () => {
         }
     };
 
-    const getChatById = async (id: string) => {
+    const getChatById = async (id: string, failedCallback = () => {}) => {
         const response = await request<{ chat: ChatInfo; messages: Message[] }>({
             url: `/messenger/chat/${id}`,
             isAuth: true,
         });
 
         if (catchRequestError(response)) {
-            return errorController(response);
+            return errorController(response, '', failedCallback);
         }
 
         if ('data' in response) {
@@ -53,14 +51,14 @@ const useDialogs = () => {
         successCallback();
     };
 
-    const sendStartMessageUser = async (userId: string | number, message: string, successCallback = () => {}) => {
+    const editMessage = async (messageId: number, message: string, successCallback = () => {}) => {
         const response = await request<{ message: Message }>({
-            url: `/messenger/message/user/${userId}`,
+            url: `/messenger/message/${messageId}`,
+            method: 'PATCH',
+            isAuth: true,
             data: {
                 message,
             },
-            method: 'POST',
-            isAuth: true,
         });
 
         if (catchRequestError(response)) {
@@ -68,17 +66,12 @@ const useDialogs = () => {
         }
 
         successCallback();
-
-        if('data' in response){
-            return response.data.message;
-        }
     };
 
-    const createChat = async (data: FormData, successCallback = () => {}) => {
+    const clearChatHistory = async (chatId: number, successCallback = () => {}) => {
         const response = await request<{ chat: ChatItem }>({
-            url: '/messenger/chat',
-            data,
-            method: 'POST',
+            url: `/messenger/chat/${chatId}/history`,
+            method: 'DELETE',
             isAuth: true,
         });
 
@@ -87,17 +80,25 @@ const useDialogs = () => {
         }
 
         successCallback();
-
-        if('data' in response){
-            return response.data;
-        }
     };
 
-    const deleteMesseges = async (data: FormData, successCallback = () => {}) => {
-        const response = await request<{ chat: ChatItem }>({
-            url: '/messenger/chat',
-            data,
-            method: 'POST',
+    const deleteMessageById = async (messageId: number, forAll = false, successCallback = () => {}) => {
+        const response = await request<{ message: Message }>({
+            url: `/messenger/message/${messageId}?for_all=${forAll}`,
+            method: 'DELETE',
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+    };
+
+    const joinChatFromLink = async (link: string, successCallback = () => {}) => {
+        const response = await request<{ chat: ChatItem; messages: Message[] }>({
+            url: `/messenger/chat/join/${link}`,
             isAuth: true,
         });
 
@@ -107,8 +108,8 @@ const useDialogs = () => {
 
         successCallback();
 
-        if('data' in response){
-            return response.data;
+        if ('data' in response) {
+            return response.data.chat;
         }
     };
 
@@ -116,10 +117,11 @@ const useDialogs = () => {
         getDialogs,
         getChatById,
         sendMessageInChat,
-        sendStartMessageUser,
-        createChat,
-        deleteMesseges
+        editMessage,
+        clearChatHistory,
+        deleteMessageById,
+        joinChatFromLink,
     };
 };
 
-export default useDialogs;
+export default useMessenger;

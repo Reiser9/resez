@@ -113,9 +113,6 @@
 .mainBlockLink svg{
     width: 20px;
     flex-shrink: 0;
+    color: var(--main);
     transition: .2s linear;
-}
-
-.mainBlockLink svg path{
-    stroke: var(--main)
 }

@@ -1,1 +1,14 @@
-export type { Collection, CollectionSingle, QAPair, CollectionDTO, Collections } from './model';
+export type {
+    Collection,
+    CollectionSingle,
+    Pair,
+    CollectionDTO,
+    Collections,
+    CollectionSettings,
+    Excel,
+    PairDTO,
+    CollectionChoice,
+    CollectionValidation,
+    CollectionWrite,
+    MatchItem,
+} from './model';

@@ -1,0 +1,64 @@
+.pointsTextInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.pointsText{
+    position: relative;
+    padding-left: 1.6rem;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .pointsText{
+        font-size: 1.4rem;
+    }
+}
+
+.pointsText:before{
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+}
+
+.pointsTextRed:before{
+    background: var(--error);
+}
+
+.pointsTextGreen:before{
+    background: var(--success);
+}
+
+.pointContent{
+    width: 100%;
+    display: flex;
+    gap: 24px;
+}
+
+.pointWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+@media (max-width: 1050px) {
+    .pointContent{
+        gap: 16px;
+    }
+}
+@media (max-width: 998px) {
+    .pointContent{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

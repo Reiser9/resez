@@ -1,28 +1,29 @@
 'use client';
 
 import React from 'react';
+import { Tooltip } from 'antd';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
 import { Text } from '@/shared/ui/Text';
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross } from '@/shared/icons';
+import { Cross, Plus } from '@/shared/icons';
 import { CollectionItem } from '@/shared/ui/CollectionItem';
-import useCollections from '@/features/collection/useCollections';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
+import { useCollections } from '@/features/collection';
 
-const Memo = () => {
+const Memory = () => {
     const queryClient = useQueryClient();
-    const { getPaginationCollections } = useCollections();
-
-    const revalidateRoles = () => {
-        queryClient.invalidateQueries({ queryKey: ['collections'] });
-    };
+    const { collectionsIsLoading, getPaginationCollections, deleteCollectionById } = useCollections();
 
     const resetRequest = () => {
         queryClient.resetQueries({ queryKey: ['collections'] });
+    };
+
+    const revalidateRequest = () => {
+        queryClient.invalidateQueries({ queryKey: ['collections'] });
     };
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
@@ -36,20 +37,27 @@ const Memo = () => {
         },
     });
 
+    const deleteCollectionHandler = (id: string) => {
+        deleteCollectionById(id, revalidateRequest);
+    };
+
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
-                        Коллекции {(!isPending && data?.pages[0]?.totalCount !== 0) && `(${data?.pages[0]?.totalCount})`}
+                        Коллекции {!isPending && !error && `(${data?.pages[0]?.totalCount})`}
+                        {error?.message}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
                 </div>
 
-                <Button href="memory/create" variant="light" auto>
-                    Создать
-                </Button>
+                <Tooltip title="Создать">
+                    <IconButton href="memory/create" variant="light" small circle>
+                        <Plus />
+                    </IconButton>
+                </Tooltip>
             </div>
 
             {isPending ? (
@@ -65,7 +73,14 @@ const Memo = () => {
             ) : (
                 <div className={base.contentItems}>
                     {data?.pages.map((collection) =>
-                        collection?.collections?.map((data) => <CollectionItem key={data.id} data={data} />),
+                        collection?.collections?.map((data) => (
+                            <CollectionItem
+                                key={data.id}
+                                data={data}
+                                loading={collectionsIsLoading.includes(String(data.id))}
+                                deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                            />
+                        )),
                     )}
                 </div>
             )}
@@ -79,4 +94,4 @@ const Memo = () => {
     );
 };
 
-export default Memo;
+export default Memory;

@@ -3,6 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
 
@@ -11,9 +12,11 @@ import { DialogMessageItem } from '@/shared/ui/DialogMessageItem';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Preloader } from '@/shared/ui/Preloader';
 import { formatDate } from '@/shared/utils/formatDate';
-import { useDialogs } from '@/features/messenger';
+import { useMessenger } from '@/features/messenger';
 import { MessengerDialogTopBar } from './MessengerDialogTopBar';
 import { MessengerDialogSendForm } from './MessengerDialogSendForm';
+import { Message as MessageType } from '@/entities/messenger';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {
     dialogId: string | undefined;
@@ -22,41 +25,78 @@ type Props = {
 export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
     const messagerDialogRef = React.useRef<null | HTMLDivElement>(null);
 
-    const [selectedMessegesIDs, setSelectedMessegesIDs] = React.useState<number[]>([]);
+    const [selectedMessegesIDs, setSelectedMessegesIDs] = React.useState<MessageType[]>([]);
+    const [replyMessage, setReplyMessage] = React.useState<MessageType | null>(null);
+
+    const [isEditedMessage, setIsEditedMessage] = React.useState(false);
+    const [editMessage, setEditMessage] = React.useState<MessageType>();
 
     let currentDate: null | string;
 
-    const { getChatById } = useDialogs();
+    const router = useRouter();
+    const { getChatById } = useMessenger();
+    const myId = useAppSelector(state => state.user.user?.id);
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['messenger_dialogs_by_id', dialogId],
-        queryFn: () => getChatById(String(dialogId)),
+        queryFn: () => getChatById(String(dialogId), () => router.push("/messenger")),
         enabled: !!dialogId,
     });
 
-    const selectMessage = (id: number) => {
+    const currentMessagesRef = React.useRef<MessageType>();
+    
+    const selectMessage = (message: MessageType) => {
         setSelectedMessegesIDs((prev) => {
-            if (prev.includes(id)) {
-                return prev.filter((messageId) => messageId !== id);
+            if (prev.includes(message)) {
+                return prev.filter((messageId) => messageId !== message);
             } else {
-                return [...prev, id];
+                return [...prev, message];
             }
         });
     };
 
     const scrollBottom = () => {
-        if(messagerDialogRef.current){
+        if (messagerDialogRef.current) {
             messagerDialogRef.current.scrollTo({
-                top: messagerDialogRef.current.scrollHeight
+                top: messagerDialogRef.current.scrollHeight,
             });
         }
-    }
+    };
 
     React.useEffect(() => {
-        if(dialogId && messagerDialogRef.current){
+        if(!isEditedMessage){
+            const filteredArray = data?.messages.filter(item => item.sender?.id === myId);
+            const lastItemWithDesired = filteredArray?.pop();
+            currentMessagesRef.current = lastItemWithDesired;
+            setEditMessage(lastItemWithDesired);
+        }
+    }, [data?.messages, isEditedMessage]);
+
+
+    React.useEffect(() => {
+        if (dialogId && messagerDialogRef.current) {
             scrollBottom();
         }
     }, [dialogId, messagerDialogRef.current, data?.messages]);
+
+    React.useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.key === "ArrowUp" && currentMessagesRef.current) {
+                setIsEditedMessage(true);
+            }
+
+            if (event.key === "Escape") {
+                setIsEditedMessage(false);
+                setReplyMessage(null);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
 
     return (
         <div
@@ -66,17 +106,19 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
         >
             {dialogId ? (
                 <>
-                    <MessengerDialogTopBar
+                    {!error && <MessengerDialogTopBar
                         data={data?.chat}
                         selectedMessegesIDs={selectedMessegesIDs}
                         setSelectedMessegesIDs={setSelectedMessegesIDs}
-                    />
+                        setReplyMessage={setReplyMessage}
+                        dataLoading={isLoading}
+                    />}
 
                     <div className={styles.messangerDialog} ref={messagerDialogRef}>
                         {isLoading ? (
                             <Preloader page small />
                         ) : error ? (
-                            <NotContent small icon={<Cross />} danger text="При загрузке сообщения произошла ошибка." />
+                            <NotContent icon={<Cross />} danger text="При загрузке чата произошла ошибка." />
                         ) : data?.messages?.length ? (
                             <>
                                 {data.messages.map((data, id) => {
@@ -87,7 +129,16 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
                                     });
 
                                     let messageElement = (
-                                        <div key={id} style={{width: "100%", display: "flex", flexDirection: "column", gap: 2, alignItems: "flex-start"}}>
+                                        <div
+                                            key={id}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 2,
+                                                alignItems: 'flex-start',
+                                            }}
+                                        >
                                             {currentDate !== messageDateString && (
                                                 <div className={styles.messangerDialogDateInner}>
                                                     <p className={styles.messangerDialogDate}>
@@ -99,7 +150,10 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
                                             <DialogMessageItem
                                                 data={data}
                                                 selectMessage={selectMessage}
-                                                isSelected={selectedMessegesIDs.includes(data.id)}
+                                                isSelected={selectedMessegesIDs.includes(data)}
+                                                onDoubleClick={() => setReplyMessage(data)}
+                                                setEditMessage={setEditMessage}
+                                                setIsEditedMessage={setIsEditedMessage}
                                             />
                                         </div>
                                     );
@@ -114,7 +168,16 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
                         )}
                     </div>
 
-                    <MessengerDialogSendForm dialogId={dialogId} scrollDialogToBottom={scrollBottom} />
+                    {!error && <MessengerDialogSendForm
+                        dialogId={dialogId}
+                        scrollDialogToBottom={scrollBottom}
+                        replyMessage={replyMessage}
+                        setReplyMessage={setReplyMessage}
+                        isEditedMessage={isEditedMessage}
+                        setIsEditedMessage={setIsEditedMessage}
+                        editMessage={editMessage}
+                        isKicked={data?.chat.isKicked}
+                    />}
                 </>
             ) : (
                 <NotContent icon={<Send />} text="Для начала общения выберите чат" />

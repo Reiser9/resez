@@ -10,32 +10,47 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Collection } from '@/entities/collection';
-import { ArrowRightLong, Delete, DotsHorizontal, Edit, Lock } from '@/shared/icons';
+import { ArrowRightLong, Delete, DotsHorizontal, Edit, Heart, Lock } from '@/shared/icons';
 import { Text } from '../Text';
 import { HoverMenu, MenuLink } from '../HoverMenu';
 import { IconButton } from '../Button';
 import { LoaderForItem } from '../Preloader';
 import { Badge } from '../Badge';
+import { useRouter } from 'next/navigation';
+import { ConfirmModal } from '../Modal';
 
 type Props = {
     data: Collection;
     loading?: boolean;
+    deleteCallback?: () => void;
+    style?: React.CSSProperties;
 };
 
-const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
-    const { id, collection, description, isPrivate, pairsCount, user } = data || {};
+const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {}, style }) => {
+    const { id, collection, description, isPrivate, pairsCount, user, likesCount, isLiked } = data || {};
     const { avatar, nickname } = user || {};
 
-    const [collectionItemMenu, setCollectionItemMenu] = React.useState<boolean>(false);
+    const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
+    const [deleteCollectionModal, setDeleteCollectionModal] = React.useState(false);
+
+    const router = useRouter();
 
     return (
-        <div className={cn(base.item3, styles.collectionItem)}>
+        <div className={cn(base.item3, styles.collectionItem)} style={style}>
             <Link href={`memory/${id}`} className={styles.collectionItemInfoInner}>
                 <span className={styles.collectionItemInfo}>
                     <p className={styles.collectionItemName}>{collection}</p>
 
                     <span className={styles.collectionItemTags}>
                         <p className={styles.collectionItemNumber}>Терминов: {pairsCount}</p>
+
+                        <p className={cn(styles.collectionItemLikes, {
+                            [styles.isLiked]: isLiked
+                        })}>
+                            <Heart />
+
+                            {likesCount}
+                        </p>
 
                         {isPrivate && (
                             <Tooltip title="Скрыта">
@@ -60,7 +75,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
 
             <div className={styles.collectionItemBottom}>
                 <Link href={`/user/${nickname}`} className={styles.collectionItemAuthor}>
-                    <Badge image={avatar} text={nickname} />
+                    <Badge isUserAvatar image={avatar} text={nickname} />
 
                     <p className={styles.collectionItemAuthorName}>{nickname}</p>
                 </Link>
@@ -74,12 +89,15 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
                     value={collectionItemMenu}
                     setValue={setCollectionItemMenu}
                 >
-                    <MenuLink>
+                    <MenuLink onClick={() => router.push(`/training/memory/edit/${id}`)}>
                         <Edit />
                         Редактировать
                     </MenuLink>
 
-                    <MenuLink danger>
+                    <MenuLink danger onClick={() => {
+                        setCollectionItemMenu(false);
+                        setDeleteCollectionModal(true);
+                    }}>
                         <Delete />
                         Удалить
                     </MenuLink>
@@ -87,6 +105,14 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false }) => {
             </div>
 
             {loading && <LoaderForItem />}
+
+            <ConfirmModal
+                text="Вы действительно хотите удалить коллекцию?"
+                confirmText="Удалить"
+                value={deleteCollectionModal}
+                setValue={setDeleteCollectionModal}
+                callback={deleteCallback}
+            />
         </div>
     );
 };

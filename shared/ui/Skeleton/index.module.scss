@@ -67,3 +67,19 @@
     display: flex;
     height: 172px;
 }
+
+.scrollContent{
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+.scrollItem{
+    width: calc(100% / 4 - 24px / 4);
+    height: 40px;
+}
+
+.subjectItem{
+    display: flex;
+    height: 221px;
+}

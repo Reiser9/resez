@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
@@ -20,8 +21,6 @@ import { LoaderForItem } from '../Preloader';
 import { Text } from '../Text';
 import { ConfirmModal, Modal } from '../Modal';
 import { Input } from '../Input';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import Link from 'next/link';
 
 type Props = {
     data?: UserAdmin;
@@ -61,16 +60,14 @@ const UserItem: React.FC<Props> = ({
     const [blockReason, setBlockReason] = React.useState<string>('');
 
     const { copyTextWithNotify } = useCopyText();
-    const isHideAvatars = useAppSelector((state) => state.user.user?.settings.isHideAvatars);
-    const userId = useAppSelector((state) => state.user.user?.id);
 
     return (
         <>
             <div className={styles.userItem}>
                 <div className={styles.userInfoInner}>
                     <div className={styles.userAvatarInner}>
-                        <Link href={`/user/${id}`}>
-                            <Badge size="big" image={isHideAvatars && id !== userId ? '' : avatar} text={nickname} />
+                        <Link href={`/user/${nickname}`}>
+                            <Badge isUserAvatar size="big" image={avatar} text={nickname} />
                         </Link>
 
                         {isOnline ? (
@@ -94,7 +91,7 @@ const UserItem: React.FC<Props> = ({
 
                     <div className={styles.userInfo}>
                         {firstName && lastName && (
-                            <Link href={`/user/${id}`}>
+                            <Link href={`/user/${nickname}`}>
                                 <Text className={styles.userInfoName}>{`${firstName} ${lastName}`}</Text>
                             </Link>
                         )}

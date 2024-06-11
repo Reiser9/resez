@@ -110,8 +110,5 @@
 .achievementItemInfo svg{
     width: 100%;
     flex-shrink: 0;
-}
-
-.achievementItemInfo svg path{
-    stroke: var(--main);
+    color: var(--main);
 }

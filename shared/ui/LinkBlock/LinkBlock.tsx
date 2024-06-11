@@ -44,7 +44,7 @@ const LinkBlock: React.FC<Props> = ({
 
             {text && <p className={typography.text2}>{text}</p>}
 
-            {children}
+            {children && <span className={styles.cardLinkImgInner}>{children}</span>}
         </Link>
     );
 };
