@@ -37,13 +37,11 @@ const SessionItemCompact: React.FC<Props> = ({ current = false, data, ...props }
                 </div>
             </div>
 
-            {current && (
+            {isActive || current ? (
                 <Text variant="text2" className={styles.sessionActive}>
                     Активный
                 </Text>
-            )}
-
-            {!isActive && (
+            ) : (
                 <Text variant="text2" className={styles.sessionActive}>
                     Завершен
                 </Text>

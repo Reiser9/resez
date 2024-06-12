@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const Cross = ({ ...props }) => {
     return (
         <svg
@@ -17,23 +16,3 @@ export const Cross = ({ ...props }) => {
         </svg>
     );
 };
-=======
-export const Cross = ({ ...props }) => {
-    return (
-        <svg
-            {...props}
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <path
-                d="M6 18L18 6M6 6L18 18"
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-};
->>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018

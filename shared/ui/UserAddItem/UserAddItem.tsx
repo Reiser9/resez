@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 'use client';
 
 import React, { HTMLAttributes } from 'react';
@@ -45,51 +44,3 @@ const UserAddItem: React.FC<Props> = ({ data, active = false, ...props }) => {
 };
 
 export default UserAddItem;
-=======
-'use client';
-
-import React, { HTMLAttributes } from 'react';
-import cn from 'classnames';
-
-import styles from './index.module.scss';
-
-import { Badge } from '../Badge';
-import { Text } from '../Text';
-import { Check } from '@/shared/icons';
-import { UserSearch } from '@/entities/user';
-
-type Props = {
-    data: UserSearch;
-    active?: boolean;
-} & HTMLAttributes<HTMLDivElement>;
-
-const UserAddItem: React.FC<Props> = ({ data, active = false, ...props }) => {
-    const { id, nickname, avatar } = data || {};
-
-    return (
-        <div className={styles.messangerNewChatUserItem} {...props}>
-            <div className={styles.messangerNewChatUserItemWrapper}>
-                <Badge isUserAvatar text={nickname} image={avatar} />
-
-                <div className={styles.messangerNewChatUserItemInfo}>
-                    {/* <Text className={styles.messangerNewChatUserItemName}>{name}</Text> */}
-
-                    <Text className={styles.messangerNewChatUserItemNickname} variant="text2">
-                        {nickname}
-                    </Text>
-                </div>
-            </div>
-
-            <div
-                className={cn(styles.messangerNewChatUserItemIndicator, {
-                    [styles.active]: active,
-                })}
-            >
-                <Check />
-            </div>
-        </div>
-    );
-};
-
-export default UserAddItem;
->>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const Swap = ({ ...props }) => {
     return (
         <svg
@@ -17,23 +16,3 @@ export const Swap = ({ ...props }) => {
         </svg>
     );
 };
-=======
-export const Swap = ({ ...props }) => {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1"
-            stroke="currentColor"
-        >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-            />
-        </svg>
-    );
-};
->>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018

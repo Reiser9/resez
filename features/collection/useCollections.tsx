@@ -25,10 +25,26 @@ const useCollections = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationCollections = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationCollections = async ({ pageParam }: { pageParam: number }, search: string) => {
         const limit = 6;
         const response = await request<Collections>({
-            url: `/memory-ms/collection?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/memory-ms/collection?offset=${pageParam * limit}&limit=${limit}&search=${search}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getLikedPaginationCollections = async ({ pageParam }: { pageParam: number }, search: string) => {
+        const limit = 6;
+        const response = await request<Collections>({
+            url: `/memory-ms/collection/liked?offset=${pageParam * limit}&limit=${limit}&search=${search}`,
             isAuth: true,
         });
 
@@ -256,6 +272,7 @@ const useCollections = () => {
         collectionIsLoading,
         collectionsIsLoading,
         getPaginationCollections,
+        getLikedPaginationCollections,
         getCollectionById,
         getPairsCollection,
         deleteCollectionById,

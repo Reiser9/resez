@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const Menu = ({ ...props }) => {
     return (
         <svg
@@ -17,23 +16,3 @@ export const Menu = ({ ...props }) => {
         </svg>
     );
 };
-=======
-export const Menu = ({ ...props }) => {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1"
-            stroke="currentColor"
-        >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-            />
-        </svg>
-    );
-};
->>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018

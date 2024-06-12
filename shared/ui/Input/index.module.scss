@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .inputWrapper {
     width: 100%;
     display: flex;
@@ -13,7 +12,7 @@
     display: flex;
 }
 
-.input {
+.input, .inputResizable {
     width: 100%;
     border: 1px solid var(--input);
     background: var(--input);
@@ -22,7 +21,14 @@
     min-height: 44px;
 }
 
-.input:focus {
+.inputResizable{
+    transition: .2s linear;
+    word-break: break-word;
+    cursor: text;
+    outline: none;
+}
+
+.input:focus, .inputResizable:focus{
     border: 1px solid var(--main);
 }
 
@@ -48,7 +54,7 @@
 }
 
 @media (max-width: 440px) {
-    .input {
+    .input, .inputResizable {
         min-height: 40px;
         font-size: 1.5rem;
     }
@@ -129,136 +135,4 @@
     transform: translateY(-50%);
     right: 8px;
     pointer-events: none;
-=======
-.inputWrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-}
-
-.inputInner {
-    width: 100%;
-    position: relative;
-    display: flex;
-}
-
-.input {
-    width: 100%;
-    border: 1px solid var(--input);
-    background: var(--input);
-    border-radius: 4px;
-    padding: 1rem 1.6rem;
-    min-height: 44px;
-}
-
-.input:focus {
-    border: 1px solid var(--main);
-}
-
-.error, .error:focus{
-    border: 1px solid var(--error);
-}
-
-.error::placeholder{
-    color: var(--error);
-}
-
-.success, .success:focus{
-    border: 1px solid var(--success);
-}
-
-.success:focus{
-    color: var(--success);
-}
-
-.errorMessage{
-    font-size: 1.4rem;
-    color: var(--error);
-}
-
-@media (max-width: 440px) {
-    .input {
-        min-height: 40px;
-        font-size: 1.5rem;
-    }
-}
-
-.textarea {
-    resize: none;
-    height: 120px;
-    outline: none;
-}
-
-.input.white, .textarea.white{
-    background: var(--white);
-}
-
-.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.password {
-    padding: 1rem 4.5rem 1rem 1.6rem;
-}
-
-.inputShow, .infoIcon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 0;
-    z-index: 2;
-    width: 45px;
-    height: 100%;
-    max-height: 45px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.inputShow svg, .infoIcon svg {
-    flex-shrink: 0;
-    width: 100%;
-    max-width: 24px;
-}
-
-.infoIcon svg{
-    color: var(--main);
-}
-
-.inputTitleWrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 4px;
-    flex-wrap: wrap;
-}
-
-.limitText {
-    color: var(--textGrey);
-    margin-left: auto;
-}
-
-.limit {
-    color: var(--error);
-}
-
-.commentText{
-    font-size: 1.4rem;
-}
-
-.colorView{
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 8px;
-    pointer-events: none;
->>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
 }

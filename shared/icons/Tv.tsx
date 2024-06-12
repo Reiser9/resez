@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const Tv = ({ ...props }) => {
     return (
         <svg
@@ -16,22 +15,3 @@ export const Tv = ({ ...props }) => {
         </svg>
     );
 };
-=======
-export const Tv = ({ ...props }) => {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            { ...props }
-        >
-            <rect width="20" height="15" x="2" y="7" rx="2" ry="2" />
-            <polyline points="17 2 12 7 7 2" />
-        </svg>
-    );
-};
->>>>>>> c61da454dd30e7ca31637fe711cf5e35c92c2018
