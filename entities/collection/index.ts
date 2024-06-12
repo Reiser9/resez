@@ -12,17 +12,3 @@ export type {
     CollectionWrite,
     MatchItem,
 } from './model';
-export type {
-    Collection,
-    CollectionSingle,
-    Pair,
-    CollectionDTO,
-    Collections,
-    CollectionSettings,
-    Excel,
-    PairDTO,
-    CollectionChoice,
-    CollectionValidation,
-    CollectionWrite,
-    MatchItem,
-} from './model';
