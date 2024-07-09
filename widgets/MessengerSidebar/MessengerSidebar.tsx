@@ -17,7 +17,7 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { Modal } from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
 import { File } from '@/shared/ui/File';
-import { Button, IconButton } from '@/shared/ui/Button';
+import { Button } from '@/shared/ui/Button';
 import useSearchUser from '@/features/user/search/useSearchUser';
 import { UserAddItem } from '@/shared/ui/UserAddItem';
 import { setDialogsScrollPosition } from '@/store/slices/messenger';

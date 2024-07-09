@@ -80,21 +80,15 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
         ref: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         const [show, setShow] = React.useState(false);
-        const isPasting = React.useRef(false);
 
         const sanitize = (e: ClipboardEvent<HTMLInputElement>) => {
-            isPasting.current = true;
             e.preventDefault();
 
             setValue(prev => `${prev} ${sanitizeHtml(e.clipboardData.getData('text'), sanitizeConf)}`);
         };
 
         const changeResizable = (e: ContentEditableEvent) => {
-            if (!isPasting.current) {
-                setValue(e.target.value);
-            }
-
-            isPasting.current = false;
+            setValue(e.target.value);
         };
 
         const content = () => {

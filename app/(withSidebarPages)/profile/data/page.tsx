@@ -19,11 +19,24 @@ import { Preloader } from '@/shared/ui/Preloader';
 import { Upload, Delete, Paintbruh } from '@/shared/icons';
 import { File } from '@/shared/ui/File';
 
+type GenderType = 'Мужской' | 'Женский';
+
+const genderValues: { label: string; value: GenderType }[] = [
+    {
+        label: 'Мужской',
+        value: 'Мужской',
+    },
+    {
+        label: 'Женский',
+        value: 'Женский',
+    },
+];
+
 const ProfileData = () => {
     const [name, setName] = React.useState<string>('');
     const [surname, setSurname] = React.useState<string>('');
     const [birthday, setBirthday] = React.useState<Dayjs | null>();
-    const [sex, setSex] = React.useState<'Мужской' | 'Женский' | null>(null);
+    const [sex, setSex] = React.useState<GenderType | null>(null);
     const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
 
     const { isLoading, dataIsSaving, getProfileData, saveProfileData } = useProfileData();
@@ -180,22 +193,13 @@ const ProfileData = () => {
                             setValue={setBirthday}
                             wrapperClass={styles.dataItem}
                         />
-                        <Select
+                        <Select<GenderType>
                             title="Пол"
                             placeholder="Выберите пол"
                             value={sex}
                             setValue={setSex}
                             wrapperClass={styles.dataItem}
-                            options={[
-                                {
-                                    label: 'Мужской',
-                                    value: 'Мужской',
-                                },
-                                {
-                                    label: 'Женский',
-                                    value: 'Женский',
-                                },
-                            ]}
+                            options={genderValues}
                         />
                     </div>
                 </div>

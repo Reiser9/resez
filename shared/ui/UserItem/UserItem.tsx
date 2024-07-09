@@ -51,10 +51,10 @@ const UserItem: React.FC<Props> = ({
         lastName,
         status,
         registrationDate,
-        isOnline,
-        lastActivity,
+        activity
     } = data || {};
     const { level, limit, xp } = levelInfo || {};
+    const { isOnline, lastSeen } = activity || {};
     const [confirmBlock, setConfirmBlock] = React.useState<boolean>(false);
     const [confirmUnblock, setConfirmUnblock] = React.useState<boolean>(false);
     const [blockReason, setBlockReason] = React.useState<string>('');
@@ -128,7 +128,7 @@ const UserItem: React.FC<Props> = ({
                     {!isOnline && (
                         <TextPoint
                             title="Был(а) в сети"
-                            text={lastActivity ? formatDate(lastActivity) : 'Неизвестно'}
+                            text={lastSeen ? formatDate(lastSeen) : 'Неизвестно'}
                         />
                     )}
                     {registrationDate && (

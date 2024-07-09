@@ -264,3 +264,16 @@
     width: 48px;
     flex-shrink: 0;
 }
+
+.avatarDecorationWrapper{
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}

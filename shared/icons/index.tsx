@@ -105,3 +105,7 @@ export { Swap } from './Swap';
 export { Excel } from './images/Excel';
 export { Heart } from './Heart';
 export { Share } from './Share';
+export { Clapperboard } from './Clapperboard';
+export { Notebook } from './Notebook';
+export { Filter } from './Filter';
+export { FileEmpty } from './FileEmpty';

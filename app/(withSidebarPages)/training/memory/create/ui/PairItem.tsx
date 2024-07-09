@@ -10,8 +10,8 @@ import { Delete, Photo, Swap } from '@/shared/icons';
 import { IconButton } from '@/shared/ui/Button';
 import { File } from '@/shared/ui/File';
 import { Input } from '@/shared/ui/Input';
-import type { PairDTO } from '@/entities/collection';
 import useCollections from '@/features/collection/useCollections';
+import type { PairDTO } from '@/entities/collection';
 
 type Props = {
     data: PairDTO;

@@ -5,7 +5,7 @@ import React from 'react';
 import useRequest from '@/shared/hooks/useRequest';
 import { Subject, SubjectDTO, Task } from '@/entities/subject';
 import useAlert from '@/shared/hooks/useAlert';
-import { PagginationSubjects } from '@/entities/subject/model';
+import type { PagginationSubjects } from '@/entities/subject/model';
 
 const useSubjects = () => {
     const { request, catchRequestError, errorController } = useRequest();

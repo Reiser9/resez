@@ -1,6 +1,7 @@
 import { Dayjs } from 'dayjs';
 import { Paggination } from '../pagination';
 import { Role } from '../role';
+import { ProductDTO } from '../store';
 
 export type LoginData = {
     nickname: string;
@@ -68,13 +69,19 @@ export type UserAdmin = {
     firstName: string;
     lastName: string;
     registrationDate: Date;
-    isOnline: boolean;
-    lastActivity: Date;
     status: string;
     levelInfo: {
         level: number;
         xp: number;
         limit: number;
+    };
+    activity: {
+        isOnline: boolean;
+        lastSeen: Date;
+    } | null;
+    subscription: {
+        name: string;
+        canUploadImages: boolean;
     };
     roles: Role[];
 };
@@ -89,6 +96,8 @@ export type ProfileInfo = {
     firstName: string;
     lastName: string;
     gender: 'Мужской' | 'Женский' | null;
+    avatar?: string;
+    avatarDecoration?: ProductDTO;
 };
 
 export type UserShortInfo = {
@@ -132,4 +141,4 @@ export type UserProfile = {
     firstName: string;
     lastName: string;
     avatar: string;
-}
+};

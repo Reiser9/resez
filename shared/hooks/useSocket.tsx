@@ -25,11 +25,11 @@ const useSocket = () => {
 
     const currentDialogIdRef = React.useRef(currentDialogId);
     const currentUserIdRef = React.useRef(user?.id);
+    const quesryRef = React.useRef(queryClient);
 
-    const revalidateChatById = () => {
-        queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
-        queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
-    };
+    React.useEffect(() => {
+        quesryRef.current = queryClient;
+    }, [queryClient]);
 
     React.useEffect(() => {
         if (!user?.id || !sessionId || !isAuth) {
@@ -80,8 +80,8 @@ const useSocket = () => {
         });
 
         socket.on('message', (message: Message) => {
-            revalidateChatById();
-            console.log(currentUserIdRef.current); // Разобраться почему currentUserIdRef = undefined
+            quesryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
+            quesryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs'] });
 
             if (
                 currentUserIdRef.current &&

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import cn from 'classnames';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -54,11 +55,11 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
         restoreArchiveSubject(id, () => {
             revalidateArchiveSubjects();
         });
-    }
+    };
 
     return (
         <>
-            <div className={`${base.item3} ${styles.subjectItem}`}>
+            <div className={cn(base.item3, styles.subjectItem)}>
                 <div className={styles.subjectItemWrapper}>
                     {subject && <Text variant="h4">{subject}</Text>}
 
@@ -87,10 +88,13 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
                             )}
 
                             {remove && (
-                                <MenuLink danger onClick={() => {
-                                    setActionMenu(false);
-                                    setConfirmDelete(true);
-                                }}>
+                                <MenuLink
+                                    danger
+                                    onClick={() => {
+                                        setActionMenu(false);
+                                        setConfirmDelete(true);
+                                    }}
+                                >
                                     <Delete />
                                     Удалить
                                 </MenuLink>

@@ -1,0 +1,1 @@
+export type { ProductDTO, Avatars } from './model.ts';

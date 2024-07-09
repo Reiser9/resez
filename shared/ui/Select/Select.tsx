@@ -1,6 +1,7 @@
 import React from 'react';
 import { Select as SelectAnt } from 'antd';
 import cn from 'classnames';
+import { SelectProps } from 'antd/lib';
 
 import styles from './index.module.scss';
 
@@ -8,18 +9,17 @@ import { ArrowBottom, Cross } from '@/shared/icons';
 import { Preloader } from '../Preloader';
 import { NotContent } from '../NotContent';
 import { Text } from '../Text';
-import { SelectProps } from 'antd/lib';
 
-type Option = {
+type Option<T> = {
     label: string;
-    value: string;
+    value: T;
 };
 
-type Props = {
+type Props<T> = {
     placeholder?: string;
-    value: "Мужской" | "Женский" | null;
-    setValue: (value: "Мужской" | "Женский") => void;
-    options: Option[];
+    value: T | null;
+    setValue: (value: T) => void;
+    options: Option<T>[];
     loading?: boolean;
     showSearch?: boolean;
     clear?: boolean;
@@ -27,9 +27,9 @@ type Props = {
     title?: string;
     wrapperClass?: string;
     className?: string;
-} & SelectProps;
+} & SelectProps<T>;
 
-const Select: React.FC<Props> = ({
+const Select = <T extends string>({
     placeholder,
     value,
     setValue,
@@ -41,7 +41,7 @@ const Select: React.FC<Props> = ({
     wrapperClass,
     className,
     ...props
-}) => {
+}: Props<T>) => {
     return (
         <div className={cn(styles.selectInner, wrapperClass)}>
             {title && <Text variant="text3">{title}</Text>}

@@ -43,8 +43,6 @@ const MemoryCreate = () => {
     const { validateHandler, scrollBottom, removePair } = useHandlers();
     const router = useRouter();
 
-    const [test, setTest] = React.useState('');
-
     const addNewPair = () => {
         setPairs((prev) => [
             ...prev,

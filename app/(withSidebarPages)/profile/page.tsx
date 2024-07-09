@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Lottie from 'lottie-react';
 import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
@@ -24,11 +25,37 @@ const ProfilePage = () => {
 
     const { user, profileInfo } = useAppSelector((state) => state.user);
     const { avatar, nickname, levelInfo } = user || {};
-    const { firstName, lastName } = profileInfo || {};
+    const { firstName, lastName, avatarDecoration } = profileInfo || {};
     const { level, limit, xp } = levelInfo || {};
+    const { contentUrl, title, options, contentType } = avatarDecoration || {};
+    const { width, x, y } = options || {};
 
     const { getProfileData } = useProfileData();
     const { copyTextWithNotify } = useCopyText();
+
+    const [animationData, setAnimationData] = React.useState<any | null>(null);
+
+    React.useEffect(() => {
+        const fetchAnimationData = async () => {
+            try {
+                if (!contentUrl) {
+                    return;
+                }
+                const response = await fetch(contentUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setAnimationData(data);
+            } catch (error) {
+                console.error('Error fetching animation data:', error);
+            }
+        };
+
+        if (contentType === 'animation') {
+            fetchAnimationData();
+        }
+    }, [contentUrl, contentType]);
 
     React.useEffect(() => {
         getProfileData();
@@ -46,7 +73,7 @@ const ProfilePage = () => {
                     </Link>
 
                     <div className={styles.profileAvatarInner}>
-                        <Badge image={avatar} text={nickname} style={{width: 92, height: 92}} />
+                        <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
 
                         <Link href="profile/data" className={styles.profileAvatarLink}>
                             Изменить
@@ -58,6 +85,28 @@ const ProfilePage = () => {
                                 style={{ background: CONFIG.BASE_COLOR }} //theme?.primary || CONFIG.BASE_COLOR
                             ></div>
                         </Tooltip>
+
+                        <div
+                            className={styles.avatarDecorationWrapper}
+                        >
+                            {contentType === 'animation' ? (
+                                <Lottie
+                                    animationData={animationData}
+                                    className={base.avatarDecoration}
+                                    style={{ width: width, top: y, left: x }}
+                                />
+                            ) : (
+                                <>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={contentUrl}
+                                        alt={title}
+                                        className={base.avatarDecoration}
+                                        style={{ width: width, top: y, left: x }}
+                                    />
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
 

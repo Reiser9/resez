@@ -31,6 +31,7 @@ const AdminUsers = () => {
 
             return nextPage;
         },
+        refetchInterval: 10000
     });
 
     const revalidateUsers = () => {

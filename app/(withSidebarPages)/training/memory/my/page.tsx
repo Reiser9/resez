@@ -67,7 +67,7 @@ const MemoryMy = () => {
         <div className={base.baseWrapperGap16}>
             <Tabs />
 
-            {!isPending && !error && !!data?.pages[0]?.totalCount && <div className={styles.searchInner}>
+            <div className={styles.searchInner}>
                 <Input
                     placeholder="Искать"
                     className={styles.searchInput}
@@ -76,7 +76,7 @@ const MemoryMy = () => {
                 />
 
                 <Search className={styles.searchIcon} />
-            </div>}
+            </div>
 
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
