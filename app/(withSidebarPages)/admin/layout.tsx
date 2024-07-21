@@ -28,9 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <SidebarLink href="/admin/users">Пользователи</SidebarLink>
                         <SidebarLink href="/admin/roles">Роли</SidebarLink>
                         <SidebarLink href="/admin/warns">Жалобы</SidebarLink>
-                        <SidebarLink href="/admin/archive/subjects">Архив</SidebarLink>
+                        <SidebarLink href="/admin/archive">Архив</SidebarLink>
                         <SidebarLink href="/admin/subjects">Предметы</SidebarLink>
-                        <SidebarLink href="/admin/store/products/avatar">Магазин</SidebarLink>
+                        <SidebarLink href="/admin/tasks">Задания</SidebarLink>
+                        <SidebarLink href="/admin/tests">Тесты</SidebarLink>
+                        <SidebarLink href="/admin/store/products">Магазин</SidebarLink>
                     </InnerPageSidebar>
                 </div>
             </ContentWrapper>

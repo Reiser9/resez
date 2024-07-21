@@ -13,7 +13,7 @@ import { Text } from '@/shared/ui/Text';
 
 import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Added, Clapperboard, DotsHorizontal, Photo } from '@/shared/icons';
+import { Added, Check, Clapperboard, DotsHorizontal, Photo } from '@/shared/icons';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 
@@ -23,7 +23,7 @@ type Props = {
 };
 
 const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
-    const { title, contentType, options, contentUrl } = data || {};
+    const { title, contentType, options, contentUrl, isCollected } = data || {};
     const { width, x, y } = options || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -97,6 +97,12 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
             </div>
 
             <div className={styles.avatarItemContent}>
+                {isCollected && (
+                    <div className={styles.avatarItemCollected}>
+                        <Check />
+                    </div>
+                )}
+
                 <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
 
                 <div
@@ -146,10 +152,17 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                     value={actionMenu}
                     setValue={setActionMenu}
                 >
-                    <MenuLink onClick={addProductToProfile}>
-                        <Added />
-                        Добавить
-                    </MenuLink>
+                    {isCollected ? (
+                        <MenuLink disabled>
+                            <Check />
+                            Добавлено
+                        </MenuLink>
+                    ) : (
+                        <MenuLink onClick={addProductToProfile}>
+                            <Added />
+                            Добавить
+                        </MenuLink>
+                    )}
                 </HoverMenu>
             </div>
         </div>

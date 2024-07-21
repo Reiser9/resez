@@ -312,3 +312,24 @@
     display: flex;
     position: relative;
 }
+
+.headerBalance{
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--input);
+}
+
+.headerBalanceWrapper{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.headerBalanceWrapper svg{
+    width: 20px;
+    flex-shrink: 0;
+}

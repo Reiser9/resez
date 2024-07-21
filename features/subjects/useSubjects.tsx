@@ -5,16 +5,68 @@ import React from 'react';
 import useRequest from '@/shared/hooks/useRequest';
 import { Subject, SubjectDTO, Task } from '@/entities/subject';
 import useAlert from '@/shared/hooks/useAlert';
-import type { PagginationSubjects } from '@/entities/subject/model';
+import type {
+    MarkConversionItem,
+    PagginationSubjects,
+    ScoreConversion,
+    ScoreConversionItem,
+    SubjectSubThemeDTO,
+    SubjectTask,
+    SubjectTaskDTO,
+} from '@/entities/subject/model';
 
 const useSubjects = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPagginationSubjects = async ({ pageParam }: { pageParam: number }) => {
-        const limit = 6;
+    const getPagginationSubjects = async ({ pageParam, limit = 9 }: { pageParam: number; limit?: number }) => {
         const response = await request<PagginationSubjects>({
-            url: `/admin/subject?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/admin/subject?offset=${pageParam * limit}&limit=${limit}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getSubjectThemes = async (subjectId: number | string) => {
+        const response = await request<{ subjectTasks: SubjectTaskDTO[] }>({
+            url: `/education-ms/admin/subject/${subjectId}/subject-task`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.subjectTasks;
+        }
+    };
+
+    const getSubjectSubThemes = async (themeId: number | string) => {
+        const response = await request<{ subThemes: SubjectSubThemeDTO[] }>({
+            url: `/education-ms/admin/subject-task/${themeId}/sub-theme`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.subThemes;
+        }
+    };
+
+    const getSubjects = async () => {
+        const response = await request<{ subjects: { id: number; subject: string; slug: string }[] }>({
+            url: '/education-ms/subject',
             isAuth: true,
         });
 
@@ -37,7 +89,7 @@ const useSubjects = () => {
         successCallback = () => {},
     ) => {
         const response = await request<{ subject: SubjectDTO }>({
-            url: '/admin/subject',
+            url: '/education-ms/admin/subject',
             isAuth: true,
             method: 'POST',
             data: {
@@ -61,8 +113,33 @@ const useSubjects = () => {
         }
     };
 
+    const createTableForSubject = async (
+        id: number | string,
+        scoreConversion: ScoreConversionItem[] | MarkConversionItem[],
+        successCallback = () => {},
+    ) => {
+        const response = await request({
+            url: `/education-ms/admin/subject/${id}/score-conversion`,
+            isAuth: true,
+            method: 'POST',
+            data: {
+                scoreConversion,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     const editSubject = async (
-        subjectId: number,
+        subjectId: string,
         subject: string,
         slug: string,
         isPublished: boolean,
@@ -72,7 +149,7 @@ const useSubjects = () => {
         successCallback = () => {},
     ) => {
         const response = await request<{ subject: SubjectDTO }>({
-            url: `/admin/subject/${subjectId}`,
+            url: `/education-ms/admin/subject/${subjectId}`,
             isAuth: true,
             method: 'PATCH',
             data: {
@@ -98,16 +175,16 @@ const useSubjects = () => {
 
     const deleteSubject = async (subjectId: number, successCallback = () => {}) => {
         const response = await request<{ subject: Subject }>({
-            url: `/admin/subject/${subjectId}/archive`,
+            url: `/education-ms/admin/subject/${subjectId}/archive`,
             isAuth: true,
-            method: 'DELETE'
+            method: 'DELETE',
         });
 
         if (catchRequestError(response)) {
             return errorController(response);
         }
 
-        alertNotify("Успешно", "Предмет удален", "success");
+        alertNotify('Успешно', 'Предмет удален', 'success');
         successCallback();
 
         if ('data' in response) {
@@ -115,15 +192,71 @@ const useSubjects = () => {
         }
     };
 
-    const getSubjectBySlug = async (slug: string) => {
+    const getSubjectById = async (id: string) => {
         const response = await request<{ subject: Subject }>({
-            url: `/admin/subject/${slug}`,
+            url: `/education-ms/admin/subject/${id}`,
             isAuth: true,
         });
 
         if (catchRequestError(response)) {
             return errorController(response);
         }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getPointsSubjectById = async (id: string) => {
+        const response = await request<{
+            isMark: boolean;
+            scoreConversion: ScoreConversion[];
+            subjectTasks: SubjectTask[];
+        }>({
+            url: `/education-ms/admin/subject/${id}/score-conversion`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getPointsSubjectBySlug = async (slug: string) => {
+        const response = await request<{
+            isMark: boolean;
+            scoreConversion: ScoreConversion[];
+            subjectTasks: SubjectTask[];
+        }>({
+            url: `/education-ms/subject/${slug}/score-info`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const publishSubject = async (id: number, successCallback = () => {}) => {
+        const response = await request<SubjectDTO>({
+            url: `/education-ms/admin/subject/${id}/toggle-publish`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
 
         if ('data' in response) {
             return response.data;
@@ -132,10 +265,17 @@ const useSubjects = () => {
 
     return {
         getPagginationSubjects,
+        getSubjects,
+        getSubjectThemes,
+        getSubjectSubThemes,
+        createTableForSubject,
         createSubject,
         deleteSubject,
         editSubject,
-        getSubjectBySlug,
+        getPointsSubjectBySlug,
+        getSubjectById,
+        getPointsSubjectById,
+        publishSubject,
     };
 };
 

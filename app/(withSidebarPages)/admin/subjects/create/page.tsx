@@ -1,38 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Checkbox, Steps } from 'antd';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
-import typography from '@/shared/styles/typography.module.scss';
 import styles from './index.module.scss';
 
-// import useTest from '../../../../hooks/useTest';
-import useAlert from '@/shared/hooks/useAlert';
-
-import { Delete, Plus } from '@/shared/icons';
+import { Plus } from '@/shared/icons';
 
 import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { Preloader } from '@/shared/ui/Preloader';
+import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { cyrToLat } from '@/shared/utils/cytToLat';
 import PointsTable from './PointsTable';
 import { useSubjects } from '@/features/subjects';
-
-type SubTheme = {
-    subTheme: string;
-    tasksCount: number;
-};
-
-type Task = {
-    theme: string;
-    primaryScore: string;
-    isDetailedAnswer: boolean;
-    subThemes: SubTheme[];
-};
-
-type TaskKey = 'theme' | 'primaryScore' | 'isDetailedAnswer' | 'subThemes';
+import { ScoreConversionItem, SubTheme, Task } from '@/entities/subject';
+import SubjectTaskItem from './SubjectTaskItem';
+import SubjectTaskItemForm from './SubjectTaskItemForm';
+import useAlert from '@/shared/hooks/useAlert';
+import { Text } from '@/shared/ui/Text';
 
 const SubjectsCreate = () => {
     const [step, setStep] = React.useState(0);
@@ -50,14 +37,17 @@ const SubjectsCreate = () => {
     const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
     const [subTheme, setSubTheme] = React.useState('');
     const [subThemes, setSubThemes] = React.useState<SubTheme[]>([]);
+    const [tasksCount, setTasksCount] = React.useState(0);
 
     const [createdSubjectId, setCreatedSubjectId] = React.useState(0);
     const [red, setRed] = React.useState(-9999);
     const [green, setGreen] = React.useState(9999);
-    const [elements, setElements] = React.useState([]);
+    const [elements, setElements] = React.useState<ScoreConversionItem[]>([]);
     const [primaryCount, setPrimaryCount] = React.useState<number | null>(null);
 
-    const { createSubject } = useSubjects();
+    const { createSubject, createTableForSubject } = useSubjects();
+    const { alertNotify } = useAlert();
+    const router = useRouter();
 
     const cyrToLatName = () => {
         if (!slug) {
@@ -65,7 +55,7 @@ const SubjectsCreate = () => {
         }
     };
 
-    const subjectHandler = async () => {
+    const createSubjectHandler = async () => {
         let updatedTasks = [...tasks];
 
         if (theme && primaryScore && (subThemes.length > 0 || subTheme)) {
@@ -76,9 +66,14 @@ const SubjectsCreate = () => {
                     theme,
                     primaryScore,
                     isDetailedAnswer,
-                    subThemes: trimSubTheme ? [...subThemes, { subTheme: trimSubTheme, tasksCount: 0 }] : subThemes,
+                    subThemes: trimSubTheme ? [...subThemes, { subTheme: trimSubTheme, tasksCount }] : subThemes,
+                    tasksCount: 0,
                 },
             ];
+        }
+
+        if (!updatedTasks.length) {
+            return alertNotify('Предупреждение', 'Хотя бы одно задание должно быть создано', 'warn');
         }
 
         const id = await createSubject(name, slug, isPublished, updatedTasks, isPoint, examMinutes, () => {
@@ -94,8 +89,60 @@ const SubjectsCreate = () => {
         }, 0);
 
         setPrimaryCount(primaryCount);
-        console.log(primaryCount);
-        // fillEmptyTableCell(primaryCount);
+        fillEmptyTableCell(primaryCount);
+    };
+
+    const createTablePoints = () => {
+        let empty = false,
+            incorrectValue = false;
+
+        let updatedScores = elements.map((data) => {
+            const { primaryScore, secondaryScore } = data || {};
+            const isGreen = Number(primaryScore) - 1 >= green;
+            const isRed = Number(primaryScore) - 1 <= red;
+
+            if (!secondaryScore) {
+                empty = true;
+            }
+
+            return {
+                primaryScore,
+                secondaryScore,
+                isGreen,
+                isRed,
+            };
+        });
+
+        if (empty) {
+            return alertNotify('Предупреждение', 'Таблица должна быть полностью заполненной', 'warn');
+        }
+
+        if (isPoint) {
+            let updatedScores = elements.map((data) => {
+                const { primaryScore, secondaryScore, isGreen, isRed } = data || {};
+                const score = String(secondaryScore).split('-');
+
+                if (score.length !== 2) {
+                    incorrectValue = true;
+                }
+
+                return {
+                    isGreen,
+                    isRed,
+                    grade: Number(primaryScore) + 1,
+                    minScore: score[0],
+                    maxScore: score[1],
+                };
+            });
+
+            return createTableForSubject(createdSubjectId, updatedScores, () => router.push('/admin/subjects'));
+        }
+
+        if (incorrectValue) {
+            return alertNotify('Ошибка', 'Баллы введены некорректно, пример ввода: 1-2', 'error');
+        }
+
+        createTableForSubject(createdSubjectId, updatedScores, () => router.push('/admin/subjects'));
     };
 
     const addTask = () => {
@@ -106,6 +153,7 @@ const SubjectsCreate = () => {
             primaryScore,
             isDetailedAnswer,
             subThemes: trimSubTheme ? [...subThemes, { subTheme: trimSubTheme, tasksCount: 0 }] : subThemes,
+            tasksCount: 0,
         };
 
         setTasks((prev) => [...prev, newTask]);
@@ -117,78 +165,57 @@ const SubjectsCreate = () => {
         setSubTheme('');
     };
 
-    const removeTask = (id: number) => {
-        const updatedTasks = [...tasks];
-        updatedTasks.splice(id, 1);
-        setTasks(updatedTasks);
+    const fillEmptyTableCell = (count: number) => {
+        let newElements: ScoreConversionItem[] = [];
+
+        [...Array(isPoint ? 4 : count)].map((_, id) => {
+            newElements = [
+                ...newElements,
+                {
+                    primaryScore: id + 1,
+                    isRed: false,
+                    isGreen: false,
+                    secondaryScore: '',
+                },
+            ];
+        });
+
+        setElements(newElements);
     };
 
-    const updateCreatedTask = (id: number, key: TaskKey, value: string | boolean | SubTheme[]) => {
-        let updatedTasks = [...tasks];
+    const setRedHandler = (id: number) => {
+        setGreen((prev) => {
+            if (prev === 9999 || id + 1 === primaryCount) {
+                return 9999;
+            } else if (id >= prev) {
+                return id + 1;
+            }
 
-        if (id < 0 || id >= updatedTasks.length) {
-            return updatedTasks;
-        }
+            return prev;
+        });
 
-        let editedTask = updatedTasks[id][key];
-        editedTask = value;
-
-        setTasks(updatedTasks);
+        setRed((prev) => (prev === id ? -9999 : id));
     };
 
-    const addCreatedSubTheme = (id: number) => {
-        const updatedSubThemes = [...tasks];
-        const temp = updatedSubThemes[id].subThemes;
-        updatedSubThemes[id].subThemes = [
-            ...temp,
-            {
-                subTheme: '',
-                tasksCount: 0,
-            },
-        ];
-        setTasks(updatedSubThemes);
+    const setGreenHandler = (id: number) => {
+        setRed((prev) => {
+            if (prev === -9999 || id === -1) {
+                return -9999;
+            } else if (id <= prev) {
+                return id - 1;
+            }
+
+            return prev;
+        });
+
+        setGreen((prev) => (prev === id ? 9999 : id));
     };
 
-    const updateCreatedSubTheme = (taskId: number, themeId: number, value: string) => {
-        const updatedSubThemes = [...tasks];
-        updatedSubThemes[taskId].subThemes[themeId].subTheme = value;
-        setTasks(updatedSubThemes);
-    };
+    const handleChangeInput = (e: ChangeEvent<HTMLInputElement>, id: number) => {
+        let currentData = [...elements];
+        currentData[id].secondaryScore = e.target.value;
 
-    const deleteCreatedSubTheme = (taskId: number, themeId: number) => {
-        const updatedSubThemes = [...tasks];
-        updatedSubThemes[taskId].subThemes.splice(themeId, 1);
-        setTasks(updatedSubThemes);
-    };
-
-    const updateSubTheme = (id: number, value: string) => {
-        const subthemes = [...subThemes];
-        subthemes[id].subTheme = value;
-        setSubThemes(subthemes);
-    };
-
-    const addSubTheme = () => {
-        const tempSubTheme = subTheme.trim();
-
-        setSubThemes((prev) => [
-            ...prev,
-            {
-                subTheme: tempSubTheme,
-                tasksCount: 0,
-            },
-        ]);
-        setSubTheme('');
-    };
-
-    const deleteSubTheme = (id: number) => {
-        const updatedSubThemes = [...subThemes];
-        updatedSubThemes.splice(id, 1);
-        setSubThemes(updatedSubThemes);
-    };
-
-    const removeStateSubTheme = () => {
-        setSubTheme(subThemes[subThemes.length - 1].subTheme);
-        setSubThemes((prev) => prev.slice(0, -1));
+        setElements(currentData);
     };
 
     return (
@@ -196,11 +223,11 @@ const SubjectsCreate = () => {
             title={`Создание ${step === 0 ? 'предмета' : 'таблицы'}`}
             button={
                 step === 0 ? (
-                    <Button auto levitation onClick={subjectHandler}>
+                    <Button auto levitation onClick={createSubjectHandler}>
                         К таблице баллов
                     </Button>
                 ) : (
-                    <Button auto levitation>
+                    <Button auto levitation onClick={createTablePoints}>
                         Создать
                     </Button>
                 )
@@ -250,151 +277,34 @@ const SubjectsCreate = () => {
                         </Checkbox>
 
                         <div className={styles.subjectTasksInner}>
-                            <p className={typography.text2}>Задания: {tasks.length + 1}</p>
+                            <Text variant="text2">Задания: {tasks.length + 1}</Text>
 
                             <div className={styles.subjectTasksContent}>
                                 {tasks.map((task, taskId) => (
-                                    <div className={styles.subjectTaskItem} key={taskId}>
-                                        <div className={styles.subjectTaskItemDelete}>
-                                            <p className={styles.subjectTaskNum}>{taskId + 1}</p>
-
-                                            <IconButton variant="danger" small onClick={() => removeTask(taskId)}>
-                                                <Delete />
-                                            </IconButton>
-                                        </div>
-
-                                        <Input
-                                            value={task.theme}
-                                            onChange={(e) => updateCreatedTask(taskId, 'theme', e.target.value)}
-                                            title="Тема задания"
-                                            trackLength
-                                            lengthLimit={150}
-                                        />
-
-                                        <Input
-                                            value={task.primaryScore}
-                                            onChange={(e) => updateCreatedTask(taskId, 'primaryScore', e.target.value)}
-                                            title="Первичный балл"
-                                            lengthLimit={2}
-                                        />
-
-                                        <Checkbox
-                                            checked={task.isDetailedAnswer}
-                                            onChange={(e) =>
-                                                updateCreatedTask(taskId, 'isDetailedAnswer', e.target.checked)
-                                            }
-                                        >
-                                            Развернутый ответ
-                                        </Checkbox>
-
-                                        {task.subThemes.map((theme, subThemeId) => (
-                                            <div className={styles.subjectItemDeleteInner} key={subThemeId}>
-                                                <Input
-                                                    value={theme.subTheme}
-                                                    onChange={(e) =>
-                                                        updateCreatedSubTheme(taskId, subThemeId, e.target.value)
-                                                    }
-                                                    title={`Подтема (${theme.tasksCount || 0})`}
-                                                    trackLength
-                                                    lengthLimit={150}
-                                                />
-
-                                                {task.subThemes.length <= 1 ? (
-                                                    <IconButton variant="danger" disabled>
-                                                        <Delete />
-                                                    </IconButton>
-                                                ) : (
-                                                    <IconButton
-                                                        variant="danger"
-                                                        onClick={() => deleteCreatedSubTheme(taskId, subThemeId)}
-                                                    >
-                                                        <Delete />
-                                                    </IconButton>
-                                                )}
-                                            </div>
-                                        ))}
-
-                                        <Button
-                                            auto
-                                            variant="empty"
-                                            className={styles.subjectTaskAdd}
-                                            onClick={() => addCreatedSubTheme(taskId)}
-                                        >
-                                            <Plus />
-                                            Подтема
-                                        </Button>
-                                    </div>
+                                    <SubjectTaskItem
+                                        key={taskId}
+                                        number={taskId}
+                                        task={task}
+                                        tasks={tasks}
+                                        setTasks={setTasks}
+                                    />
                                 ))}
 
-                                <div className={styles.subjectTaskItem}>
-                                    <p className={styles.subjectTaskNum}>{tasks.length + 1}</p>
-
-                                    <Input
-                                        value={theme}
-                                        setValue={setTheme}
-                                        title="Тема задания"
-                                        trackLength
-                                        lengthLimit={150}
-                                    />
-
-                                    <Input
-                                        value={primaryScore}
-                                        setValue={setPrimaryScore}
-                                        title="Первичный балл"
-                                        lengthLimit={2}
-                                    />
-
-                                    <Checkbox
-                                        checked={isDetailedAnswer}
-                                        onChange={(e) => setIsDetailedAnswer(e.target.checked)}
-                                    >
-                                        Развернутый ответ
-                                    </Checkbox>
-
-                                    {subThemes.map((subTheme, id) => (
-                                        <div className={styles.subjectItemDeleteInner} key={id}>
-                                            <Input
-                                                value={subTheme.subTheme}
-                                                onChange={(e) => updateSubTheme(id, e.target.value)}
-                                                title="Подтема"
-                                                trackLength
-                                                lengthLimit={150}
-                                            />
-
-                                            <IconButton variant="danger" onClick={() => deleteSubTheme(id)}>
-                                                <Delete />
-                                            </IconButton>
-                                        </div>
-                                    ))}
-
-                                    <div className={styles.subjectItemDeleteInner}>
-                                        <Input
-                                            value={subTheme}
-                                            setValue={setSubTheme}
-                                            title="Подтема"
-                                            trackLength
-                                            lengthLimit={150}
-                                        />
-
-                                        <IconButton
-                                            variant="danger"
-                                            disabled={subThemes.length < 1}
-                                            onClick={removeStateSubTheme}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    </div>
-
-                                    <Button
-                                        auto
-                                        variant="empty"
-                                        className={styles.subjectTaskAdd}
-                                        onClick={addSubTheme}
-                                    >
-                                        <Plus />
-                                        Подтема
-                                    </Button>
-                                </div>
+                                <SubjectTaskItemForm
+                                    subThemes={subThemes}
+                                    setSubThemes={setSubThemes}
+                                    subTheme={subTheme}
+                                    setSubTheme={setSubTheme}
+                                    number={tasks.length + 1}
+                                    theme={theme}
+                                    setTheme={setTheme}
+                                    primaryScore={primaryScore}
+                                    setPrimaryScore={setPrimaryScore}
+                                    isDetailedAnswer={isDetailedAnswer}
+                                    setIsDetailedAnswer={setIsDetailedAnswer}
+                                    tasksCount={0}
+                                    setTasksCount={setTasksCount}
+                                />
 
                                 <Button auto variant="empty" className={styles.subjectTaskAdd} onClick={addTask}>
                                     <Plus />
@@ -405,7 +315,18 @@ const SubjectsCreate = () => {
                     </>
                 )}
 
-                {step === 1 && <PointsTable isPoint={isPoint} primaryCount={primaryCount} />}
+                {step === 1 && (
+                    <PointsTable
+                        isPoint={isPoint}
+                        primaryCount={primaryCount}
+                        red={red}
+                        green={green}
+                        handleChangeInput={handleChangeInput}
+                        setRedHandler={setRedHandler}
+                        setGreenHandler={setGreenHandler}
+                        elements={elements}
+                    />
+                )}
             </div>
         </CreatePageDefault>
     );

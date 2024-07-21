@@ -11,12 +11,13 @@ import { Preloader } from '@/shared/ui/Preloader';
 import { BackButton, IconButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { Tree } from 'antd';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { TreePermission } from '../create/page';
 import { Permissions } from '@/entities/role';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { Delete, DotsHorizontal, Edit } from '@/shared/icons';
+import { Cross, Delete, DotsHorizontal, Edit } from '@/shared/icons';
 import { ConfirmModal } from '@/shared/ui/Modal';
+import { useQuery } from '@tanstack/react-query';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const AdminRolePage = () => {
     const { id } = useParams();
@@ -28,25 +29,28 @@ const AdminRolePage = () => {
     const [actionMenu, setActionMenu] = React.useState<boolean>(false);
     const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
 
-    const { permissions } = useAppSelector((state) => state.role);
-    const { isLoading, getAllPermissions } = usePermissions();
-    const { roleIsLoading, rolesIsLoading, getCurrentRole, deleteRole } = useRoles();
+    const { getAllPermissions } = usePermissions();
+    const { rolesIsLoading, getCurrentRole, deleteRole } = useRoles();
     const router = useRouter();
 
-    const getCurrentRoleHandler = async (id: string | number) => {
-        const role = await getCurrentRole(id);
+    const {
+        data,
+        isLoading: roleIsLoading,
+        error,
+    } = useQuery({
+        queryKey: ['role_by_id', id],
+        queryFn: () => getCurrentRole(String(id)),
+        enabled: !!id,
+    });
 
-        if (!role) {
-            return router.push('/admin/roles');
-        }
-
-        const { role: roleName, permissions } = role;
-
-        setName(roleName);
-
-        const perm = permissions.filter((data) => data.isActive).map((data) => data.id.toString());
-        setPermission(perm);
-    };
+    const {
+        data: permissions,
+        isLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['permissions', id],
+        queryFn: getAllPermissions,
+    });
 
     const formatArrayToTree = (arr: Permissions[]): TreePermission[] =>
         arr.map((item: Permissions) => ({
@@ -69,13 +73,22 @@ const AdminRolePage = () => {
     }, [permissions]);
 
     React.useEffect(() => {
-        if (id) {
-            getCurrentRoleHandler(String(id));
+        if (data) {
+            const { role: roleName, permissions } = data;
+
+            setName(roleName);
+
+            const perm = permissions.filter((data) => data.isActive).map((data) => data.id.toString());
+            setPermission(perm);
         }
-    }, [id]);
+    }, [data]);
 
     if (roleIsLoading || isLoading) {
         return <Preloader page />;
+    }
+
+    if (error) {
+        return <NotContent danger icon={<Cross />} text="Ошибка при загрузке данных" />;
     }
 
     return (
@@ -115,27 +128,31 @@ const AdminRolePage = () => {
                     </HoverMenu>
                 </div>
 
-                <div className={styles.roleContent}>
-                    <div className={styles.roleInfo}>
-                        <div style={{ width: '100%', display: 'flex' }}>
-                            <Tree
-                                selectable={false}
-                                checkable
-                                defaultExpandAll
-                                checkedKeys={permission}
-                                treeData={currentPermissions}
-                                disabled
-                            />
+                {permissionsError ? (
+                    <NotContent text="Ошибка загрузки прав доступа" danger icon={<Cross />} />
+                ) : (
+                    <div className={styles.roleContent}>
+                        <div className={styles.roleInfo}>
+                            <div style={{ width: '100%', display: 'flex' }}>
+                                <Tree
+                                    selectable={false}
+                                    checkable
+                                    defaultExpandAll
+                                    checkedKeys={permission}
+                                    treeData={currentPermissions}
+                                    disabled
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <ConfirmModal
                 value={confirmDelete}
                 setValue={setConfirmDelete}
                 text="Вы действительно хотите удалить роль?"
-                callback={() => deleteRole(id as string, () => router.push("/admin/roles"))}
+                callback={() => deleteRole(id as string, () => router.push('/admin/roles'))}
                 loading={rolesIsLoading.includes(id as string)}
             />
         </>

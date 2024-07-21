@@ -23,6 +23,10 @@ const archiveTabs: ArchiveTab[] = [
         name: 'Роли',
         link: '/admin/archive/roles',
     },
+    {
+        name: 'Задания',
+        link: '/admin/archive/tasks',
+    },
 ];
 
 const ArchiveTabs = () => {

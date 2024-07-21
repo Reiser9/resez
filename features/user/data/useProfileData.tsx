@@ -4,7 +4,7 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { ProfileInfo, UserProfile } from '@/entities/user';
+import { ProfileInfo, ProfileInfoDTO, UserProfile } from '@/entities/user';
 import { initProfileInfo } from '@/store/slices/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 
@@ -28,14 +28,15 @@ const useProfileData = () => {
             return errorController(response);
         }
 
+        successCallback();
+
         if ('data' in response) {
             dispatch(initProfileInfo(response.data.user));
+            return response.data.user;
         }
-
-        successCallback();
     };
 
-    const saveProfileData = async (data: ProfileInfo, successCallback = () => {}) => {
+    const saveProfileData = async (data: ProfileInfoDTO, successCallback = () => {}) => {
         setDataIsSaving(true);
         const response = await request<{ user: ProfileInfo }>({
             url: '/user/profile-info',

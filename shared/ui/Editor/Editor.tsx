@@ -14,12 +14,16 @@ import CheckList from '@editorjs/checklist';
 import InlineCode from '@editorjs/inline-code';
 import SimpleImage from '@editorjs/simple-image';
 import { OutputData } from '@editorjs/editorjs';
-import { CustomMath } from './CustomMathTool';
-import { CustomFiles } from './CustomFiles';
 import { ToolConstructable } from '@editorjs/editorjs/types/tools/index';
 import { ToolSettings } from '@editorjs/editorjs/types/tools/tool-settings';
 
+import { CustomMath } from './CustomMathTool';
+import { CustomFiles } from './CustomFiles';
+
 import styles from './index.module.scss';
+
+import { useFile } from '@/features/file';
+import { Text } from '../Text';
 
 const ReactEditorJS = createReactEditorJS();
 
@@ -27,6 +31,7 @@ type Props = {
     placeholder?: string;
     id?: string | undefined;
     minHeight?: number;
+    title?: string;
 };
 
 export interface EditorCore {
@@ -38,9 +43,9 @@ export interface EditorCore {
 }
 
 const Editor = React.forwardRef<EditorCore, Props>((props, ref) => {
-    const { placeholder = '', id = '', minHeight = 60, ...editorProps } = props;
+    const { placeholder = '', id = '', minHeight = 60, title, ...editorProps } = props;
 
-    // const {uploadImageOnServerFile, uploadImageOnServerUrl, uploadFile} = useAdmin();
+    const { uploadImageOnServerByFile, uploadImageOnServerByUrl, uploadFile } = useFile();
 
     const handleInitialize = React.useCallback(
         (instance: EditorCore) => {
@@ -55,20 +60,20 @@ const Editor = React.forwardRef<EditorCore, Props>((props, ref) => {
 
     const uploadByFile = async (file: File) => {
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('file', file);
 
-        // return await uploadImageOnServerFile(formData);
+        return await uploadImageOnServerByFile(formData);
     };
 
     const uploadByUrl = async (url: string) => {
-        // return await uploadImageOnServerUrl(url);
+        return await uploadImageOnServerByUrl(url);
     };
 
     const uploadFileHandler = async (file: File) => {
         const formData = new FormData();
         formData.append('file', file);
 
-        // return await uploadFile(formData);
+        return await uploadFile(formData);
     };
 
     const EDITOR_TOOLS: { [toolName: string]: ToolConstructable | ToolSettings } = {
@@ -198,17 +203,21 @@ const Editor = React.forwardRef<EditorCore, Props>((props, ref) => {
     };
 
     return (
-        <ReactEditorJS
-            onInitialize={handleInitialize}
-            tools={EDITOR_TOOLS}
-            minHeight={minHeight}
-            holder={id}
-            placeholder={placeholder}
-            i18n={localLang}
-            {...editorProps}
-        >
-            <div id={id} className={styles.editor}></div>
-        </ReactEditorJS>
+        <div className={styles.editorWrapper}>
+            {title && <Text variant="text3">{title}</Text>}
+
+            <ReactEditorJS
+                onInitialize={handleInitialize}
+                tools={EDITOR_TOOLS}
+                minHeight={minHeight}
+                holder={id}
+                placeholder={placeholder}
+                i18n={localLang}
+                {...editorProps}
+            >
+                <div id={id} className={styles.editor}></div>
+            </ReactEditorJS>
+        </div>
     );
 });
 

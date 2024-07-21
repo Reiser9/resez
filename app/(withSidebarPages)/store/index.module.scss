@@ -1,0 +1,24 @@
+.storeSubscriptionBlock{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.2rem;
+    background: var(--input);
+    gap: 12px;
+    border-radius: 4px;
+}
+
+.storeSubscriptionLogoInner{
+    display: flex;
+}
+
+.storeSubscriptionLogoInner svg{
+    width: 40px;
+    flex-shrink: 0;
+}
+
+.storeSubscriptionLogoInner svg:last-child{
+    position: relative;
+    left: -12px;
+}

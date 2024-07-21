@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import dayjs, { Dayjs } from 'dayjs';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -18,6 +19,7 @@ import { useProfileData, useAvatar } from '@/features/user';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Upload, Delete, Paintbruh } from '@/shared/icons';
 import { File } from '@/shared/ui/File';
+import { Badge } from '@/shared/ui/Badge';
 
 type GenderType = 'Мужской' | 'Женский';
 
@@ -33,17 +35,28 @@ const genderValues: { label: string; value: GenderType }[] = [
 ];
 
 const ProfileData = () => {
-    const [name, setName] = React.useState<string>('');
-    const [surname, setSurname] = React.useState<string>('');
+    const [name, setName] = React.useState('');
+    const [surname, setSurname] = React.useState('');
     const [birthday, setBirthday] = React.useState<Dayjs | null>();
     const [sex, setSex] = React.useState<GenderType | null>(null);
     const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
 
-    const { isLoading, dataIsSaving, getProfileData, saveProfileData } = useProfileData();
+    const { dataIsSaving, getProfileData, saveProfileData } = useProfileData();
     const { isLoading: avatarLoading, deleteAvatar, updateAvatar } = useAvatar();
-    const user = useAppSelector((state) => state.user.user);
     const profileInfo = useAppSelector((state) => state.user.profileInfo);
-    const { avatar, nickname } = user || {};
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['profile_data'],
+        queryFn: () => getProfileData(),
+    });
+
+    const { avatar, nickname } = data || {};
+
+    const queryClient = useQueryClient();
+
+    const revalidateProfile = async () => {
+        await queryClient.invalidateQueries({ queryKey: ['profile_data'] });
+    };
 
     const saveData = () => {
         saveProfileData({
@@ -58,7 +71,7 @@ const ProfileData = () => {
         if (avatarFile) {
             let formData = new FormData();
             formData.append('avatar', avatarFile);
-            updateAvatar(formData);
+            updateAvatar(formData, revalidateProfile);
         }
     }, [avatarFile]);
 
@@ -72,10 +85,6 @@ const ProfileData = () => {
             setSex(gender || null);
         }
     }, [profileInfo]);
-
-    React.useEffect(() => {
-        getProfileData();
-    }, []);
 
     if (isLoading) {
         return <Preloader page />;
@@ -91,13 +100,7 @@ const ProfileData = () => {
                 <div className={styles.dataAvatar}>
                     <div className={styles.dataAvatarOutline}>
                         <div className={styles.dataAvatarBackground}>
-                            {avatar ? (
-                                <Image src={avatar} alt="Аватар" fill className={styles.dataAvatarImg} />
-                            ) : nickname ? (
-                                nickname[0]
-                            ) : (
-                                'No'
-                            )}
+                            <Badge image={avatar} text={nickname ?? "No"} style={{width: "100%", height: "100%"}} />
 
                             {avatarLoading && <Preloader small />}
                         </div>
@@ -137,7 +140,7 @@ const ProfileData = () => {
                                     variant="light"
                                     color="danger"
                                     loading={avatarLoading}
-                                    onClick={() => deleteAvatar()}
+                                    onClick={() => deleteAvatar(revalidateProfile)}
                                     className={styles.dataAvatarActionDesktop}
                                 >
                                     Удалить
@@ -149,7 +152,7 @@ const ProfileData = () => {
                                     circle
                                     variant="danger"
                                     className={styles.dataAvatarAction}
-                                    onClick={() => deleteAvatar()}
+                                    onClick={() => deleteAvatar(revalidateProfile)}
                                 >
                                     <Delete />
                                 </IconButton>

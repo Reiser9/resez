@@ -2,11 +2,13 @@ import React from 'react';
 import { Metadata } from 'next';
 
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
+import base from '@/shared/styles/base.module.scss';
 
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { InnerPageSidebar } from '@/shared/ui/InnerPageSidebar';
 import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { AuthWrapper } from '@/shared/wrappers/AuthWrapper';
+import SubjectsTabs from '../useful/points/SubjectsTabs';
 
 export const metadata: Metadata = {
     title: 'ResEz - Тесты',

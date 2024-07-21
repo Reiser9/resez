@@ -7,7 +7,7 @@ const AdminStore = () => {
     const router = useRouter();
 
     React.useEffect(() => {
-        router.push('/admin/store/products/avatar');
+        router.replace('/admin/store/products/avatar');
     }, []);
 };
 

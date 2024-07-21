@@ -30,7 +30,7 @@ const AdminSubjects = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['subjects'],
-        queryFn: getPagginationSubjects,
+        queryFn: (param) => getPagginationSubjects({ pageParam: param.pageParam }),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -51,11 +51,13 @@ const AdminSubjects = () => {
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
                 </div>
 
-                {checkPermission(permissions, [PERMISSIONS.CREATE_SUBJECTS]) && <Tooltip title="Создать">
-                    <IconButton small variant="light" href="subjects/create" circle>
-                        <Plus />
-                    </IconButton>
-                </Tooltip>}
+                {checkPermission(permissions, [PERMISSIONS.CREATE_SUBJECTS]) && (
+                    <Tooltip title="Создать">
+                        <IconButton small variant="light" href="subjects/create" circle>
+                            <Plus />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </div>
 
             {isPending ? (
@@ -77,6 +79,7 @@ const AdminSubjects = () => {
                                     // loading={subjectIsLoading.includes(data.id)}
                                     edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
                                     remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                    publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
                                 />
                             )),
                         )}

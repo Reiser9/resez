@@ -109,3 +109,6 @@ export { Clapperboard } from './Clapperboard';
 export { Notebook } from './Notebook';
 export { Filter } from './Filter';
 export { FileEmpty } from './FileEmpty';
+export { MessengerEmptyData } from './picture/MessengerEmptyData';
+export { StorePersonalization } from './picture/StorePersonalization';
+export { ResCoin } from './ResCoin';

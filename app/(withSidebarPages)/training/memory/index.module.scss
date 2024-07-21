@@ -273,7 +273,7 @@
 .subscribeBanner{
     width: 100%;
     border-radius: 4px;
-    background: linear-gradient(-45deg, var(--infoB), var(--lighten));
+    background: var(--input);
     padding: 2rem 1.6rem;
     overflow: hidden;
     position: relative;

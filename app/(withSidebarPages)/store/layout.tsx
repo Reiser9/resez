@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <ContentWrapper type='full'>
+        <ContentWrapper>
             <div className={pws.wrapper}>
                 <div className={pws.content}>{children}</div>
 

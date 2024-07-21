@@ -7,7 +7,7 @@ const PersonalizationPage = () => {
     const router = useRouter();
 
     React.useEffect(() => {
-        router.push('/personalization/avatar');
+        router.replace('/personalization/avatar');
     }, []);
 };
 

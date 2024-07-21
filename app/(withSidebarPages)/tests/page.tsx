@@ -1,37 +1,22 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import cn from 'classnames';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
 import { InfoBlock } from '@/shared/ui/InfoBlock';
 import { Stack, Tests, TypesTest } from '@/shared/icons';
 import { Button } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
+import SubjectsTabs from '../useful/points/SubjectsTabs';
 
 const TestsPage = () => {
     return (
         <div className={base.baseWrapperGap16}>
-            <ScrollWithArrows>
-                <Link href="/useful/points/russian" replace className={cn(base.tag, base.active)}>
-                    Русский язык
-                </Link>
-                <Link href="/useful/points/math" replace className={cn(base.tag)}>
-                    Математика
-                </Link>
-                <Link href="/useful/points/history" replace className={cn(base.tag)}>
-                    История
-                </Link>
-                <Link href="/useful/points/informatics" replace className={cn(base.tag)}>
-                    Информатика
-                </Link>
-            </ScrollWithArrows>
-
+            <SubjectsTabs baseUrl="/tests/subject/" />
+                        
             <InfoBlock
                 icon={<Stack />}
                 title="Создайте свой вариант из заданных заданий"
@@ -46,7 +31,7 @@ const TestsPage = () => {
 
             <div className={base.baseWrapperGap12}>
                 <div className={base.titleInner}>
-                    <Text variant='h4'>Варианты от ResEz</Text>
+                    <Text variant="h4">Варианты от ResEz</Text>
 
                     <Button auto small variant="light" href="/tests/recommended/123">
                         Смотреть все
@@ -67,7 +52,7 @@ const TestsPage = () => {
             </div>
 
             <div className={base.baseWrapperGap12}>
-                <Text variant='h4'>Каталог заданий</Text>
+                <Text variant="h4">Каталог заданий</Text>
 
                 <div className={base.contentItems}>
                     {/* {taskCatalogIsLoading || subjectsIsLoading ? (
@@ -79,7 +64,7 @@ const TestsPage = () => {
                     ) : (
                         <NotContent text="Заданий не найдено" />
                     )} */}
-                    
+
                     <NotContent text="Заданий не найдено" />
                 </div>
             </div>

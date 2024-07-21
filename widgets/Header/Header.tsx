@@ -7,7 +7,7 @@ import { Switch } from 'antd';
 
 import styles from './index.module.scss';
 
-import { ArrowBottom, Cross, Enter, Exit, Menu, Moon, Notify, Snowflake, Trophy, User } from '@/shared/icons';
+import { ArrowBottom, Cross, Enter, Exit, Menu, Moon, Notify, ResCoin, Snowflake, Trophy, User } from '@/shared/icons';
 import { Badge } from '@/shared/ui/Badge';
 import { Text } from '@/shared/ui/Text';
 import { HoverMenu } from '@/shared/ui/HoverMenu';
@@ -36,7 +36,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const { isLoading, logout } = useLogout();
     const { isAuth, user } = useAppSelector((state) => state.user);
-    const { avatar, levelInfo, nickname, unreadNotifiesCount } = user || {};
+    const { avatar, levelInfo, nickname, unreadNotifiesCount, coins } = user || {};
     const { level } = levelInfo || {};
 
     const closeProfileMenu = () => {
@@ -122,6 +122,16 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         </div>
 
                                         <div className={styles.headerProfileLvl}>{level}</div>
+                                    </div>
+
+                                    <div className={styles.headerBalance}>
+                                        <Text fontWeight={600}>Баланс:</Text>
+
+                                        <div className={styles.headerBalanceWrapper}>
+                                            <Text fontWeight={600}>{coins}</Text>
+
+                                            <ResCoin />
+                                        </div>
                                     </div>
 
                                     <Link

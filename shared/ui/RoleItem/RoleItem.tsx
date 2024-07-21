@@ -55,7 +55,7 @@ const RoleItem: React.FC<Props> = ({ data, loading = false, deleteRole = () => {
                             setValue={setActionMenu}
                         >
                             {edit && (
-                                <MenuLink onClick={() => router.push(`roles/edit/${id}`)}>
+                                <MenuLink onClick={() => router.push(`/admin/roles/edit/${id}`)}>
                                     <Edit />
                                     Редактировать
                                 </MenuLink>

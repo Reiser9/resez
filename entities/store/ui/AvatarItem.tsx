@@ -12,7 +12,7 @@ import { ProductDTO } from '../model';
 import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Archive, Clapperboard, DotsHorizontal, Edit, Notebook, Photo, Store } from '@/shared/icons';
+import { Archive, Check, Clapperboard, DotsHorizontal, Edit, Notebook, Photo, Store } from '@/shared/icons';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 

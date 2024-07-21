@@ -9,7 +9,7 @@ import styles from './index.module.scss';
 
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Button, IconButton } from '@/shared/ui/Button';
-import { Delete, DotsHorizontal, Edit, Restore } from '@/shared/icons';
+import { Delete, DotsHorizontal, Edit, Notebook, Restore } from '@/shared/icons';
 import { TextPoint } from '@/shared/ui/TextPoint';
 import { LoaderForItem } from '@/shared/ui/Preloader';
 import { Modal } from '@/shared/ui/Modal';
@@ -28,9 +28,17 @@ type Props = {
     edit?: boolean;
     remove?: boolean;
     restore?: boolean;
+    publish?: boolean;
 };
 
-const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, remove = false, restore = false }) => {
+const SubjectItem: React.FC<Props> = ({
+    data,
+    loading = false,
+    edit = false,
+    remove = false,
+    restore = false,
+    publish = false,
+}) => {
     const { id, subject, isPublished, subjectTasksCount, tasksCount } = data || {};
 
     const [confirmText, setConfirmText] = React.useState('');
@@ -38,7 +46,7 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
     const [confirmDelete, setConfirmDelete] = React.useState(false);
 
     const queryClient = useQueryClient();
-    const { deleteSubject } = useSubjects();
+    const { deleteSubject, publishSubject } = useSubjects();
 
     const revalidateSubjects = () => {
         queryClient.invalidateQueries({ queryKey: ['subjects'] });
@@ -51,10 +59,12 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
     const router = useRouter();
     const { restoreArchiveSubject } = useArchive();
 
-    const restoreArchiveSubjectHandlert = async () => {
-        restoreArchiveSubject(id, () => {
-            revalidateArchiveSubjects();
-        });
+    const restoreArchiveSubjectHandler = async () => {
+        restoreArchiveSubject(id, revalidateArchiveSubjects);
+    };
+
+    const publishSubjectHandler = async () => {
+        publishSubject(id, revalidateSubjects);
     };
 
     return (
@@ -74,14 +84,30 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
                             setValue={setActionMenu}
                         >
                             {restore && (
-                                <MenuLink onClick={restoreArchiveSubjectHandlert}>
+                                <MenuLink onClick={restoreArchiveSubjectHandler}>
                                     <Restore />
                                     Восстановить
                                 </MenuLink>
                             )}
 
+                            {publish && (
+                                <MenuLink onClick={publishSubjectHandler}>
+                                    {isPublished ? (
+                                        <>
+                                            <Notebook />
+                                            В черновик
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Restore />
+                                            Опубликовать
+                                        </>
+                                    )}
+                                </MenuLink>
+                            )}
+
                             {edit && (
-                                <MenuLink onClick={() => router.push(`subject/edit/${id}`)}>
+                                <MenuLink onClick={() => router.push(`/admin/subjects/edit/${id}`)}>
                                     <Edit />
                                     Редактировать
                                 </MenuLink>
@@ -110,7 +136,7 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
                 {loading && <LoaderForItem />}
             </div>
 
-            <Modal
+            {remove && <Modal
                 value={confirmDelete}
                 setValue={setConfirmDelete}
                 title={`Удаление предмета: ${subject}`}
@@ -137,7 +163,7 @@ const SubjectItem: React.FC<Props> = ({ data, loading = false, edit = false, rem
                 >
                     Удалить
                 </Button>
-            </Modal>
+            </Modal>}
         </>
     );
 };

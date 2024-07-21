@@ -56,6 +56,11 @@ export type User = {
     permissions: Permission[];
     unreadNotifiesCount: number;
     settings: Settings;
+    subscription: {
+        name: string;
+        canUploadImages: boolean;
+    };
+    coins: number;
 };
 
 export type UserAdmin = {
@@ -91,13 +96,21 @@ export type UsersAdmin = Paggination & {
 };
 
 export type ProfileInfo = {
-    birthDate: Dayjs | undefined | null;
     id?: number;
+    nickname: string;
     firstName: string;
     lastName: string;
+    birthDate: Dayjs | undefined | null;
     gender: 'Мужской' | 'Женский' | null;
     avatar?: string;
     avatarDecoration?: ProductDTO;
+};
+
+export type ProfileInfoDTO = {
+    firstName: string;
+    lastName: string;
+    birthDate: Dayjs | undefined | null;
+    gender: 'Мужской' | 'Женский' | null;
 };
 
 export type UserShortInfo = {
@@ -141,4 +154,5 @@ export type UserProfile = {
     firstName: string;
     lastName: string;
     avatar: string;
+    avatarDecoration?: ProductDTO;
 };

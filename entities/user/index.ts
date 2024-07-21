@@ -19,5 +19,6 @@ export type {
     UsersAdmin,
     UserSearch,
     UsersSearch,
-    UserProfile
+    UserProfile,
+    ProfileInfoDTO
 } from './model';

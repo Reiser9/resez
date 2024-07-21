@@ -7,3 +7,4 @@ export { default as CollectionItemSkeleton } from './CollectionItemSkeleton';
 export { default as ScrollSkeleton } from './ScrollSkeleton';
 export { default as SubjectItemSceleton } from './SubjectItemSceleton';
 export { default as AvatarItemSkeleton } from './AvatarItemSkeleton';
+export { default as TaskItemSkeleton } from './TaskItemSkeleton';

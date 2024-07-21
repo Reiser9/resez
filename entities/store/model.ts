@@ -7,7 +7,7 @@ export type ProductDTO = {
     price: number;
     seasonStartDate: Date;
     seasonEndDate: Date;
-    options: any;
+    options: { width: number; height: number; x: string; y: string };
     contentUrl: string;
     updatedAt: Date;
     createdAt: Date;
@@ -16,6 +16,8 @@ export type ProductDTO = {
     achievementId: number;
     isArchived: boolean;
     isPublished: boolean;
+    isActive: boolean;
+    isCollected: boolean;
 };
 
 export type Avatars = Paggination & {

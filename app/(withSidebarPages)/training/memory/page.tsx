@@ -25,8 +25,8 @@ const Memory = () => {
                         Никаких ограничений и спокойная подготовка, именно это получите вы вместе с Resez Premium
                     </Text>
 
-                    <Button auto disabled>
-                        Soon
+                    <Button auto href="/store/subscription" variant='light'>
+                        Подробнее
                     </Button>
                 </div>
 

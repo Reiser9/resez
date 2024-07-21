@@ -18,7 +18,7 @@ type Option<T> = {
 type Props<T> = {
     placeholder?: string;
     value: T | null;
-    setValue: (value: T) => void;
+    setValue?: (value: T) => void;
     options: Option<T>[];
     loading?: boolean;
     showSearch?: boolean;
@@ -53,8 +53,8 @@ const Select = <T extends string>({
                 allowClear={
                     clear
                         ? {
-                            clearIcon: <Cross width="16" />,
-                        }
+                              clearIcon: <Cross width="16" />,
+                          }
                         : false
                 }
                 className={cn(styles.select, className)}

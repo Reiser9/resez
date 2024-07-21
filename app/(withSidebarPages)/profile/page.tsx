@@ -79,14 +79,14 @@ const ProfilePage = () => {
                             Изменить
                         </Link>
 
-                        <Tooltip title="Тема пользователя" placement="bottom">
+                        {/* <Tooltip title="Тема пользователя" placement="bottom">
                             <div
                                 className={styles.profileInfoTheme}
                                 style={{ background: CONFIG.BASE_COLOR }} //theme?.primary || CONFIG.BASE_COLOR
                             ></div>
-                        </Tooltip>
+                        </Tooltip> */}
 
-                        <div
+                        {avatarDecoration && <div
                             className={styles.avatarDecorationWrapper}
                         >
                             {contentType === 'animation' ? (
@@ -106,7 +106,7 @@ const ProfilePage = () => {
                                     />
                                 </>
                             )}
-                        </div>
+                        </div>}
                     </div>
                 </div>
 

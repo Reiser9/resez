@@ -6,23 +6,22 @@ import { Checkbox, Tree } from 'antd';
 import { Color } from 'antd/es/color-picker';
 import { useRouter } from 'next/navigation';
 import { TreeProps } from 'antd/lib';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from './index.module.scss';
 
-import { BackButton, Button, IconButton } from '@/shared/ui/Button';
-import { Text } from '@/shared/ui/Text';
+import { Button } from '@/shared/ui/Button';
 import { ColorPickerInput, Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { usePermissions, useRoles } from '@/features/role';
 import { CONFIG } from '@/shared/consts/CONFIG';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { TreePermission } from '../../create/page';
 import { Permissions } from '@/entities/role';
 import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
-import { Plus } from '@/shared/icons';
 import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Cross } from '@/shared/icons';
 
 const AdminEditRole = () => {
     const { id } = useParams();
@@ -36,9 +35,8 @@ const AdminEditRole = () => {
         'hex',
     );
 
-    const { isLoading, roleIsLoading, editRole, getCurrentRole } = useRoles();
-    const { isLoading: permissionsIsLoading, getAllPermissions } = usePermissions();
-    const { permissions } = useAppSelector((state) => state.role);
+    const { editRole, getCurrentRole } = useRoles();
+    const { getAllPermissions } = usePermissions();
     const router = useRouter();
 
     const textHexString = React.useMemo(
@@ -55,6 +53,25 @@ const AdminEditRole = () => {
     const [currentPermissions, setCurrentPermissions] = React.useState<TreePermission[]>([]);
     const [permission, setPermission] = React.useState<Key[]>([]);
     const [permissionHalf, setPermissionHalf] = React.useState<Key[]>([]);
+
+    const {
+        data,
+        isLoading: roleIsLoading,
+        error,
+    } = useQuery({
+        queryKey: ['role_by_id', id],
+        queryFn: () => getCurrentRole(String(id)),
+        enabled: !!id,
+    });
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['permissions', id],
+        queryFn: getAllPermissions,
+    });
 
     const onCheckPermission: TreeProps['onCheck'] = (value, elem) => {
         if (!('checked' in value)) {
@@ -86,29 +103,6 @@ const AdminEditRole = () => {
         editRole(id as string, data, () => router.push('/admin/roles'));
     };
 
-    const getCurrentRoleHandler = async (id: string | number) => {
-        const role = await getCurrentRole(id);
-
-        if (!role) {
-            return router.push('/admin/roles');
-        }
-
-        const { role: roleName, textColor, backgroundColor, permissions } = role;
-
-        setName(roleName);
-        setTextColor(textColor);
-        setBackgroundColor(backgroundColor);
-
-        const perm = permissions.filter((data) => data.isActive).map((data) => data.id.toString());
-        const permHalf = permissions.filter((data) => !data.isActive).map((data) => data.id.toString());
-        setPermission(perm);
-        setPermissionHalf(permHalf);
-    };
-
-    React.useEffect(() => {
-        getAllPermissions();
-    }, []);
-
     React.useEffect(() => {
         if (!permissions || permissions.length === 0) {
             return;
@@ -119,20 +113,33 @@ const AdminEditRole = () => {
     }, [permissions]);
 
     React.useEffect(() => {
-        if (id) {
-            getCurrentRoleHandler(id as string);
+        if (data) {
+            const { role: roleName, textColor, backgroundColor, permissions } = data;
+
+            setName(roleName);
+            setTextColor(textColor);
+            setBackgroundColor(backgroundColor);
+
+            const perm = permissions.filter((data) => data.isActive).map((data) => data.id.toString());
+            const permHalf = permissions.filter((data) => !data.isActive).map((data) => data.id.toString());
+            setPermission(perm);
+            setPermissionHalf(permHalf);
         }
-    }, [id]);
+    }, [data]);
 
     if (roleIsLoading || permissionsIsLoading) {
         return <Preloader page />;
+    }
+
+    if (error) {
+        return <NotContent text="Ошибка при загрузке данных" icon={<Cross />} danger />;
     }
 
     return (
         <CreatePageDefault
             title="Редактирование роли"
             button={
-                <Button auto onClick={editRoleHandler} loading={isLoading} levitation>
+                <Button auto onClick={editRoleHandler} levitation>
                     Сохранить
                 </Button>
             }
@@ -177,16 +184,20 @@ const AdminEditRole = () => {
                     />
                 )}
 
-                <div style={{ width: '100%', display: 'flex' }}>
-                    <Tree
-                        selectable={false}
-                        checkable
-                        defaultExpandAll
-                        onCheck={onCheckPermission}
-                        checkedKeys={permission}
-                        treeData={currentPermissions}
-                    />
-                </div>
+                {permissionsError ? (
+                    <NotContent text="Ошибка загрузки прав доступа" danger icon={<Cross />} />
+                ) : (
+                    <div style={{ width: '100%', display: 'flex' }}>
+                        <Tree
+                            selectable={false}
+                            checkable
+                            defaultExpandAll
+                            onCheck={onCheckPermission}
+                            checkedKeys={permission}
+                            treeData={currentPermissions}
+                        />
+                    </div>
+                )}
             </div>
         </CreatePageDefault>
     );

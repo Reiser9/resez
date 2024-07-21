@@ -9,7 +9,7 @@ const useSearchUser = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const getPaginationUsers = async () => {
-        const limit = 6;
+        const limit = 9;
         const response = await request<UsersSearch>({
             url: `/user?search=&limit=20`,
             isAuth: true,

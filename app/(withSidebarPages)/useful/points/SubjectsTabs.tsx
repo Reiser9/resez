@@ -1,0 +1,52 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import cn from 'classnames';
+import { useQuery } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
+
+import base from '@/shared/styles/base.module.scss';
+
+import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
+import { useSubjects } from '@/features/subjects';
+import { ScrollSkeleton } from '@/shared/ui/Skeleton';
+
+const SubjectsTabs = ({ baseUrl = '/useful/points/' }) => {
+    const { getSubjects } = useSubjects();
+    const pathname = usePathname();
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['profile_data'],
+        queryFn: getSubjects,
+    });
+
+    const { subjects } = data || {};
+
+    if (isLoading) {
+        return <ScrollSkeleton />;
+    }
+
+    return (
+        <>
+            {!error && (
+                <ScrollWithArrows>
+                    {subjects?.map((data) => (
+                        <Link
+                            key={data.id}
+                            href={`${baseUrl}${data.slug}`}
+                            replace
+                            className={cn(base.tag, {
+                                [base.active]: pathname === `${baseUrl}${data.slug}`,
+                            })}
+                        >
+                            {data.subject}
+                        </Link>
+                    ))}
+                </ScrollWithArrows>
+            )}
+        </>
+    );
+};
+
+export default SubjectsTabs;

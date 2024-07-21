@@ -27,6 +27,7 @@ const usePermissions = () => {
 
         if ('data' in response) {
             dispatch(initRoles(response.data.permissions));
+            return response.data.permissions;
         }
     };
 

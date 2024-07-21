@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { QRCode, Tooltip } from 'antd';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Lottie from 'lottie-react';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -72,7 +73,33 @@ const UserProfilePage = () => {
         }
     };
 
-    const { id: userId, avatar, firstName, lastName, nickname: userNickname } = data || {};
+    const { id: userId, avatar, firstName, lastName, nickname: userNickname, avatarDecoration } = data || {};
+    const { contentUrl, title, options, contentType } = avatarDecoration || {};
+    const { width, x, y } = options || {};
+
+    const [animationData, setAnimationData] = React.useState<any | null>(null);
+
+    React.useEffect(() => {
+        const fetchAnimationData = async () => {
+            try {
+                if (!contentUrl) {
+                    return;
+                }
+                const response = await fetch(contentUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setAnimationData(data);
+            } catch (error) {
+                console.error('Error fetching animation data:', error);
+            }
+        };
+
+        if (contentType === 'animation') {
+            fetchAnimationData();
+        }
+    }, [contentUrl, contentType]);
 
     return (
         <>
@@ -93,12 +120,34 @@ const UserProfilePage = () => {
                                 Изменить
                             </Link>
 
-                            <Tooltip title="Тема пользователя" placement="bottom">
+                            {/* <Tooltip title="Тема пользователя" placement="bottom">
                                 <div
                                     className={styles.profileInfoTheme}
                                     style={{ background: CONFIG.BASE_COLOR }} //theme?.primary || CONFIG.BASE_COLOR
                                 ></div>
-                            </Tooltip>
+                            </Tooltip> */}
+
+                            {avatarDecoration && <div
+                                className={styles.avatarDecorationWrapper}
+                            >
+                                {contentType === 'animation' ? (
+                                    <Lottie
+                                        animationData={animationData}
+                                        className={base.avatarDecoration}
+                                        style={{ width: width, top: y, left: x }}
+                                    />
+                                ) : (
+                                    <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={contentUrl}
+                                            alt={title}
+                                            className={base.avatarDecoration}
+                                            style={{ width: width, top: y, left: x }}
+                                        />
+                                    </>
+                                )}
+                            </div>}
                         </div>
                     </div>
 
