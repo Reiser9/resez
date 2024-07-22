@@ -32,6 +32,7 @@ type Props = {
     id?: string | undefined;
     minHeight?: number;
     title?: string;
+    editorRef: React.MutableRefObject<EditorCore | null>;
 };
 
 export interface EditorCore {
@@ -42,20 +43,16 @@ export interface EditorCore {
     get dangerouslyLowLevelInstance(): any | null;
 }
 
-const Editor = React.forwardRef<EditorCore, Props>((props, ref) => {
-    const { placeholder = '', id = '', minHeight = 60, title, ...editorProps } = props;
+const Editor: React.FC<Props> = (props) => {
+    const { placeholder = '', id = '', minHeight = 60, title, editorRef, ...editorProps } = props;
 
     const { uploadImageOnServerByFile, uploadImageOnServerByUrl, uploadFile } = useFile();
 
     const handleInitialize = React.useCallback(
         (instance: EditorCore) => {
-            if (typeof ref === 'function') {
-                ref(instance);
-            } else if (ref) {
-                ref.current = instance;
-            }
+            editorRef.current = instance;
         },
-        [ref],
+        [editorRef],
     );
 
     const uploadByFile = async (file: File) => {
@@ -219,7 +216,7 @@ const Editor = React.forwardRef<EditorCore, Props>((props, ref) => {
             </ReactEditorJS>
         </div>
     );
-});
+};
 
 Editor.displayName = 'editor';
 

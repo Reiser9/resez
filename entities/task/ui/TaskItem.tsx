@@ -2,15 +2,14 @@
 
 import React from 'react';
 import cn from 'classnames';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { CustomHtmlParser } from '@/shared/ui/CustomHtmlParser';
 import { ConfirmModal } from '@/shared/ui/Modal';
-import { LoaderForItem } from '@/shared/ui/Preloader';
-import Link from 'next/link';
+import { LoaderForItem, Preloader } from '@/shared/ui/Preloader';
 import { Text } from '@/shared/ui/Text';
 import { IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
@@ -18,6 +17,12 @@ import { Archive, Check, Delete, DotsHorizontal, Edit, Restore, Verified } from 
 import { Tooltip } from 'antd';
 import { formatDate } from '@/shared/utils/formatDate';
 import { SubjectTask } from '../model';
+import dynamic from 'next/dynamic';
+
+const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
+    ssr: false,
+    loading: () => <Preloader small page />,
+});
 
 type Props = {
     data: SubjectTask;

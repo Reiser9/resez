@@ -4,7 +4,7 @@ import React from 'react';
 import { Checkbox } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -19,15 +19,14 @@ import { EditorCore } from '@/shared/ui/Editor/Editor';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { useSubjects } from '@/features/subjects';
 import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
-import { Preloader } from '@/shared/ui/Preloader';
-
-// const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
-//     ssr: false,
-//     loading: () => <Preloader small page />,
-// });
-import { Editor } from '@/shared/ui/Editor';
 import { useTask } from '@/features/task';
 import useAlert from '@/shared/hooks/useAlert';
+import { Preloader } from '@/shared/ui/Preloader';
+
+const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
+    ssr: false,
+    loading: () => <Preloader small page />,
+});
 
 const AdminTaskCreate = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -50,8 +49,8 @@ const AdminTaskCreate = () => {
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
     const [subThemesDroped, setSubThemesDroped] = React.useState(false);
 
-    const taskRef = React.useRef<EditorCore>(null);
-    const solutionRef = React.useRef<EditorCore>(null);
+    const taskRef = React.useRef<EditorCore | null>(null);
+    const solutionRef = React.useRef<EditorCore | null>(null);
 
     const { getPagginationSubjects, getSubjectThemes, getSubjectSubThemes } = useSubjects();
     const { createTask } = useTask();
@@ -95,8 +94,8 @@ const AdminTaskCreate = () => {
             return;
         }
 
-        if(!subject || !theme || !subTheme){
-            return alertNotify("Предупреждение", "Предмет, задание и тема не может быть пустой", "warn");
+        if (!subject || !theme || !subTheme) {
+            return alertNotify('Предупреждение', 'Предмет, задание и тема не может быть пустой', 'warn');
         }
 
         const taskData = await taskRef.current.save();
@@ -105,12 +104,12 @@ const AdminTaskCreate = () => {
         const taskContent = getHtmlInEditor(taskData.blocks);
         const solutionContent = getHtmlInEditor(solutionData.blocks);
 
-        if(!taskContent){
-            return alertNotify("Предупреждение", "Нужно заполнить задание", "warn");
+        if (!taskContent) {
+            return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
         }
 
         createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, answer, source, () => {
-            router.replace("/admin/tasks");
+            router.replace('/admin/tasks');
         });
     };
 
@@ -283,8 +282,8 @@ const AdminTaskCreate = () => {
                             </Checkbox>
                         )}
 
-                        <Editor title="Задание" ref={taskRef} id="taskEditor" />
-                        <Editor title="Решение" ref={solutionRef} id="answerEditor" />
+                        <Editor title="Задание" editorRef={taskRef} id="taskEditor" />
+                        <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
 
                         <Input title="Ответ" value={answer} setValue={setAnswer} />
                         <Input title="Источник" value={source} setValue={setSource} />
