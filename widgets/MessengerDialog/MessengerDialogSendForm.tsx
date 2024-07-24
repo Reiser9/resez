@@ -159,9 +159,9 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                 )}
 
                 <form className={styles.messangerDialogSendWrapper} onSubmit={sendMessage}>
-                    <IconButton>
+                    {/* <IconButton>
                         <Clip />
-                    </IconButton>
+                    </IconButton> */}
 
                     <Input
                         ref={sendMessageInputRef}
@@ -171,7 +171,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                     />
 
                     <IconButton className={styles.sendButton} disabled={sendingMessage}>
-                        <Microphone
+                        {/* <Microphone
                             className={cn(styles.iconButton, {
                                 [styles.fade]: !message,
                             })}
@@ -181,6 +181,10 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                             className={cn(styles.iconButton, {
                                 [styles.fade]: message,
                             })}
+                        /> */}
+
+                        <Send
+                            className={cn(styles.iconButton, styles.fade)}
                         />
                     </IconButton>
                 </form>

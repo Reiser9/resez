@@ -118,7 +118,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                     [styles.hide]: !!dialogId,
                 })}
             >
-                <div className={styles.searchInputInner}>
+                {/* <div className={styles.searchInputInner}>
                     <input type="text" className={styles.searchInput} placeholder="Поиск" />
 
                     <Search className={styles.searchInputIcon} />
@@ -128,7 +128,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                             <Plus />
                         </button>
                     </Tooltip>
-                </div>
+                </div> */}
 
                 <div className={styles.messangerSidebarDialogsContent} ref={chatListRef}>
                     {isLoading ? (

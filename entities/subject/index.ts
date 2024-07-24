@@ -9,5 +9,6 @@ export type {
     ScoreConversion,
     SubjectTask,
     SubjectTaskDTO,
-    SubjectSubThemeDTO
+    SubjectSubThemeDTO,
+    SubjectTaskCreate
 } from './model';

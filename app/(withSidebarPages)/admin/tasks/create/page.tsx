@@ -197,7 +197,7 @@ const AdminTaskCreate = () => {
 
     return (
         <CreatePageDefault
-            title={`Создание задания`}
+            title="Создание задания"
             button={
                 subTheme && (
                     <Button auto levitation onClick={createTaskHandler}>

@@ -1,0 +1,11 @@
+.selectDisabled{
+    width: 100%;
+    background: var(--input);
+    border-radius: 4px;
+    padding: .8rem 1.6rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    filter: grayscale(1);
+}

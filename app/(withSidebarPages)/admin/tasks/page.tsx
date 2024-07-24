@@ -22,7 +22,7 @@ const AdminTests = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
 
     const queryClient = useQueryClient();
-    const { getPagginationTasks, archiveTask } = useTask();
+    const { getPagginationTasks, archiveTask, toggleVerify } = useTask();
 
     const revalidateRequest = () => {
         queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -42,6 +42,10 @@ const AdminTests = () => {
             return nextPage;
         },
     });
+
+    const toggleVerifyHandler = (id: number) => {
+        toggleVerify(id, revalidateRequest);
+    };
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -84,6 +88,7 @@ const AdminTests = () => {
                                     edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
                                     remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
                                     archiveCallback={() => archiveTask(data.id, revalidateRequest)}
+                                    toggleVerify={() => toggleVerifyHandler(data.id)}
                                 />
                             )),
                         )}

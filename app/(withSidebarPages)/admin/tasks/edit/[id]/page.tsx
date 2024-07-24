@@ -1,12 +1,269 @@
 'use client';
 
 import React from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+import styles from '../index.module.scss';
+import base from '@/shared/styles/base.module.scss';
+
+import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { Button } from '@/shared/ui/Button';
+import { Select } from '@/shared/ui/Select';
+import { Checkbox } from 'antd';
+import { checkPermission } from '@/shared/utils/checkPermissions';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { Input } from '@/shared/ui/Input';
+import { Preloader } from '@/shared/ui/Preloader';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import { EditorCore } from '@/shared/ui/Editor/Editor';
+import useAlert from '@/shared/hooks/useAlert';
+import { useTask } from '@/features/task';
+import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
+import { useSubjects } from '@/features/subjects';
+import { useQuery } from '@tanstack/react-query';
+import { Text } from '@/shared/ui/Text';
+import { convertHtmlToEditorBlocks, getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
+
+const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
+    ssr: false,
+    loading: () => <Preloader small page />,
+});
 
 const AdminTaskEdit = () => {
     const { id } = useParams();
+    const permissions = useAppSelector((state) => state.user.user?.permissions);
 
-    return <div>AdminTaskEdit {id}</div>;
+    const [subject, setSubject] = React.useState<string | null>(null);
+    const [subjectId, setSubjectId] = React.useState<number>();
+    const [isVerified, setIsVerified] = React.useState(false);
+    const [theme, setTheme] = React.useState<string | null>(null);
+    const [subTheme, setSubTheme] = React.useState<string | null>(null);
+    const [answer, setAnswer] = React.useState('');
+    const [source, setSource] = React.useState('');
+    const [isDetailedAnswerTask, setIsDetailedAnswerTask] = React.useState(false);
+    const [editingIsLoading, setEditingIsLoading] = React.useState(false);
+
+    const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
+    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
+    const [subjectsDroped, setSubjectsDroped] = React.useState(false);
+    const [themes, setThemes] = React.useState<SubjectTaskDTO[]>([]);
+    const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
+    const [themesDroped, setThemesDroped] = React.useState(false);
+    const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
+    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
+    const [subThemesDroped, setSubThemesDroped] = React.useState(false);
+
+    const taskRef = React.useRef<EditorCore | null>(null);
+    const solutionRef = React.useRef<EditorCore | null>(null);
+
+    const { getPagginationSubjects, getSubjectThemes, getSubjectSubThemes } = useSubjects();
+    const { editTask, getTaskById } = useTask();
+    const { alertNotify } = useAlert();
+    const router = useRouter();
+
+    const {
+        data,
+        isLoading: taskIsLoading,
+        error,
+    } = useQuery({
+        queryKey: ['task_by_id', id],
+        queryFn: () => getTaskById(String(id)),
+        enabled: !!id,
+    });
+
+    const {
+        data: themesData,
+        isLoading: themesIsLoading,
+        error: themesError,
+    } = useQuery({
+        queryKey: ['themes'],
+        queryFn: () => getSubjectThemes(String(subjectId)),
+        enabled: !!subjectId,
+    });
+
+    const {
+        data: subThemesData,
+        isLoading: subThemesIsLoading,
+        error: subThemesError,
+        refetch: refetchSubThemes,
+    } = useQuery({
+        queryKey: ['subthemes'],
+        queryFn: () => getSubjectSubThemes(String(theme)),
+        enabled: !!theme,
+    });
+
+    const editTaskHandler = async () => {
+        if (!taskRef.current || !solutionRef.current) {
+            return;
+        }
+
+        if (!subjectId || !theme || !subTheme) {
+            return alertNotify('Предупреждение', 'Предмет, задание и тема не может быть пустой', 'warn');
+        }
+
+        const taskData = await taskRef.current.save();
+        const solutionData = await solutionRef.current.save();
+
+        const taskContent = getHtmlInEditor(taskData.blocks);
+        const solutionContent = getHtmlInEditor(solutionData.blocks);
+
+        if (!taskContent) {
+            return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
+        }
+
+        editTask(String(id), subjectId, theme, subTheme, taskContent, isVerified, solutionContent, answer, source, () => {
+            router.replace('/admin/tasks');
+        });
+    };
+
+    const handleSearchThemes = (value: string) => {
+        const filteredOptions = themes.filter((theme) => {
+            const themeTemp = `${theme.number}. ${theme.theme}`;
+            return themeTemp.toLowerCase().includes(value.toLowerCase());
+        });
+
+        setThemesFilter(filteredOptions);
+    };
+
+    const handleSearchSubThemes = (value: string) => {
+        const filteredOptions = subThemes.filter((subTheme) =>
+            subTheme.subTheme.toLowerCase().includes(value.toLowerCase()),
+        );
+
+        setSubThemesFilter(filteredOptions);
+    };
+
+    React.useEffect(() => {
+        if (data) {
+            const { subject, isVerified, source, answer, solution, task, subjectTask, subTheme } = data;
+
+            setSubjectId(subject.id);
+            setSubject(subject.subject);
+            setTheme(String(subjectTask.id));
+            setSubTheme(String(subTheme.id));
+            setIsVerified(isVerified);
+            setAnswer(answer);
+            setSource(source);
+            setEditingIsLoading(true);
+
+            setTimeout(() => {
+                taskRef.current?.render({
+                    blocks: convertHtmlToEditorBlocks(task),
+                });
+                solutionRef.current?.render({
+                    blocks: convertHtmlToEditorBlocks(solution),
+                });
+            }, 1000);
+        }
+    }, [data]);
+
+    React.useEffect(() => {
+        if (themesData) {
+            setThemes(themesData);
+            setThemesFilter(themesData);
+        }
+    }, [themesData]);
+
+    React.useEffect(() => {
+        if (subThemesData) {
+            setSubThemes(subThemesData);
+            setSubThemesFilter(subThemesData);
+        }
+    }, [subThemesData]);
+
+    React.useEffect(() => {
+        if (editingIsLoading) {
+            return setEditingIsLoading(false);
+        }
+
+        if (theme) {
+            setSubTheme(null);
+            setSubThemes([]);
+            refetchSubThemes();
+        }
+    }, [theme]);
+
+    if (taskIsLoading) {
+        return <Preloader page />;
+    }
+
+    return (
+        <CreatePageDefault
+            title="Редактирование задания"
+            button={
+                subTheme && (
+                    <Button auto levitation onClick={editTaskHandler}>
+                        Сохранить
+                    </Button>
+                )
+            }
+        >
+            <div className={base.formMedium}>
+                <div className={base.baseWrapperGap4}>
+                    <Text variant="text3">Предмет</Text>
+
+                    <div className={styles.selectDisabled}>{subject}</div>
+                </div>
+
+                {subject && (
+                    <Select
+                        title="Номер задания"
+                        notContentText="Заданий не найдено"
+                        value={theme}
+                        onChange={(value) => {
+                            setTheme(value);
+                            setThemesFilter(themes);
+                        }}
+                        loading={themesIsLoading}
+                        options={themesFilter?.map((data) => {
+                            return {
+                                label: `${data.number}. ${data.theme}`,
+                                value: String(data.id),
+                            };
+                        })}
+                        showSearch
+                        onSearch={handleSearchThemes}
+                        filterOption={false}
+                    />
+                )}
+
+                {theme && (
+                    <Select
+                        title="Тема"
+                        notContentText="Тем не найдено"
+                        value={subTheme}
+                        onChange={(value) => {
+                            setSubTheme(value);
+                            setSubThemesFilter(subThemes);
+                        }}
+                        loading={subThemesIsLoading}
+                        options={subThemesFilter?.map((data) => {
+                            return {
+                                label: data.subTheme,
+                                value: String(data.id),
+                            };
+                        })}
+                        showSearch
+                        onSearch={handleSearchSubThemes}
+                        filterOption={false}
+                    />
+                )}
+
+                {checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS]) && (
+                    <Checkbox checked={isVerified} onChange={(e) => setIsVerified(e.target.checked)}>
+                        Задание проверено
+                    </Checkbox>
+                )}
+
+                <Editor title="Задание" editorRef={taskRef} id="taskEditor" />
+                <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
+
+                <Input title="Ответ" value={answer} setValue={setAnswer} />
+                <Input title="Источник" value={source} setValue={setSource} />
+            </div>
+        </CreatePageDefault>
+    );
 };
 
 export default AdminTaskEdit;

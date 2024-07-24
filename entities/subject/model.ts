@@ -42,6 +42,15 @@ export type SubjectTaskDTO = {
     isDetailedAnswer: boolean;
 };
 
+export type SubjectTaskCreate = SubjectTaskDTO & {
+    subThemes: {
+        id: number;
+        subTheme: string;
+        tasksCount: number;
+    }[];
+    tasksCount: number;
+};
+
 export type SubjectSubThemeDTO = {
     id: number;
     subTheme: string;

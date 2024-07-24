@@ -1,0 +1,44 @@
+.positionController{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.positionValues{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.positionValue{
+    width: calc(100% / 4 - 24px / 4);
+}
+
+@media (max-width: 375px) {
+    .positionValue{
+        width: calc(100% / 2 - 8px / 2);
+    }
+}
+
+.positionActions{
+    width: 100%;
+    max-width: 130px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.positionActionsButtons{
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.positionButtons{
+    display: flex;
+    gap: 8px;
+}

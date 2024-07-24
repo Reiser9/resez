@@ -1,0 +1,201 @@
+// TestItem
+.testItem{
+    border-radius: 4px;
+    background: var(--input);
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+}
+
+.testItemTags{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.testItemTag{
+    padding: 0.6rem;
+    border-radius: 4px;
+    background: var(--lighten);
+    color: var(--main);
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+}
+
+.testItemTag svg{
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.testItemTag svg path{
+    stroke: var(--main);
+}
+
+.testItemWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.testItemTitleWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.testItemTitleInner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.testItemMore{
+    flex-shrink: 0;
+}
+
+.testItemAvatar{
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--lighten);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--main);
+}
+
+.testItemName{
+    font-weight: 600;
+}
+
+.testItemScore{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.testItemScoreTitle{
+    color: var(--textGrey);
+}
+
+.testItemScoreContent{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.testItemScoreValueInner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.testItemScoreValue{
+    font-weight: 600;
+    color: var(--main);
+    text-align: center;
+}
+
+.testItemScoreLine{
+    width: 100%;
+    height: 3px;
+    border-radius: 50px;
+    background: var(--lighten);
+    position: relative;
+}
+
+.testItemScoreProgress{
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50px;
+    height: 100%;
+    transition: .2s linear;
+    background: var(--main);
+}
+
+.testItemInfo{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+div.testItemInfoItem{
+    width: calc(100% / 2 - 8px / 2);
+}
+
+.testItemLockResult{
+    width: 100%;
+    border-radius: 4px;
+    padding: 0.8rem;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+    background: var(--lighten);
+    color: var(--main);
+}
+
+// TestQuestionItem
+.testQuestionItem{
+    width: 100%;
+    border-radius: 4px;
+    padding: 1.2rem;
+    background: var(--input);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.taskItemWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.testQuestionTask{
+    width: 100%;
+}
+
+.testQuestionTheme{
+    padding-left: 1.4rem;
+    position: relative;
+}
+
+.testQuestionTheme:before{
+    content: "";
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    background: var(--main);
+}

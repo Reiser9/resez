@@ -1,0 +1,27 @@
+@media (any-hover: hover) {
+    .testId{
+        cursor: pointer;
+    }
+}
+
+.testTags{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.testDateInner{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.4rem;
+    color: var(--textGrey);
+}
+
+.testDateInner svg{
+    width: 20px;
+}
+
+.testDateInner svg path{
+    stroke: var(--main);
+}

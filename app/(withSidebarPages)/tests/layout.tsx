@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <SidebarLink href="/tests" end>
                             Главная
                         </SidebarLink>
-                        <SidebarLink href="/tests/my">Мои тесты</SidebarLink>
+                        {/* <SidebarLink href="/tests/my">Мои тесты</SidebarLink> */}
                     </InnerPageSidebar>
                 </div>
             </ContentWrapper>

@@ -3,6 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
@@ -13,11 +14,11 @@ import { LoaderForItem, Preloader } from '@/shared/ui/Preloader';
 import { Text } from '@/shared/ui/Text';
 import { IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { Archive, Check, Delete, DotsHorizontal, Edit, Restore, Verified } from '@/shared/icons';
+import { Archive, Check, Delete, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
 import { Tooltip } from 'antd';
 import { formatDate } from '@/shared/utils/formatDate';
 import { SubjectTask } from '../model';
-import dynamic from 'next/dynamic';
+import { Badge } from '@/shared/ui/Badge';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -30,10 +31,19 @@ type Props = {
     remove: boolean;
     archiveCallback?: () => void;
     restoreCallback?: () => void;
+    toggleVerify?: () => void;
 };
 
-const TaskItem: React.FC<Props> = ({ data, edit = false, remove = false, archiveCallback, restoreCallback }) => {
-    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, userId, isArchived } = data || {};
+const TaskItem: React.FC<Props> = ({
+    data,
+    edit = false,
+    remove = false,
+    archiveCallback,
+    restoreCallback,
+    toggleVerify,
+}) => {
+    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived } = data || {};
+    const { avatar, nickname, id: userId } = user;
 
     const router = useRouter();
 
@@ -74,6 +84,24 @@ const TaskItem: React.FC<Props> = ({ data, edit = false, remove = false, archive
                                     </MenuLink>
                                 )}
 
+                                <MenuLink
+                                    onClick={() => {
+                                        toggleVerify && toggleVerify();
+                                        setActionMenu(false);
+                                    }}
+                                >
+                                    {isVerified ? (
+                                        <>
+                                            <Notebook />В черновик
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check />
+                                            Верифицировать
+                                        </>
+                                    )}
+                                </MenuLink>
+
                                 {edit && (
                                     <MenuLink onClick={() => router.push(`/admin/tasks/edit/${id}`)}>
                                         <Edit />
@@ -82,7 +110,13 @@ const TaskItem: React.FC<Props> = ({ data, edit = false, remove = false, archive
                                 )}
 
                                 {remove && !isArchived && (
-                                    <MenuLink danger onClick={() => setConfirmDelete(true)}>
+                                    <MenuLink
+                                        danger
+                                        onClick={() => {
+                                            setActionMenu(false);
+                                            setConfirmDelete(true);
+                                        }}
+                                    >
                                         <Archive />В архив
                                     </MenuLink>
                                 )}
@@ -92,16 +126,9 @@ const TaskItem: React.FC<Props> = ({ data, edit = false, remove = false, archive
 
                     <div className={base.titleInner}>
                         <div className={base.titleWrapper}>
-                            {/* <div className={base.circle40}>
-                                {avatar && (!isShowAvatars || userId === authorId) ? (
-                                    <img src={avatar} alt="avatar" className={base.circleAvatar} />
-                                ) : (
-                                    nickname && nickname[0]
-                                )}
-                            </div>
+                            <Badge text={nickname} image={avatar} />
 
-                            <p className={typography.text}>{nickname}</p> */}
-                            {userId}
+                            <Text>{nickname}</Text>
                         </div>
 
                         <div className={base.titleWrapper}>

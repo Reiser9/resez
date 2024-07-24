@@ -12,6 +12,7 @@ import type {
     ScoreConversionItem,
     SubjectSubThemeDTO,
     SubjectTask,
+    SubjectTaskCreate,
     SubjectTaskDTO,
 } from '@/entities/subject/model';
 
@@ -263,6 +264,21 @@ const useSubjects = () => {
         }
     };
 
+    const getTasksBySubjectId = async (id: number | string) => {
+        const response = await request<{ subjectTasks: SubjectTaskCreate[] }>({
+            url: `/education-ms/admin/subject/${id}/task-info`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.subjectTasks;
+        }
+    };
+
     return {
         getPagginationSubjects,
         getSubjects,
@@ -276,6 +292,7 @@ const useSubjects = () => {
         getSubjectById,
         getPointsSubjectById,
         publishSubject,
+        getTasksBySubjectId,
     };
 };
 

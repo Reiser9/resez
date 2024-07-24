@@ -1,0 +1,46 @@
+.generateForm{
+    width: 100%;
+    border-radius: 4px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    background: var(--input);
+}
+
+.generateFormItem{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.disabled{
+    filter: grayscale(1);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.generateFormItemCounter{
+    display: flex;
+    gap: 4px;
+}
+
+.generateFormItemCount{
+    min-height: 38px;
+    padding: 0.4rem .4rem;
+    background: var(--white);
+    max-width: 52px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.generateFormSubThemes{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}

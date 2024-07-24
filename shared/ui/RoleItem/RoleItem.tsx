@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import cn from 'classnames';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -32,9 +33,13 @@ const RoleItem: React.FC<Props> = ({ data, loading = false, deleteRole = () => {
 
     return (
         <>
-            <div className={`${base.item4} ${styles.roleItem}`}>
+            <div className={cn(base.item4, styles.roleItem)}>
                 {role && (
-                    <Link href={`roles/${id}`} className={styles.roleItemName} style={{ background: backgroundColor, color: textColor }}>
+                    <Link
+                        href={`/admin/roles/${id}`}
+                        className={styles.roleItemName}
+                        style={{ background: backgroundColor, color: textColor }}
+                    >
                         {role}
                     </Link>
                 )}

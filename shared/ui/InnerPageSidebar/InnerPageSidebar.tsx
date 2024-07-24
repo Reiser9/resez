@@ -25,7 +25,7 @@ const InnerSidebar: React.FC<Props> = ({
     children,
     ...props
 }) => {
-    const [sidebarActive, setSidebarActive] = React.useState<boolean>(false);
+    const [sidebarActive, setSidebarActive] = React.useState(false);
 
     const pathname = usePathname();
 

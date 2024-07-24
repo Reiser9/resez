@@ -4,7 +4,7 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTasks } from '@/entities/task';
+import { PagginationTasks, SubjectTaskById } from '@/entities/task';
 
 const useTask = () => {
     const { request, catchRequestError, errorController } = useRequest();
@@ -65,6 +65,81 @@ const useTask = () => {
         }
     };
 
+    const editTask = async (
+        taskId: number | string,
+        subjectId: number | string,
+        subjectTaskId: number | string,
+        subThemeId: number | string,
+        task: string,
+        isVerified: boolean,
+        solution?: string,
+        answer?: string,
+        source?: string,
+        successCallback = () => {},
+    ) => {
+        const response = await request({
+            url: `/education-ms/admin/task/${taskId}`,
+            isAuth: true,
+            method: 'PATCH',
+            data: {
+                subjectId,
+                subjectTaskId,
+                subThemeId,
+                task,
+                isVerified,
+                solution,
+                answer,
+                source,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Задание сохранено', 'success');
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const toggleVerify = async (taskId: number | string, successCallback = () => {}) => {
+        const response = await request<{ task: SubjectTaskById }>({
+            url: `/education-ms/admin/task/${taskId}/toggle-verify`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getTaskById = async (taskId: number | string, successCallback = () => {}) => {
+        const response = await request<{ task: SubjectTaskById }>({
+            url: `/education-ms/admin/task/${taskId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data.task;
+        }
+    };
+
     const archiveTask = async (taskId: number, successCallback = () => {}) => {
         const response = await request({
             url: `/education-ms/admin/task/${taskId}/archive`,
@@ -87,6 +162,9 @@ const useTask = () => {
     return {
         getPagginationTasks,
         createTask,
+        editTask,
+        toggleVerify,
+        getTaskById,
         archiveTask,
     };
 };

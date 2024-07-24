@@ -3,9 +3,9 @@
 import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
-import { Switch } from 'antd';
+import Lottie from 'lottie-react';
 import { DraggableData, Rnd } from 'react-rnd';
-import Lottie from "lottie-react";
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -20,7 +20,7 @@ import { Delete, FileEmpty, Photo } from '@/shared/icons';
 import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useAvatar } from '@/features/store';
-import { useRouter } from 'next/navigation';
+import PositionController from '../PositionController';
 
 type ProductTypes = 'Украшение аватарки' | 'Баннер' | 'Тема' | 'Эффект чата' | 'Статус' | 'Наклейка';
 type ProductConditions = 'free' | 'event' | 'achievement' | 'buy' | 'subscription';
@@ -96,8 +96,6 @@ const AdminStoreCreate = () => {
     const [productAnimationFile, setProductAnimationFile] = React.useState<File | null>(null);
     const [animationData, setAnimationData] = React.useState<any | null>(null);
     const [animationError, setAnimationError] = React.useState<string | null>(null);
-    const [loop, setLoop] = React.useState(false);
-    const [autoplay, setAutoplay] = React.useState(false);
 
     const [draggable, setDraggable] = React.useState(false);
     const [position, setPosition] = React.useState({ x: 0, y: 0 });
@@ -144,10 +142,9 @@ const AdminStoreCreate = () => {
 
         formData.append('title', name);
 
-        if (view === "static" && productImage) {
+        if (view === 'static' && productImage) {
             formData.append('content', productImage);
-        }
-        else if(view === "animation" && productAnimationFile){
+        } else if (view === 'animation' && productAnimationFile) {
             formData.append('content', productAnimationFile);
         }
 
@@ -215,7 +212,7 @@ const AdminStoreCreate = () => {
     }, [productImagePreview]);
 
     React.useEffect(() => {
-        if(productAnimationFile){
+        if (productAnimationFile) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 if (e.target?.result) {
@@ -363,7 +360,7 @@ const AdminStoreCreate = () => {
                                 {productImagePreview && (
                                     <>
                                         <Text variant="text2" fontWeight={500} center>
-                                            Выберите расположение товара
+                                            Выберите позицию товара
                                         </Text>
 
                                         <div className={styles.createProductPosition}>
@@ -410,12 +407,12 @@ const AdminStoreCreate = () => {
                                                                     img.naturalWidth / img.naturalHeight;
                                                                 setAspectRatio(aspectRatio);
 
-                                                                if (img.naturalWidth > maxWidth) {
-                                                                    setWidth(maxWidth);
-                                                                    setHeight(maxWidth / aspectRatio);
-                                                                } else if (img.naturalHeight > maxHeight) {
+                                                                if (img.naturalHeight > maxHeight) {
                                                                     setHeight(maxHeight);
                                                                     setWidth(maxHeight / aspectRatio);
+                                                                } else if (img.naturalWidth > maxWidth) {
+                                                                    setWidth(maxWidth);
+                                                                    setHeight(maxWidth / aspectRatio);
                                                                 } else {
                                                                     setWidth(img.naturalWidth);
                                                                     setHeight(img.naturalWidth / aspectRatio);
@@ -426,102 +423,110 @@ const AdminStoreCreate = () => {
                                                 </div>
                                             </Rnd>
                                         </div>
+
+                                        <PositionController
+                                            position={position}
+                                            setPosition={setPosition}
+                                            maxWidth={maxWidth}
+                                            maxHeight={maxHeight}
+                                            width={width}
+                                            height={height}
+                                        />
                                     </>
                                 )}
                             </>
                         )}
 
-                        {view === 'animation' && <>
-                            <File
-                                id="productAnimation"
-                                setFile={setProductAnimationFile}
-                                accept='.json'
-                            />
+                        {view === 'animation' && (
+                            <>
+                                <File id="productAnimation" setFile={setProductAnimationFile} accept=".json" />
 
-                            <label
-                                htmlFor="productAnimation"
-                                className={styles.createProductAnimation}
-                            >
-                                <FileEmpty />
-                                {productAnimationFile ? productAnimationFile.name : "Выберите файл"}
+                                <label htmlFor="productAnimation" className={styles.createProductAnimation}>
+                                    <FileEmpty />
+                                    {productAnimationFile ? productAnimationFile.name : 'Выберите файл'}
 
-                                {productAnimationFile && (
-                                    <IconButton
-                                        small
-                                        circle
-                                        variant="danger"
-                                        className={styles.createProductImageDelete}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            setProductAnimationFile(null);
-                                        }}
-                                    >
-                                        <Delete />
-                                    </IconButton>
-                                )}
-                            </label>
-
-                            {animationError && <Text variant='text2' fontWeight={600} style={{color: "var(--error)"}}>{animationError}</Text>}
-
-                            {animationData && (
-                                <>
-                                    <Text variant="text2" fontWeight={500} center>
-                                        Выберите расположение товара
-                                    </Text>
-
-                                    <div className={styles.createProductPosition}>
-                                        <Badge
-                                            image={avatar}
-                                            text={nickname}
-                                            style={{ width: 92, height: 92 }}
-                                            className={styles.createProductCurrentAvatar}
-                                        />
-
-                                        <Rnd
-                                            bounds="parent"
-                                            size={{ width, height }}
-                                            position={position}
-                                            onResize={handleResize}
-                                            onDragStop={handleDragStop}
-                                            onDragStart={handleDragStart}
-                                            lockAspectRatio={aspectRatio}
-                                            minWidth={minWidth}
-                                            minHeight={minHeight / aspectRatio}
-                                            maxWidth={maxWidth}
-                                            maxHeight={maxHeight / aspectRatio}
-                                            enableResizing={{
-                                                bottomRight: true,
-                                                bottomLeft: true,
-                                                topRight: true,
-                                                topLeft: true,
+                                    {productAnimationFile && (
+                                        <IconButton
+                                            small
+                                            circle
+                                            variant="danger"
+                                            className={styles.createProductImageDelete}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setProductAnimationFile(null);
+                                                setAnimationData(null);
                                             }}
                                         >
-                                            <div
-                                                className={cn(styles.createProductPositionImage, {
-                                                    [styles.opacity]: draggable,
-                                                })}
+                                            <Delete />
+                                        </IconButton>
+                                    )}
+                                </label>
+
+                                {animationError && (
+                                    <Text variant="text2" fontWeight={600} style={{ color: 'var(--error)' }}>
+                                        {animationError}
+                                    </Text>
+                                )}
+
+                                {animationData && (
+                                    <>
+                                        <Text variant="text2" fontWeight={500} center>
+                                            Выберите позицию товара
+                                        </Text>
+
+                                        <div className={styles.createProductPosition}>
+                                            <Badge
+                                                image={avatar}
+                                                text={nickname}
+                                                style={{ width: 92, height: 92 }}
+                                                className={styles.createProductCurrentAvatar}
+                                            />
+
+                                            <Rnd
+                                                bounds="parent"
+                                                size={{ width, height }}
+                                                position={position}
+                                                onResize={handleResize}
+                                                onDragStop={handleDragStop}
+                                                onDragStart={handleDragStart}
+                                                lockAspectRatio={aspectRatio}
+                                                minWidth={minWidth}
+                                                minHeight={minHeight / aspectRatio}
+                                                maxWidth={maxWidth}
+                                                maxHeight={maxHeight / aspectRatio}
+                                                enableResizing={{
+                                                    bottomRight: true,
+                                                    bottomLeft: true,
+                                                    topRight: true,
+                                                    topLeft: true,
+                                                }}
                                             >
-                                                <Lottie animationData={animationData} className={styles.createProductAnimationPreview} ref={imageRef} />
-                                            </div>
-                                        </Rnd>
-                                    </div>
+                                                <div
+                                                    className={cn(styles.createProductPositionImage, {
+                                                        [styles.opacity]: draggable,
+                                                    })}
+                                                >
+                                                    <Lottie
+                                                        animationData={animationData}
+                                                        className={styles.createProductAnimationPreview}
+                                                        ref={imageRef}
+                                                    />
+                                                </div>
+                                            </Rnd>
+                                        </div>
 
-                                    {/* <div className={styles.createProductAnimationOptions}>
-                                        <button className={styles.createProductAnimationOption} onClick={() => setLoop(prev => !prev)}>
-                                            <Switch size="small" checked={loop} />
-
-                                            Зациклить
-                                        </button>
-
-                                        <button className={styles.createProductAnimationOption} onClick={() => setAutoplay(prev => !prev)}>
-                                            <Switch size="small" checked={autoplay} />
-
-                                            Автоматически проигрывать
-                                        </button>
-                                    </div> */}
-                                </>
-                            )}
-                        </>}
+                                        <PositionController
+                                            position={position}
+                                            setPosition={setPosition}
+                                            maxWidth={maxWidth}
+                                            maxHeight={maxHeight}
+                                            width={width}
+                                            height={height}
+                                        />
+                                    </>
+                                )}
+                            </>
+                        )}
                     </>
                 )}
             </div>

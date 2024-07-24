@@ -1,0 +1,96 @@
+.taskInner{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.taskTestButtons{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.testResult{
+    align-items: center;
+}
+
+.testResultTitle{
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .testResultTitle{
+        font-size: 1.8rem;
+    }
+}
+
+.testResultSubtitle{
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.testResultTitle span{
+    color: var(--main);
+}
+
+.testResultWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.testResultSubtitle{
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.taskSlider{
+    width: 100%;
+}
+
+.testInfoButton{
+    width: 100%;
+    padding: 0.8rem 3.6rem;
+    border-radius: 4px;
+    background: var(--lighten);
+    color: var(--main);
+    position: relative;
+}
+
+.testInfoButton svg{
+    width: 20px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 8px;
+}
+
+.testInfoButton svg path{
+    stroke: var(--main);
+}
+
+.danger{
+    background: var(--errorB);
+    color: var(--error);
+}
+
+.danger svg path{
+    stroke: var(--error);
+}
+
+.testInfoButtons{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}

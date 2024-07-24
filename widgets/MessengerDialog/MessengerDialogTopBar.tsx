@@ -352,14 +352,14 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                         </Tooltip>
 
                         <div className={styles.messangerNewChatUsersSearch}>
-                            <Button variant="light">
+                            {/* <Button variant="light">
                                 <Plus />
                                 Добавить участника
-                            </Button>
+                            </Button> */}
 
-                            <div className={styles.messangerNewChatSearch}>
+                            {/* <div className={styles.messangerNewChatSearch}>
                                 <Input placeholder="Поиск" color="white" />
-                            </div>
+                            </div> */}
 
                             <div className={styles.messangerUsersList}>
                                 {isLoading ? (
