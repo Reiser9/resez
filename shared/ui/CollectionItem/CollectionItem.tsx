@@ -10,7 +10,7 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Collection } from '@/entities/collection';
-import { ArrowRightLong, Delete, DotsHorizontal, Edit, Heart, Lock } from '@/shared/icons';
+import { ArrowRightLong, Delete, DotsHorizontal, Edit, Heart, Lock, Photo } from '@/shared/icons';
 import { Text } from '../Text';
 import { HoverMenu, MenuLink } from '../HoverMenu';
 import { IconButton } from '../Button';
@@ -28,13 +28,13 @@ type Props = {
 };
 
 const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {}, style }) => {
-    const { id, collection, description, isPrivate, pairsCount, user, likesCount, isLiked } = data || {};
+    const { id, collection, description, isPrivate, pairsCount, user, likesCount, isLiked, hasPictures } = data || {};
     const { avatar, nickname, id: authorId } = user || {};
 
     const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
     const [deleteCollectionModal, setDeleteCollectionModal] = React.useState(false);
 
-    const currentUserId = useAppSelector(state => state.user.user?.id);
+    const currentUserId = useAppSelector((state) => state.user.user?.id);
 
     const router = useRouter();
 
@@ -47,9 +47,11 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                     <span className={styles.collectionItemTags}>
                         <p className={styles.collectionItemNumber}>Терминов: {pairsCount}</p>
 
-                        <p className={cn(styles.collectionItemLikes, {
-                            [styles.isLiked]: isLiked
-                        })}>
+                        <p
+                            className={cn(styles.collectionItemLikes, {
+                                [styles.isLiked]: isLiked,
+                            })}
+                        >
                             <Heart />
 
                             {likesCount}
@@ -59,6 +61,14 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                             <Tooltip title="Скрыта">
                                 <span className={styles.collectionItemLock}>
                                     <Lock />
+                                </span>
+                            </Tooltip>
+                        )}
+
+                        {hasPictures && (
+                            <Tooltip title="Есть картинки">
+                                <span className={styles.collectionItemImage}>
+                                    <Photo />
                                 </span>
                             </Tooltip>
                         )}
@@ -83,39 +93,46 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                     <p className={styles.collectionItemAuthorName}>{nickname}</p>
                 </Link>
 
-                {authorId === currentUserId && <HoverMenu
-                    button={
-                        <IconButton variant="light" small onClick={() => setCollectionItemMenu(true)}>
-                            <DotsHorizontal />
-                        </IconButton>
-                    }
-                    value={collectionItemMenu}
-                    setValue={setCollectionItemMenu}
-                >
-                    <MenuLink onClick={() => router.push(`/training/memory/edit/${id}`)}>
-                        <Edit />
-                        Редактировать
-                    </MenuLink>
+                {authorId === currentUserId && (
+                    <HoverMenu
+                        button={
+                            <IconButton variant="light" small onClick={() => setCollectionItemMenu(true)}>
+                                <DotsHorizontal />
+                            </IconButton>
+                        }
+                        value={collectionItemMenu}
+                        setValue={setCollectionItemMenu}
+                    >
+                        <MenuLink onClick={() => router.push(`/training/memory/edit/${id}`)}>
+                            <Edit />
+                            Редактировать
+                        </MenuLink>
 
-                    <MenuLink danger onClick={() => {
-                        setCollectionItemMenu(false);
-                        setDeleteCollectionModal(true);
-                    }}>
-                        <Delete />
-                        Удалить
-                    </MenuLink>
-                </HoverMenu>}
+                        <MenuLink
+                            danger
+                            onClick={() => {
+                                setCollectionItemMenu(false);
+                                setDeleteCollectionModal(true);
+                            }}
+                        >
+                            <Delete />
+                            Удалить
+                        </MenuLink>
+                    </HoverMenu>
+                )}
             </div>
 
             {loading && <LoaderForItem />}
 
-            {authorId === currentUserId && <ConfirmModal
-                text="Вы действительно хотите удалить коллекцию?"
-                confirmText="Удалить"
-                value={deleteCollectionModal}
-                setValue={setDeleteCollectionModal}
-                callback={deleteCallback}
-            />}
+            {authorId === currentUserId && (
+                <ConfirmModal
+                    text="Вы действительно хотите удалить коллекцию?"
+                    confirmText="Удалить"
+                    value={deleteCollectionModal}
+                    setValue={setDeleteCollectionModal}
+                    callback={deleteCallback}
+                />
+            )}
         </div>
     );
 };

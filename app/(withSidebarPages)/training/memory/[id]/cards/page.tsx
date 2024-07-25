@@ -35,12 +35,20 @@ const MemoryCards = () => {
     });
 
     const wrongAnswer = () => {
+        if ((data?.cards?.length || 0) <= currentCardNumber) {
+            return;
+        }
+
         setCurrentCardNumber((prev) => prev + 1);
         setTotalWrong((prev) => prev + 1);
         setPrevAnswer(false);
     };
 
     const correctAnswer = () => {
+        if ((data?.cards?.length || 0) <= currentCardNumber) {
+            return;
+        }
+
         setCurrentCardNumber((prev) => prev + 1);
         setTotalCorrect((prev) => prev + 1);
         setPrevAnswer(true);

@@ -92,7 +92,7 @@
     fill: var(--error);
 }
 
-.collectionItemLock {
+.collectionItemLock, .collectionItemImage {
     width: 27px;
     height: 27px;
     border-radius: 4px;
@@ -102,12 +102,10 @@
     justify-content: center;
 }
 
-.collectionItemLock svg {
+.collectionItemLock svg, .collectionItemImage svg {
     width: 16px;
-}
-
-.collectionItemLock svg path {
-    stroke: var(--main);
+    flex-shrink: 0;
+    color: var(--main);
 }
 
 .collectionItemDescription{

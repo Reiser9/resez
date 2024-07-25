@@ -17,7 +17,7 @@ const SubjectsTabs = ({ baseUrl = '/useful/points/' }) => {
     const pathname = usePathname();
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ['profile_data'],
+        queryKey: ['subjects'],
         queryFn: getSubjects,
     });
 
@@ -29,7 +29,7 @@ const SubjectsTabs = ({ baseUrl = '/useful/points/' }) => {
 
     return (
         <>
-            {!error && (
+            {!error && !!subjects?.length && (
                 <ScrollWithArrows>
                     {subjects?.map((data) => (
                         <Link

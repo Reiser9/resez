@@ -16,6 +16,7 @@ export type Collection = {
     updatedAt: Date;
     likesCount: number;
     isLiked: boolean;
+    hasPictures: boolean;
     user: {
         id: number;
         nickname: string;

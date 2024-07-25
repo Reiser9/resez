@@ -153,6 +153,17 @@
     position: relative;
 }
 
+.cardCollectionItemHalfImage.lock{
+    border: 1px solid transparent;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0.4rem;
+    color: #fff;
+}
+
 .cardCollectionItemHalfImage.imageFill{
     border: 1px solid var(--main);
 }
@@ -163,7 +174,7 @@
 }
 
 @media (any-hover: hover) {
-    .cardCollectionItemHalfImage{
+    .cardCollectionItemHalfImage:not(.lock){
         cursor: pointer;
     }
 }

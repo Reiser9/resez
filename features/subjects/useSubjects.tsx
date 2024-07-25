@@ -232,6 +232,7 @@ const useSubjects = () => {
             isMark: boolean;
             scoreConversion: ScoreConversion[];
             subjectTasks: SubjectTask[];
+            durationMinutes: number;
         }>({
             url: `/education-ms/subject/${slug}/score-info`,
             isAuth: true,
@@ -279,6 +280,21 @@ const useSubjects = () => {
         }
     };
 
+    const getTasksCatalogBySubject = async (slug: string) => {
+        const response = await request<{ subjectTasks: SubjectTaskCreate[] }>({
+            url: `/education-ms/subject/${slug}/task-info`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.subjectTasks;
+        }
+    };
+
     return {
         getPagginationSubjects,
         getSubjects,
@@ -293,6 +309,7 @@ const useSubjects = () => {
         getPointsSubjectById,
         publishSubject,
         getTasksBySubjectId,
+        getTasksCatalogBySubject,
     };
 };
 

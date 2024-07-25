@@ -125,7 +125,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                     </div>
 
                                     <div className={styles.headerBalance}>
-                                        <Text fontWeight={600}>Баланс:</Text>
+                                        <Text fontWeight={600}>Баланс</Text>
 
                                         <div className={styles.headerBalanceWrapper}>
                                             <Text fontWeight={600}>{coins}</Text>

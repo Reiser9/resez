@@ -65,7 +65,7 @@
 
 .collectionItem{
     display: flex;
-    height: 172px;
+    height: 240px;
 }
 
 .scrollContent{
@@ -104,4 +104,15 @@
 .testItem{
     display: flex;
     height: 219px;
+}
+
+.dynamicItem{
+    width: 100%;
+    height: 40px;
+    display: flex;
+}
+
+.catalogItem{
+    display: flex;
+    height: 76px;
 }

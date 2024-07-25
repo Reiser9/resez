@@ -4,7 +4,7 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTests, TestById } from '@/entities/test';
+import { PagginationTests, Test, TestById } from '@/entities/test';
 
 const useTest = () => {
     const { request, catchRequestError, errorController } = useRequest();
@@ -13,6 +13,29 @@ const useTest = () => {
     const getPagginationTests = async ({ pageParam, limit = 9 }: { pageParam: number; limit?: number }) => {
         const response = await request<PagginationTests>({
             url: `/education-ms/admin/test?offset=${pageParam * limit}&limit=${limit}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getPagginationOfficialTests = async ({
+        pageParam,
+        limit = 9,
+        subjectSlug,
+    }: {
+        pageParam: number;
+        limit?: number;
+        subjectSlug: string;
+    }) => {
+        const response = await request<PagginationTests>({
+            url: `/education-ms/test/official?offset=${pageParam * limit}&limit=${limit}&subject_slug=${subjectSlug}`,
             isAuth: true,
         });
 
@@ -69,10 +92,31 @@ const useTest = () => {
         }
     };
 
+    const deleteTest = async (id: number | string, successCallback = () => {}) => {
+        const response = await request<{ test: Test }>({
+            url: `/education-ms/admin/test/${id}`,
+            isAuth: true,
+            method: 'DELETE',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Тест удален', 'success');
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         getPagginationTests,
+        getPagginationOfficialTests,
         createTest,
         getTestById,
+        deleteTest,
     };
 };
 

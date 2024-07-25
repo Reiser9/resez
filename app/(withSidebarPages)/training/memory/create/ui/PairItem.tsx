@@ -12,6 +12,9 @@ import { File } from '@/shared/ui/File';
 import { Input } from '@/shared/ui/Input';
 import useCollections from '@/features/collection/useCollections';
 import type { PairDTO } from '@/entities/collection';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import ResezPremium from '@/shared/icons/images/ResezPremium';
+import { Text } from '@/shared/ui/Text';
 
 type Props = {
     data: PairDTO;
@@ -36,6 +39,7 @@ const PairItem: React.FC<Props> = ({
     pairs,
     setPairs,
 }) => {
+    const subscription = useAppSelector((state) => state.user.user?.subscription);
     const { uploadImage } = useCollections();
 
     const enterNewPair = (e: React.KeyboardEvent) => {
@@ -142,31 +146,43 @@ const PairItem: React.FC<Props> = ({
                         value={questionText}
                     />
 
-                    <File
-                        id={questionImageId}
-                        onChange={(file: File) => uploadImageInArray(id, 'questionPicture', file)}
-                    />
+                    {subscription ? (
+                        <>
+                            <File
+                                id={questionImageId}
+                                onChange={(file: File) => uploadImageInArray(id, 'questionPicture', file)}
+                            />
 
-                    <label
-                        htmlFor={questionImageId}
-                        className={cn(styles.cardCollectionItemHalfImage, {
-                            [styles.imageFill]: questionPicture,
-                        })}
-                    >
-                        {questionPicture ? <Image src={questionPicture} alt="image" fill /> : <Photo />}
-
-                        {questionPicture && (
-                            <IconButton
-                                small
-                                circle
-                                variant="danger"
-                                className={styles.cardCollectionItemImageDelete}
-                                onClick={(e) => removeImageInArray(e, id, 'questionPicture')}
+                            <label
+                                htmlFor={questionImageId}
+                                className={cn(styles.cardCollectionItemHalfImage, {
+                                    [styles.imageFill]: questionPicture,
+                                })}
                             >
-                                <Delete />
-                            </IconButton>
-                        )}
-                    </label>
+                                {questionPicture ? <Image src={questionPicture} alt="image" fill /> : <Photo />}
+
+                                {questionPicture && (
+                                    <IconButton
+                                        small
+                                        circle
+                                        variant="danger"
+                                        className={styles.cardCollectionItemImageDelete}
+                                        onClick={(e) => removeImageInArray(e, id, 'questionPicture')}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                )}
+                            </label>
+                        </>
+                    ) : (
+                        <div className={cn(styles.cardCollectionItemHalfImage, styles.lock)}>
+                            <Text fontWeight={500} variant="text2" center>
+                                Для загрузки изображений требуется подписка
+                            </Text>
+
+                            <ResezPremium />
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.cardCollectionItemHalf}>
@@ -179,28 +195,43 @@ const PairItem: React.FC<Props> = ({
                         value={answerText}
                     />
 
-                    <File id={answerImageId} onChange={(file: File) => uploadImageInArray(id, 'answerPicture', file)} />
+                    {subscription ? (
+                        <>
+                            <File
+                                id={answerImageId}
+                                onChange={(file: File) => uploadImageInArray(id, 'answerPicture', file)}
+                            />
 
-                    <label
-                        htmlFor={answerImageId}
-                        className={cn(styles.cardCollectionItemHalfImage, {
-                            [styles.imageFill]: answerPicture,
-                        })}
-                    >
-                        {answerPicture ? <Image src={answerPicture} alt="image" fill /> : <Photo />}
-
-                        {answerPicture && (
-                            <IconButton
-                                small
-                                circle
-                                variant="danger"
-                                className={styles.cardCollectionItemImageDelete}
-                                onClick={(e) => removeImageInArray(e, id, 'answerPicture')}
+                            <label
+                                htmlFor={answerImageId}
+                                className={cn(styles.cardCollectionItemHalfImage, {
+                                    [styles.imageFill]: answerPicture,
+                                })}
                             >
-                                <Delete />
-                            </IconButton>
-                        )}
-                    </label>
+                                {answerPicture ? <Image src={answerPicture} alt="image" fill /> : <Photo />}
+
+                                {answerPicture && (
+                                    <IconButton
+                                        small
+                                        circle
+                                        variant="danger"
+                                        className={styles.cardCollectionItemImageDelete}
+                                        onClick={(e) => removeImageInArray(e, id, 'answerPicture')}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                )}
+                            </label>
+                        </>
+                    ) : (
+                        <div className={cn(styles.cardCollectionItemHalfImage, styles.lock)}>
+                            <Text fontWeight={500} variant="text2" center>
+                                Для загрузки изображений требуется подписка
+                            </Text>
+
+                            <ResezPremium />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

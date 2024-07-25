@@ -727,7 +727,8 @@ ol .cdx-list__item {
 }
 
 .blockImage img {
-    max-width: 100%;
+    width: auto;
+    max-width: 500px;
 }
 
 /* Custom math tool */

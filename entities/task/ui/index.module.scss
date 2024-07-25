@@ -47,3 +47,9 @@
 .taskVerified path{
     stroke: var(--main);
 }
+
+.taskItemContent{
+    width: 100%;
+    max-height: 200px;
+    overflow: hidden;
+}

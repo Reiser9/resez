@@ -16,8 +16,8 @@ import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 const Sidebar = () => {
     const sidebarRef = React.useRef<HTMLDivElement>(null);
-    const {showSidebar, setShowSidebar} = useSidebarContext();
-    const permissions = useAppSelector(state => state.user.user?.permissions);
+    const { showSidebar, setShowSidebar } = useSidebarContext();
+    const permissions = useAppSelector((state) => state.user.user?.permissions);
 
     const outsideSidebarClick = (e: MouseEvent) => {
         if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
@@ -27,7 +27,7 @@ const Sidebar = () => {
 
     const closeSidebar = () => {
         setShowSidebar(false);
-    }
+    };
 
     React.useEffect(() => {
         window.addEventListener('click', outsideSidebarClick);
@@ -70,10 +70,12 @@ const Sidebar = () => {
                     Магазин
                 </SidebarLink>
 
-                {checkPermission(permissions, [PERMISSIONS.ADMIN]) && <SidebarLink href="/admin" onClick={closeSidebar}>
-                    <Code />
-                    Админка
-                </SidebarLink>}
+                {checkPermission(permissions, [PERMISSIONS.ADMIN]) && (
+                    <SidebarLink href="/admin" onClick={closeSidebar}>
+                        <Code />
+                        Админка
+                    </SidebarLink>
+                )}
 
                 {/* <SidebarLink href="/config">
                     <Console />
@@ -124,6 +126,10 @@ const Sidebar = () => {
                 <Link href="/docs/publicoffer" className={styles.sidebarFooterLink}>
                     Публичная оферта
                 </Link>
+
+                <a href="https://github.com/NikitaMasl" target="_blanc" className={styles.sidebarFooterLinkSupport}>
+                    support by Nikita Maslov
+                </a>
             </div>
         </aside>
     );

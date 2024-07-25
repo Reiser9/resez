@@ -9,3 +9,5 @@ export { default as SubjectItemSceleton } from './SubjectItemSceleton';
 export { default as AvatarItemSkeleton } from './AvatarItemSkeleton';
 export { default as TaskItemSkeleton } from './TaskItemSkeleton';
 export { default as TestItemSkeleton } from './TestItemSkeleton';
+export { default as DynamicSkeleton } from './DynamicSkeleton';
+export { default as CatalogItemSkeleton } from './CatalogItemSkeleton';

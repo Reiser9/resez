@@ -84,7 +84,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
         const sanitize = (e: ClipboardEvent<HTMLInputElement>) => {
             e.preventDefault();
 
-            setValue(prev => `${prev} ${sanitizeHtml(e.clipboardData.getData('text'), sanitizeConf)}`);
+            setValue((prev) => `${prev} ${sanitizeHtml(e.clipboardData.getData('text'), sanitizeConf)}`);
         };
 
         const changeResizable = (e: ContentEditableEvent) => {
@@ -141,7 +141,19 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     placeholder={placeholder}
                     type={show ? 'text' : type}
                     value={value}
-                    onChange={onChange ? onChange : (e) => setValue(e.target.value)}
+                    onChange={
+                        onChange
+                            ? onChange
+                            : (e) => {
+                                  const value = e.target.value;
+
+                                  if (value.length > lengthLimit) {
+                                      return;
+                                  }
+
+                                  setValue(e.target.value);
+                              }
+                    }
                     {...(props as InputHTMLAttributes<HTMLInputElement>)}
                 />
             );

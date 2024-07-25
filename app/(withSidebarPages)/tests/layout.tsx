@@ -9,6 +9,8 @@ import { InnerPageSidebar } from '@/shared/ui/InnerPageSidebar';
 import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { AuthWrapper } from '@/shared/wrappers/AuthWrapper';
 import SubjectsTabs from '../useful/points/SubjectsTabs';
+import { InfoBlock } from '@/shared/ui/InfoBlock';
+import { Stack, TypesTest } from '@/shared/icons';
 
 export const metadata: Metadata = {
     title: 'ResEz - Тесты',
@@ -19,7 +21,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthWrapper>
             <ContentWrapper>
                 <div className={pws.wrapper}>
-                    <div className={pws.content}>{children}</div>
+                    <div className={pws.content}>
+                        <div className={base.baseWrapperGap16}>
+                            <SubjectsTabs baseUrl="/tests/subject/" />
+
+                            <InfoBlock
+                                icon={<Stack />}
+                                title="Решайте вариант из заданных заданий"
+                                text="Пройдите тест, выбирая задания из предложенных вариантов. Узнайте свой уровень знаний, решая тесты по выбранному предмету. Начните свой путь к успеху уже сегодня!"
+                                image={<TypesTest />}
+                            />
+
+                            {children}
+                        </div>
+                    </div>
 
                     <InnerPageSidebar>
                         <SidebarLink href="/tests" end>

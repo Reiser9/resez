@@ -217,7 +217,9 @@ const SubjectEdit = () => {
             theme,
             primaryScore,
             isDetailedAnswer,
-            subThemes: trimSubTheme ? [...subThemes, { subTheme: trimSubTheme, tasksCount }] : subThemes,
+            subThemes: trimSubTheme
+                ? [...subThemes, { subTheme: trimSubTheme, tasksCount, id: subThemeId }]
+                : subThemes,
             tasksCount: 0,
         };
 
@@ -229,6 +231,7 @@ const SubjectEdit = () => {
         setSubThemes([]);
         setSubTheme('');
         setTasksCount(0);
+        setSubThemeId(undefined);
     };
 
     const setRedHandler = (id: number) => {
@@ -305,9 +308,9 @@ const SubjectEdit = () => {
             const lastSubTheme = subThemes.splice(-1)[0];
 
             setSubThemes(subThemes);
-            setSubTheme(lastSubTheme.subTheme);
-            setTasksCount(lastSubTheme.tasksCount);
-            setSubThemeId(lastSubTheme.id);
+            setSubTheme(lastSubTheme?.subTheme || '');
+            setTasksCount(lastSubTheme?.tasksCount || 0);
+            setSubThemeId(lastSubTheme?.id);
         }
     }, [data]);
 

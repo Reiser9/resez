@@ -1,15 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Checkbox } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
 import base from '@/shared/styles/base.module.scss';
+import styles from '../index.module.scss';
 
 import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
-import { Button } from '@/shared/ui/Button';
+import { Button, IconButton } from '@/shared/ui/Button';
 import { Select } from '@/shared/ui/Select';
 import { Input } from '@/shared/ui/Input';
 import { checkPermission } from '@/shared/utils/checkPermissions';
@@ -21,11 +22,13 @@ import { useSubjects } from '@/features/subjects';
 import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { useTask } from '@/features/task';
 import useAlert from '@/shared/hooks/useAlert';
-import { Preloader } from '@/shared/ui/Preloader';
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { Delete, Plus } from '@/shared/icons';
+import { Text } from '@/shared/ui/Text';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
-    loading: () => <Preloader small page />,
+    loading: () => <DynamicSkeleton />,
 });
 
 const AdminTaskCreate = () => {
@@ -35,19 +38,17 @@ const AdminTaskCreate = () => {
     const [isVerified, setIsVerified] = React.useState(false);
     const [theme, setTheme] = React.useState<string | null>(null);
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
+    const [answers, setAnswers] = React.useState<string[]>([]);
     const [answer, setAnswer] = React.useState('');
     const [source, setSource] = React.useState('');
     const [isDetailedAnswerTask, setIsDetailedAnswerTask] = React.useState(false);
 
     const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
     const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
-    const [subjectsDroped, setSubjectsDroped] = React.useState(false);
     const [themes, setThemes] = React.useState<SubjectTaskDTO[]>([]);
     const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
-    const [themesDroped, setThemesDroped] = React.useState(false);
     const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
-    const [subThemesDroped, setSubThemesDroped] = React.useState(false);
 
     const taskRef = React.useRef<EditorCore | null>(null);
     const solutionRef = React.useRef<EditorCore | null>(null);
@@ -61,10 +62,10 @@ const AdminTaskCreate = () => {
         data: subjectsData,
         isLoading: subjectsIsLoading,
         error: subjectsError,
+        refetch,
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects({ pageParam: 0, limit: 9999 }),
-        enabled: subjectsDroped,
     });
 
     const {
@@ -75,7 +76,7 @@ const AdminTaskCreate = () => {
     } = useQuery({
         queryKey: ['themes'],
         queryFn: () => getSubjectThemes(String(subject)),
-        enabled: themesDroped && !!subject,
+        enabled: !!subject,
     });
 
     const {
@@ -86,8 +87,37 @@ const AdminTaskCreate = () => {
     } = useQuery({
         queryKey: ['subthemes'],
         queryFn: () => getSubjectSubThemes(String(theme)),
-        enabled: subThemesDroped && !!theme,
+        enabled: !!theme,
     });
+
+    const addAnswer = () => {
+        if (!answer) {
+            return;
+        }
+
+        setAnswers((prev) => [...prev, answer]);
+        setAnswer('');
+    };
+
+    const removeAnswer = (id: number) => {
+        let newAnswers = [...answers];
+
+        newAnswers.splice(id, 1);
+        setAnswers(newAnswers);
+    };
+
+    const removeAnswerForm = () => {
+        const lastAnswer = answers.splice(-1)[0];
+        setAnswer(lastAnswer);
+        setAnswers(answers);
+    };
+
+    const changeAnswer = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>, id: number) => {
+        let newAnswers = [...answers];
+
+        newAnswers[id] = e.target.value;
+        setAnswers(newAnswers);
+    };
 
     const createTaskHandler = async () => {
         if (!taskRef.current || !solutionRef.current) {
@@ -108,26 +138,29 @@ const AdminTaskCreate = () => {
             return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
         }
 
-        createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, answer, source, () => {
+        const trimAnswer = answer.trim();
+        let allAnswers = trimAnswer ? [...answers, trimAnswer] : [...answers];
+
+        createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, allAnswers, source, () => {
             router.replace('/admin/tasks');
         });
     };
 
     const subjectDropdown = (open: boolean) => {
-        if (open && subjects.length === 0) {
-            setSubjectsDroped(true);
+        if (open) {
+            refetch();
         }
     };
 
     const themeDropdown = (open: boolean) => {
-        if (open && themes.length === 0 && subject) {
-            setThemesDroped(true);
+        if (open && subject) {
+            refetchThemes();
         }
     };
 
     const subThemeDropdown = (open: boolean) => {
-        if (open && subThemes.length === 0 && theme) {
-            setSubThemesDroped(true);
+        if (open && theme) {
+            refetchSubThemes();
         }
     };
 
@@ -183,7 +216,6 @@ const AdminTaskCreate = () => {
             setThemes([]);
             setSubTheme(null);
             setSubThemes([]);
-            refetchThemes();
         }
     }, [subject]);
 
@@ -191,7 +223,6 @@ const AdminTaskCreate = () => {
         if (theme) {
             setSubTheme(null);
             setSubThemes([]);
-            refetchSubThemes();
         }
     }, [theme]);
 
@@ -285,7 +316,46 @@ const AdminTaskCreate = () => {
                         <Editor title="Задание" editorRef={taskRef} id="taskEditor" />
                         <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
 
-                        <Input title="Ответ" value={answer} setValue={setAnswer} />
+                        <div className={styles.answerWrapper}>
+                            <Text variant="text3">Ответ{!!answers.length && 'ы'}</Text>
+                            {answers.map((answer, id) => (
+                                <div key={id} className={styles.answerItem}>
+                                    <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+
+                                    <IconButton
+                                        variant="danger"
+                                        small
+                                        circle
+                                        className={styles.answerItemDelete}
+                                        onClick={() => removeAnswer(id)}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                </div>
+                            ))}
+
+                            <div className={styles.answerItem}>
+                                <Input value={answer} setValue={setAnswer} />
+
+                                {!!answers.length && (
+                                    <IconButton
+                                        variant="danger"
+                                        small
+                                        circle
+                                        className={styles.answerItemDelete}
+                                        onClick={removeAnswerForm}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                )}
+                            </div>
+                        </div>
+
+                        <Button variant="light" auto onClick={addAnswer}>
+                            <Plus />
+                            Добавить ответ
+                        </Button>
+
                         <Input title="Источник" value={source} setValue={setSource} />
                     </>
                 )}

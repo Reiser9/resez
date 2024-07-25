@@ -81,7 +81,8 @@ const MemoryMy = () => {
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
-                        Коллекции {!isPending && !error && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                        Коллекции{' '}
+                        {!isPending && !error && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -103,7 +104,11 @@ const MemoryMy = () => {
             ) : error ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data?.pages[0]?.totalCount === 0 ? (
-                <NotContent text="Коллекций не найдено" />
+                <NotContent text="Коллекций не найдено">
+                    <Button href="/training/memory/create" variant="light" auto>
+                        Создать коллекцию
+                    </Button>
+                </NotContent>
             ) : (
                 <div className={base.contentItems}>
                     {data?.pages.map((collection) =>

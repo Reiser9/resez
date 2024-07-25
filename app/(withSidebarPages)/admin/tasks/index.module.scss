@@ -1,0 +1,32 @@
+.selectDisabled{
+    width: 100%;
+    background: var(--input);
+    border-radius: 4px;
+    padding: .8rem 1.6rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+
+.answerWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.answerItem{
+    width: 100%;
+    display: flex;
+    position: relative;
+}
+
+.answerItemDelete{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 4px;
+}

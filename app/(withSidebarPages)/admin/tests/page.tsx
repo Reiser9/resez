@@ -22,7 +22,7 @@ const AdminTests = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
 
     const queryClient = useQueryClient();
-    const { getPagginationTests } = useTest();
+    const { getPagginationTests, deleteTest } = useTest();
 
     const revalidateRequest = () => {
         queryClient.invalidateQueries({ queryKey: ['tests'] });
@@ -82,8 +82,8 @@ const AdminTests = () => {
                                     data={data}
                                     // loading={subjectIsLoading.includes(data.id)}
                                     // edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                    // remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                                    // archiveCallback={() => archiveTask(data.id, revalidateRequest)}
+                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                    removeCallback={() => deleteTest(data.id, revalidateRequest)}
                                 />
                             )),
                         )}

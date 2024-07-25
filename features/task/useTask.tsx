@@ -33,7 +33,7 @@ const useTask = () => {
         task: string,
         isVerified: boolean,
         solution?: string,
-        answer?: string,
+        answers?: string[],
         source?: string,
         successCallback = () => {},
     ) => {
@@ -48,7 +48,7 @@ const useTask = () => {
                 task,
                 isVerified,
                 solution,
-                answer,
+                answers,
                 source,
             },
         });
@@ -73,7 +73,7 @@ const useTask = () => {
         task: string,
         isVerified: boolean,
         solution?: string,
-        answer?: string,
+        answers?: string[],
         source?: string,
         successCallback = () => {},
     ) => {
@@ -88,7 +88,7 @@ const useTask = () => {
                 task,
                 isVerified,
                 solution,
-                answer,
+                answers,
                 source,
             },
         });

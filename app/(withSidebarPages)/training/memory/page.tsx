@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -9,10 +10,49 @@ import base from '@/shared/styles/base.module.scss';
 import Tabs from './ui/Tabs';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
-import { ArrowRight } from '@/shared/icons';
+import { ArrowRight, Cross } from '@/shared/icons';
 import { NotContent } from '@/shared/ui/NotContent';
+import { useCollections } from '@/features/collection';
+import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
+import { CollectionItem } from '@/shared/ui/CollectionItem';
 
 const Memory = () => {
+    const queryClient = useQueryClient();
+    const { collectionsIsLoading, getPaginationCollections, deleteCollectionById, getPopularCollections } =
+        useCollections();
+
+    const revalidateRequest = () => {
+        queryClient.invalidateQueries({ queryKey: ['collections'] });
+    };
+
+    const refetchPopular = () => {
+        queryClient.resetQueries({ queryKey: ['collections_popular'] });
+    };
+
+    const { data, isPending, error } = useInfiniteQuery({
+        queryKey: ['collections'],
+        queryFn: (page) => getPaginationCollections(page, ''),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
+
+            return nextPage;
+        },
+    });
+
+    const {
+        data: popularCollections,
+        isPending: popularCollectionsIsLoading,
+        error: popularCollectionsError,
+    } = useQuery({
+        queryKey: ['collections_popular'],
+        queryFn: getPopularCollections,
+    });
+
+    const deleteCollectionHandler = (id: string) => {
+        deleteCollectionById(id, revalidateRequest);
+    };
+
     return (
         <div className={base.baseWrapperGap16}>
             <Tabs />
@@ -25,7 +65,7 @@ const Memory = () => {
                         Никаких ограничений и спокойная подготовка, именно это получите вы вместе с Resez Premium
                     </Text>
 
-                    <Button auto href="/store/subscription" variant='light'>
+                    <Button auto href="/store/subscription" variant="light">
                         Подробнее
                     </Button>
                 </div>
@@ -37,28 +77,74 @@ const Memory = () => {
 
             <div className={base.baseWrapperGap8}>
                 <div className={base.titleInner}>
-                    <Text variant="h3">
-                        Популярные
-                    </Text>
+                    <Text variant="h3">Популярные</Text>
 
-                    <ReloadButton />
+                    <ReloadButton onClick={refetchPopular} disabled={popularCollectionsIsLoading} />
                 </div>
 
-                <NotContent text="Скоро все появится" />
+                {popularCollectionsIsLoading ? (
+                    <div className={base.contentItems}>
+                        {[...Array(3)].map((_, id) => (
+                            <CollectionItemSkeleton key={id} />
+                        ))}
+                    </div>
+                ) : popularCollectionsError ? (
+                    <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                ) : data?.pages[0]?.totalCount === 0 ? (
+                    <NotContent text="Коллекций не найдено" />
+                ) : (
+                    <div className={base.contentItems}>
+                        {popularCollections?.map((data) => (
+                            <CollectionItem
+                                key={data.id}
+                                data={data}
+                                loading={collectionsIsLoading.includes(String(data.id))}
+                                deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
             <div className={base.baseWrapperGap8}>
                 <div className={base.titleInner}>
-                    <Text variant="h3">
-                        Ваши коллекции
-                    </Text>
+                    <Text variant="h3">Ваши коллекции</Text>
 
-                    <IconButton href='/training/memory/my' small variant='light' circle>
+                    <IconButton href="/training/memory/my" small variant="light" circle>
                         <ArrowRight />
                     </IconButton>
                 </div>
 
-                <NotContent text="Скоро все появится" />
+                {isPending ? (
+                    <div className={base.contentItems}>
+                        {[...Array(3)].map((_, id) => (
+                            <CollectionItemSkeleton key={id} />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                ) : data?.pages[0]?.totalCount === 0 ? (
+                    <NotContent text="Коллекций не найдено">
+                        <Button href="/training/memory/create" variant="light" auto>
+                            Создать коллекцию
+                        </Button>
+                    </NotContent>
+                ) : (
+                    <div className={base.contentItems}>
+                        {data?.pages.map((collection) =>
+                            collection?.collections
+                                ?.slice(0, 3)
+                                .map((data) => (
+                                    <CollectionItem
+                                        key={data.id}
+                                        data={data}
+                                        loading={collectionsIsLoading.includes(String(data.id))}
+                                        deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                                    />
+                                )),
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

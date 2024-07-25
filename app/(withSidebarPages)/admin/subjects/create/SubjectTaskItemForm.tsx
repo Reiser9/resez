@@ -88,7 +88,13 @@ const SubjectTaskItemForm: React.FC<Props> = ({
 
             <Input value={theme} setValue={setTheme} title="Тема задания" trackLength lengthLimit={150} />
 
-            <Input value={primaryScore} setValue={setPrimaryScore} title="Первичный балл" lengthLimit={2} />
+            <Input
+                value={primaryScore}
+                setValue={setPrimaryScore}
+                title="Первичный балл"
+                lengthLimit={2}
+                type="number"
+            />
 
             <Checkbox checked={isDetailedAnswer} onChange={(e) => setIsDetailedAnswer(e.target.checked)}>
                 Развернутый ответ

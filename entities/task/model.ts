@@ -4,7 +4,7 @@ import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '../subject';
 export type SubjectTask = {
     id: number;
     task: string;
-    answer: string;
+    answers: string[];
     isVerified: boolean;
     isArchived: boolean;
     source: string;

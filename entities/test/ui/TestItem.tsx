@@ -17,9 +17,11 @@ import { Text } from '@/shared/ui/Text';
 
 type Props = {
     data: Test;
+    remove?: boolean;
+    removeCallback?: () => void;
 };
 
-const TestItem: React.FC<Props> = ({ data }) => {
+const TestItem: React.FC<Props> = ({ data, remove = false, removeCallback = () => {} }) => {
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmDelete, setConfirmDelete] = React.useState(false);
 
@@ -32,31 +34,35 @@ const TestItem: React.FC<Props> = ({ data }) => {
                     <div className={styles.testItemTitleWrapper}>
                         {subject && <p className={styles.testItemName}>{subject}</p>}
 
-                        <HoverMenu
-                            button={
-                                <IconButton
-                                    className={styles.testItemMore}
-                                    variant="light"
-                                    small
-                                    onClick={() => setActionMenu((prev) => !prev)}
-                                >
-                                    <DotsHorizontal />
-                                </IconButton>
-                            }
-                            value={actionMenu}
-                            setValue={setActionMenu}
-                        >
-                            <MenuLink
-                                danger
-                                onClick={() => {
-                                    setConfirmDelete(true);
-                                    setActionMenu(false);
-                                }}
+                        {remove && (
+                            <HoverMenu
+                                button={
+                                    <IconButton
+                                        className={styles.testItemMore}
+                                        variant="light"
+                                        small
+                                        onClick={() => setActionMenu((prev) => !prev)}
+                                    >
+                                        <DotsHorizontal />
+                                    </IconButton>
+                                }
+                                value={actionMenu}
+                                setValue={setActionMenu}
                             >
-                                <Delete />
-                                Удалить
-                            </MenuLink>
-                        </HoverMenu>
+                                {remove && (
+                                    <MenuLink
+                                        danger
+                                        onClick={() => {
+                                            setConfirmDelete(true);
+                                            setActionMenu(false);
+                                        }}
+                                    >
+                                        <Delete />
+                                        Удалить
+                                    </MenuLink>
+                                )}
+                            </HoverMenu>
+                        )}
                     </div>
 
                     <div className={styles.testItemInfo}>
@@ -138,12 +144,14 @@ const TestItem: React.FC<Props> = ({ data }) => {
                 {/* {loading && <LoaderForItem />} */}
             </div>
 
-            <ConfirmModal
-                value={confirmDelete}
-                setValue={setConfirmDelete}
-                text="Вы действительно хотите удалить тест?"
-                // callback={deleteCallback}
-            />
+            {remove && (
+                <ConfirmModal
+                    value={confirmDelete}
+                    setValue={setConfirmDelete}
+                    text="Вы действительно хотите удалить тест?"
+                    callback={removeCallback}
+                />
+            )}
         </>
     );
 };

@@ -13,6 +13,7 @@ import { useSubjects } from '@/features/subjects';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
+import { Text } from '@/shared/ui/Text';
 
 const PointsSubject = () => {
     const { subject } = useParams();
@@ -24,7 +25,7 @@ const PointsSubject = () => {
         enabled: !!subject,
     });
 
-    const { isMark, scoreConversion, subjectTasks } = data || {};
+    const { isMark, scoreConversion, subjectTasks, durationMinutes } = data || {};
 
     if (isLoading) {
         return <Preloader />;
@@ -43,6 +44,8 @@ const PointsSubject = () => {
                 <p className={cn(styles.pointsText, styles.pointsTextGreen)}>
                     Зелёным отмечена область, в которой ученик получает оценку «отлично»
                 </p>
+
+                <Text fontWeight={500}>Длительность экзамена: {durationMinutes} мин.</Text>
             </div>
 
             <div className={styles.pointContent}>

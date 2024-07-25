@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -16,7 +17,6 @@ import { Cross, Plus } from '@/shared/icons';
 import { useSubjects } from '@/features/subjects';
 import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
-import { Tooltip } from 'antd';
 
 const AdminSubjects = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -33,7 +33,7 @@ const AdminSubjects = () => {
         queryFn: (param) => getPagginationSubjects({ pageParam: param.pageParam }),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
+            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
 
             return nextPage;
         },

@@ -12,7 +12,7 @@ const UsefulPoints = () => {
     const { getSubjects } = useSubjects();
 
     const { data, error } = useQuery({
-        queryKey: ['profile_data'],
+        queryKey: ['subjects'],
         queryFn: getSubjects,
     });
 

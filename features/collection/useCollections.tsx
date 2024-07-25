@@ -26,7 +26,7 @@ const useCollections = () => {
     const { alertNotify } = useAlert();
 
     const getPaginationCollections = async ({ pageParam }: { pageParam: number }, search: string) => {
-        const limit = 6;
+        const limit = 9;
         const response = await request<Collections>({
             url: `/memory-ms/collection?offset=${pageParam * limit}&limit=${limit}&search=${search}`,
             isAuth: true,
@@ -42,7 +42,7 @@ const useCollections = () => {
     };
 
     const getLikedPaginationCollections = async ({ pageParam }: { pageParam: number }, search: string) => {
-        const limit = 6;
+        const limit = 9;
         const response = await request<Collections>({
             url: `/memory-ms/collection/liked?offset=${pageParam * limit}&limit=${limit}&search=${search}`,
             isAuth: true,
@@ -257,7 +257,7 @@ const useCollections = () => {
     const likeCollection = async (id: string | number, successCallback = () => {}) => {
         const response = await request({
             url: `/memory-ms/like/${id}`,
-            isAuth: true
+            isAuth: true,
         });
 
         if (catchRequestError(response)) {
@@ -265,7 +265,22 @@ const useCollections = () => {
         }
 
         successCallback();
-    }
+    };
+
+    const getPopularCollections = async () => {
+        const response = await request<{ collections: Collection[] }>({
+            url: `/memory-ms/collection/popular`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.collections;
+        }
+    };
 
     return {
         isLoading,
@@ -283,7 +298,8 @@ const useCollections = () => {
         updateSettings,
         getTestCollection,
         getMatchesCollection,
-        likeCollection
+        likeCollection,
+        getPopularCollections,
     };
 };
 

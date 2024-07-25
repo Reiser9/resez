@@ -89,6 +89,7 @@ const SubjectTaskItem: React.FC<Props> = ({ number, task, tasks, setTasks }) => 
                 onChange={(e) => updateCreatedTask(number, 'primaryScore', e.target.value)}
                 title="Первичный балл"
                 lengthLimit={2}
+                type='number'
             />
 
             <Checkbox

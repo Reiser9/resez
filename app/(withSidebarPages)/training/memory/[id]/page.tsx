@@ -20,6 +20,7 @@ import {
     Edit,
     Heart,
     Lock,
+    Photo,
     Settings,
     Share,
     TypesCards,
@@ -49,7 +50,8 @@ const MemoryCardInfo = () => {
     const [settingsModal, setSettingsModal] = React.useState(false);
 
     const { id } = useParams();
-    const { getCollectionById, deleteCollectionById, getCollectionSettings, updateSettings, likeCollection } = useCollections();
+    const { getCollectionById, deleteCollectionById, getCollectionSettings, updateSettings, likeCollection } =
+        useCollections();
     const userId = useAppSelector((state) => state.user.user?.id);
     const router = useRouter();
 
@@ -74,7 +76,8 @@ const MemoryCardInfo = () => {
         user,
         createdAt,
         likesCount,
-        isLiked
+        isLiked,
+        hasPictures,
     } = data || {};
     const { id: authorId, avatar, nickname } = user || {};
 
@@ -84,7 +87,7 @@ const MemoryCardInfo = () => {
 
     const likeCollectionHandler = () => {
         likeCollection(String(id), revalidateCollection);
-    }
+    };
 
     if (isLoading) {
         return <Preloader page />;
@@ -109,12 +112,26 @@ const MemoryCardInfo = () => {
                                     </div>
                                 </Tooltip>
                             )}
+
+                            {hasPictures && (
+                                <Tooltip title="Есть картинки">
+                                    <div className={base.tagElementIcon}>
+                                        <Photo />
+                                    </div>
+                                </Tooltip>
+                            )}
                         </div>
 
                         <div className={styles.memoCollectionActions}>
-                            <Button small variant="light" color="danger" className={cn(styles.memoCollectionActionLike, {
-                                [styles.active]: isLiked
-                            })} onClick={likeCollectionHandler}>
+                            <Button
+                                small
+                                variant="light"
+                                color="danger"
+                                className={cn(styles.memoCollectionActionLike, {
+                                    [styles.active]: isLiked,
+                                })}
+                                onClick={likeCollectionHandler}
+                            >
                                 <Heart />
 
                                 {likesCount}
@@ -153,7 +170,7 @@ const MemoryCardInfo = () => {
                                     </>
                                 )}
 
-                                <MenuLink
+                                {/* <MenuLink
                                     onClick={() => {
                                         setActionMenu(false);
                                     }}
@@ -171,7 +188,7 @@ const MemoryCardInfo = () => {
                                 >
                                     <Copy />
                                     Дублировать
-                                </MenuLink>
+                                </MenuLink> */}
                             </HoverMenu>
                         </div>
                     </div>
@@ -241,9 +258,7 @@ const MemoryCardInfo = () => {
                                         )}
 
                                         <Text variant="text2" style={{ marginTop: '0.4rem' }}>
-                                            <Dotdotdot clamp={6}>
-                                                {parse(data.questionText)}
-                                            </Dotdotdot>
+                                            <Dotdotdot clamp={6}>{parse(data.questionText)}</Dotdotdot>
                                         </Text>
                                     </TextPoint>
 
@@ -255,9 +270,7 @@ const MemoryCardInfo = () => {
                                         )}
 
                                         <Text variant="text2" style={{ marginTop: '0.4rem' }}>
-                                            <Dotdotdot clamp={6}>
-                                                {parse(data.answerText)}
-                                            </Dotdotdot>
+                                            <Dotdotdot clamp={6}>{parse(data.answerText)}</Dotdotdot>
                                         </Text>
                                     </TextPoint>
                                 </div>

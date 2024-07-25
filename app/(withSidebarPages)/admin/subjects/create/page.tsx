@@ -266,6 +266,7 @@ const SubjectsCreate = () => {
                             setValue={setExamMinutes}
                             title="Длительность экзамена в минутах"
                             lengthLimit={3}
+                            type="number"
                         />
 
                         <Checkbox checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)}>

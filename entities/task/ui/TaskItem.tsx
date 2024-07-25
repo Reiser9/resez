@@ -10,19 +10,19 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { ConfirmModal } from '@/shared/ui/Modal';
-import { LoaderForItem, Preloader } from '@/shared/ui/Preloader';
 import { Text } from '@/shared/ui/Text';
 import { IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { Archive, Check, Delete, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
+import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
 import { Tooltip } from 'antd';
 import { formatDate } from '@/shared/utils/formatDate';
 import { SubjectTask } from '../model';
 import { Badge } from '@/shared/ui/Badge';
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
-    loading: () => <Preloader small page />,
+    loading: () => <DynamicSkeleton />,
 });
 
 type Props = {
@@ -146,7 +146,7 @@ const TaskItem: React.FC<Props> = ({
                 </div>
 
                 {task && (
-                    <div className={base.format}>
+                    <div className={cn(base.format, styles.taskItemContent)}>
                         <CustomHtmlParser html={task} />
                     </div>
                 )}

@@ -26,6 +26,7 @@ import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import TestQuestionItem from '@/entities/test/ui/TestQuestionItem';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
+import useCopyText from '@/features/utils/useCopyText';
 
 const TestPage = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -37,7 +38,8 @@ const TestPage = () => {
 
     const { id } = useParams();
     const router = useRouter();
-    const { getTestById } = useTest();
+    const { getTestById, deleteTest } = useTest();
+    const { copyTextWithNotify } = useCopyText();
 
     const {
         data: test,
@@ -131,16 +133,26 @@ const TestPage = () => {
                                 <Text
                                     variant="h4"
                                     className={styles.testId}
-                                    // onClick={() => copyTextWithNotify(id, 'ID теста скопировано')}
+                                    onClick={() => copyTextWithNotify(String(id), 'ID теста скопировано')}
                                 >
                                     ID: {id}
                                 </Text>
 
                                 <div className={base.titleInner}>
                                     <div className={base.titleWrapper}>
-                                        <Badge text={nickname} image={avatar} />
+                                        {isOfficial ? (
+                                            <>
+                                                <Badge text="R" />
 
-                                        <Text>{nickname}</Text>
+                                                <Text>{'ResEz Team'}</Text>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Badge text={nickname} image={avatar} />
+
+                                                <Text>{nickname}</Text>
+                                            </>
+                                        )}
                                     </div>
 
                                     <div className={styles.testDateInner}>
@@ -199,7 +211,7 @@ const TestPage = () => {
                     value={confirmDelete}
                     setValue={setConfirmDelete}
                     text="Вы действительно хотите удалить тест?"
-                    // callback={() => removeTest(testId, () => router.replace('/tests'))}
+                    callback={() => deleteTest(String(testId), () => router.replace('/tests'))}
                 />
             )}
         </>
