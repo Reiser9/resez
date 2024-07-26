@@ -54,8 +54,8 @@ const TaskItem: React.FC<Props> = ({
         <>
             <div className={styles.taskItem}>
                 <div className={base.baseWrapperGap12}>
-                    <div className={`${base.titleInnerNowrap} ${base.aifs}`}>
-                        <Link href={`/tasks/${id}`} className={styles.taskItemWrapper}>
+                    <div className={cn(base.titleInnerNowrap, base.aifs)}>
+                        <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
                             <span className={base.titleWrapper}>
                                 <span className={base.circle32}>{number}</span>
 
