@@ -727,8 +727,12 @@ ol .cdx-list__item {
 }
 
 .blockImage img {
-    width: auto;
-    max-width: 500px;
+    width: 500px;
+    max-width: 100%;
+}
+
+.mathquill span{
+    white-space: normal!important;
 }
 
 /* Custom math tool */

@@ -5,15 +5,41 @@ import React from 'react';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 import { PagginationTasks, SubjectTaskById } from '@/entities/task';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useTask = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPagginationTasks = async ({ pageParam }: { pageParam: number }) => {
-        const limit = 9;
+    const getPagginationTasks = async ({
+        pageParam,
+        limit = 9,
+        subjectId = '',
+        subjectTaskId = '',
+        subThemeId = '',
+        userId = '',
+        isVerified = '',
+    }: {
+        pageParam: number;
+        limit?: number;
+        subjectId?: string;
+        subjectTaskId?: string;
+        subThemeId?: string;
+        userId?: string;
+        isVerified?: string;
+    }) => {
+        const queryString = buildQueryString({
+            offset: pageParam * limit,
+            limit,
+            subject_id: subjectId,
+            subject_task_id: subjectTaskId,
+            subTheme_id: subThemeId,
+            user_id: userId,
+            is_verified: isVerified,
+        });
+
         const response = await request<PagginationTasks>({
-            url: `/education-ms/admin/task?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/admin/task?${queryString}`,
             isAuth: true,
         });
 
@@ -125,7 +151,7 @@ const useTask = () => {
 
     const getTaskById = async (taskId: number | string, successCallback = () => {}) => {
         const response = await request<{ task: SubjectTaskById }>({
-            url: `/education-ms/admin/task/${taskId}`,
+            url: `/education-ms/task/${taskId}`,
             isAuth: true,
         });
 

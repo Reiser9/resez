@@ -62,7 +62,6 @@ const AdminTaskCreate = () => {
         data: subjectsData,
         isLoading: subjectsIsLoading,
         error: subjectsError,
-        refetch,
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects({ pageParam: 0, limit: 9999 }),
@@ -72,9 +71,8 @@ const AdminTaskCreate = () => {
         data: themesData,
         isLoading: themesIsLoading,
         error: themesError,
-        refetch: refetchThemes,
     } = useQuery({
-        queryKey: ['themes'],
+        queryKey: ['themes', subject],
         queryFn: () => getSubjectThemes(String(subject)),
         enabled: !!subject,
     });
@@ -83,9 +81,8 @@ const AdminTaskCreate = () => {
         data: subThemesData,
         isLoading: subThemesIsLoading,
         error: subThemesError,
-        refetch: refetchSubThemes,
     } = useQuery({
-        queryKey: ['subthemes'],
+        queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
         enabled: !!theme,
     });
@@ -138,30 +135,12 @@ const AdminTaskCreate = () => {
             return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
         }
 
-        const trimAnswer = answer.trim();
+        const trimAnswer = (answer || '').trim();
         let allAnswers = trimAnswer ? [...answers, trimAnswer] : [...answers];
 
         createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, allAnswers, source, () => {
             router.replace('/admin/tasks');
         });
-    };
-
-    const subjectDropdown = (open: boolean) => {
-        if (open) {
-            refetch();
-        }
-    };
-
-    const themeDropdown = (open: boolean) => {
-        if (open && subject) {
-            refetchThemes();
-        }
-    };
-
-    const subThemeDropdown = (open: boolean) => {
-        if (open && theme) {
-            refetchSubThemes();
-        }
     };
 
     const handleSearchSubjects = (value: string) => {
@@ -242,7 +221,6 @@ const AdminTaskCreate = () => {
                     title="Предмет"
                     notContentText="Предметов не найдено"
                     loading={subjectsIsLoading}
-                    onDropdownVisibleChange={subjectDropdown}
                     value={subject}
                     onChange={(value) => {
                         setSubject(value);
@@ -264,7 +242,6 @@ const AdminTaskCreate = () => {
                         title="Номер задания"
                         notContentText="Заданий не найдено"
                         loading={themesIsLoading}
-                        onDropdownVisibleChange={themeDropdown}
                         value={theme}
                         onChange={(value) => {
                             setTheme(value);
@@ -287,7 +264,6 @@ const AdminTaskCreate = () => {
                         title="Тема"
                         notContentText="Тем не найдено"
                         loading={subThemesIsLoading}
-                        onDropdownVisibleChange={subThemeDropdown}
                         value={subTheme}
                         onChange={(value) => {
                             setSubTheme(value);

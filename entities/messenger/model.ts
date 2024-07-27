@@ -24,6 +24,10 @@ export type ChatInfo = {
     isKicked: boolean;
     userId?: number;
     chat: string;
+    activity: {
+        isOnline: boolean;
+        lastSeen: Date;
+    };
     picture: string;
     membersCount?: number;
     inviteLink: string;
@@ -45,6 +49,10 @@ export type ChatUser = {
     nickname: string;
     avatar: string;
     isAdmin: boolean;
+    activity: {
+        isOnline: boolean;
+        lastSeen: Date;
+    };
 };
 
 export type ChatUsersPaggination = Paggination & {

@@ -145,11 +145,12 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                         </Tooltip>
                                     ))
                                 ) : (
-                                    <Tooltip title="Заблокировать">
-                                        <IconButton small variant="danger">
-                                            <Block />
-                                        </IconButton>
-                                    </Tooltip>
+                                    // <Tooltip title="Заблокировать">
+                                    //     <IconButton small variant="danger">
+                                    //         <Block />
+                                    //     </IconButton>
+                                    // </Tooltip>
+                                    <></>
                                 )}
                             </div>
                         </div>

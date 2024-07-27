@@ -29,6 +29,7 @@ const SubjectEdit = () => {
     const [name, setName] = React.useState('');
     const [slug, setSlug] = React.useState('');
     const [examMinutes, setExamMinutes] = React.useState('');
+    const [order, setOrder] = React.useState('0');
     const [isPublished, setIsPublished] = React.useState(false);
     const [isPoint, setIsPoint] = React.useState(false);
 
@@ -87,7 +88,7 @@ const SubjectEdit = () => {
             return alertNotify('Предупреждение', 'Хотя бы одно задание должно быть создано', 'warn');
         }
 
-        editSubject(String(id), name, slug, isPublished, updatedTasks, isPoint, examMinutes, () => {
+        editSubject(String(id), name, slug, isPublished, order, updatedTasks, isPoint, examMinutes, () => {
             setStep(1);
             alertNotify('Успешно', 'Информация о предмета сохранена', 'success');
             const primaryCountReduce = updatedTasks.reduce((accumulator, currentValue) => {
@@ -435,8 +436,10 @@ const SubjectEdit = () => {
                             value={examMinutes}
                             setValue={setExamMinutes}
                             title="Длительность экзамена в минутах"
-                            lengthLimit={3}
+                            lengthLimit={2}
                         />
+
+                        <Input value={order} setValue={setOrder} title="Позиция" lengthLimit={3} type="number" />
 
                         <Checkbox checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)}>
                             Опубликовать

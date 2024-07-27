@@ -38,6 +38,7 @@ import { useChat, useMessenger } from '@/features/messenger';
 import { Checkbox, Tooltip } from 'antd';
 import { copyText } from '@/shared/utils/copyText';
 import { File } from '@/shared/ui/File';
+import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 type Props = {
     selectedMessegesIDs: Message[];
@@ -54,7 +55,9 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
     setReplyMessage,
     dataLoading,
 }) => {
-    const { id, chat, isGroup, isLeft, isAdmin, picture, membersCount, userId, isKicked, inviteLink } = data || {};
+    const { id, chat, isGroup, isLeft, isAdmin, picture, membersCount, userId, isKicked, inviteLink, activity } =
+        data || {};
+    const { isOnline, lastSeen } = activity || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [infoModal, setInfoModal] = React.useState(false);
@@ -170,7 +173,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                 <ArrowLeft />
                             </IconButton>
 
-                            {!!selectedMessegesIDs.length && (
+                            {/* {!!selectedMessegesIDs.length && (
                                 <div className={styles.selectedMessages}>
                                     <p className={styles.selectedMessagesText}>
                                         Выделено: {selectedMessegesIDs.length}
@@ -178,39 +181,47 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
 
                                     <Cross onClick={() => setSelectedMessegesIDs([])} />
                                 </div>
-                            )}
+                            )} */}
                         </div>
 
-                        {!selectedMessegesIDs.length && (
-                            <div className={styles.messangerTopBarInfo}>
-                                <div className={styles.messangerTopBarWrapper}>
-                                    {isGroup ? (
-                                        <div className={styles.messangerTopBarName} onClick={() => setInfoModal(true)}>
-                                            {chat}
-                                        </div>
-                                    ) : (
-                                        <Link href={`/user/${chat}`} className={typography.h4}>
-                                            {chat}
-                                        </Link>
-                                    )}
-
-                                    {/* <Mute className={styles.messangerTopBarMute} /> */}
-                                </div>
-
-                                {!isLeft && !isKicked && (
-                                    <div className={styles.messangerTopBarOnline}>
-                                        <Text variant="text2" textClassName={styles.lastOnline}>
-                                            {isGroup ? `Участников: ${membersCount}` : 'был в сети 5 минут назад'}
-                                        </Text>
-
-                                        {!isGroup && <Mobile />}
+                        {/* {!selectedMessegesIDs.length && ( */}
+                        <div className={styles.messangerTopBarInfo}>
+                            <div className={styles.messangerTopBarWrapper}>
+                                {isGroup ? (
+                                    <div className={styles.messangerTopBarName} onClick={() => setInfoModal(true)}>
+                                        {chat}
                                     </div>
+                                ) : (
+                                    <Link href={`/user/${chat}`} className={typography.h4}>
+                                        {chat}
+                                    </Link>
                                 )}
+
+                                {/* <Mute className={styles.messangerTopBarMute} /> */}
                             </div>
-                        )}
+
+                            {!isLeft && !isKicked && (
+                                <div className={styles.messangerTopBarOnline}>
+                                    <Text variant="text2" textClassName={styles.lastOnline}>
+                                        {isGroup
+                                            ? `Участников: ${membersCount}`
+                                            : `${
+                                                  isOnline
+                                                      ? 'Онлайн'
+                                                      : lastSeen
+                                                      ? `Был(а) в сети ${getFormattedDate(lastSeen)}`
+                                                      : 'Был(а) в сети очень давно'
+                                              }`}
+                                    </Text>
+
+                                    {/* {!isGroup && <Mobile />} */}
+                                </div>
+                            )}
+                        </div>
+                        {/* )} */}
 
                         <div className={base.titleWrapper}>
-                            {!!selectedMessegesIDs.length && (
+                            {/* {!!selectedMessegesIDs.length && (
                                 <>
                                     {selectedMessegesIDs.length === 1 && (
                                         <Button
@@ -233,7 +244,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                         <Delete />
                                     </IconButton>
                                 </>
-                            )}
+                            )} */}
 
                             <HoverMenu
                                 button={
@@ -287,10 +298,10 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                             Профиль
                                         </MenuLink>
 
-                                        <MenuLink danger>
+                                        {/* <MenuLink danger>
                                             <Block />
                                             Заблокировать
-                                        </MenuLink>
+                                        </MenuLink> */}
                                     </>
                                 )}
 
@@ -370,7 +381,20 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                             <div className={styles.chatUserItemWrapper}>
                                                 <Badge isUserAvatar text={data.nickname} image={data.avatar} />
 
-                                                <Text>{data.nickname}</Text>
+                                                <div className={base.baseWrapperGap4}>
+                                                    <Text>{data.nickname}</Text>
+
+                                                    <Text variant="text2" fontWeight={500}>
+                                                        {data.activity.isOnline
+                                                            ? 'Онлайн'
+                                                            : data.activity.lastSeen
+                                                            ? `Был(а) в сети ${getFormattedDate(
+                                                                  data.activity.lastSeen,
+                                                                  'short',
+                                                              )}`
+                                                            : 'Был(а) в сети очень давно'}
+                                                    </Text>
+                                                </div>
                                             </div>
 
                                             {data.isAdmin && (

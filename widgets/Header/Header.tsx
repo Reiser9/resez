@@ -157,14 +157,14 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         )}
                                     </Link>
 
-                                    <Link
+                                    {/* <Link
                                         href="/profile/achievements"
                                         className={styles.headerProfileMenuLink}
                                         onClick={closeProfileMenu}
                                     >
                                         <Trophy />
                                         Достижения
-                                    </Link>
+                                    </Link> */}
                                 </>
                             ) : (
                                 <Link href="/login" className={styles.headerProfileMenuLink} onClick={closeProfileMenu}>

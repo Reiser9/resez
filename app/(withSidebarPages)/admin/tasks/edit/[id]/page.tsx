@@ -74,9 +74,8 @@ const AdminTaskEdit = () => {
         data: themesData,
         isLoading: themesIsLoading,
         error: themesError,
-        refetch: refetchThemes,
     } = useQuery({
-        queryKey: ['themes'],
+        queryKey: ['themes', subjectId],
         queryFn: () => getSubjectThemes(String(subjectId)),
         enabled: !!subjectId,
     });
@@ -85,9 +84,8 @@ const AdminTaskEdit = () => {
         data: subThemesData,
         isLoading: subThemesIsLoading,
         error: subThemesError,
-        refetch: refetchSubThemes,
     } = useQuery({
-        queryKey: ['subthemes'],
+        queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
         enabled: !!theme,
     });
@@ -140,7 +138,7 @@ const AdminTaskEdit = () => {
             return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
         }
 
-        const trimAnswer = answer.trim();
+        const trimAnswer = (answer || '').trim();
         let allAnswers = trimAnswer ? [...answers, trimAnswer] : [...answers];
 
         editTask(
@@ -157,18 +155,6 @@ const AdminTaskEdit = () => {
                 router.replace('/admin/tasks');
             },
         );
-    };
-
-    const themeDropdown = (open: boolean) => {
-        if (open && subject) {
-            refetchThemes();
-        }
-    };
-
-    const subThemeDropdown = (open: boolean) => {
-        if (open && theme) {
-            refetchSubThemes();
-        }
     };
 
     const handleSearchThemes = (value: string) => {
@@ -273,7 +259,6 @@ const AdminTaskEdit = () => {
                             setThemesFilter(themes);
                         }}
                         loading={themesIsLoading}
-                        onDropdownVisibleChange={themeDropdown}
                         options={themesFilter?.map((data) => {
                             return {
                                 label: `${data.number}. ${data.theme}`,
@@ -296,7 +281,6 @@ const AdminTaskEdit = () => {
                             setSubThemesFilter(subThemes);
                         }}
                         loading={subThemesIsLoading}
-                        onDropdownVisibleChange={subThemeDropdown}
                         options={subThemesFilter?.map((data) => {
                             return {
                                 label: data.subTheme,

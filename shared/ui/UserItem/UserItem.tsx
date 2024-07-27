@@ -9,8 +9,6 @@ import styles from './index.module.scss';
 
 import { CONFIG } from '../../consts/CONFIG';
 
-import { formatDate } from '../../utils/formatDate';
-
 import useCopyText from '@/features/utils/useCopyText';
 import { UserAdmin } from '@/entities/user/model';
 import { Badge } from '../Badge';
@@ -21,6 +19,7 @@ import { LoaderForItem } from '../Preloader';
 import { Text } from '../Text';
 import { ConfirmModal, Modal } from '../Modal';
 import { Input } from '../Input';
+import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 type Props = {
     data?: UserAdmin;
@@ -128,11 +127,11 @@ const UserItem: React.FC<Props> = ({
                     {!isOnline && (
                         <TextPoint
                             title="Был(а) в сети"
-                            text={lastSeen ? formatDate(lastSeen) : 'Неизвестно'}
+                            text={lastSeen ? getFormattedDate(lastSeen) : 'Неизвестно'}
                         />
                     )}
                     {registrationDate && (
-                        <TextPoint title="Дата регистрации" text={formatDate(registrationDate, 'DD.MM.YYYY в HH:mm')} />
+                        <TextPoint title="Дата регистрации" text={getFormattedDate(registrationDate)} />
                     )}
 
                     {!!roles?.length && (

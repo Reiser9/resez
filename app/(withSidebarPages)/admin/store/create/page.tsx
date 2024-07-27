@@ -326,6 +326,7 @@ const AdminStoreCreate = () => {
                                     id="productImage"
                                     setImgPreview={setProductImagePreview}
                                     setFile={setProductImage}
+                                    accept='image/png, image/jpeg, image/svg+xml, image/gif'
                                 />
 
                                 <label

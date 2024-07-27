@@ -129,6 +129,7 @@ export const convertHtmlToEditorBlocks = (html: string) => {
             block.data = {
                 items: [],
             };
+            block.data.style = node.nodeName === 'UL' ? 'unordered' : 'ordered';
 
             node.childNodes.forEach((itemNode) => {
                 if (!(itemNode instanceof Element)) return;

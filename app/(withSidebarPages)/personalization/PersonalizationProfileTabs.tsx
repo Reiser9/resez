@@ -19,10 +19,10 @@ const personalizationTabs: PersonalizationTab[] = [
         name: 'Украшения аватарок',
         link: '/personalization/avatar',
     },
-    {
-        name: 'Баннеры',
-        link: '/personalization/banner',
-    },
+    // {
+    //     name: 'Баннеры',
+    //     link: '/personalization/banner',
+    // },
 ];
 
 const PersonalizationProfileTabs = () => {

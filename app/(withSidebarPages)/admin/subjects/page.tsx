@@ -33,7 +33,7 @@ const AdminSubjects = () => {
         queryFn: (param) => getPagginationSubjects({ pageParam: param.pageParam }),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
 
             return nextPage;
         },

@@ -41,9 +41,9 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false }) => {
                         <Text variant="h4">Задание</Text>
                     </div>
 
-                    <IconButton small variant="warn" onClick={() => setWarn(true)}>
+                    {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
                         <Warn />
-                    </IconButton>
+                    </IconButton> */}
                 </div>
 
                 {task && (
@@ -63,7 +63,7 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false }) => {
                 </Spoiler>
             </div>
 
-            <Modal value={warn} setValue={setWarn} title="Жалоба на задание" size="small">
+            {/* <Modal value={warn} setValue={setWarn} title="Жалоба на задание" size="small">
                 <Input
                     value={warnText}
                     setValue={setWarnText}
@@ -74,7 +74,7 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false }) => {
                 />
 
                 <Button>Отправить</Button>
-            </Modal>
+            </Modal> */}
         </>
     );
 };

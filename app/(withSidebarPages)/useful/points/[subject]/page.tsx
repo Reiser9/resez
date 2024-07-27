@@ -45,7 +45,11 @@ const PointsSubject = () => {
                     Зелёным отмечена область, в которой ученик получает оценку «отлично»
                 </p>
 
-                <Text fontWeight={500}>Длительность экзамена: {durationMinutes} мин.</Text>
+                {durationMinutes && (
+                    <Text fontWeight={500}>
+                        Длительность экзамена: {Math.floor(durationMinutes / 60)} ч. {durationMinutes % 60} мин.
+                    </Text>
+                )}
             </div>
 
             <div className={styles.pointContent}>

@@ -85,7 +85,7 @@ const useSocket = () => {
 
             if (
                 currentUserIdRef.current &&
-                currentUserIdRef.current !== message.sender.id &&
+                currentUserIdRef.current !== message?.sender?.id &&
                 Number(currentDialogIdRef.current) != message.chatId &&
                 message.type !== 'Системное'
             ) {

@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </SidebarLink>
                         <SidebarLink href="/profile/data">Личные данные</SidebarLink>
                         <SidebarLink href="/profile/safety">Безопасность</SidebarLink>
-                        <SidebarLink href="/profile/achievements">Достижения</SidebarLink>
+                        {/* <SidebarLink href="/profile/achievements">Достижения</SidebarLink> */}
                         <SidebarLink href="/profile/settings">Настройки</SidebarLink>
                     </InnerPageSidebar>
                 </div>

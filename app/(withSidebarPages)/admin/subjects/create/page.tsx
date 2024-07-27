@@ -27,6 +27,7 @@ const SubjectsCreate = () => {
     const [name, setName] = React.useState('');
     const [slug, setSlug] = React.useState('');
     const [examMinutes, setExamMinutes] = React.useState('');
+    const [order, setOrder] = React.useState('0');
     const [isPublished, setIsPublished] = React.useState(false);
     const [isPoint, setIsPoint] = React.useState(false);
 
@@ -76,7 +77,7 @@ const SubjectsCreate = () => {
             return alertNotify('Предупреждение', 'Хотя бы одно задание должно быть создано', 'warn');
         }
 
-        const id = await createSubject(name, slug, isPublished, updatedTasks, isPoint, examMinutes, () => {
+        const id = await createSubject(name, slug, isPublished, order, updatedTasks, isPoint, examMinutes, () => {
             setStep(1);
         });
 
@@ -268,6 +269,8 @@ const SubjectsCreate = () => {
                             lengthLimit={3}
                             type="number"
                         />
+
+                        <Input value={order} setValue={setOrder} title="Позиция" lengthLimit={3} type="number" />
 
                         <Checkbox checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)}>
                             Опубликовать

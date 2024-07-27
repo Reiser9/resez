@@ -31,7 +31,7 @@ const InnerSidebar: React.FC<Props> = ({
 
     const toggleSidebar = (value: boolean): void => {
         if (setValue) {
-            return setValue(value);
+            setValue(value);
         }
 
         setSidebarActive(value);
@@ -39,7 +39,7 @@ const InnerSidebar: React.FC<Props> = ({
 
     React.useEffect(() => {
         if (setValue) {
-            return setValue(false);
+            setValue(false);
         }
 
         setSidebarActive(false);
