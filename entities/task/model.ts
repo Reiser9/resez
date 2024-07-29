@@ -36,3 +36,15 @@ export type SubjectTaskById = SubjectTask & {
 export type PagginationTasks = Paggination & {
     tasks: SubjectTask[];
 };
+
+export type PagginationTasksById = Paggination & {
+    tasks: SubjectTaskById[];
+};
+
+export type SubThemeInfo = {
+    subject: string;
+    number: number;
+    theme: string;
+    id: number;
+    subTheme: string;
+};

@@ -4,7 +4,7 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTasks, SubjectTaskById } from '@/entities/task';
+import { PagginationTasks, PagginationTasksById, SubjectTaskById, SubThemeInfo } from '@/entities/task';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useTask = () => {
@@ -166,6 +166,40 @@ const useTask = () => {
         }
     };
 
+    const getTasksBySubThemeId = async (subthemeId: number | string, successCallback = () => {}) => {
+        const response = await request<PagginationTasksById>({
+            url: `/education-ms/sub-theme/${subthemeId}/task`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getSubThemeInfo = async (subthemeId: number | string, successCallback = () => {}) => {
+        const response = await request<{ subTheme: SubThemeInfo }>({
+            url: `/education-ms/sub-theme/${subthemeId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data.subTheme;
+        }
+    };
+
     const archiveTask = async (taskId: number, successCallback = () => {}) => {
         const response = await request({
             url: `/education-ms/admin/task/${taskId}/archive`,
@@ -191,6 +225,8 @@ const useTask = () => {
         editTask,
         toggleVerify,
         getTaskById,
+        getTasksBySubThemeId,
+        getSubThemeInfo,
         archiveTask,
     };
 };

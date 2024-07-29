@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { useQuery } from '@tanstack/react-query';
 import { useTask } from '@/features/task';
 import { Preloader } from '@/shared/ui/Preloader';
 import { TextPoint } from '@/shared/ui/TextPoint';

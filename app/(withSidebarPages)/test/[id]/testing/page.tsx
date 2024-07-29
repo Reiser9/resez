@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { LegacyRef } from 'react';
 import cn from 'classnames';
 import { Slider } from 'antd';
 import { useParams } from 'next/navigation';
@@ -19,6 +19,10 @@ import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { Text } from '@/shared/ui/Text';
 import { Pause, Play } from '@/shared/icons';
 import { InfoSidebar } from '@/shared/ui/InfoSidebar';
+import { useQuery } from '@tanstack/react-query';
+import { useTest } from '@/features/test';
+import TaskTestItem from '@/entities/task/ui/TaskTestItem';
+import { formatMinutesToDuration } from '@/shared/utils/formatMinutes';
 
 const TestingTestById = () => {
     const { id } = useParams();
@@ -31,9 +35,25 @@ const TestingTestById = () => {
     const [tasksDetailed, setTasksDetailed] = React.useState([]);
     const [tasksAnswer, setTasksAnswer] = React.useState([]);
 
+    const { getTestById } = useTest();
+
+    const {
+        data: test,
+        isLoading: testIsLoading,
+        error,
+    } = useQuery({
+        queryKey: ['test_by_id', id],
+        queryFn: () => getTestById(String(id)),
+        enabled: !!id,
+    });
+
+    const { subject, tasks, durationMinutes } = test || {};
+
     const checkResult = async () => {};
 
     const checkDetailedTasksHandler = async () => {};
+
+    const restartTest = () => {};
 
     return (
         <>
@@ -42,16 +62,15 @@ const TestingTestById = () => {
                     <div className={pws.contentFull}>
                         <div className={styles.taskInner}>
                             <div className={base.taskContent}>
-                                {/* {step === 1 &&
+                                {step === 1 &&
                                     tasksAnswer?.map((data, id) => (
                                         <TaskTestItem
                                             key={id}
-                                            test
                                             data={data}
-                                            value={data.answer}
-                                            setValue={setAnswerHandler}
+                                            // value={data.answer}
+                                            // setValue={setAnswerHandler}
                                         />
-                                    ))} */}
+                                    ))}
 
                                 {step === 2 && (
                                     <div className={base.baseWrapperGap20}>
@@ -201,23 +220,25 @@ const TestingTestById = () => {
                                         </TextPoint>
 
                                         <TextPoint title="Осталось:" className={styles.testInfoItem}>
-                                            {/* <Text variant="h4">{remainingTime}</Text> */}
+                                            <Text variant="h4">00:00</Text>
                                         </TextPoint>
                                     </div>
                                 )}
 
-                                <TextPoint title="Предмет:">{/* <Text variant="h4">{subject}</Text> */}</TextPoint>
+                                <TextPoint title="Предмет:">
+                                    <Text variant="h4">{subject}</Text>
+                                </TextPoint>
 
                                 <TextPoint title="Экзамен длится:">
-                                    {/* <Text variant="h4">{formatMinutesToDuration(durationMinutes)}</Text> */}
+                                    <Text variant="h4">{formatMinutesToDuration(durationMinutes)}</Text>
                                 </TextPoint>
 
                                 {step === 1 && (
                                     <div className={styles.testInfoButtons}>
                                         <button className={styles.testInfoButton}>
-                                            {/* {!isPaused ? <Pause /> : <Play />} */}
+                                            {/* {!isPaused ? <Pause /> : <Play />}
 
-                                            {/* {!isPaused ? 'Пауза' : 'Продолжить'} */}
+                                            {!isPaused ? 'Пауза' : 'Продолжить'} */}
                                         </button>
 
                                         <button
@@ -238,14 +259,14 @@ const TestingTestById = () => {
                 </div>
             </ContentWrapper>
 
-            {/* <ConfirmModal
+            <ConfirmModal
                 value={confirmRestart}
                 setValue={setConfirmRestart}
                 callback={restartTest}
                 text="Вы действительно хотите начать тест заново? Прогресс теста не будет сохранен"
                 rejectText="Продолжить решать"
                 confirmText="Начать заново"
-            /> */}
+            />
         </>
     );
 };

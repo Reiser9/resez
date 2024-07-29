@@ -21,6 +21,7 @@ import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useAvatar } from '@/features/store';
 import PositionController from '../PositionController';
+import useAlert from '@/shared/hooks/useAlert';
 
 type ProductTypes = 'Украшение аватарки' | 'Баннер' | 'Тема' | 'Эффект чата' | 'Статус' | 'Наклейка';
 type ProductConditions = 'free' | 'event' | 'achievement' | 'buy' | 'subscription';
@@ -31,26 +32,26 @@ const productTypes: { label: string; value: ProductTypes }[] = [
         label: 'Украшение аватарки',
         value: 'Украшение аватарки',
     },
-    {
-        label: 'Баннер',
-        value: 'Баннер',
-    },
-    {
-        label: 'Тема',
-        value: 'Тема',
-    },
-    {
-        label: 'Эффект чата',
-        value: 'Эффект чата',
-    },
-    {
-        label: 'Статус',
-        value: 'Статус',
-    },
-    {
-        label: 'Наклейка',
-        value: 'Наклейка',
-    },
+    // {
+    //     label: 'Баннер',
+    //     value: 'Баннер',
+    // },
+    // {
+    //     label: 'Тема',
+    //     value: 'Тема',
+    // },
+    // {
+    //     label: 'Эффект чата',
+    //     value: 'Эффект чата',
+    // },
+    // {
+    //     label: 'Статус',
+    //     value: 'Статус',
+    // },
+    // {
+    //     label: 'Наклейка',
+    //     value: 'Наклейка',
+    // },
 ];
 
 const productConditions: { label: string; value: ProductConditions }[] = [
@@ -58,22 +59,22 @@ const productConditions: { label: string; value: ProductConditions }[] = [
         label: 'Бесплатно',
         value: 'free',
     },
-    {
-        label: 'Сезонно/Временно',
-        value: 'event',
-    },
-    {
-        label: 'За достижение',
-        value: 'achievement',
-    },
+    // {
+    //     label: 'Сезонно/Временно',
+    //     value: 'event',
+    // },
+    // {
+    //     label: 'За достижение',
+    //     value: 'achievement',
+    // },
     {
         label: 'За валюту',
         value: 'buy',
     },
-    {
-        label: 'За подписку',
-        value: 'subscription',
-    },
+    // {
+    //     label: 'За подписку',
+    //     value: 'subscription',
+    // },
 ];
 
 const minWidth = 40;
@@ -109,6 +110,7 @@ const AdminStoreCreate = () => {
     const imageRef = React.useRef<HTMLImageElement>(null);
 
     const { createAvatar } = useAvatar();
+    const { alertNotify } = useAlert();
     const router = useRouter();
 
     const handleResize = (e: MouseEvent | TouchEvent, direction: any, ref: HTMLElement, delta: any, position: any) => {
@@ -138,6 +140,13 @@ const AdminStoreCreate = () => {
     // Сделать разделение по функциям
 
     const createAvatarHandler = () => {
+        if (!name) {
+            return alertNotify('Предупреждение', 'Название товара должно быть заполнено', 'warn');
+        }
+        if (!type) {
+            return alertNotify('Предупреждение', 'Тип товара должен быть заполнен', 'warn');
+        }
+
         const formData = new FormData();
 
         formData.append('title', name);
@@ -326,7 +335,7 @@ const AdminStoreCreate = () => {
                                     id="productImage"
                                     setImgPreview={setProductImagePreview}
                                     setFile={setProductImage}
-                                    accept='image/png, image/jpeg, image/svg+xml, image/gif'
+                                    accept="image/png, image/jpeg, image/svg+xml, image/gif"
                                 />
 
                                 <label

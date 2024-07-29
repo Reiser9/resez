@@ -9,6 +9,7 @@ export type Test = {
     updatedAt: Date;
     subject: string;
     tasksCount: number;
+    durationMinutes: number;
 };
 
 export type PagginationTests = Paggination & {

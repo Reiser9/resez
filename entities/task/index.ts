@@ -1,1 +1,1 @@
-export type { PagginationTasks, SubjectTask, SubjectTaskById } from './model';
+export type { PagginationTasks, SubjectTask, SubjectTaskById, PagginationTasksById, SubThemeInfo } from './model';

@@ -14,6 +14,7 @@ import { Modal } from '@/shared/ui/Modal';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { SubjectTaskById } from '../model';
 import { Warn } from '@/shared/icons';
+import Link from 'next/link';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -23,10 +24,11 @@ const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/Cust
 type Props = {
     data: SubjectTaskById;
     showAnswer?: boolean;
+    taskWithLink?: boolean;
 };
 
-const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false }) => {
-    const { task, solution, answers, subjectTask } = data || {};
+const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink = false }) => {
+    const { task, solution, answers, subjectTask, id } = data || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
@@ -38,7 +40,13 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false }) => {
                     <div className={base.titleWrapper}>
                         <div className={base.circle32}>{subjectTask.number}</div>
 
-                        <Text variant="h4">Задание</Text>
+                        {taskWithLink ? (
+                            <Link href={`/task/${id}`}>
+                                <Text variant="h4">Задание</Text>
+                            </Link>
+                        ) : (
+                            <Text variant="h4">Задание</Text>
+                        )}
                     </div>
 
                     {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
@@ -59,7 +67,7 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false }) => {
                         </div>
                     )}
 
-                    {!!answers.length && <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>}
+                    {!!answers?.length && <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>}
                 </Spoiler>
             </div>
 

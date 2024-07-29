@@ -3,7 +3,6 @@
 import React from 'react';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
-import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Text } from '@/shared/ui/Text';
@@ -62,7 +61,7 @@ const AdminUsers = () => {
             ) : error ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data?.pages[0]?.totalCount === 0 ? (
-                <NotContent text="Уведомлений не найдено" />
+                <NotContent text="Пользователей не найдено" />
             ) : (
                 <div className={base.contentItems}>
                     {data?.pages.map((user) =>
