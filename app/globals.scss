@@ -720,14 +720,14 @@ ol .cdx-list__item {
 }
 
 .blockImage {
-    width: 500px;
+    width: 100%;
     display: flex;
     justify-content: center;
     margin: 0.6rem 0;
 }
 
 .blockImage img {
-    width: auto;
+    width: 500px;
     max-width: 100%;
 }
 

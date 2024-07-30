@@ -12,6 +12,7 @@ import { EventProvider, ThemeProvider, SidebarProvider, ScrollProvider } from '@
 import { NotifiesWrapper } from '@/shared/wrappers/NotifiesWrapper';
 import { InitialWrapper } from '@/shared/wrappers/InitialWrapper';
 import { CONFIG } from '@/shared/consts/CONFIG';
+import ErrorBoundary from '@/shared/wrappers/ErrorBoundary';
 
 const nunito = Nunito({
     subsets: ['cyrillic'],
@@ -28,41 +29,46 @@ export const viewport: Viewport = {
     initialScale: 1,
     width: 'device-width',
     maximumScale: 1,
-    userScalable: false
+    userScalable: false,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ru">
             <body className={nunito.variable}>
-                <ReduxProvider>
-                    <ReactQueryProvider>
-                        <ThemeProvider>
-                            <EventProvider>
-                                <SidebarProvider>
-                                    <ScrollProvider>
-                                        <NotifiesWrapper>
-                                            <SkeletonTheme baseColor="var(--input)" highlightColor="var(--inputDarken)">
-                                                <ConfigProvider
-                                                    locale={ruRU}
-                                                    theme={{
-                                                        token: {
-                                                            // Поменять #007cee на динамический цвет
-                                                            colorPrimary: CONFIG.BASE_COLOR,
-                                                            fontFamily: 'var(--font-nunito)',
-                                                        },
-                                                    }}
+                {/* <ErrorBoundary> */}
+                    <ReduxProvider>
+                        <ReactQueryProvider>
+                            <ThemeProvider>
+                                <EventProvider>
+                                    <SidebarProvider>
+                                        <ScrollProvider>
+                                            <NotifiesWrapper>
+                                                <SkeletonTheme
+                                                    baseColor="var(--input)"
+                                                    highlightColor="var(--inputDarken)"
                                                 >
-                                                    <InitialWrapper>{children}</InitialWrapper>
-                                                </ConfigProvider>
-                                            </SkeletonTheme>
-                                        </NotifiesWrapper>
-                                    </ScrollProvider>
-                                </SidebarProvider>
-                            </EventProvider>
-                        </ThemeProvider>
-                    </ReactQueryProvider>
-                </ReduxProvider>
+                                                    <ConfigProvider
+                                                        locale={ruRU}
+                                                        theme={{
+                                                            token: {
+                                                                // Поменять #007cee на динамический цвет
+                                                                colorPrimary: CONFIG.BASE_COLOR,
+                                                                fontFamily: 'var(--font-nunito)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        <InitialWrapper>{children}</InitialWrapper>
+                                                    </ConfigProvider>
+                                                </SkeletonTheme>
+                                            </NotifiesWrapper>
+                                        </ScrollProvider>
+                                    </SidebarProvider>
+                                </EventProvider>
+                            </ThemeProvider>
+                        </ReactQueryProvider>
+                    </ReduxProvider>
+                {/* </ErrorBoundary> */}
             </body>
         </html>
     );

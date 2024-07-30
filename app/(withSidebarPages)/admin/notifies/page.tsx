@@ -179,7 +179,7 @@ const AdminNotifies = () => {
                     Отложенная отправка
                 </Checkbox>
 
-                {delayedSend && (
+                {/* {delayedSend && (
                     <div className={styles.notifiesDelayInner}>
                         <DatePicker
                             disablePrevDate
@@ -198,7 +198,7 @@ const AdminNotifies = () => {
                             suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
                         />
                     </div>
-                )}
+                )} */}
 
                 {/* <Select
                     placeholder="Тип уведомления"

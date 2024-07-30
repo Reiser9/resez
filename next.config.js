@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
-const { hostname } = require('os');
 const path = require('path');
-const { protocol } = require('socket.io-client');
 
 const nextConfig = {
     sassOptions: {
@@ -17,7 +15,7 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'resez.ru',
+                hostname: '**',
             },
         ],
     },
