@@ -4,7 +4,8 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTests, Test, TestById } from '@/entities/test';
+import { PagginationTests, Test, TestById, TestResult } from '@/entities/test';
+import { SubjectTaskById } from '@/entities/task';
 
 const useTest = () => {
     const { request, catchRequestError, errorController } = useRequest();
@@ -111,12 +112,56 @@ const useTest = () => {
         }
     };
 
+    const getDetailedTasksByTestId = async (id: number | string) => {
+        const response = await request<{ tasks: SubjectTaskById[] }>({
+            url: `/education-ms/test/${id}/task/detailed`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.tasks;
+        }
+    };
+
+    const checkResultTestById = async (
+        id: number | string,
+        simpleTasks: { id: number | string; answer: string }[],
+        detailedTasks: { id: number | string; primaryScore: string | number }[],
+        successCallback = () => {},
+    ) => {
+        const response = await request<TestResult>({
+            url: `/education-ms/test/${id}/submit`,
+            isAuth: true,
+            method: 'POST',
+            data: {
+                simpleTasks,
+                detailedTasks,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         getPagginationTests,
         getPagginationOfficialTests,
         createTest,
         getTestById,
         deleteTest,
+        getDetailedTasksByTestId,
+        checkResultTestById,
     };
 };
 

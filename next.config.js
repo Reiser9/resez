@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
+const { hostname } = require('os');
 const path = require('path');
+const { protocol } = require('socket.io-client');
 
 const nextConfig = {
     sassOptions: {
@@ -7,17 +9,8 @@ const nextConfig = {
     },
     reactStrictMode: false,
     images: {
-        remotePatterns: [
-            {
-                protocol: 'http',
-                hostname: 'localhost',
-                port: '8080',
-            },
-            {
-                protocol: 'https',
-                hostname: '**',
-            },
-        ],
+        domains: ['resez.ru'],
+        unoptimized: true,
     },
 };
 

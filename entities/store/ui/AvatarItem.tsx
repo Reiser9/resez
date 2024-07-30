@@ -12,7 +12,7 @@ import { ProductDTO } from '../model';
 import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Archive, Check, Clapperboard, DotsHorizontal, Edit, Notebook, Photo, Store } from '@/shared/icons';
+import { Archive, Check, Clapperboard, DotsHorizontal, Edit, Notebook, Photo, ResCoin, Store } from '@/shared/icons';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 
@@ -25,7 +25,7 @@ type Props = {
 };
 
 const AvatarItem: React.FC<Props> = ({ data, edit, publish, remove, togglePublish }) => {
-    const { title, contentType, options, contentUrl, isPublished } = data || {};
+    const { title, contentType, options, contentUrl, isPublished, price } = data || {};
     const { width, x, y } = options || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -149,9 +149,15 @@ const AvatarItem: React.FC<Props> = ({ data, edit, publish, remove, togglePublis
             </Text>
 
             <div className={styles.avatarItemBottom}>
-                <Text variant="text2" fontWeight={600}>
-                    Бесплатно
-                </Text>
+                {price ? (
+                    <div className={styles.avatarItemPrice}>
+                        {price}
+
+                        <ResCoin />
+                    </div>
+                ) : (
+                    <Text fontWeight={600}>Бесплатно</Text>
+                )}
 
                 <HoverMenu
                     button={

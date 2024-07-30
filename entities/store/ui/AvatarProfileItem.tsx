@@ -12,7 +12,7 @@ import { ProductDTO } from '../model';
 import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Added, Check, Clapperboard, DotsHorizontal, Photo } from '@/shared/icons';
+import { Added, Check, Clapperboard, DotsHorizontal, Photo, ResCoin } from '@/shared/icons';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 
@@ -22,7 +22,7 @@ type Props = {
 };
 
 const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
-    const { title, contentType, options, contentUrl, isActive } = data || {};
+    const { title, contentType, options, contentUrl, isActive, price } = data || {};
     const { width, x, y } = options || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -78,9 +78,11 @@ const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
     };
 
     return (
-        <div className={cn(base.item3, styles.avatarItem, {
-            [styles.active]: isActive,
-        })}>
+        <div
+            className={cn(base.item3, styles.avatarItem, {
+                [styles.active]: isActive,
+            })}
+        >
             <div className={styles.avatarItemTags}>
                 {contentType === 'animation' ? (
                     <Tooltip title="Анимация">
@@ -134,9 +136,15 @@ const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
             </Text>
 
             <div className={styles.avatarItemBottom}>
-                <Text variant="text2" fontWeight={600}>
-                    Бесплатно
-                </Text>
+                {price ? (
+                    <div className={styles.avatarItemPrice}>
+                        {price}
+
+                        <ResCoin />
+                    </div>
+                ) : (
+                    <Text fontWeight={600}>Бесплатно</Text>
+                )}
 
                 <HoverMenu
                     button={

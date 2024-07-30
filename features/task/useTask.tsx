@@ -167,8 +167,9 @@ const useTask = () => {
     };
 
     const getTasksBySubThemeId = async (subthemeId: number | string, successCallback = () => {}) => {
+        const limit = 10;
         const response = await request<PagginationTasksById>({
-            url: `/education-ms/sub-theme/${subthemeId}/task`,
+            url: `/education-ms/sub-theme/${subthemeId}/task?limit=${limit}`,
             isAuth: true,
         });
 

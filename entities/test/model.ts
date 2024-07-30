@@ -32,4 +32,31 @@ export type TestById = Test & {
         avatar: string;
     };
     tasks: TestTask[];
+    primaryScore: number;
+};
+
+export type SimpleTaskResult = {
+    id: number;
+    number: number;
+    answer: string;
+    isCorrect: boolean;
+    correctAnswers: string[];
+};
+
+export type DetailedTaskResult = {
+    id: number;
+    number: number;
+    primaryScore: number;
+    maxPrimaryScore: number;
+};
+
+export type TestResult = {
+    isExam: boolean;
+    isMark: boolean;
+    simpleTasks: SimpleTaskResult[];
+    detailedTasks: DetailedTaskResult[];
+    primaryScore: number;
+    maxPrimaryScore: number;
+    grade: number;
+    secondaryScore: number;
 };

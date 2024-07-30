@@ -84,3 +84,15 @@
     flex-shrink: 0;
     color: var(--success);
 }
+
+.avatarItemPrice{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.avatarItemPrice svg{
+    width: 18px;
+    flex-shrink: 0;
+}

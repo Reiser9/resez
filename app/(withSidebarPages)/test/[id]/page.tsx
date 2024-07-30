@@ -135,7 +135,7 @@ const TestPage = () => {
                                     className={styles.testId}
                                     onClick={() => copyTextWithNotify(String(id), 'ID теста скопировано')}
                                 >
-                                    ID: {id}
+                                    Номер варианта: {id}
                                 </Text>
 
                                 <div className={base.titleInner}>

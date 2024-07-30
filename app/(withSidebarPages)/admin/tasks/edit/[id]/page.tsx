@@ -152,7 +152,7 @@ const AdminTaskEdit = () => {
             allAnswers,
             source,
             () => {
-                router.replace('/admin/tasks');
+                router.back();
             },
         );
     };

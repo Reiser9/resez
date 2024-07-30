@@ -1,1 +1,9 @@
-export type { PagginationTests, TestTask, Test, TestById } from './model';
+export type {
+    PagginationTests,
+    TestTask,
+    Test,
+    TestById,
+    DetailedTaskResult,
+    SimpleTaskResult,
+    TestResult,
+} from './model';

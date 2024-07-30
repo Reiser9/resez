@@ -139,7 +139,7 @@ const AdminTaskCreate = () => {
         let allAnswers = trimAnswer ? [...answers, trimAnswer] : [...answers];
 
         createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, allAnswers, source, () => {
-            router.replace('/admin/tasks');
+            router.back();
         });
     };
 

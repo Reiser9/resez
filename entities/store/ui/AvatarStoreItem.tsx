@@ -13,9 +13,10 @@ import { Text } from '@/shared/ui/Text';
 
 import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Added, Check, Clapperboard, DotsHorizontal, Photo } from '@/shared/icons';
+import { Added, Check, Clapperboard, DotsHorizontal, Photo, ResCoin } from '@/shared/icons';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
+import { ConfirmModal } from '@/shared/ui/Modal';
 
 type Props = {
     data: ProductDTO;
@@ -23,7 +24,7 @@ type Props = {
 };
 
 const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
-    const { title, contentType, options, contentUrl, isCollected } = data || {};
+    const { title, contentType, options, contentUrl, isCollected, price } = data || {};
     const { width, x, y } = options || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -35,6 +36,8 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
     const [animationData, setAnimationData] = React.useState<any | null>(null);
     const [isHovered, setIsHovered] = React.useState(false);
     const [isPlaying, setIsPlaying] = React.useState(false);
+
+    const [confirmBuyModal, setConfirmBuyModal] = React.useState(false);
 
     React.useEffect(() => {
         const fetchAnimationData = async () => {
@@ -79,93 +82,120 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
     };
 
     return (
-        <div className={cn(base.item3, styles.avatarItem)}>
-            <div className={styles.avatarItemTags}>
-                {contentType === 'animation' ? (
-                    <Tooltip title="Анимация">
-                        <span className={styles.avatarItemTag}>
-                            <Clapperboard />
-                        </span>
-                    </Tooltip>
-                ) : (
-                    <Tooltip title="Изображение">
-                        <span className={styles.avatarItemTag}>
-                            <Photo />
-                        </span>
-                    </Tooltip>
-                )}
-            </div>
-
-            <div className={styles.avatarItemContent}>
-                {isCollected && (
-                    <div className={styles.avatarItemCollected}>
-                        <Check />
-                    </div>
-                )}
-
-                <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
-
-                <div
-                    className={styles.avatarItemAvatarWrapper}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
+        <>
+            <div className={cn(base.item3, styles.avatarItem)}>
+                <div className={styles.avatarItemTags}>
                     {contentType === 'animation' ? (
-                        <Lottie
-                            animationData={animationData}
-                            autoplay={false}
-                            loop={false}
-                            className={base.avatarDecoration}
-                            style={{ width: width, top: y, left: x }}
-                            lottieRef={playerRef}
-                            onComplete={handleComplete}
-                        />
+                        <Tooltip title="Анимация">
+                            <span className={styles.avatarItemTag}>
+                                <Clapperboard />
+                            </span>
+                        </Tooltip>
                     ) : (
-                        <>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={contentUrl}
-                                alt={title}
+                        <Tooltip title="Изображение">
+                            <span className={styles.avatarItemTag}>
+                                <Photo />
+                            </span>
+                        </Tooltip>
+                    )}
+                </div>
+
+                <div className={styles.avatarItemContent}>
+                    {isCollected && (
+                        <div className={styles.avatarItemCollected}>
+                            <Check />
+                        </div>
+                    )}
+
+                    <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
+
+                    <div
+                        className={styles.avatarItemAvatarWrapper}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        {contentType === 'animation' ? (
+                            <Lottie
+                                animationData={animationData}
+                                autoplay={false}
+                                loop={false}
                                 className={base.avatarDecoration}
                                 style={{ width: width, top: y, left: x }}
+                                lottieRef={playerRef}
+                                onComplete={handleComplete}
                             />
-                        </>
+                        ) : (
+                            <>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={contentUrl}
+                                    alt={title}
+                                    className={base.avatarDecoration}
+                                    style={{ width: width, top: y, left: x }}
+                                />
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                <Text variant="h4" fontWeight={600}>
+                    {title}
+                </Text>
+
+                <div className={styles.avatarItemBottom}>
+                    {price ? (
+                        <div className={styles.avatarItemPrice}>
+                            {price}
+
+                            <ResCoin />
+                        </div>
+                    ) : (
+                        <Text fontWeight={600}>Бесплатно</Text>
                     )}
+
+                    <HoverMenu
+                        button={
+                            <IconButton small variant="light" onClick={() => setActionMenu((prev) => !prev)}>
+                                <DotsHorizontal />
+                            </IconButton>
+                        }
+                        value={actionMenu}
+                        setValue={setActionMenu}
+                    >
+                        {isCollected ? (
+                            <MenuLink disabled>
+                                <Check />
+                                Добавлено
+                            </MenuLink>
+                        ) : price ? (
+                            <MenuLink
+                                onClick={() => {
+                                    setActionMenu(false);
+                                    setConfirmBuyModal(true);
+                                }}
+                            >
+                                <Added />
+                                Купить
+                            </MenuLink>
+                        ) : (
+                            <MenuLink onClick={addProductToProfile}>
+                                <Added />
+                                Добавить
+                            </MenuLink>
+                        )}
+                    </HoverMenu>
                 </div>
             </div>
 
-            <Text variant="h4" fontWeight={600}>
-                {title}
-            </Text>
-
-            <div className={styles.avatarItemBottom}>
-                <Text variant="text2" fontWeight={600}>
-                    Бесплатно
-                </Text>
-
-                <HoverMenu
-                    button={
-                        <IconButton small variant="light" onClick={() => setActionMenu((prev) => !prev)}>
-                            <DotsHorizontal />
-                        </IconButton>
-                    }
-                    value={actionMenu}
-                    setValue={setActionMenu}
-                >
-                    {isCollected ? (
-                        <MenuLink disabled>
-                            <Check />
-                            Добавлено
-                        </MenuLink>
-                    ) : (
-                        <MenuLink onClick={addProductToProfile}>
-                            <Added />
-                            Добавить
-                        </MenuLink>
-                    )}
-                </HoverMenu>
-            </div>
-        </div>
+            {!!price && (
+                <ConfirmModal
+                    text={`Вы действительно хотите купить ${title} за ${price} ResCoin?`}
+                    value={confirmBuyModal}
+                    setValue={setConfirmBuyModal}
+                    callback={addProductToProfile}
+                />
+            )}
+        </>
     );
 };
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
@@ -28,15 +28,9 @@ const AdminSubjects = () => {
         queryClient.resetQueries({ queryKey: ['subjects'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, error } = useQuery({
         queryKey: ['subjects'],
-        queryFn: (param) => getPagginationSubjects({ pageParam: param.pageParam }),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: () => getPagginationSubjects({ pageParam: 0, limit: 9999 }),
     });
 
     return (
@@ -44,8 +38,7 @@ const AdminSubjects = () => {
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
-                        Предметы{' '}
-                        {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                        Предметы {!error && !isPending && !!data?.totalCount && `(${data?.totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -68,24 +61,23 @@ const AdminSubjects = () => {
                 </div>
             ) : error ? (
                 <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
+            ) : !!data?.subjects.length ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>
                     <div className={base.contentItems}>
-                        {data?.pages.map((subject) =>
-                            subject?.subjects.map((data) => (
-                                <SubjectItem
-                                    key={data.id}
-                                    data={data}
-                                    // loading={subjectIsLoading.includes(data.id)}
-                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                                    publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                />
-                            )),
-                        )}
+                        {data?.subjects?.map((data) => (
+                            <SubjectItem
+                                key={data.id}
+                                data={data}
+                                // loading={subjectIsLoading.includes(data.id)}
+                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                            />
+                        ))}
+                        ,
                     </div>
 
-                    {hasNextPage && (
+                    {/* {hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}
@@ -94,7 +86,7 @@ const AdminSubjects = () => {
                         >
                             Показать еще
                         </Button>
-                    )}
+                    )} */}
                 </div>
             ) : (
                 <NotContent text="Предметов не найдено" />

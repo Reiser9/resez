@@ -11,7 +11,8 @@ import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import AvatarStoreItem from '@/entities/store/ui/AvatarStoreItem';
-import { Button } from '@/shared/ui/Button';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
 
 const StorePersonalizationAvatar = () => {
     const queryClient = useQueryClient();
@@ -37,7 +38,15 @@ const StorePersonalizationAvatar = () => {
     });
 
     return (
-        <>
+        <div className={base.baseWrapperGap16}>
+            <div className={base.titleInner}>
+                <Text variant="h3">
+                    Украшения {!isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                </Text>
+
+                <ReloadButton onClick={resetRequest} disabled={isPending} />
+            </div>
+
             {isPending ? (
                 <div className={base.contentItems}>
                     {[...Array(3)].map((_, id) => (
@@ -67,7 +76,7 @@ const StorePersonalizationAvatar = () => {
                     Показать еще
                 </Button>
             )}
-        </>
+        </div>
     );
 };
 
