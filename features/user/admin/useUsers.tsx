@@ -12,7 +12,7 @@ const useNotify = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationUsers = async ({ pageParam }: { pageParam: number }): Promise<UsersAdmin | void> => {
+    const getPaginationUsers = async ({ pageParam }: { pageParam: number }) => {
         const limit = 6;
         const response = await request<UsersAdmin>({
             url: `/admin/user?offset=${pageParam * limit}&limit=${limit}`,
@@ -28,7 +28,7 @@ const useNotify = () => {
         }
     };
 
-    const blockUser = async (id: number, reason?: string, successCallback = () => {}): Promise<void> => {
+    const blockUser = async (id: number, reason?: string, successCallback = () => {}) => {
         setUsersIsLoading((prev) => [...prev, id]);
         const response = await request<UserAdmin>({
             url: `/admin/user/${id}/block`,
@@ -48,7 +48,7 @@ const useNotify = () => {
         successCallback();
     };
 
-    const unblockUser = async (id: number, successCallback = () => {}): Promise<void> => {
+    const unblockUser = async (id: number, successCallback = () => {}) => {
         setUsersIsLoading((prev) => [...prev, id]);
         const response = await request<UserAdmin>({
             url: `/admin/user/${id}/unblock`,
@@ -65,11 +65,30 @@ const useNotify = () => {
         successCallback();
     };
 
+    const changeUserBalance = async (userId: number, amount: number, successCallback = () => {}) => {
+        const response = await request<UserAdmin>({
+            url: `/admin/user/${userId}/add-coins`,
+            isAuth: true,
+            method: 'PATCH',
+            data: {
+                amount,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        alertNotify('Успешно', 'Баланс изменен', 'success');
+        successCallback();
+    };
+
     return {
         usersIsLoading,
         getPaginationUsers,
         blockUser,
         unblockUser,
+        changeUserBalance,
     };
 };
 

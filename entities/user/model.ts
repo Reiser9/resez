@@ -60,7 +60,7 @@ export type User = {
         name: string;
         canUploadImages: boolean;
     };
-    coins: number;
+    balance: number;
 };
 
 export type UserAdmin = {
@@ -70,7 +70,6 @@ export type UserAdmin = {
     isBlocked: boolean;
     blockReason: string;
     avatar: string;
-    level: number;
     firstName: string;
     lastName: string;
     registrationDate: Date;
@@ -89,6 +88,7 @@ export type UserAdmin = {
         canUploadImages: boolean;
     };
     roles: Role[];
+    balance: number;
 };
 
 export type UsersAdmin = Paggination & {

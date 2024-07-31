@@ -6,14 +6,13 @@ import cn from 'classnames';
 
 import styles from '../../index.module.scss';
 
-import { Delete, Photo, Swap } from '@/shared/icons';
+import { Delete, Photo, ResezPremium, Swap } from '@/shared/icons';
 import { IconButton } from '@/shared/ui/Button';
 import { File } from '@/shared/ui/File';
 import { Input } from '@/shared/ui/Input';
 import useCollections from '@/features/collection/useCollections';
 import type { PairDTO } from '@/entities/collection';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import ResezPremium from '@/shared/icons/images/ResezPremium';
 import { Text } from '@/shared/ui/Text';
 
 type Props = {

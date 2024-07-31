@@ -19,6 +19,7 @@ import { ToolSettings } from '@editorjs/editorjs/types/tools/tool-settings';
 
 import { CustomMath } from './CustomMathTool';
 import { CustomFiles } from './CustomFiles';
+import { CustomVoice } from './CustomVoice';
 
 import styles from './index.module.scss';
 
@@ -103,6 +104,12 @@ const Editor: React.FC<Props> = (props) => {
                 uploadRequest: uploadFileHandler,
             },
         },
+        audio: {
+            class: CustomVoice as any,
+            config: {
+                uploadRequest: uploadFileHandler,
+            },
+        }
     };
 
     const localLang = {
@@ -174,7 +181,7 @@ const Editor: React.FC<Props> = (props) => {
                     'Delete column': 'Удалить колонку',
                     'Delete row': 'Удалить строку',
                     'With headings': 'С заголовками',
-                    'Without headings': 'Без заголовками',
+                    'Without headings': 'Без заголовков',
                 },
                 list: {
                     Ordered: 'Упорядоченный',

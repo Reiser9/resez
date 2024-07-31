@@ -36,7 +36,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const { isLoading, logout } = useLogout();
     const { isAuth, user } = useAppSelector((state) => state.user);
-    const { avatar, levelInfo, nickname, unreadNotifiesCount, coins } = user || {};
+    const { avatar, levelInfo, nickname, unreadNotifiesCount, balance } = user || {};
     const { level } = levelInfo || {};
 
     const closeProfileMenu = () => {
@@ -87,7 +87,12 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <div className={styles.headerProfileWrap} onClick={toggleMenuProfile}>
                                     {isAuth ? (
                                         <>
-                                            <Badge isUserAvatar image={avatar} text={nickname} dot={!!unreadNotifiesCount} />
+                                            <Badge
+                                                isUserAvatar
+                                                image={avatar}
+                                                text={nickname}
+                                                dot={!!unreadNotifiesCount}
+                                            />
 
                                             <Text className={styles.headerProfileNick}>{nickname}</Text>
                                         </>
@@ -128,7 +133,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         <Text fontWeight={600}>Баланс</Text>
 
                                         <div className={styles.headerBalanceWrapper}>
-                                            <Text fontWeight={600}>{coins}</Text>
+                                            <Text fontWeight={600}>{balance}</Text>
 
                                             <ResCoin />
                                         </div>
@@ -179,11 +184,13 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <Switch size="small" checked={theme === 'dark'} className={styles.headerThemeLabel} />
                             </div>
 
-                            {holidayEventName === 'newyear' && <div className={styles.headerProfileMenuLink} onClick={toggleShowParticles}>
-                                <Snowflake />
-                                Снег
-                                <Switch size="small" checked={showParticles} className={styles.headerThemeLabel} />
-                            </div>}
+                            {holidayEventName === 'newyear' && (
+                                <div className={styles.headerProfileMenuLink} onClick={toggleShowParticles}>
+                                    <Snowflake />
+                                    Снег
+                                    <Switch size="small" checked={showParticles} className={styles.headerThemeLabel} />
+                                </div>
+                            )}
 
                             {isAuth && (
                                 <div

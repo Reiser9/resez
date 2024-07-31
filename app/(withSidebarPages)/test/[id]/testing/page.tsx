@@ -188,7 +188,7 @@ const TestingTestById = () => {
                                             <p className={styles.testResultSubtitle}>Затрачено времени: 0</p>
                                         </div>
 
-                                        <Button href="/tests/recommended" variant="light" auto>
+                                        <Button href="/tests" variant="light" auto>
                                             Решать другие тесты
                                         </Button>
 
@@ -281,17 +281,17 @@ const TestingTestById = () => {
                             </div>
 
                             <InfoSidebar value={sidebarActive} setValue={setSidebarActive}>
-                                {step !== 3 && (
+                                {/* {step !== 3 && (
                                     <div className={styles.testInfoWrapper}>
                                         <TextPoint title="Прошло:" className={styles.testInfoItem}>
-                                            {/* <Text variant="h4">{elapsedTime}</Text> */}
+                                            <Text variant="h4">{elapsedTime}</Text>
                                         </TextPoint>
 
                                         <TextPoint title="Осталось:" className={styles.testInfoItem}>
                                             <Text variant="h4">00:00</Text>
                                         </TextPoint>
                                     </div>
-                                )}
+                                )} */}
 
                                 <TextPoint title="Предмет:">
                                     <Text variant="h4">{subject}</Text>
@@ -301,12 +301,12 @@ const TestingTestById = () => {
                                     <Text variant="h4">{formatMinutesToDuration(durationMinutes)}</Text>
                                 </TextPoint>
 
-                                {step === 1 && (
+                                {/* {step === 1 && (
                                     <div className={styles.testInfoButtons}>
                                         <button className={styles.testInfoButton}>
-                                            {/* {!isPaused ? <Pause /> : <Play />}
+                                            {!isPaused ? <Pause /> : <Play />}
 
-                                            {!isPaused ? 'Пауза' : 'Продолжить'} */}
+                                            {!isPaused ? 'Пауза' : 'Продолжить'}
                                         </button>
 
                                         <button
@@ -320,21 +320,21 @@ const TestingTestById = () => {
                                             Начать заново
                                         </button>
                                     </div>
-                                )}
+                                )} */}
                             </InfoSidebar>
                         </div>
                     </div>
                 </div>
             </ContentWrapper>
 
-            <ConfirmModal
+            {/* <ConfirmModal
                 value={confirmRestart}
                 setValue={setConfirmRestart}
                 callback={restartTest}
                 text="Вы действительно хотите начать тест заново? Прогресс теста не будет сохранен"
                 rejectText="Продолжить решать"
                 confirmText="Начать заново"
-            />
+            /> */}
         </>
     );
 };

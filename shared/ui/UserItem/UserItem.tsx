@@ -20,6 +20,7 @@ import { Text } from '../Text';
 import { ConfirmModal, Modal } from '../Modal';
 import { Input } from '../Input';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
+import { useUsers } from '@/features/user';
 
 type Props = {
     data?: UserAdmin;
@@ -50,15 +51,26 @@ const UserItem: React.FC<Props> = ({
         lastName,
         status,
         registrationDate,
-        activity
+        activity,
+        balance,
     } = data || {};
     const { level, limit, xp } = levelInfo || {};
     const { isOnline, lastSeen } = activity || {};
-    const [confirmBlock, setConfirmBlock] = React.useState<boolean>(false);
-    const [confirmUnblock, setConfirmUnblock] = React.useState<boolean>(false);
-    const [blockReason, setBlockReason] = React.useState<string>('');
+    const [confirmBlock, setConfirmBlock] = React.useState(false);
+    const [confirmUnblock, setConfirmUnblock] = React.useState(false);
+    const [blockReason, setBlockReason] = React.useState('');
 
     const { copyTextWithNotify } = useCopyText();
+
+    const { changeUserBalance } = useUsers();
+
+    const changeUserBalanceHandler = (value: number) => {
+        if (!id) {
+            return;
+        }
+
+        changeUserBalance(id, value);
+    };
 
     return (
         <>
@@ -125,10 +137,7 @@ const UserItem: React.FC<Props> = ({
 
                     {status && <TextPoint title="Статус" text={status} />}
                     {!isOnline && (
-                        <TextPoint
-                            title="Был(а) в сети"
-                            text={lastSeen ? getFormattedDate(lastSeen) : 'Неизвестно'}
-                        />
+                        <TextPoint title="Был(а) в сети" text={lastSeen ? getFormattedDate(lastSeen) : 'Неизвестно'} />
                     )}
                     {registrationDate && (
                         <TextPoint title="Дата регистрации" text={getFormattedDate(registrationDate)} />
@@ -152,6 +161,11 @@ const UserItem: React.FC<Props> = ({
                             </div>
                         </TextPoint>
                     )}
+
+                    <TextPoint title="Баланс" text={balance || 0} />
+
+                    <Button onClick={() => changeUserBalanceHandler(10)}>+10</Button>
+                    <Button onClick={() => changeUserBalanceHandler(-10)}>-10</Button>
                 </div>
 
                 <div className={styles.userItemWrapper}>

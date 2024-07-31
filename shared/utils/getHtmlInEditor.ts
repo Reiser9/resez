@@ -69,6 +69,19 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
                     }</a>`;
                 }
                 break;
+            case 'audio':
+                if (block.data?.audioUrl) {
+                    html += `<div class="blockAudio">
+                        <audio data-name="${block.data.audioName}" controls>
+                            <source src="${block.data.audioUrl}" type="audio/mpeg" />
+                            <p>
+                                Ваш браузер не поддерживает HTML5 аудио. Ссылка на аудио
+                                <a href="${block.data.audioUrl}">ссылка на аудио</a>
+                            </p>
+                        </audio>
+                    </div>`;
+                }
+                break;
             case 'math':
                 if (block.data?.latex) {
                     if (block.data?.type === 'block') {
@@ -145,6 +158,14 @@ export const convertHtmlToEditorBlocks = (html: string) => {
                     url: node.querySelector('img')?.getAttribute('src'),
                 },
                 caption: node.querySelector('img')?.getAttribute('alt'),
+            };
+        } else if (node.nodeName === 'DIV' && node.className === 'blockAudio') {
+            block.type = 'audio';
+            block.data = {
+                audio: {
+                    url: node.getElementsByTagName('audio')[0].getElementsByTagName('source')[0].getAttribute('src'),
+                },
+                audioName: node.getElementsByTagName('audio')[0].getAttribute('data-name'),
             };
         } else if (node.nodeName === 'DIV') {
             block.type = 'table';

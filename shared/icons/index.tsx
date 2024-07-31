@@ -123,3 +123,5 @@ export { ArrowBottomLeft } from './ArrowBottomLeft';
 export { ArrowBottomRight } from './ArrowBottomRight';
 export { PositionHorizontal } from './PositionHorizontal';
 export { PositionVertical } from './PositionVertical';
+export { ResezPremium } from './images/ResezPremium';
+export { ResezPremiumPlus } from './images/ResezPremiumPlus';

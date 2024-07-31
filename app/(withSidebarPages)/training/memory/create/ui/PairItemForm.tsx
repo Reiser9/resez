@@ -7,13 +7,12 @@ import Image from 'next/image';
 import styles from '../../index.module.scss';
 
 import { IconButton } from '@/shared/ui/Button';
-import { Delete, Photo, Swap } from '@/shared/icons';
+import { Delete, Photo, ResezPremium, Swap } from '@/shared/icons';
 import { File } from '@/shared/ui/File';
 import { Input } from '@/shared/ui/Input';
 import { PairDTO } from '@/entities/collection';
 import { useCollections } from '@/features/collection';
 import { Text } from '@/shared/ui/Text';
-import ResezPremium from '@/shared/icons/images/ResezPremium';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResezPremium = ({ ...props }) => {
+export const ResezPremium = ({ ...props }) => {
     return (
         <svg viewBox="0 0 29 30" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
@@ -30,5 +30,3 @@ const ResezPremium = ({ ...props }) => {
         </svg>
     );
 };
-
-export default ResezPremium;
