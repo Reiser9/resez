@@ -17,6 +17,10 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
 import { ProgressSteps } from '@/shared/ui/ProgressSteps';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
+import { Pair } from '@/entities/collection';
+
+const cardsPerPage = 10;
+const buffer = 2;
 
 const MemoryCards = () => {
     const [currentCardNumber, setCurrentCardNumber] = React.useState(0);
@@ -24,6 +28,8 @@ const MemoryCards = () => {
     const [totalWrong, setTotalWrong] = React.useState(0);
     const [prevAnswer, setPrevAnswer] = React.useState<boolean | null>(null);
     const [isProcessPlaying, setIsProcessPlaying] = React.useState(false);
+
+    const [visibleCards, setVisibleCards] = React.useState<Pair[]>();
 
     const { id } = useParams();
     const { getPairsCollection } = useCollections();
@@ -88,6 +94,22 @@ const MemoryCards = () => {
         }
     }, [currentCardNumber, data?.cards]);
 
+    React.useEffect(() => {
+        if (!data || !data.cards) {
+            return;
+        }
+
+        const start = Math.max(currentCardNumber - buffer, 0);
+        const end = Math.min(currentCardNumber + cardsPerPage - buffer, data.cards.length);
+        setVisibleCards(data.cards.slice(start, end));
+    }, [currentCardNumber, data]);
+
+    React.useEffect(() => {
+        if (data && data.cards) {
+            setVisibleCards(data.cards.slice(0, cardsPerPage));
+        }
+    }, [data]);
+
     if (isLoading) {
         return <Preloader page small />;
     }
@@ -103,18 +125,18 @@ const MemoryCards = () => {
             </div>
 
             {error ? (
-                <NotContent text="Ошибка загрузка карточек" icon={<Cross />} danger />
+                <NotContent text="Ошибка при загрузке карточек" icon={<Cross />} danger />
             ) : (
                 <>
                     <div className={styles.typeCardsInner}>
                         {isProcessPlaying && (
                             <div className={styles.typeCardsContent}>
-                                {data?.cards?.map((data, id) => (
+                                {visibleCards?.map((el, id) => (
                                     <Card
-                                        key={data.id}
-                                        data={data}
-                                        active={currentCardNumber === id}
-                                        prev={currentCardNumber === id + 1}
+                                        key={el.id}
+                                        data={el}
+                                        active={(currentCardNumber > buffer ? buffer : currentCardNumber) === id}
+                                        prev={(currentCardNumber > buffer ? buffer : currentCardNumber) === id + 1}
                                         correctCallback={correctAnswer}
                                         wrongCallback={wrongAnswer}
                                     />

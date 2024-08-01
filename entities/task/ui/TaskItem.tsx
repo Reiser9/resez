@@ -29,6 +29,7 @@ type Props = {
     data: SubjectTask;
     edit: boolean;
     remove: boolean;
+    href?: string;
     archiveCallback?: () => void;
     restoreCallback?: () => void;
     toggleVerify?: () => void;
@@ -38,6 +39,7 @@ const TaskItem: React.FC<Props> = ({
     data,
     edit = false,
     remove = false,
+    href,
     archiveCallback,
     restoreCallback,
     toggleVerify,
@@ -55,7 +57,7 @@ const TaskItem: React.FC<Props> = ({
             <div className={styles.taskItem}>
                 <div className={base.baseWrapperGap12}>
                     <div className={cn(base.titleInnerNowrap, base.aifs)}>
-                        <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
+                        <Link href={href ? href : `/task/${id}`} className={styles.taskItemWrapper}>
                             <span className={base.titleWrapper}>
                                 <span className={base.circle32}>{number}</span>
 

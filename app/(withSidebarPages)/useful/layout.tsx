@@ -14,22 +14,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <AuthWrapper>
-            <ContentWrapper>
-                <div className={pws.wrapper}>
-                    <div className={pws.content}>{children}</div>
+        <ContentWrapper>
+            <div className={pws.wrapper}>
+                <div className={pws.content}>{children}</div>
 
-                    <InnerPageSidebar>
-                        <SidebarLink href="/useful" end>
-                            Главная
-                        </SidebarLink>
-                        <SidebarLink href="/useful/points">Баллы ЕГЭ</SidebarLink>
-                        <SidebarLink href="/useful/tasks" disabled>
-                            Разбор заданий
-                        </SidebarLink>
-                    </InnerPageSidebar>
-                </div>
-            </ContentWrapper>
-        </AuthWrapper>
+                <InnerPageSidebar>
+                    <SidebarLink href="/useful" end>
+                        Главная
+                    </SidebarLink>
+                    <SidebarLink href="/useful/points">Баллы ЕГЭ</SidebarLink>
+                    <SidebarLink href="/useful/tasks" disabled>
+                        Разбор заданий
+                    </SidebarLink>
+                </InnerPageSidebar>
+            </div>
+        </ContentWrapper>
     );
 }

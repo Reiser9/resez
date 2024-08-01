@@ -262,6 +262,7 @@ const AdminTests = () => {
                                     <TaskItem
                                         key={data.id}
                                         data={data}
+                                        href={`/admin/task/${data.id}`}
                                         // loading={subjectIsLoading.includes(data.id)}
                                         edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
                                         remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}

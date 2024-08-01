@@ -149,35 +149,38 @@ const useTask = () => {
         }
     };
 
-    const getTaskById = async (taskId: number | string, successCallback = () => {}) => {
-        const response = await request<{ task: SubjectTaskById }>({
-            url: `/education-ms/task/${taskId}`,
-            isAuth: true,
-        });
+    const getTaskById = async (taskId: number | string, forAdmin = false) => {
+        let response;
+
+        if (forAdmin) {
+            response = await request<{ task: SubjectTaskById }>({
+                url: `/education-ms/admin/task/${taskId}`,
+                isAuth: true,
+            });
+        } else {
+            response = await request<{ task: SubjectTaskById }>({
+                url: `/education-ms/task/${taskId}`,
+            });
+        }
 
         if (catchRequestError(response)) {
             return errorController(response);
         }
-
-        successCallback();
 
         if ('data' in response) {
             return response.data.task;
         }
     };
 
-    const getTasksBySubThemeId = async (subthemeId: number | string, successCallback = () => {}) => {
+    const getTasksBySubThemeId = async (pageParam: number, subthemeId: number | string) => {
         const limit = 10;
         const response = await request<PagginationTasksById>({
-            url: `/education-ms/sub-theme/${subthemeId}/task?limit=${limit}`,
-            isAuth: true,
+            url: `/education-ms/sub-theme/${subthemeId}/task?offset=${pageParam * limit}&limit=${limit}`,
         });
 
         if (catchRequestError(response)) {
             return errorController(response);
         }
-
-        successCallback();
 
         if ('data' in response) {
             return response.data;

@@ -5,9 +5,10 @@ import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { AuthWrapper } from '@/shared/wrappers/AuthWrapper';
+import UserProfileWrapper from './UserProfileWrapper';
 
 export const metadata: Metadata = {
-    title: 'ResEz - Профиль'
+    title: 'ResEz - Профиль',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,7 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthWrapper>
             <ContentWrapper>
                 <div className={pws.wrapper}>
-                    <div className={pws.contentFull}>{children}</div>
+                    <div className={pws.contentFull}>
+                        <UserProfileWrapper>{children}</UserProfileWrapper>
+                    </div>
                 </div>
             </ContentWrapper>
         </AuthWrapper>

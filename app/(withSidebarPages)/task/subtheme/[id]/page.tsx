@@ -26,7 +26,7 @@ const TaskSubThemePage = () => {
 
     const { data, isLoading, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['task_by_subtheme_id', id],
-        queryFn: () => getTasksBySubThemeId(String(id)),
+        queryFn: (param) => getTasksBySubThemeId(param.pageParam, String(id)),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

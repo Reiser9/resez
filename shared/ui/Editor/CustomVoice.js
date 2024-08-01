@@ -46,7 +46,7 @@ export class CustomVoice {
 
         const label = document.createElement('label');
         label.classList.add('chooseFileButton');
-        label.htmlFor = 'chooseFile';
+        label.htmlFor = 'chooseAudio';
         label.textContent = 'Загрузить аудио';
 
         container.appendChild(label);

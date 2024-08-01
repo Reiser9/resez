@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Lottie from 'lottie-react';
+import cn from 'classnames';
 import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
@@ -19,6 +20,16 @@ import { Block, Delete, DotsHorizontal, Edit, Lvl20, Lvl30, Lvl75, Message, Pain
 import useCopyText from '@/features/utils/useCopyText';
 import { Badge } from '@/shared/ui/Badge';
 import { Handshake } from '@/shared/icons/awards/Handshake';
+import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
+import { usePathname } from 'next/navigation';
+import { NotContent } from '@/shared/ui/NotContent';
+
+const tabs = [
+    {
+        name: 'Коллекции',
+        href: '/profile/collections',
+    },
+];
 
 const ProfilePage = () => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
@@ -34,6 +45,8 @@ const ProfilePage = () => {
     const { copyTextWithNotify } = useCopyText();
 
     const [animationData, setAnimationData] = React.useState<any | null>(null);
+
+    const path = usePathname();
 
     React.useEffect(() => {
         const fetchAnimationData = async () => {
@@ -86,27 +99,27 @@ const ProfilePage = () => {
                             ></div>
                         </Tooltip> */}
 
-                        {avatarDecoration && <div
-                            className={styles.avatarDecorationWrapper}
-                        >
-                            {contentType === 'animation' ? (
-                                <Lottie
-                                    animationData={animationData}
-                                    className={base.avatarDecoration}
-                                    style={{ width: width, top: y, left: x }}
-                                />
-                            ) : (
-                                <>
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={contentUrl}
-                                        alt={title}
+                        {avatarDecoration && (
+                            <div className={styles.avatarDecorationWrapper}>
+                                {contentType === 'animation' ? (
+                                    <Lottie
+                                        animationData={animationData}
                                         className={base.avatarDecoration}
                                         style={{ width: width, top: y, left: x }}
                                     />
-                                </>
-                            )}
-                        </div>}
+                                ) : (
+                                    <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={contentUrl}
+                                            alt={title}
+                                            className={base.avatarDecoration}
+                                            style={{ width: width, top: y, left: x }}
+                                        />
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -129,7 +142,7 @@ const ProfilePage = () => {
                         </Tooltip>
                     </div>
 
-                    <div className={styles.profileInfoItem}>
+                    {/* <div className={styles.profileInfoItem}>
                         <Tooltip title="QR-код профиля">
                             <IconButton small variant="light" disabled>
                                 <Qr />
@@ -170,11 +183,28 @@ const ProfilePage = () => {
                                 Удалить из друзей
                             </MenuLink>
                         </HoverMenu>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
-            <div className={styles.profileWrapper}>
+            {/* <ScrollWithArrows>
+                {tabs.map((data, id) => (
+                    <Link
+                        key={id}
+                        href={data.href}
+                        replace
+                        className={cn(base.tag, {
+                            [base.active]: path === data.href,
+                        })}
+                    >
+                        {data.name}
+                    </Link>
+                ))}
+            </ScrollWithArrows> */}
+
+            <NotContent text="Страница в доработке" />
+
+            {/* <div className={styles.profileWrapper}>
                 <div className={styles.profileSidebar}>
                     <div className={styles.profileSidebarLvlContent}>
                         <p className={styles.profileSidebarLvlValue}>{level}</p>
@@ -288,7 +318,7 @@ const ProfilePage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

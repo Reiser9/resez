@@ -258,7 +258,9 @@ const MemoryCardInfo = () => {
                                         )}
 
                                         <Text variant="text2" style={{ marginTop: '0.4rem' }}>
-                                            <Dotdotdot clamp={6}>{parse(data.questionText)}</Dotdotdot>
+                                            <Dotdotdot tagName="span" clamp={6}>
+                                                {parse(data.questionText)}
+                                            </Dotdotdot>
                                         </Text>
                                     </TextPoint>
 
@@ -270,7 +272,9 @@ const MemoryCardInfo = () => {
                                         )}
 
                                         <Text variant="text2" style={{ marginTop: '0.4rem' }}>
-                                            <Dotdotdot clamp={6}>{parse(data.answerText)}</Dotdotdot>
+                                            <Dotdotdot tagName="span" clamp={6}>
+                                                {parse(data.answerText)}
+                                            </Dotdotdot>
                                         </Text>
                                     </TextPoint>
                                 </div>
