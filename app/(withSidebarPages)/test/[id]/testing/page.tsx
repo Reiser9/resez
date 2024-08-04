@@ -185,7 +185,7 @@ const TestingTestById = () => {
                                                 Набрано первичных баллов: {primaryScore} из {maxPrimaryScore}
                                             </p>
 
-                                            <p className={styles.testResultSubtitle}>Затрачено времени: 0</p>
+                                            {/* <p className={styles.testResultSubtitle}>Затрачено времени: 0</p> */}
                                         </div>
 
                                         <Button href="/tests" variant="light" auto>

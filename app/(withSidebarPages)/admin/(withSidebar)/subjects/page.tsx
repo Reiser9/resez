@@ -74,7 +74,6 @@ const AdminSubjects = () => {
                                 publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
                             />
                         ))}
-                        ,
                     </div>
 
                     {/* {hasNextPage && (

@@ -6,12 +6,13 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import parse from 'html-react-parser';
+import Dotdotdot from 'react-dotdotdot';
+import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import { Preloader } from '@/shared/ui/Preloader';
-import { Tooltip } from 'antd';
 import {
     Cross,
     Date,
@@ -41,17 +42,17 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
 import CollectionSettings from './CollectionSettings';
 import { Copy } from '@/shared/icons/Copy';
-import Dotdotdot from 'react-dotdotdot';
 
 const MemoryCardInfo = () => {
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+
     const [actionMenu, setActionMenu] = React.useState(false);
     const [deleteCollectionModal, setDeleteCollectionModal] = React.useState(false);
     const [showAnswers, setShowAnswers] = React.useState(false);
     const [settingsModal, setSettingsModal] = React.useState(false);
 
     const { id } = useParams();
-    const { getCollectionById, deleteCollectionById, getCollectionSettings, updateSettings, likeCollection } =
-        useCollections();
+    const { getCollectionById, deleteCollectionById, likeCollection } = useCollections();
     const userId = useAppSelector((state) => state.user.user?.id);
     const router = useRouter();
 
@@ -86,6 +87,10 @@ const MemoryCardInfo = () => {
     };
 
     const likeCollectionHandler = () => {
+        if (!isAuth) {
+            return router.push('/login');
+        }
+
         likeCollection(String(id), revalidateCollection);
     };
 

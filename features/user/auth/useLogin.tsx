@@ -15,7 +15,7 @@ const useLogin = () => {
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const login = async (data?: LoginData | LoginWithQRData, callUrl = '/', withQr = false): Promise<void> => {
+    const login = async (data?: LoginData | LoginWithQRData, withQr = false) => {
         setIsLoading(true);
 
         if (withQr) {

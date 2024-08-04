@@ -28,7 +28,7 @@ type Props = {
 };
 
 const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink = false }) => {
-    const { task, solution, answers, subjectTask, id } = data || {};
+    const { task, solution, answers, subjectTask, id, source } = data || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
@@ -69,6 +69,8 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink 
 
                     {!!answers?.length && <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>}
                 </Spoiler>
+
+                {source && <Text fontWeight={600}>Источник: {source}</Text>}
             </div>
 
             {/* <Modal value={warn} setValue={setWarn} title="Жалоба на задание" size="small">

@@ -50,7 +50,7 @@ const Login = () => {
 
     React.useEffect(() => {
         socket.on('auth', (data: { code: string }) => {
-            login(data, '', true);
+            login(data, true);
         });
 
         return () => {

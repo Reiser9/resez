@@ -3,14 +3,13 @@
 import React from 'react';
 import cn from 'classnames';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
 import useArchive from '@/features/user/admin/useArchive';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross, Restore } from '@/shared/icons';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Cross } from '@/shared/icons';
+import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
@@ -46,20 +45,11 @@ const AdminArchiveTasks = () => {
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <Text variant="h3">
-                        Задания{' '}
-                        {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
-                    </Text>
+                <Text variant="h3">
+                    Задания {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                </Text>
 
-                    <ReloadButton onClick={resetRequest} disabled={isPending} />
-                </div>
-
-                <Tooltip title="Восстановить все">
-                    <IconButton small variant="light">
-                        <Restore />
-                    </IconButton>
-                </Tooltip>
+                <ReloadButton onClick={resetRequest} disabled={isPending} />
             </div>
 
             {isPending ? (
@@ -78,6 +68,7 @@ const AdminArchiveTasks = () => {
                                 <TaskItem
                                     key={data.id}
                                     data={data}
+                                    href={`/admin/task/${data.id}`}
                                     // loading={subjectIsLoading.includes(data.id)}
                                     edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
                                     remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}

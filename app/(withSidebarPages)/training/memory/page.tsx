@@ -15,8 +15,11 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { CollectionItem } from '@/shared/ui/CollectionItem';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const Memory = () => {
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getPaginationCollections, deleteCollectionById, getPopularCollections } =
         useCollections();
@@ -38,6 +41,7 @@ const Memory = () => {
 
             return nextPage;
         },
+        enabled: isAuth
     });
 
     const {
@@ -115,35 +119,43 @@ const Memory = () => {
                     </IconButton>
                 </div>
 
-                {isPending ? (
-                    <div className={base.contentItems}>
-                        {[...Array(3)].map((_, id) => (
-                            <CollectionItemSkeleton key={id} />
-                        ))}
-                    </div>
-                ) : error ? (
-                    <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data?.pages[0]?.totalCount === 0 ? (
-                    <NotContent text="Коллекций не найдено">
-                        <Button href="/training/memory/create" variant="light" auto>
-                            Создать коллекцию
+                {isAuth ? (
+                    isPending ? (
+                        <div className={base.contentItems}>
+                            {[...Array(3)].map((_, id) => (
+                                <CollectionItemSkeleton key={id} />
+                            ))}
+                        </div>
+                    ) : error ? (
+                        <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                    ) : data?.pages[0]?.totalCount === 0 ? (
+                        <NotContent text="Коллекций не найдено">
+                            <Button href="/training/memory/create" variant="light" auto>
+                                Создать коллекцию
+                            </Button>
+                        </NotContent>
+                    ) : (
+                        <div className={base.contentItems}>
+                            {data?.pages.map((collection) =>
+                                collection?.collections
+                                    ?.slice(0, 3)
+                                    .map((data) => (
+                                        <CollectionItem
+                                            key={data.id}
+                                            data={data}
+                                            loading={collectionsIsLoading.includes(String(data.id))}
+                                            deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                                        />
+                                    )),
+                            )}
+                        </div>
+                    )
+                ) : (
+                    <NotContent text="Требуется авторизация">
+                        <Button href="/login" variant="light" auto>
+                            Авторизоваться
                         </Button>
                     </NotContent>
-                ) : (
-                    <div className={base.contentItems}>
-                        {data?.pages.map((collection) =>
-                            collection?.collections
-                                ?.slice(0, 3)
-                                .map((data) => (
-                                    <CollectionItem
-                                        key={data.id}
-                                        data={data}
-                                        loading={collectionsIsLoading.includes(String(data.id))}
-                                        deleteCallback={() => deleteCollectionHandler(String(data.id))}
-                                    />
-                                )),
-                        )}
-                    </div>
                 )}
             </div>
         </div>

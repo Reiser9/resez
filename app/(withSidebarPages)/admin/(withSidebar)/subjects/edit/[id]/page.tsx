@@ -9,7 +9,7 @@ import styles from '../../create/index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { useSubjects } from '@/features/subjects';
-import { ScoreConversionItem, SubTheme, Task } from '@/entities/subject';
+import type { ScoreConversionItem, SubTheme, Task } from '@/entities/subject';
 import useAlert from '@/shared/hooks/useAlert';
 import { cyrToLat } from '@/shared/utils/cytToLat';
 import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
@@ -41,6 +41,7 @@ const SubjectEdit = () => {
     const [subTheme, setSubTheme] = React.useState('');
     const [subThemes, setSubThemes] = React.useState<SubTheme[]>([]);
     const [tasksCount, setTasksCount] = React.useState(0);
+    const [taskId, setTaskId] = React.useState<number>();
     const [subThemeId, setSubThemeId] = React.useState<number>();
 
     const [red, setRed] = React.useState(-9999);
@@ -75,6 +76,7 @@ const SubjectEdit = () => {
             updatedTasks = [
                 ...updatedTasks,
                 {
+                    id: taskId,
                     theme,
                     primaryScore,
                     isDetailedAnswer,
@@ -215,6 +217,7 @@ const SubjectEdit = () => {
         const trimSubTheme = subTheme.trim();
 
         const newTask = {
+            id: taskId,
             theme,
             primaryScore,
             isDetailedAnswer,
@@ -232,6 +235,7 @@ const SubjectEdit = () => {
         setSubThemes([]);
         setSubTheme('');
         setTasksCount(0);
+        setTaskId(undefined);
         setSubThemeId(undefined);
     };
 
@@ -299,12 +303,13 @@ const SubjectEdit = () => {
 
             const lastTask = subjectTasks.splice(-1)[0];
 
-            const { theme, tasksCount, subThemes, primaryScore, isDetailedAnswer } = lastTask;
+            const { theme, subThemes, primaryScore, isDetailedAnswer, id } = lastTask;
 
             setTasks(subjectTasks);
             setTheme(theme);
             setPrimaryScore(primaryScore);
             setIsDetailedAnswer(isDetailedAnswer);
+            setTaskId(id);
 
             const lastSubTheme = subThemes.splice(-1)[0];
 

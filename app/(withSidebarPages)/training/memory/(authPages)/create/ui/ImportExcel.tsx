@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-import styles from '../../index.module.scss';
+import styles from '../../../index.module.scss';
 
 import { ExcelFile } from '@/shared/ui/File';
 import { ConfirmModal, Modal } from '@/shared/ui/Modal';

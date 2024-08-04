@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from './index.module.scss';
 
 import { useAvatar } from '@/features/store';
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
@@ -13,9 +13,13 @@ import { Cross } from '@/shared/icons';
 import AvatarStoreItem from '@/entities/store/ui/AvatarStoreItem';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const StorePersonalizationAvatar = () => {
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+
     const queryClient = useQueryClient();
+    const router = useRouter();
     const { getPaginationStoreAvatars, addProductToProfile } = useAvatar();
 
     const revalidateAvatars = () => {
@@ -25,6 +29,14 @@ const StorePersonalizationAvatar = () => {
     const resetRequest = () => {
         queryClient.resetQueries({ queryKey: ['store_avatars'] });
     };
+
+    const addProductToProfileHandler = (id: number) => {
+        if(!isAuth){
+            return router.push("/login");
+        }
+
+        addProductToProfile(id, revalidateAvatars)
+    }
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['store_avatars'],
@@ -62,7 +74,7 @@ const StorePersonalizationAvatar = () => {
                             <AvatarStoreItem
                                 key={data.id}
                                 data={data}
-                                addProductToProfile={() => addProductToProfile(data.id, revalidateAvatars)}
+                                addProductToProfile={() => addProductToProfileHandler(data.id)}
                             />
                         )),
                     )}

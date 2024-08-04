@@ -66,7 +66,7 @@ const AdminTaskEdit = () => {
         error,
     } = useQuery({
         queryKey: ['task_by_id', id],
-        queryFn: () => getTaskById(String(id)),
+        queryFn: () => getTaskById(String(id), true),
         enabled: !!id,
     });
 

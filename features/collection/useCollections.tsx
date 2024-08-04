@@ -58,7 +58,7 @@ const useCollections = () => {
     };
 
     const getCollectionById = async (id: string | number, failedCallback = () => {}) => {
-        const response = await request<CollectionSingle>({
+        const response = await request<{ collection: CollectionSingle }>({
             url: `/memory-ms/collection/${id}`,
             isAuth: true,
         });
@@ -68,7 +68,7 @@ const useCollections = () => {
         }
 
         if ('data' in response) {
-            return response.data;
+            return response.data.collection;
         }
     };
 
@@ -282,6 +282,22 @@ const useCollections = () => {
         }
     };
 
+    const getUserCollectionsByNickname = async (offset: number, nickname: string, search: string) => {
+        const limit = 9;
+        const response = await request<Collections>({
+            url: `/memory-ms/collection/user/${nickname}?offset=${offset * limit}&limit=${limit}&search=${search}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         isLoading,
         collectionIsLoading,
@@ -300,6 +316,7 @@ const useCollections = () => {
         getMatchesCollection,
         likeCollection,
         getPopularCollections,
+        getUserCollectionsByNickname,
     };
 };
 

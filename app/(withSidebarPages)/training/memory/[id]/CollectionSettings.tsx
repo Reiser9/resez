@@ -14,6 +14,7 @@ import { SettingsItem } from '@/shared/ui/SettingsItem';
 import { Settings } from '@/shared/icons';
 import { useCollections } from '@/features/collection';
 import { Input } from '@/shared/ui/Input';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {
     id: number | string;
@@ -22,12 +23,14 @@ type Props = {
 };
 
 const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) => {
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+
     const [shuffleCardsLocal, setShuffleCardsLocal] = React.useState(false);
     const [cardsAnswerOnFrontLocal, setCardsAnswerOnFrontLocal] = React.useState(false);
 
     const [shuffleTestLocal, setShuffleTestLocal] = React.useState(false);
     const [testAnswerOnFrontLocal, setTestAnswerOnFrontLocal] = React.useState(false);
-    const [maxQuestionsLocal, setMaxQuestionsLocal] = React.useState("");
+    const [maxQuestionsLocal, setMaxQuestionsLocal] = React.useState('');
     const [answerChoiceModeLocal, setAnswerChoiceModeLocal] = React.useState(false);
     const [trueFalseModeLocal, setTrueFalseModeLocal] = React.useState(false);
     const [writeModeLocal, setWriteModeLocal] = React.useState(false);
@@ -37,7 +40,7 @@ const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) =>
     const { data, isLoading, error, refetch, isFetching } = useQuery({
         queryKey: ['memory_settings', id],
         queryFn: getCollectionSettings,
-        enabled: openModal,
+        enabled: openModal && isAuth,
     });
 
     const updateSettingsHandler = async () => {
@@ -59,19 +62,18 @@ const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) =>
     };
 
     const checkMods = (number: number) => {
-        if(!answerChoiceModeLocal && !trueFalseModeLocal && !writeModeLocal){
+        if (!answerChoiceModeLocal && !trueFalseModeLocal && !writeModeLocal) {
             const mods = [setAnswerChoiceModeLocal, setTrueFalseModeLocal, setWriteModeLocal];
             mods.splice(number, 1);
             const random = Math.floor(Math.random() * (3 - 1) + 1);
 
-            if(random === 1){
+            if (random === 1) {
                 mods[0](true);
-            }
-            else{
+            } else {
                 mods[1](true);
             }
         }
-    }
+    };
 
     React.useEffect(() => {
         checkMods(0);
@@ -111,131 +113,141 @@ const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) =>
 
     return (
         <Modal title="Настройки" value={openModal} setValue={setOpenModal} size="small">
-            {error ? (
-                <NotContent text="Ошибка при загрузке настроек" danger icon={<Settings />}>
-                    <Button variant="light" auto onClick={refetch} loading={isFetching} small>
-                        Загрузить еще раз
+            {isAuth ? (
+                error ? (
+                    <NotContent text="Ошибка при загрузке настроек" danger icon={<Settings />}>
+                        <Button variant="light" auto onClick={refetch} loading={isFetching} small>
+                            Загрузить еще раз
+                        </Button>
+                    </NotContent>
+                ) : isLoading ? (
+                    <Preloader page small />
+                ) : (
+                    <div className={styles.memoSettingsContent}>
+                        <div className={styles.memoSettingsItem}>
+                            <Text variant="h4" fontWeight={700}>
+                                Карточки
+                            </Text>
+
+                            <SettingsItem
+                                title="Перемешать"
+                                text="Каждый раз когда вы будете играть, карточки будут попадаться в случайном порядке"
+                                checked={shuffleCardsLocal}
+                                name="shuffleCards"
+                                fullWidth
+                                setValue={setShuffleCardsLocal}
+                            />
+
+                            <SettingsItem
+                                title="Ответы сверху"
+                                text="Если включено, то ответы будут поменяны местами с вопросами"
+                                checked={cardsAnswerOnFrontLocal}
+                                name="cardsAnswerOnFront"
+                                fullWidth
+                                setValue={setCardsAnswerOnFrontLocal}
+                            />
+                        </div>
+
+                        <div className={styles.memoSettingsItem}>
+                            <Text variant="h4" fontWeight={700}>
+                                Тест
+                            </Text>
+
+                            <SettingsItem
+                                title="Перемешать"
+                                text="Вопросы будут попадаться в случайном порядке"
+                                checked={shuffleTestLocal}
+                                name="shuffleTestLocal"
+                                fullWidth
+                                setValue={setShuffleTestLocal}
+                            />
+
+                            <SettingsItem
+                                title="Ответы сверху"
+                                text="Если включено, то ответы будут поменяны местами с вопросами"
+                                checked={testAnswerOnFrontLocal}
+                                name="testAnswerOnFrontLocal"
+                                fullWidth
+                                setValue={setTestAnswerOnFrontLocal}
+                            />
+
+                            <div className={styles.memoSettingsQuestion}>
+                                <Text fontWeight={600}>Количество вопросов в тесте</Text>
+
+                                <Input
+                                    wrapperClass={styles.memoSettingsQuestionInput}
+                                    color="white"
+                                    value={maxQuestionsLocal}
+                                    setValue={setMaxQuestionsLocal}
+                                    type="number"
+                                    lengthLimit={3}
+                                />
+                            </div>
+
+                            <div className={styles.memoModsInner}>
+                                <Text fontWeight={600} style={{ marginBottom: '.8rem' }}>
+                                    Режимы:
+                                </Text>
+
+                                <SettingsItem
+                                    title="Выбор ответа"
+                                    checked={answerChoiceModeLocal}
+                                    name="answerChoiceMode"
+                                    fullWidth
+                                    setValue={setAnswerChoiceModeLocal}
+                                />
+
+                                <SettingsItem
+                                    title="Верно или неверное"
+                                    checked={trueFalseModeLocal}
+                                    name="trueFalseMode"
+                                    fullWidth
+                                    setValue={setTrueFalseModeLocal}
+                                />
+
+                                <SettingsItem
+                                    title="Письменный ответ"
+                                    checked={writeModeLocal}
+                                    name="writeMode"
+                                    fullWidth
+                                    setValue={setWriteModeLocal}
+                                />
+                            </div>
+                        </div>
+
+                        <div className={styles.memoSettingsItem}>
+                            <Text variant="h4" fontWeight={700}>
+                                Заучивание
+                            </Text>
+
+                            <NotContent text="Для данного типа пока что настройки отсутствуют" icon={<Settings />} />
+                        </div>
+
+                        <div className={styles.memoSettingsItem}>
+                            <Text variant="h4" fontWeight={700}>
+                                Подбор
+                            </Text>
+
+                            <NotContent text="Для данного типа пока что настройки отсутствуют" icon={<Settings />} />
+                        </div>
+
+                        <Button
+                            auto
+                            levitation
+                            wrapperStyle={{ bottom: '12px' }}
+                            onClick={updateSettingsHandler}
+                            loading={settingsIsLoading}
+                        >
+                            Сохранить
+                        </Button>
+                    </div>
+                )
+            ) : (
+                <NotContent text="Требуется авторизация">
+                    <Button href="/login" variant="light" auto>
+                        Авторизоваться
                     </Button>
                 </NotContent>
-            ) : isLoading ? (
-                <Preloader page small />
-            ) : (
-                <div className={styles.memoSettingsContent}>
-                    <div className={styles.memoSettingsItem}>
-                        <Text variant="h4" fontWeight={700}>
-                            Карточки
-                        </Text>
-
-                        <SettingsItem
-                            title="Перемешать"
-                            text="Каждый раз когда вы будете играть, карточки будут попадаться в случайном порядке"
-                            checked={shuffleCardsLocal}
-                            name="shuffleCards"
-                            fullWidth
-                            setValue={setShuffleCardsLocal}
-                        />
-
-                        <SettingsItem
-                            title="Ответы сверху"
-                            text="Если включено, то ответы будут поменяны местами с вопросами"
-                            checked={cardsAnswerOnFrontLocal}
-                            name="cardsAnswerOnFront"
-                            fullWidth
-                            setValue={setCardsAnswerOnFrontLocal}
-                        />
-                    </div>
-
-                    <div className={styles.memoSettingsItem}>
-                        <Text variant="h4" fontWeight={700}>
-                            Тест
-                        </Text>
-
-                        <SettingsItem
-                            title="Перемешать"
-                            text="Вопросы будут попадаться в случайном порядке"
-                            checked={shuffleTestLocal}
-                            name="shuffleTestLocal"
-                            fullWidth
-                            setValue={setShuffleTestLocal}
-                        />
-
-                        <SettingsItem
-                            title="Ответы сверху"
-                            text="Если включено, то ответы будут поменяны местами с вопросами"
-                            checked={testAnswerOnFrontLocal}
-                            name="testAnswerOnFrontLocal"
-                            fullWidth
-                            setValue={setTestAnswerOnFrontLocal}
-                        />
-
-                        <div className={styles.memoSettingsQuestion}>
-                            <Text fontWeight={600}>Количество вопросов в тесте</Text>
-
-                            <Input
-                                wrapperClass={styles.memoSettingsQuestionInput}
-                                color="white"
-                                value={maxQuestionsLocal}
-                                setValue={setMaxQuestionsLocal}
-                                type='number'
-                                lengthLimit={3}
-                            />
-                        </div>
-
-                        <div className={styles.memoModsInner}>
-                            <Text fontWeight={600} style={{marginBottom: ".8rem"}}>Режимы:</Text>
-
-                            <SettingsItem
-                                title="Выбор ответа"
-                                checked={answerChoiceModeLocal}
-                                name="answerChoiceMode"
-                                fullWidth
-                                setValue={setAnswerChoiceModeLocal}
-                            />
-
-                            <SettingsItem
-                                title="Верно или неверное"
-                                checked={trueFalseModeLocal}
-                                name="trueFalseMode"
-                                fullWidth
-                                setValue={setTrueFalseModeLocal}
-                            />
-
-                            <SettingsItem
-                                title="Письменный ответ"
-                                checked={writeModeLocal}
-                                name="writeMode"
-                                fullWidth
-                                setValue={setWriteModeLocal}
-                            />
-                        </div>
-                    </div>
-
-                    <div className={styles.memoSettingsItem}>
-                        <Text variant="h4" fontWeight={700}>
-                            Заучивание
-                        </Text>
-
-                        <NotContent text="Для данного типа пока что настройки отсутствуют" icon={<Settings />} />
-                    </div>
-
-                    <div className={styles.memoSettingsItem}>
-                        <Text variant="h4" fontWeight={700}>
-                            Подбор
-                        </Text>
-
-                        <NotContent text="Для данного типа пока что настройки отсутствуют" icon={<Settings />} />
-                    </div>
-
-                    <Button
-                        auto
-                        levitation
-                        wrapperStyle={{ bottom: '12px' }}
-                        onClick={updateSettingsHandler}
-                        loading={settingsIsLoading}
-                    >
-                        Сохранить
-                    </Button>
-                </div>
             )}
         </Modal>
     );

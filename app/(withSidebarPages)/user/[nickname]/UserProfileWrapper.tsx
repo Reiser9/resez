@@ -40,6 +40,7 @@ import { Input } from '@/shared/ui/Input';
 import { useDialog } from '@/features/messenger';
 import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
 import { Preloader } from '@/shared/ui/Preloader';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
@@ -49,6 +50,8 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
     const [sendMessageIsLoading, setSendMessageIsLoading] = React.useState(false);
 
     const { nickname } = useParams();
+    const myNickname = useAppSelector((state) => state.user.user?.nickname);
+    const isAuth = useAppSelector((state) => state.user.isAuth);
     const router = useRouter();
     const queryClient = useQueryClient();
 
@@ -105,6 +108,12 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
         }
     }, [contentUrl, contentType]);
 
+    React.useEffect(() => {
+        if (userNickname && userNickname === myNickname) {
+            router.replace('/profile');
+        }
+    }, [userNickname, myNickname]);
+
     if (isLoading) {
         return <Preloader page />;
     }
@@ -124,9 +133,9 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
                         <div className={styles.profileAvatarInner}>
                             <Badge isUserAvatar image={avatar} text={userNickname} style={{ width: 92, height: 92 }} />
 
-                            <Link href="/profile/data" className={styles.profileAvatarLink}>
+                            {/* <Link href="/profile/data" className={styles.profileAvatarLink}>
                                 Изменить
-                            </Link>
+                            </Link> */}
 
                             {/* <Tooltip title="Тема пользователя" placement="bottom">
                                 <div
@@ -179,10 +188,10 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
                         </div>
 
                         <div className={styles.profileInfoItem}>
-                            <Button small variant="light" onClick={() => setMessageModal(true)}>
+                            {isAuth && <Button small variant="light" onClick={() => setMessageModal(true)}>
                                 <Message />
                                 Сообщение
-                            </Button>
+                            </Button>}
 
                             <Tooltip title="QR-код профиля">
                                 <IconButton small variant="light" onClick={() => setQrModal(true)}>

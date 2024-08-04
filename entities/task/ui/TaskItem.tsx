@@ -29,6 +29,7 @@ type Props = {
     data: SubjectTask;
     edit: boolean;
     remove: boolean;
+    verify?: boolean;
     href?: string;
     archiveCallback?: () => void;
     restoreCallback?: () => void;
@@ -39,12 +40,13 @@ const TaskItem: React.FC<Props> = ({
     data,
     edit = false,
     remove = false,
+    verify = false,
     href,
     archiveCallback,
     restoreCallback,
     toggleVerify,
 }) => {
-    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived } = data || {};
+    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source } = data || {};
     const { avatar, nickname, id: userId } = user;
 
     const router = useRouter();
@@ -86,23 +88,25 @@ const TaskItem: React.FC<Props> = ({
                                     </MenuLink>
                                 )}
 
-                                <MenuLink
-                                    onClick={() => {
-                                        toggleVerify && toggleVerify();
-                                        setActionMenu(false);
-                                    }}
-                                >
-                                    {isVerified ? (
-                                        <>
-                                            <Notebook />В черновик
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Check />
-                                            Верифицировать
-                                        </>
-                                    )}
-                                </MenuLink>
+                                {verify && (
+                                    <MenuLink
+                                        onClick={() => {
+                                            toggleVerify && toggleVerify();
+                                            setActionMenu(false);
+                                        }}
+                                    >
+                                        {isVerified ? (
+                                            <>
+                                                <Notebook />В черновик
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Check />
+                                                Верифицировать
+                                            </>
+                                        )}
+                                    </MenuLink>
+                                )}
 
                                 {edit && (
                                     <MenuLink onClick={() => router.push(`/admin/tasks/edit/${id}`)}>
@@ -152,6 +156,8 @@ const TaskItem: React.FC<Props> = ({
                         <CustomHtmlParser html={task} />
                     </div>
                 )}
+
+                {source && <Text fontWeight={600}>Источник: {source}</Text>}
 
                 {/* {loading && <LoaderForItem />} */}
             </div>

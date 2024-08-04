@@ -6,7 +6,7 @@ import { Checkbox, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from '../index.module.scss';
+import styles from '../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection/model';
 import { Button, IconButton } from '@/shared/ui/Button';

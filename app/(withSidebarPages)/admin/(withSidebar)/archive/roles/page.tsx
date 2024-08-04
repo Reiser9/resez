@@ -1,22 +1,19 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import cn from 'classnames';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
 import useArchive from '@/features/user/admin/useArchive';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross, Restore } from '@/shared/icons';
-import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Cross } from '@/shared/icons';
+import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
-import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { Tooltip } from 'antd';
 import { RoleItem } from '@/shared/ui/RoleItem';
 import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
 import { useRoles } from '@/features/role';
@@ -50,19 +47,11 @@ const AdminArchiveRoles = () => {
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <Text variant="h3">
-                        Роли {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
-                    </Text>
+                <Text variant="h3">
+                    Роли {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                </Text>
 
-                    <ReloadButton onClick={resetRequest} disabled={isPending} />
-                </div>
-
-                <Tooltip title="Восстановить все">
-                    <IconButton small variant="light">
-                        <Restore />
-                    </IconButton>
-                </Tooltip>
+                <ReloadButton onClick={resetRequest} disabled={isPending} />
             </div>
 
             {isPending ? (

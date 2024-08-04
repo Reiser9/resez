@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import cn from 'classnames';
 
-import styles from '../../index.module.scss';
+import styles from '../../../index.module.scss';
 
 import { Delete, Photo, ResezPremium, Swap } from '@/shared/icons';
 import { IconButton } from '@/shared/ui/Button';

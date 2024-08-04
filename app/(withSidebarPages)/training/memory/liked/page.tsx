@@ -3,7 +3,6 @@
 import React from 'react';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
-import styles from '../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import { Text } from '@/shared/ui/Text';
@@ -15,8 +14,11 @@ import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { useCollections } from '@/features/collection';
 import Tabs from '../ui/Tabs';
 import { Input } from '@/shared/ui/Input';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const MemoryLiked = () => {
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+
     const [searchValue, setSearchValue] = React.useState('');
     const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -40,6 +42,7 @@ const MemoryLiked = () => {
 
             return nextPage;
         },
+        enabled: isAuth,
     });
 
     const deleteCollectionHandler = (id: string) => {
@@ -47,6 +50,10 @@ const MemoryLiked = () => {
     };
 
     React.useEffect(() => {
+        if (!isAuth) {
+            return;
+        }
+
         if (debounceTimeout.current) {
             clearTimeout(debounceTimeout.current);
         }
@@ -60,61 +67,76 @@ const MemoryLiked = () => {
                 clearTimeout(debounceTimeout.current);
             }
         };
-    }, [searchValue]);
+    }, [searchValue, isAuth]);
 
     return (
         <div className={base.baseWrapperGap16}>
             <Tabs />
 
-            <div className={styles.searchInner}>
-                <Input
-                    placeholder="Искать"
-                    className={styles.searchInput}
-                    value={searchValue}
-                    setValue={setSearchValue}
-                />
+            {isAuth ? (
+                <>
+                    <div className={base.searchInner}>
+                        <Input
+                            placeholder="Искать"
+                            className={base.searchInput}
+                            value={searchValue}
+                            setValue={setSearchValue}
+                        />
 
-                <Search className={styles.searchIcon} />
-            </div>
+                        <Search className={base.searchIcon} />
+                    </div>
 
-            <div className={base.titleInner}>
-                <Text variant="h3">
-                    Коллекции{' '}
-                    {!isPending && !error && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
-                </Text>
+                    <div className={base.titleInner}>
+                        <Text variant="h3">
+                            Коллекции{' '}
+                            {!isPending && !error && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                        </Text>
 
-                <ReloadButton onClick={resetRequest} disabled={isPending} />
-            </div>
+                        <ReloadButton onClick={resetRequest} disabled={isPending} />
+                    </div>
 
-            {isPending ? (
-                <div className={base.contentItems}>
-                    {[...Array(3)].map((_, id) => (
-                        <CollectionItemSkeleton key={id} />
-                    ))}
-                </div>
-            ) : error ? (
-                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data?.pages[0]?.totalCount === 0 ? (
-                <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />
-            ) : (
-                <div className={base.contentItems}>
-                    {data?.pages.map((collection) =>
-                        collection?.collections?.map((data) => (
-                            <CollectionItem
-                                key={data.id}
-                                data={data}
-                                loading={collectionsIsLoading.includes(String(data.id))}
-                                deleteCallback={() => deleteCollectionHandler(String(data.id))}
-                            />
-                        )),
+                    {isPending ? (
+                        <div className={base.contentItems}>
+                            {[...Array(3)].map((_, id) => (
+                                <CollectionItemSkeleton key={id} />
+                            ))}
+                        </div>
+                    ) : error ? (
+                        <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                    ) : data?.pages[0]?.totalCount === 0 ? (
+                        <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />
+                    ) : (
+                        <div className={base.contentItems}>
+                            {data?.pages.map((collection) =>
+                                collection?.collections?.map((data) => (
+                                    <CollectionItem
+                                        key={data.id}
+                                        data={data}
+                                        loading={collectionsIsLoading.includes(String(data.id))}
+                                        deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                                    />
+                                )),
+                            )}
+                        </div>
                     )}
-                </div>
-            )}
 
-            {hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
+                    {hasNextPage && (
+                        <Button
+                            auto
+                            onClick={fetchNextPage}
+                            loading={isFetchingNextPage}
+                            className={base.buttonShowMore}
+                        >
+                            Показать еще
+                        </Button>
+                    )}
+                </>
+            ) : (
+                <NotContent text="Требуется авторизация">
+                    <Button href="/login" variant="light" auto>
+                        Авторизоваться
+                    </Button>
+                </NotContent>
             )}
         </div>
     );

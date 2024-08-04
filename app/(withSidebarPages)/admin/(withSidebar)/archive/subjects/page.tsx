@@ -3,7 +3,6 @@
 import React from 'react';
 import cn from 'classnames';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -11,7 +10,7 @@ import useArchive from '@/features/user/admin/useArchive';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross, Restore } from '@/shared/icons';
 import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
@@ -42,20 +41,11 @@ const AdminArchiveSubjects = () => {
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <Text variant="h3">
-                        Предметы{' '}
-                        {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
-                    </Text>
+                <Text variant="h3">
+                    Предметы {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                </Text>
 
-                    <ReloadButton onClick={resetRequest} disabled={isPending} />
-                </div>
-
-                <Tooltip title="Восстановить все">
-                    <IconButton small variant="light">
-                        <Restore />
-                    </IconButton>
-                </Tooltip>
+                <ReloadButton onClick={resetRequest} disabled={isPending} />
             </div>
 
             {isPending ? (

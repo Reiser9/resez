@@ -39,7 +39,7 @@ const PointsSubject = () => {
         <>
             <div className={styles.pointsTextInner}>
                 <p className={cn(styles.pointsText, styles.pointsTextRed)}>
-                    Красным обозначен минимальный порог для получения аттестата
+                    Красным обозначена область, в которой ученик получается оценку «неудовлетворительно»
                 </p>
                 <p className={cn(styles.pointsText, styles.pointsTextGreen)}>
                     Зелёным отмечена область, в которой ученик получает оценку «отлично»

@@ -3,6 +3,7 @@
 import React from 'react';
 
 import useRequest from '@/shared/hooks/useRequest';
+import axios from 'axios';
 
 const useFile = () => {
     const { request, catchRequestError, errorController } = useRequest();
@@ -31,7 +32,7 @@ const useFile = () => {
         const response = await request({
             url: '/education-ms/admin/upload/image-by-url',
             data: {
-                url
+                url,
             },
             method: 'POST',
             isAuth: true,
@@ -45,6 +46,8 @@ const useFile = () => {
             return response.data;
         }
     };
+
+    // http://localhost:8084/admin/upload/file
 
     const uploadFile = async (file: FormData) => {
         const response = await request({

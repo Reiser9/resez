@@ -4,7 +4,6 @@ import { Metadata } from 'next';
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
-import { AuthWrapper } from '@/shared/wrappers/AuthWrapper';
 import UserProfileWrapper from './UserProfileWrapper';
 
 export const metadata: Metadata = {
@@ -13,14 +12,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <AuthWrapper>
-            <ContentWrapper>
-                <div className={pws.wrapper}>
-                    <div className={pws.contentFull}>
-                        <UserProfileWrapper>{children}</UserProfileWrapper>
-                    </div>
+        <ContentWrapper>
+            <div className={pws.wrapper}>
+                <div className={pws.contentFull}>
+                    <UserProfileWrapper>{children}</UserProfileWrapper>
                 </div>
-            </ContentWrapper>
-        </AuthWrapper>
+            </div>
+        </ContentWrapper>
     );
 }
