@@ -28,6 +28,7 @@ const MemoryCards = () => {
     const [totalWrong, setTotalWrong] = React.useState(0);
     const [prevAnswer, setPrevAnswer] = React.useState<boolean | null>(null);
     const [isProcessPlaying, setIsProcessPlaying] = React.useState(false);
+    const [resultBlock, setResultBlock] = React.useState(false);
 
     const [visibleCards, setVisibleCards] = React.useState<Pair[]>();
 
@@ -68,6 +69,7 @@ const MemoryCards = () => {
         setTotalWrong(0);
         setPrevAnswer(null);
         setIsProcessPlaying(true);
+        setResultBlock(false);
     };
 
     const returnPrevSlide = () => {
@@ -89,6 +91,7 @@ const MemoryCards = () => {
     React.useEffect(() => {
         if (currentCardNumber === data?.cards?.length) {
             setTimeout(() => setIsProcessPlaying(false), 200);
+            setTimeout(() => setResultBlock(true), 400);
         } else {
             setIsProcessPlaying(true);
         }
@@ -147,6 +150,7 @@ const MemoryCards = () => {
                         <div
                             className={cn(styles.typeCardsResult, {
                                 [styles.active]: currentCardNumber === data?.cards?.length || isFetching,
+                                [styles.show]: resultBlock
                             })}
                         >
                             <Text variant="h3">Результат:</Text>

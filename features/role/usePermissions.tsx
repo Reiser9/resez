@@ -8,7 +8,7 @@ import { useAppDispatch } from '@/shared/hooks/useRedux';
 import { initRoles } from '@/store/slices/role';
 
 const usePermissions = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const { request, catchRequestError, errorController } = useRequest();
     const dispatch = useAppDispatch();

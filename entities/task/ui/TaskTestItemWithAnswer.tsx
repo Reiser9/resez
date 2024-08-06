@@ -37,13 +37,17 @@ const TaskTestItemWithAnswer: React.FC<Props> = ({ data, setValue }) => {
         <>
             <div className={styles.taskTestItem}>
                 <div className={base.titleInner}>
-                    <div className={base.titleWrapper}>
-                        <div className={base.circle32}>{number}</div>
+                    <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
+                        <span className={base.titleWrapper}>
+                            <span className={base.circle32}>{number}</span>
 
-                        <Link href={`/task/${id}`}>
                             <Text variant="h4">Задание</Text>
-                        </Link>
-                    </div>
+                        </span>
+
+                        {theme && <p className={styles.taskTheme}>{theme}</p>}
+
+                        {subTheme && <p className={styles.taskTheme}>{subTheme}</p>}
+                    </Link>
 
                     {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
                         <Warn />

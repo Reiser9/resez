@@ -6,12 +6,12 @@ import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useLogout = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController, clearLocalData } = useRequest();
 
-    const logout = async (successCallback: () => void = () => {}): Promise<void> => {
+    const logout = async (successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request({
             url: '/auth/logout',

@@ -19,7 +19,7 @@ import { SubjectDTO } from '@/entities/subject';
 import { Text } from '@/shared/ui/Text';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSubjects } from '@/features/subjects';
-import useArchive from '@/features/user/admin/useArchive';
+import { useArchive } from '@/features/user';
 
 type Props = {
     data: SubjectDTO;
@@ -94,8 +94,7 @@ const SubjectItem: React.FC<Props> = ({
                                 <MenuLink onClick={publishSubjectHandler}>
                                     {isPublished ? (
                                         <>
-                                            <Notebook />
-                                            В черновик
+                                            <Notebook />В черновик
                                         </>
                                     ) : (
                                         <>
@@ -136,34 +135,36 @@ const SubjectItem: React.FC<Props> = ({
                 {loading && <LoaderForItem />}
             </div>
 
-            {remove && <Modal
-                value={confirmDelete}
-                setValue={setConfirmDelete}
-                title={`Удаление предмета: ${subject}`}
-                size="small"
-            >
-                <Text variant="text2" className={base.warningText}>
-                    Внимание! Удаляя предмет, удалятся и все задания, связанные с ним, будьте внимательны, перед тем,
-                    как удаляете предмет
-                </Text>
-
-                <Text variant="text2">Чтобы удалить предмет, напишите слово ПОДТВЕРДИТЬ в поле ниже</Text>
-
-                <Input value={confirmText} setValue={setConfirmText} />
-
-                <Button
-                    loading={loading}
-                    onClick={() =>
-                        deleteSubject(id, () => {
-                            revalidateSubjects();
-                            setConfirmDelete(false);
-                        })
-                    }
-                    disabled={confirmText.toLowerCase() !== 'подтвердить'}
+            {remove && (
+                <Modal
+                    value={confirmDelete}
+                    setValue={setConfirmDelete}
+                    title={`Удаление предмета: ${subject}`}
+                    size="small"
                 >
-                    Удалить
-                </Button>
-            </Modal>}
+                    <Text variant="text2" className={base.warningText}>
+                        Внимание! Удаляя предмет, удалятся и все задания, связанные с ним, будьте внимательны, перед
+                        тем, как удаляете предмет
+                    </Text>
+
+                    <Text variant="text2">Чтобы удалить предмет, напишите слово ПОДТВЕРДИТЬ в поле ниже</Text>
+
+                    <Input value={confirmText} setValue={setConfirmText} />
+
+                    <Button
+                        loading={loading}
+                        onClick={() =>
+                            deleteSubject(id, () => {
+                                revalidateSubjects();
+                                setConfirmDelete(false);
+                            })
+                        }
+                        disabled={confirmText.toLowerCase() !== 'подтвердить'}
+                    >
+                        Удалить
+                    </Button>
+                </Modal>
+            )}
         </>
     );
 };

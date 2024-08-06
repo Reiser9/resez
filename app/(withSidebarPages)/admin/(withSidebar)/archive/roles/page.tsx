@@ -6,7 +6,6 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import useArchive from '@/features/user/admin/useArchive';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { Button, ReloadButton } from '@/shared/ui/Button';
@@ -17,6 +16,7 @@ import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { RoleItem } from '@/shared/ui/RoleItem';
 import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
 import { useRoles } from '@/features/role';
+import { useArchive } from '@/features/user';
 
 const AdminArchiveRoles = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -35,7 +35,7 @@ const AdminArchiveRoles = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['archive_roles'],
-        queryFn: getArhiveRoles,
+        queryFn: (param) => getArhiveRoles(param.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

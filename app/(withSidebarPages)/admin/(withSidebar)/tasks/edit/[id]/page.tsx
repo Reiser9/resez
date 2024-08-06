@@ -178,10 +178,14 @@ const AdminTaskEdit = () => {
         if (data) {
             const { subject, isVerified, source, answers, solution, task, subjectTask, subTheme } = data;
 
-            setSubjectId(subject.id);
-            setSubject(subject.subject);
-            setTheme(String(subjectTask.id));
-            setSubTheme(String(subTheme.id));
+            setSubjectId(subject?.id);
+            setSubject(subject?.subject);
+
+            const taskTheme = subjectTask?.id ? String(subjectTask?.id) : null;
+            const taskSubTheme = subTheme?.id ? String(subTheme?.id) : null;
+
+            setTheme(taskTheme);
+            setSubTheme(taskSubTheme);
             setIsVerified(isVerified);
 
             const lastAnswer = answers.splice(-1)[0];

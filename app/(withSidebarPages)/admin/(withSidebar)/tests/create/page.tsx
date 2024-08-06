@@ -36,7 +36,7 @@ const AdminTestCreate = () => {
         error: subjectsError,
     } = useQuery({
         queryKey: ['subjects'],
-        queryFn: () => getPagginationSubjects({ pageParam: 0, limit: 9999 }),
+        queryFn: () => getPagginationSubjects(0, 9999),
         enabled: subjectsDroped,
     });
 

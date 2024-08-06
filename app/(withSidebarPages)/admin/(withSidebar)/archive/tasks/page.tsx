@@ -6,7 +6,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import useArchive from '@/features/user/admin/useArchive';
+import { useArchive } from '@/features/user';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { Button, ReloadButton } from '@/shared/ui/Button';
@@ -33,7 +33,7 @@ const AdminArchiveTasks = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['archive_tasks'],
-        queryFn: getArhiveTasks,
+        queryFn: (param) => getArhiveTasks(param.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

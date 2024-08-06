@@ -1,0 +1,18 @@
+.searchInner{
+    width: 100%;
+    position: relative;
+}
+
+.searchIcon{
+    position: absolute;
+    width: 20px;
+    top: 50%;
+    left: 12px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    color: var(--grey);
+}
+
+input.searchInput{
+    padding: 1rem 1.6rem 1rem 3.8rem;
+}

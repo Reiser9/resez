@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 
@@ -9,15 +7,21 @@ import type { PagginationSubjects, SubjectDTO } from '@/entities/subject/model';
 import type { RoleDTO, Roles } from '@/entities/role';
 import { PagginationTasks } from '@/entities/task';
 import { SubjectTask } from '@/entities/task/model';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useArchive = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getArhiveSubjects = async ({ pageParam }: { pageParam: number }) => {
-        const limit = 6;
+    const getArhiveSubjects = async (page: number) => {
+        const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<PagginationSubjects>({
-            url: `/education-ms/admin/subject/archived?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/admin/subject/archived?${queryString}`,
             isAuth: true,
         });
 
@@ -62,10 +66,15 @@ const useArchive = () => {
 
     const restoreAllArchiveSubjects = async () => {};
 
-    const getArhiveRoles = async ({ pageParam }: { pageParam: number }) => {
-        const limit = 8;
+    const getArhiveRoles = async (page: number) => {
+        const limit = 12;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<Roles>({
-            url: `/admin/archive/role?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/admin/archive/role?${queryString}`,
             isAuth: true,
         });
 
@@ -110,10 +119,15 @@ const useArchive = () => {
 
     const restoreAllArchiveRoles = async () => {};
 
-    const getArhiveTasks = async ({ pageParam }: { pageParam: number }) => {
-        const limit = 6;
+    const getArhiveTasks = async (page: number) => {
+        const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<PagginationTasks>({
-            url: `/education-ms/admin/task/archived?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/admin/task/archived?${queryString}`,
             isAuth: true,
         });
 

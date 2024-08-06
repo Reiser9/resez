@@ -151,7 +151,7 @@ const TestingTestById = () => {
 
                                             {detailedAnswerTasks?.map((data) => (
                                                 <div key={data.id} className={base.baseWrapperGap20}>
-                                                    <TaskTestItem data={data} showAnswer />
+                                                    <TaskTestItem data={data} showAnswer taskWithLink />
 
                                                     <div className={base.baseWrapperGap4}>
                                                         <Text variant="text2">

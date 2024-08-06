@@ -1,19 +1,23 @@
 'use client';
 
-import React from 'react';
-
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import type { Avatars, ProductDTO } from '@/entities/store';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useAvatar = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationAvatars = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationAvatars = async (page: number) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<Avatars>({
-            url: `/admin/store/avatar-decoration?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/admin/store/avatar-decoration?${queryString}`,
             isAuth: true,
         });
 

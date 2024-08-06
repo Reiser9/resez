@@ -262,11 +262,9 @@ const MemoryCardInfo = () => {
                                             </div>
                                         )}
 
-                                        <Text variant="text2" style={{ marginTop: '0.4rem' }}>
-                                            <Dotdotdot tagName="span" clamp={6}>
-                                                {parse(data.questionText)}
-                                            </Dotdotdot>
-                                        </Text>
+                                        <div className={styles.memoCollectionPairText}>
+                                            {parse(data.questionText)}
+                                        </div>
                                     </TextPoint>
 
                                     <TextPoint blur={!showAnswers} title="Определение">
@@ -276,11 +274,9 @@ const MemoryCardInfo = () => {
                                             </div>
                                         )}
 
-                                        <Text variant="text2" style={{ marginTop: '0.4rem' }}>
-                                            <Dotdotdot tagName="span" clamp={6}>
-                                                {parse(data.answerText)}
-                                            </Dotdotdot>
-                                        </Text>
+                                        <div className={styles.memoCollectionPairText}>
+                                            {parse(data.answerText)}
+                                        </div>
                                     </TextPoint>
                                 </div>
                             ))}

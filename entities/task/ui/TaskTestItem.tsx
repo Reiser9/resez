@@ -28,26 +28,36 @@ type Props = {
 };
 
 const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink = false }) => {
-    const { task, solution, answers, subjectTask, id, source } = data || {};
+    const { task, solution, answers, subjectTask, id, source, subTheme, subject } = data || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
+
+    const taskInfoContent = () => {
+        return (
+            <>
+                <span className={base.circle32}>{subjectTask?.number ?? '?'}</span>
+
+                <Text variant="h4">{subject.subject}</Text>
+
+                {subjectTask?.theme && <p className={styles.taskTheme}>{subjectTask.theme}</p>}
+
+                {subTheme?.subTheme && <p className={styles.taskTheme}>{subTheme.subTheme}</p>}
+            </>
+        );
+    };
 
     return (
         <>
             <div className={styles.taskTestItem}>
                 <div className={base.titleInner}>
-                    <div className={base.titleWrapper}>
-                        <div className={base.circle32}>{subjectTask.number}</div>
-
-                        {taskWithLink ? (
-                            <Link href={`/task/${id}`}>
-                                <Text variant="h4">Задание</Text>
-                            </Link>
-                        ) : (
-                            <Text variant="h4">Задание</Text>
-                        )}
-                    </div>
+                    {taskWithLink ? (
+                        <Link href={`/task/${id}`} className={base.titleWrapper}>
+                            {taskInfoContent()}
+                        </Link>
+                    ) : (
+                        <div className={base.titleWrapper}>{taskInfoContent()}</div>
+                    )}
 
                     {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
                         <Warn />

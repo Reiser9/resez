@@ -9,17 +9,18 @@ import base from '@/shared/styles/base.module.scss';
 import { Text } from '@/shared/ui/Text';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross, Search } from '@/shared/icons';
+import { Cross } from '@/shared/icons';
 import { CollectionItem } from '@/shared/ui/CollectionItem';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { useCollections } from '@/features/collection';
-import { Input } from '@/shared/ui/Input';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { SearchInput } from '@/shared/ui/SearchInput';
 
 const UserCollections = () => {
     const { nickname } = useParams();
 
     const [searchValue, setSearchValue] = React.useState('');
-    const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
+    const debounceTimeout = useDebounce(searchValue, 500);
 
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getUserCollectionsByNickname, deleteCollectionById } = useCollections();
@@ -49,33 +50,12 @@ const UserCollections = () => {
     };
 
     React.useEffect(() => {
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-
-        debounceTimeout.current = setTimeout(() => {
-            refetch();
-        }, 500);
-
-        return () => {
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-        };
-    }, [searchValue]);
+        refetch();
+    }, [debounceTimeout]);
 
     return (
         <div className={base.baseWrapperGap16}>
-            <div className={base.searchInner}>
-                <Input
-                    placeholder="Искать"
-                    className={base.searchInput}
-                    value={searchValue}
-                    setValue={setSearchValue}
-                />
-
-                <Search className={base.searchIcon} />
-            </div>
+            <SearchInput value={searchValue} setValue={setSearchValue} />
 
             <div className={base.titleInner}>
                 <Text variant="h3">

@@ -72,10 +72,22 @@
     aspect-ratio: 1 / 1;
     position: relative;
     margin: 0.4rem 0 0 0;
+    background: var(--white);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .memoCollectionPairImage img{
     object-fit: contain;
+}
+
+.memoCollectionPairText{
+    width: 100%;
+    max-height: 200px;
+    overflow: hidden;
+    word-break: break-word;
+    margin-top: 0.8rem;
+    font-size: 1.4rem;
 }
 
 .memoSettingsContent{

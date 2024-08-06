@@ -5,19 +5,25 @@ import React from 'react';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import type { EditRoleDTO, RoleCreateDTO, RoleDTO, Roles } from '@/entities/role';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useRoles = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [roleIsLoading, setRoleIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [roleIsLoading, setRoleIsLoading] = React.useState(false);
     const [rolesIsLoading, setRolesIsLoading] = React.useState<string[]>([]);
 
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationRoles = async ({ pageParam }: { pageParam: number }) => {
-        const limit = 8;
+    const getPaginationRoles = async (page: number) => {
+        const limit = 12;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<Roles>({
-            url: `/admin/role?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/admin/role?${queryString}`,
             isAuth: true,
         });
 

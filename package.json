@@ -19,6 +19,7 @@
     "classnames": "2.5.1",
     "dayjs": "1.11.10",
     "html-react-parser": "5.1.0",
+    "lodash": "^4.17.21",
     "lottie-react": "2.4.0",
     "moment-timezone": "0.5.44",
     "next": "14.0.4",

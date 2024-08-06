@@ -34,14 +34,14 @@ const Memory = () => {
 
     const { data, isPending, error } = useInfiniteQuery({
         queryKey: ['collections'],
-        queryFn: (page) => getPaginationCollections(page, ''),
+        queryFn: (param) => getPaginationCollections(param.pageParam, ''),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
 
             return nextPage;
         },
-        enabled: isAuth
+        enabled: isAuth,
     });
 
     const {
@@ -136,18 +136,14 @@ const Memory = () => {
                         </NotContent>
                     ) : (
                         <div className={base.contentItems}>
-                            {data?.pages.map((collection) =>
-                                collection?.collections
-                                    ?.slice(0, 3)
-                                    .map((data) => (
-                                        <CollectionItem
-                                            key={data.id}
-                                            data={data}
-                                            loading={collectionsIsLoading.includes(String(data.id))}
-                                            deleteCallback={() => deleteCollectionHandler(String(data.id))}
-                                        />
-                                    )),
-                            )}
+                            {data?.pages[0]?.collections?.slice(0, 3).map((data) => (
+                                <CollectionItem
+                                    key={data.id}
+                                    data={data}
+                                    loading={collectionsIsLoading.includes(String(data.id))}
+                                    deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                                />
+                            ))}
                         </div>
                     )
                 ) : (

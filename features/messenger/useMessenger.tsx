@@ -8,6 +8,7 @@ const useMessenger = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const getDialogs = async () => {
+        // Сделать с пагинацией
         const response = await request<ChatsDTO>({ url: '/messenger/chat?limit=20', isAuth: true });
 
         if (catchRequestError(response)) {

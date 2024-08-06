@@ -7,12 +7,12 @@ import useRequest from '@/shared/hooks/useRequest';
 import { RecoveryChangePassword, RecoverySendCode, RecoveryVerifyCode } from '@/entities/user';
 
 const useRecovery = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const sendCode = async (data: RecoverySendCode, successCallback = () => {}): Promise<void> => {
+    const sendCode = async (data: RecoverySendCode, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<RecoverySendCode>({
             url: '/auth/send-recovery-password-code',
@@ -30,7 +30,7 @@ const useRecovery = () => {
         alertNotify('Успешно', 'Для восстановления пароля вам отправлен код подтверждения', 'success');
     };
 
-    const verifyCode = async (data: RecoveryVerifyCode, successCallback = () => {}): Promise<void> => {
+    const verifyCode = async (data: RecoveryVerifyCode, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<RecoveryVerifyCode>({
             url: '/auth/verify-recovery-password-code',
@@ -48,7 +48,7 @@ const useRecovery = () => {
         alertNotify('Успешно', 'Придумайте новый пароль', 'success');
     };
 
-    const changePassword = async (data: RecoveryChangePassword, successCallback = () => {}): Promise<void> => {
+    const changePassword = async (data: RecoveryChangePassword, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<RecoveryChangePassword>({
             url: '/auth/recovery-password',

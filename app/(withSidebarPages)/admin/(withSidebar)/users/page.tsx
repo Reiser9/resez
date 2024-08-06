@@ -23,14 +23,14 @@ const AdminUsers = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['adminUsers'],
-        queryFn: getPaginationUsers,
+        queryFn: (param) => getPaginationUsers(param.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
 
             return nextPage;
         },
-        refetchInterval: 10000
+        refetchInterval: 10000,
     });
 
     const revalidateUsers = () => {

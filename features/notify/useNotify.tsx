@@ -5,6 +5,7 @@ import React from 'react';
 import useRequest from '@/shared/hooks/useRequest';
 import { Notifies, Notify } from '@/entities/notify';
 import useAlert from '@/shared/hooks/useAlert';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useNotify = () => {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -13,10 +14,16 @@ const useNotify = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationNotifies = async ({ pageParam }: { pageParam: number }, unread = false) => {
-        const limit = 6;
+    const getPaginationNotifies = async (page: number, unread = false) => {
+        const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            unread,
+        });
+
         const response = await request<Notifies>({
-            url: `/notify?offset=${pageParam * 6}&limit=${limit}&unread=${unread}`,
+            url: `/notify?${queryString}`,
             isAuth: true,
         });
 
@@ -86,9 +93,9 @@ const useNotify = () => {
             isAuth: true,
             data: {
                 title,
-                sender: senderTrim,
-                userIDs: userIDs || [],
-                date,
+                // sender: senderTrim,
+                // userIDs: userIDs || [],
+                // date,
                 content,
                 notifyTypeId: type,
             },

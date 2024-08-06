@@ -9,8 +9,8 @@ import { initProfileInfo } from '@/store/slices/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 
 const useProfileData = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [dataIsSaving, setDataIsSaving] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [dataIsSaving, setDataIsSaving] = React.useState(false);
 
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
@@ -73,14 +73,14 @@ const useProfileData = () => {
         if ('data' in response) {
             return response.data.user;
         }
-    }
+    };
 
     return {
         isLoading,
         dataIsSaving,
         getProfileData,
         saveProfileData,
-        getUserProfile
+        getUserProfile,
     };
 };
 

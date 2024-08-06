@@ -5,6 +5,7 @@ import React from 'react';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import type { UserAdmin, UsersAdmin } from '@/entities/user';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useNotify = () => {
     const [usersIsLoading, setUsersIsLoading] = React.useState<number[]>([]);
@@ -12,10 +13,15 @@ const useNotify = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationUsers = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationUsers = async (page: number) => {
         const limit = 6;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<UsersAdmin>({
-            url: `/admin/user?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/admin/user?${queryString}`,
             isAuth: true,
         });
 

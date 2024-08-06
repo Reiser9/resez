@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import useRequest from '@/shared/hooks/useRequest';
 import { AdminStats } from '@/entities/admin';
 

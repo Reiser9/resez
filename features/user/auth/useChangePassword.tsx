@@ -7,12 +7,12 @@ import useRequest from '@/shared/hooks/useRequest';
 import { ChangePassword, VerifyChangePassword } from '@/entities/user';
 
 const useChangePassword = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const changePassword = async (data: ChangePassword, successCallback: () => void = () => {}): Promise<void> => {
+    const changePassword = async (data: ChangePassword, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request({
             url: '/user/send-change-password-code',
@@ -30,10 +30,7 @@ const useChangePassword = () => {
         successCallback();
     };
 
-    const verifyChangePassword = async (
-        data: VerifyChangePassword,
-        successCallback: () => void = () => {},
-    ): Promise<void> => {
+    const verifyChangePassword = async (data: VerifyChangePassword, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request({
             url: '/user/verify-change-password-code',

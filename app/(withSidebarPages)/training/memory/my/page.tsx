@@ -9,19 +9,20 @@ import base from '@/shared/styles/base.module.scss';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross, Plus, Search } from '@/shared/icons';
+import { Cross, Plus } from '@/shared/icons';
 import { CollectionItem } from '@/shared/ui/CollectionItem';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { useCollections } from '@/features/collection';
-import { Input } from '@/shared/ui/Input';
 import Tabs from '../ui/Tabs';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { SearchInput } from '@/shared/ui/SearchInput';
 
 const MemoryMy = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const [searchValue, setSearchValue] = React.useState('');
-    const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
+    const debounceTimeout = useDebounce(searchValue, 500);
 
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getPaginationCollections, deleteCollectionById } = useCollections();
@@ -36,7 +37,7 @@ const MemoryMy = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
         queryKey: ['collections'],
-        queryFn: (page) => getPaginationCollections(page, searchValue),
+        queryFn: (param) => getPaginationCollections(param.pageParam, searchValue),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -55,20 +56,8 @@ const MemoryMy = () => {
             return;
         }
 
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-
-        debounceTimeout.current = setTimeout(() => {
-            refetch();
-        }, 500);
-
-        return () => {
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-        };
-    }, [searchValue, isAuth]);
+        refetch();
+    }, [debounceTimeout, isAuth]);
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -76,16 +65,7 @@ const MemoryMy = () => {
 
             {isAuth ? (
                 <>
-                    <div className={base.searchInner}>
-                        <Input
-                            placeholder="Искать"
-                            className={base.searchInput}
-                            value={searchValue}
-                            setValue={setSearchValue}
-                        />
-
-                        <Search className={base.searchIcon} />
-                    </div>
+                    <SearchInput value={searchValue} setValue={setSearchValue} />
 
                     <div className={base.titleInner}>
                         <div className={base.titleWrapper}>
@@ -116,11 +96,15 @@ const MemoryMy = () => {
                     ) : error ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data?.pages[0]?.totalCount === 0 ? (
-                        <NotContent text="Коллекций не найдено">
-                            <Button href="/training/memory/create" variant="light" auto>
-                                Создать коллекцию
-                            </Button>
-                        </NotContent>
+                        searchValue ? (
+                            <NotContent text="По вашему запросу коллекций не найдено" />
+                        ) : (
+                            <NotContent text="Коллекций не найдено">
+                                <Button href="/training/memory/create" variant="light" auto>
+                                    Создать коллекцию
+                                </Button>
+                            </NotContent>
+                        )
                     ) : (
                         <div className={base.contentItems}>
                             {data?.pages.map((collection) =>

@@ -34,7 +34,7 @@ const TestsSubject = () => {
 
     const { data, isPending, error } = useInfiniteQuery({
         queryKey: ['official_tests_by_subject'],
-        queryFn: (params) => getPagginationOfficialTests({ pageParam: params.pageParam, subjectSlug: String(subject) }),
+        queryFn: (params) => getPagginationOfficialTests(params.pageParam, String(subject)),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

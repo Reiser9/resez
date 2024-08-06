@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 import { PagginationTasks, PagginationTasksById, SubjectTaskById, SubThemeInfo } from '@/entities/task';
@@ -11,25 +9,17 @@ const useTask = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPagginationTasks = async ({
-        pageParam,
+    const getPagginationTasks = async (
+        page: number,
+        subjectId?: string,
+        subjectTaskId?: string,
+        subThemeId?: string,
+        userId?: string,
+        isVerified?: string,
         limit = 9,
-        subjectId = '',
-        subjectTaskId = '',
-        subThemeId = '',
-        userId = '',
-        isVerified = '',
-    }: {
-        pageParam: number;
-        limit?: number;
-        subjectId?: string;
-        subjectTaskId?: string;
-        subThemeId?: string;
-        userId?: string;
-        isVerified?: string;
-    }) => {
+    ) => {
         const queryString = buildQueryString({
-            offset: pageParam * limit,
+            offset: page * limit,
             limit,
             subject_id: subjectId,
             subject_task_id: subjectTaskId,
@@ -172,10 +162,14 @@ const useTask = () => {
         }
     };
 
-    const getTasksBySubThemeId = async (pageParam: number, subthemeId: number | string) => {
+    const getTasksBySubThemeId = async (page: number, subthemeId: number | string) => {
         const limit = 10;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
         const response = await request<PagginationTasksById>({
-            url: `/education-ms/sub-theme/${subthemeId}/task?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/sub-theme/${subthemeId}/task?${queryString}`,
         });
 
         if (catchRequestError(response)) {

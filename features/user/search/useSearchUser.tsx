@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import useRequest from '@/shared/hooks/useRequest';
 import type { UsersSearch } from '@/entities/user';
 
@@ -10,6 +8,11 @@ const useSearchUser = () => {
 
     const getPaginationUsers = async () => {
         const limit = 9;
+        // const queryString = buildQueryString({
+        //     offset: page * limit,
+        //     limit,
+        // });
+
         const response = await request<UsersSearch>({
             url: `/user?search=&limit=20`,
             isAuth: true,
@@ -25,7 +28,7 @@ const useSearchUser = () => {
     };
 
     return {
-        getPaginationUsers
+        getPaginationUsers,
     };
 };
 

@@ -1,19 +1,23 @@
 'use client';
 
-import React from 'react';
-
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 import { PagginationTests, Test, TestById, TestResult } from '@/entities/test';
 import { SubjectTaskById } from '@/entities/task';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useTest = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPagginationTests = async ({ pageParam, limit = 9 }: { pageParam: number; limit?: number }) => {
+    const getPagginationTests = async (page: number, limit = 9) => {
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<PagginationTests>({
-            url: `/education-ms/admin/test?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/admin/test?${queryString}`,
             isAuth: true,
         });
 
@@ -26,17 +30,15 @@ const useTest = () => {
         }
     };
 
-    const getPagginationOfficialTests = async ({
-        pageParam,
-        limit = 9,
-        subjectSlug,
-    }: {
-        pageParam: number;
-        limit?: number;
-        subjectSlug: string;
-    }) => {
+    const getPagginationOfficialTests = async (page: number, subjectSlug: string, limit = 9) => {
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            subject_slug: subjectSlug,
+        });
+
         const response = await request<PagginationTests>({
-            url: `/education-ms/test/official?offset=${pageParam * limit}&limit=${limit}&subject_slug=${subjectSlug}`,
+            url: `/education-ms/test/official?${queryString}`,
             isAuth: true,
         });
 

@@ -67,13 +67,13 @@ const AdminTests = () => {
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, isVerified],
         queryFn: (pageParam) =>
-            getPagginationTasks({
-                pageParam: pageParam.pageParam,
-                subjectId: subjectId || '',
-                subjectTaskId: subjectTaskId || '',
-                subThemeId: subThemeId || '',
-                isVerified: isVerified || '',
-            }),
+            getPagginationTasks(
+                pageParam.pageParam,
+                subjectId || '',
+                subjectTaskId || '',
+                subThemeId || '',
+                isVerified || '',
+            ),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
@@ -88,7 +88,7 @@ const AdminTests = () => {
         error: subjectsError,
     } = useQuery({
         queryKey: ['subjects'],
-        queryFn: () => getPagginationSubjects({ pageParam: 0, limit: 9999 }),
+        queryFn: () => getPagginationSubjects(0, 9999),
     });
 
     const {
@@ -268,6 +268,7 @@ const AdminTests = () => {
                                         remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
                                         archiveCallback={() => archiveTask(data.id, revalidateRequest)}
                                         toggleVerify={() => toggleVerifyHandler(data.id)}
+                                        verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
                                     />
                                 )),
                             )}

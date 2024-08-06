@@ -6,21 +6,22 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import base from '@/shared/styles/base.module.scss';
 
 import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross, Heart, Plus, Search } from '@/shared/icons';
+import { Cross, Heart } from '@/shared/icons';
 import { CollectionItem } from '@/shared/ui/CollectionItem';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { useCollections } from '@/features/collection';
 import Tabs from '../ui/Tabs';
-import { Input } from '@/shared/ui/Input';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { SearchInput } from '@/shared/ui/SearchInput';
 
 const MemoryLiked = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const [searchValue, setSearchValue] = React.useState('');
-    const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
+    const debounceTimeout = useDebounce(searchValue, 500);
 
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getLikedPaginationCollections, deleteCollectionById } = useCollections();
@@ -54,20 +55,8 @@ const MemoryLiked = () => {
             return;
         }
 
-        if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
-        }
-
-        debounceTimeout.current = setTimeout(() => {
-            refetch();
-        }, 500);
-
-        return () => {
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-        };
-    }, [searchValue, isAuth]);
+        refetch();
+    }, [debounceTimeout, isAuth]);
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -75,16 +64,7 @@ const MemoryLiked = () => {
 
             {isAuth ? (
                 <>
-                    <div className={base.searchInner}>
-                        <Input
-                            placeholder="Искать"
-                            className={base.searchInput}
-                            value={searchValue}
-                            setValue={setSearchValue}
-                        />
-
-                        <Search className={base.searchIcon} />
-                    </div>
+                    <SearchInput value={searchValue} setValue={setSearchValue} />
 
                     <div className={base.titleInner}>
                         <Text variant="h3">
@@ -104,7 +84,11 @@ const MemoryLiked = () => {
                     ) : error ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data?.pages[0]?.totalCount === 0 ? (
-                        <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />
+                        searchValue ? (
+                            <NotContent text="По вашему запросу коллекций не найдено" />
+                        ) : (
+                            <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />
+                        )
                     ) : (
                         <div className={base.contentItems}>
                             {data?.pages.map((collection) =>

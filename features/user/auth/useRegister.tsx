@@ -10,14 +10,14 @@ import useRequest from '@/shared/hooks/useRequest';
 import type { RegisterData, RegisterResponse } from '@/entities/user/model';
 
 const useRegister = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const register = async (data: RegisterData): Promise<void> => {
+    const register = async (data: RegisterData) => {
         setIsLoading(true);
         const response = await request<RegisterResponse>({ url: '/auth/register', method: 'POST', data });
         setIsLoading(false);

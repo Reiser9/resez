@@ -9,7 +9,7 @@ import useRequest from '@/shared/hooks/useRequest';
 import type { LoginData, LoginResponse, LoginWithQRData } from '@/entities/user';
 
 const useLogin = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();

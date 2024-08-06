@@ -39,20 +39,26 @@ const TaskPage = () => {
 
             <InfoSidebar value={infoMenu} setValue={setInfoMenu}>
                 <TextPoint title="Предмет:">
-                    <Text variant="h4">{subject?.subject || 0}</Text>
+                    <Text variant="h4">{subject?.subject || "-"}</Text>
                 </TextPoint>
 
-                <TextPoint title="Номер задания:">
-                    <Text variant="h4">{subjectTask?.number || 0}</Text>
-                </TextPoint>
+                {subjectTask?.number && (
+                    <TextPoint title="Номер задания:">
+                        <Text variant="h4">{subjectTask.number}</Text>
+                    </TextPoint>
+                )}
 
-                <TextPoint title="Тема:">
-                    <Text variant="h4">{subjectTask?.theme || 0}</Text>
-                </TextPoint>
+                {subjectTask?.theme && (
+                    <TextPoint title="Тема:">
+                        <Text variant="h4">{subjectTask.theme}</Text>
+                    </TextPoint>
+                )}
 
-                <TextPoint title="Подтема:">
-                    <Text variant="h4">{subTheme?.subTheme || 0}</Text>
-                </TextPoint>
+                {subTheme?.subTheme && (
+                    <TextPoint title="Подтема:">
+                        <Text variant="h4">{subTheme.subTheme}</Text>
+                    </TextPoint>
+                )}
             </InfoSidebar>
         </div>
     );

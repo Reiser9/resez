@@ -12,7 +12,7 @@ const useCheckAuth = () => {
     const dispatch = useAppDispatch();
     const { request, clearLocalData, getHealthServer, catchRequestError, errorController } = useRequest();
 
-    const checkAuth = async (): Promise<void> => {
+    const checkAuth = async () => {
         await getHealthServer();
         const accessToken = localStorage.getItem('accessToken');
 
@@ -32,7 +32,7 @@ const useCheckAuth = () => {
         // if ('data' in refresh) {
         //     localStorage.setItem('accessToken', refresh.data.accessToken);
         // }
-        
+
         const data = await request<UserShortInfo>({ url: '/user/short-info', isAuth: true });
 
         dispatch(setAppIsLoading(false));

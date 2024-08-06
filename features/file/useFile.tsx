@@ -1,9 +1,6 @@
 'use client';
 
-import React from 'react';
-
 import useRequest from '@/shared/hooks/useRequest';
-import axios from 'axios';
 
 const useFile = () => {
     const { request, catchRequestError, errorController } = useRequest();

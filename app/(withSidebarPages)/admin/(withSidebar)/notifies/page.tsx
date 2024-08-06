@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Checkbox, Select, TimePicker } from 'antd';
+import { Checkbox, TimePicker } from 'antd';
 import { Dayjs } from 'dayjs';
-// import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -17,10 +17,15 @@ import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { Clock } from '@/shared/icons';
 import useNotify from '@/features/notify/useNotify';
+import { EditorCore } from '@/shared/ui/Editor/Editor';
+import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
+import { Select } from '@/shared/ui/Select';
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 
-// const EditorNoSSR = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
-//     ssr: false,
-// });
+const Editor = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
+    ssr: false,
+    loading: () => <DynamicSkeleton />,
+});
 
 const AdminNotifies = () => {
     const [title, setTitle] = React.useState('');
@@ -44,11 +49,11 @@ const AdminNotifies = () => {
     const { alertNotify } = useAlert();
 
     // const searchUsersRef = React.useRef(null);
-    // const editorRef = React.useRef(null);
+    const editorRef = React.useRef<EditorCore | null>(null);
 
     const createNotify = async () => {
         if ((!date || !time) && delayedSend) {
-            return alertNotify('Ошибка', 'Укажите время и дату', 'error');
+            return alertNotify('Предупреждение', 'Укажите время и дату', 'warn');
         }
 
         if (delayedSend && !isDateTimePast(date, time)) {
@@ -62,10 +67,14 @@ const AdminNotifies = () => {
             );
         }
 
-        // const savedData = await editorRef.current?.save();
-        // const content = getHtmlInEditor(savedData.blocks);
+        const savedData = await editorRef.current?.save();
+        const content = getHtmlInEditor(savedData?.blocks);
 
-        sendNotify(title, author, userIDs, newDate ?? '', 'content', type, () => {
+        if (!content) {
+            return alertNotify('Предупреждение', 'Контент уведомления не должен быть пустой', 'warn');
+        }
+
+        sendNotify(title, author, userIDs, newDate ?? '', content, type, () => {
             setTitle('');
             setAuthor('');
             setDate(undefined);
@@ -130,7 +139,6 @@ const AdminNotifies = () => {
                     value={title}
                     setValue={setTitle}
                     title="Заголовок"
-                    placeholder="Введите текст"
                     lengthLimit={100}
                     trackLength
                 />
@@ -150,17 +158,17 @@ const AdminNotifies = () => {
                     />
                 )}
 
-                <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
+                {/* <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
                     Отправить пользователю
-                </Checkbox>
+                </Checkbox> */}
 
-                {sendForOne && (
+                {/* {sendForOne && (
                     <Select
                         showSearch
                         placeholder="Пользователь"
                         mode="multiple"
                         maxTagCount="responsive"
-                        // notContentText="Пользователей не найдено"
+                        notContentText="Пользователей не найдено"
                         loading={false}
                         onSearch={(value: string) => setSearchValue(value.trim())}
                         onDropdownVisibleChange={handleDropdownVisibleUsersChange}
@@ -173,11 +181,11 @@ const AdminNotifies = () => {
                         //     };
                         // })}
                     />
-                )}
+                )} */}
 
-                <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
+                {/* <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
                     Отложенная отправка
-                </Checkbox>
+                </Checkbox> */}
 
                 {/* {delayedSend && (
                     <div className={styles.notifiesDelayInner}>
@@ -186,7 +194,6 @@ const AdminNotifies = () => {
                             placeholder="Выберите дату"
                             wrapperClass={styles.notifiesDelayItem}
                             value={date}
-                            // @ts-ignore
                             setValue={setDate}
                         />
                         <TimePicker
@@ -214,7 +221,7 @@ const AdminNotifies = () => {
                     })}
                 />*/}
 
-                {/* <EditorNoSSR placeholder="Сообщение" ref={editorRef} id="notifyEditor" /> */}
+                <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
             </div>
 
             <Button auto onClick={createNotify} levitation>

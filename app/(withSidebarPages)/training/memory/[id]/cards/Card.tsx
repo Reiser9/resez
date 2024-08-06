@@ -107,7 +107,7 @@ const Card: React.FC<Props> = ({
             clearCard();
         },
         preventScrollOnSwipe: true,
-        trackMouse: true,
+        trackMouse: true
     });
 
     const myRef = React.useRef<HTMLDivElement>();

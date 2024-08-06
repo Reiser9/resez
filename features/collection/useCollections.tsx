@@ -16,19 +16,26 @@ import type {
     Pair,
     PairDTO,
 } from '@/entities/collection';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useCollections = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [collectionIsLoading, setCollectionIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [collectionIsLoading, setCollectionIsLoading] = React.useState(false);
     const [collectionsIsLoading, setCollectionsIsLoading] = React.useState<string[]>([]);
 
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationCollections = async ({ pageParam }: { pageParam: number }, search: string) => {
+    const getPaginationCollections = async (page: number, search: string) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            search,
+        });
+
         const response = await request<Collections>({
-            url: `/memory-ms/collection?offset=${pageParam * limit}&limit=${limit}&search=${search}`,
+            url: `/memory-ms/collection?${queryString}`,
             isAuth: true,
         });
 

@@ -34,7 +34,7 @@ const AdminTests = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['tests'],
-        queryFn: getPagginationTests,
+        queryFn: (params) => getPagginationTests(params.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

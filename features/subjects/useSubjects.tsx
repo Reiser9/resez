@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import useRequest from '@/shared/hooks/useRequest';
 import { Subject, SubjectDTO, Task } from '@/entities/subject';
 import useAlert from '@/shared/hooks/useAlert';
@@ -15,14 +13,20 @@ import type {
     SubjectTaskCreate,
     SubjectTaskDTO,
 } from '@/entities/subject/model';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useSubjects = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPagginationSubjects = async ({ pageParam, limit = 9 }: { pageParam: number; limit?: number }) => {
+    const getPagginationSubjects = async (page: number, limit = 9) => {
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<PagginationSubjects>({
-            url: `/education-ms/admin/subject?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/education-ms/admin/subject?${queryString}`,
             isAuth: true,
         });
 

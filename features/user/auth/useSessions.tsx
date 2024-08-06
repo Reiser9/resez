@@ -5,15 +5,16 @@ import React from 'react';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import type { Session, Sessions } from '@/entities/user/session';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useSessions = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [sessionsIsLoading, setSessionsIsLoading] = React.useState<number[]>([]);
 
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getSessions = async (): Promise<Sessions | void> => {
+    const getSessions = async () => {
         const response = await request<Sessions>({ url: '/session', isAuth: true });
 
         if (catchRequestError(response)) {
@@ -25,11 +26,16 @@ const useSessions = () => {
         }
     };
 
-    const getPaginationSessions = async ({ pageParam }: { pageParam: number }): Promise<Sessions | void> => {
-        const limit = pageParam === 0 ? 5 : 6;
-        const offset = pageParam * limit === 0 ? 0 : pageParam * limit - 1;
+    const getPaginationSessions = async (page: number) => {
+        const limit = page === 0 ? 8 : 9;
+        const offset = page * limit === 0 ? 0 : page * limit - 1;
+        const queryString = buildQueryString({
+            offset: offset,
+            limit,
+        });
+
         const response = await request<Sessions>({
-            url: `/session?offset=${offset}&limit=${limit}`,
+            url: `/session?${queryString}`,
             isAuth: true,
         });
 
@@ -44,7 +50,7 @@ const useSessions = () => {
 
     const endAllSessions = async (successCallback = () => {}): Promise<void> => {
         setIsLoading(true);
-        const response = await request<Session>({
+        const response = await request<Sessions>({
             url: '/session/end-all',
             isAuth: true,
             method: 'PATCH',
@@ -56,13 +62,13 @@ const useSessions = () => {
             return errorController(response);
         }
 
-        successCallback();
         alertNotify('Успешно', 'Все сессии, кроме текущей, завершены', 'success');
+        successCallback();
     };
 
-    const endSessionById = async (id: number, successCallback = () => {}): Promise<void> => {
+    const endSessionById = async (id: number, successCallback = () => {}) => {
         setSessionsIsLoading((prev) => [...prev, id]);
-        const response = await request<Session>({
+        const response = await request({
             url: `/session/end/${id}`,
             isAuth: true,
             method: 'PATCH',

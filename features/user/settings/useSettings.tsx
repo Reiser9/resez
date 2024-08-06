@@ -8,12 +8,12 @@ import { Settings } from '@/entities/user';
 import { setUserSettings } from '@/store/slices/user';
 
 const useSettings = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const dispatch = useAppDispatch();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const updateSettings = async (data: Settings): Promise<void> => {
+    const updateSettings = async (data: Settings) => {
         setIsLoading(true);
         const response = await request<{ settings: Settings }>({
             url: '/user/settings',

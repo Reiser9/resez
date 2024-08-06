@@ -33,7 +33,7 @@ const AdminStoreAvatar = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['admin_avatars'],
-        queryFn: getPaginationAvatars,
+        queryFn: (param) => getPaginationAvatars(param.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -44,7 +44,7 @@ const AdminStoreAvatar = () => {
 
     const togglePublishHandler = (id: number) => {
         togglePublishAvatar(id, revalidateAvatars);
-    }
+    };
 
     return (
         <div className={base.baseWrapperGap16}>

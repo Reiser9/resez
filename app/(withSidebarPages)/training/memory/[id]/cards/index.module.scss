@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     position: relative;
 }
 
@@ -30,14 +31,14 @@
 
 .typeCardsResult{
     width: 100%;
-    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    // position: absolute;
+    // top: 50%;
+    // left: 50%;
+    // transform: translate(-50%, -50%);
+    display: none;
     opacity: 0;
     pointer-events: none;
     transition: .3s ease-in-out;
@@ -46,6 +47,10 @@
 .active{
     opacity: 1;
     pointer-events: all;
+}
+
+.show{
+    display: flex;
 }
 
 .typeCardsEvents{
@@ -223,7 +228,7 @@
     word-break: break-word;
     font-size: calc(1.2rem + 1.5vmin);
     max-height: 100%;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 .cardText p, .cardText div{
@@ -235,7 +240,7 @@
     position: relative;
     width: 100%;
     min-height: 25%;
-    flex-shrink: 0;
+    height: 100%;
     pointer-events: none;
 }
 

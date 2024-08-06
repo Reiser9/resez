@@ -61,14 +61,14 @@ const TaskItem: React.FC<Props> = ({
                     <div className={cn(base.titleInnerNowrap, base.aifs)}>
                         <Link href={href ? href : `/task/${id}`} className={styles.taskItemWrapper}>
                             <span className={base.titleWrapper}>
-                                <span className={base.circle32}>{number}</span>
+                                <span className={base.circle32}>{number ?? '?'}</span>
 
-                                <Text variant="h4">{subject}</Text>
+                                {subject && <Text variant="h4">{subject}</Text>}
                             </span>
 
-                            <p className={styles.taskTheme}>{theme}</p>
+                            {theme && <p className={styles.taskTheme}>{theme}</p>}
 
-                            <p className={styles.taskTheme}>{subTheme}</p>
+                            {subTheme && <p className={styles.taskTheme}>{subTheme}</p>}
                         </Link>
 
                         {(edit || remove) && (

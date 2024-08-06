@@ -19,7 +19,7 @@ const UnreadNotifyPage = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['notify'],
-        queryFn: (data) => getPaginationNotifies(data, true),
+        queryFn: (param) => getPaginationNotifies(param.pageParam, true),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

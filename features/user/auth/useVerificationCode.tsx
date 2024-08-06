@@ -8,12 +8,12 @@ import { VerificationCodeData } from '@/entities/user';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useVerificationCode = () => {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const dispatch = useAppDispatch();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const sendVerificationCode = async (successCallback: () => void = () => {}): Promise<void> => {
+    const sendVerificationCode = async (successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ verificationCodeData: VerificationCodeData }>({
             url: '/auth/send-verification-code',

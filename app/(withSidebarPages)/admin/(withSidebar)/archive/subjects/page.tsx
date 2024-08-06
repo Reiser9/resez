@@ -6,9 +6,8 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import useArchive from '@/features/user/admin/useArchive';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross, Restore } from '@/shared/icons';
+import { Cross } from '@/shared/icons';
 import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
@@ -16,6 +15,7 @@ import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { useArchive } from '@/features/user';
 
 const AdminArchiveSubjects = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -29,7 +29,7 @@ const AdminArchiveSubjects = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['archive_subjects'],
-        queryFn: getArhiveSubjects,
+        queryFn: (param) => getArhiveSubjects(param.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
