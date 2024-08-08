@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { SelectProps } from 'antd/lib';
 
 import styles from './index.module.scss';
+import base from '@/shared/styles/base.module.scss';
 
 import { ArrowBottom, Cross } from '@/shared/icons';
 import { Preloader } from '../Preloader';
@@ -17,9 +18,9 @@ type Option<T> = {
 
 type Props<T> = {
     placeholder?: string;
-    value: T | null;
+    value?: T | null;
     setValue?: (value: T) => void;
-    options: Option<T>[];
+    options?: Option<T>[];
     loading?: boolean;
     showSearch?: boolean;
     clear?: boolean;
@@ -29,7 +30,7 @@ type Props<T> = {
     className?: string;
 } & SelectProps<T>;
 
-const Select = <T extends string>({
+const Select = <T,>({
     placeholder,
     value,
     setValue,
@@ -43,7 +44,7 @@ const Select = <T extends string>({
     ...props
 }: Props<T>) => {
     return (
-        <div className={cn(styles.selectInner, wrapperClass)}>
+        <div className={cn(base.baseWrapperGap4, wrapperClass)}>
             {title && <Text variant="text3">{title}</Text>}
 
             <SelectAnt
@@ -60,7 +61,11 @@ const Select = <T extends string>({
                 className={cn(styles.select, className)}
                 suffixIcon={<ArrowBottom width="16" />}
                 notFoundContent={
-                    loading ? <Preloader small className={styles.loader} /> : <NotContent text={notContentText} />
+                    loading ? (
+                        <Preloader small wrapperClassName={styles.loader} />
+                    ) : (
+                        <NotContent text={notContentText} />
+                    )
                 }
                 removeIcon={<Cross width="14" />}
                 options={options}

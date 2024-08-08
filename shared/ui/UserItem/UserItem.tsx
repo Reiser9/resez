@@ -14,17 +14,16 @@ import { UserAdmin } from '@/entities/user/model';
 import { Badge } from '../Badge';
 import { Button, IconButton } from '../Button';
 import { TextPoint } from '../TextPoint';
-import { Notify, Stop, Verified } from '@/shared/icons';
+import { Notify, ResCoin, Stop, Verified } from '@/shared/icons';
 import { LoaderForItem } from '../Preloader';
 import { Text } from '../Text';
 import { ConfirmModal, Modal } from '../Modal';
 import { Input } from '../Input';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
-import { useUsers } from '@/features/user';
 
 type Props = {
     data?: UserAdmin;
-    userBlock?: () => void;
+    userBlock?: (reason: string) => void;
     userUnblock?: () => void;
     loading?: boolean;
     notify?: boolean;
@@ -49,10 +48,11 @@ const UserItem: React.FC<Props> = ({
         id,
         firstName,
         lastName,
-        status,
         registrationDate,
         activity,
         balance,
+        subscription,
+        telegramUsername,
     } = data || {};
     const { level, limit, xp } = levelInfo || {};
     const { isOnline, lastSeen } = activity || {};
@@ -61,16 +61,6 @@ const UserItem: React.FC<Props> = ({
     const [blockReason, setBlockReason] = React.useState('');
 
     const { copyTextWithNotify } = useCopyText();
-
-    const { changeUserBalance } = useUsers();
-
-    const changeUserBalanceHandler = (value: number) => {
-        if (!id) {
-            return;
-        }
-
-        changeUserBalance(id, value);
-    };
 
     return (
         <>
@@ -135,7 +125,6 @@ const UserItem: React.FC<Props> = ({
                         )} */}
                     </div>
 
-                    {status && <TextPoint title="Статус" text={status} />}
                     {!isOnline && (
                         <TextPoint title="Был(а) в сети" text={lastSeen ? getFormattedDate(lastSeen) : 'Неизвестно'} />
                     )}
@@ -144,7 +133,7 @@ const UserItem: React.FC<Props> = ({
                     )}
 
                     {!!roles?.length && (
-                        <TextPoint title="Роли">
+                        <TextPoint title={roles.length === 1 ? 'Роль' : 'Роли'}>
                             <div className={styles.userRoles}>
                                 {roles.map((data, id) => (
                                     <p
@@ -162,14 +151,19 @@ const UserItem: React.FC<Props> = ({
                         </TextPoint>
                     )}
 
-                    <TextPoint title="Баланс" text={balance || 0} />
+                    <TextPoint title="Баланс">
+                        <div className={styles.userBalance}>
+                            {balance || 0}
 
-                    <Button onClick={() => changeUserBalanceHandler(10)}>+10</Button>
-                    <Button onClick={() => changeUserBalanceHandler(-10)}>-10</Button>
+                            <ResCoin />
+                        </div>
+                    </TextPoint>
+
+                    {telegramUsername && <TextPoint title="Телеграм никнейм" text={telegramUsername} />}
                 </div>
 
                 <div className={styles.userItemWrapper}>
-                    <div className={styles.userLvlInner}>
+                    {/* <div className={styles.userLvlInner}>
                         <p className={styles.userLvlPoint}>{level || 1}</p>
 
                         <div className={styles.userLvlProgressTotal}>
@@ -184,10 +178,12 @@ const UserItem: React.FC<Props> = ({
                         </div>
 
                         <p className={styles.userLvlPoint}>{(level || 1) + 1}</p>
-                    </div>
+                    </div> */}
 
                     <div className={styles.userItemButtons}>
-                        <Button variant="light">Подробнее</Button>
+                        <Button variant="light" href={`/admin/users/${id}`}>
+                            Подробнее
+                        </Button>
 
                         {!isBlocked && (notify || block) && (
                             <>
@@ -243,7 +239,7 @@ const UserItem: React.FC<Props> = ({
                     variant="light"
                     color="danger"
                     onClick={() => {
-                        userBlock();
+                        userBlock(blockReason);
                         setConfirmBlock(false);
                     }}
                 >

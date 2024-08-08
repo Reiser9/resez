@@ -19,6 +19,8 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useLogout } from '@/features/user';
 import { ConfirmModal } from '@/shared/ui/Modal';
 import { getHolidayEvent } from '@/shared/utils/getHolidayEvent';
+import { useQuery } from '@tanstack/react-query';
+import useNotify from '@/features/notify/useNotify';
 
 type Props = {
     empty?: boolean;
@@ -35,9 +37,16 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { theme, toggleTheme } = useThemeContext();
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const { isLoading, logout } = useLogout();
+    const { getUnreadNotifies } = useNotify();
     const { isAuth, user } = useAppSelector((state) => state.user);
-    const { avatar, levelInfo, nickname, unreadNotifiesCount, balance } = user || {};
+    const { avatar, levelInfo, nickname, balance } = user || {};
     const { level } = levelInfo || {};
+
+    const { data: unreadNotifiesCount } = useQuery({
+        queryKey: ['notify_count'],
+        queryFn: () => getUnreadNotifies(),
+        enabled: isAuth,
+    });
 
     const closeProfileMenu = () => {
         setProfileMenu(false);
@@ -157,7 +166,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         Уведомления
                                         {!!unreadNotifiesCount && (
                                             <span className={styles.headerProfileNotifyCount}>
-                                                {unreadNotifiesCount}
+                                                {unreadNotifiesCount > 9 ? "9+" : unreadNotifiesCount}
                                             </span>
                                         )}
                                     </Link>

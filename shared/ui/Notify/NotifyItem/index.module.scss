@@ -84,6 +84,8 @@
     line-clamp: 3;
     -webkit-line-clamp: 3;
     word-break: break-word;
+    max-height: 120px;
+    overflow: hidden;
 }
 
 .notifyItemTextContent img, .notifyItemTextContent table{

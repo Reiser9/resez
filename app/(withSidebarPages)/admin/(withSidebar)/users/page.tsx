@@ -69,7 +69,7 @@ const AdminUsers = () => {
                             <UserItem
                                 key={data.id}
                                 data={data}
-                                userBlock={() => blockUser(data.id, 'Нецензурная брань', () => revalidateUsers())}
+                                userBlock={(reason: string) => blockUser(data.id, reason, () => revalidateUsers())}
                                 userUnblock={() => unblockUser(data.id, () => revalidateUsers())}
                                 notify={checkPermission(permissions, [PERMISSIONS.NOTIFIES])}
                                 block={checkPermission(permissions, [PERMISSIONS.BLOCK_USERS])}

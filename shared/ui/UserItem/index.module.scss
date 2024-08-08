@@ -114,6 +114,17 @@
     font-size: 1.4rem;
 }
 
+.userBalance{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.userBalance svg{
+    width: 20px;
+    flex-shrink: 0;
+}
+
 .userItemWrapper{
     width: 100%;
     margin-top: auto;

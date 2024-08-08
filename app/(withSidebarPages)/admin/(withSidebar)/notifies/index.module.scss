@@ -9,6 +9,18 @@
     width: calc(100% / 2 - 8px / 2);
 }
 
+.notifyUserSelect{
+    width: 100%;
+}
+
+.notifyUserSelect svg{
+    color: var(--grey);
+}
+
+.loader{
+    position: relative;
+}
+
 @media (max-width: 375px) {
     .notifiesDelayItem{
         width: 100%;

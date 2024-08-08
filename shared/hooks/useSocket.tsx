@@ -5,14 +5,12 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { socket } from '@/api/socket';
 
-// import { incrementUreadNotifyCount, setUserBlocked, updatePermissions } from '../redux/slices/user';
-// import { addNotifyInStart } from '../redux/slices/notify';
-
 import { useAppDispatch, useAppSelector } from './useRedux';
 import useNotify from './useAlert';
 import useRequest from './useRequest';
 import { setUserBlockReason, setUserBlocked } from '@/store/slices/user';
 import { Message } from '@/entities/messenger';
+import { Notify } from '@/entities/notify';
 
 const useSocket = () => {
     const { isAuth, user, sessionId } = useAppSelector((state) => state.user);
@@ -25,10 +23,10 @@ const useSocket = () => {
 
     const currentDialogIdRef = React.useRef(currentDialogId);
     const currentUserIdRef = React.useRef(user?.id);
-    const quesryRef = React.useRef(queryClient);
+    const queryRef = React.useRef(queryClient);
 
     React.useEffect(() => {
-        quesryRef.current = queryClient;
+        queryRef.current = queryClient;
     }, [queryClient]);
 
     React.useEffect(() => {
@@ -44,7 +42,7 @@ const useSocket = () => {
     }, [currentDialogId]);
 
     React.useEffect(() => {
-        if(user && user.id){
+        if (user && user.id) {
             currentUserIdRef.current = user?.id;
         }
     }, [user]);
@@ -52,11 +50,11 @@ const useSocket = () => {
     React.useEffect(() => {
         socket.connect();
 
-        // socket.on("notify", data => {
-        //     dispatch(addNotifyInStart(data.notify));
-        //     dispatch(incrementUreadNotifyCount());
-        //     alertNotify("Информация", "Новое уведомление", "info", "/notifies", 4000);
-        // });
+        socket.on('notify', (data: { notify: Notify }) => {
+            queryRef.current.invalidateQueries({ queryKey: ['notify'] });
+            queryRef.current.invalidateQueries({ queryKey: ['notify_count'] });
+            alertNotify('Новое уведомление', 'Нажмите, чтобы посмотреть', 'info', '/notify', 4000);
+        });
 
         socket.on('end-session', () => {
             clearLocalData();
@@ -80,8 +78,8 @@ const useSocket = () => {
         });
 
         socket.on('message', (message: Message) => {
-            quesryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
-            quesryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+            queryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
+            queryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs'] });
 
             if (
                 currentUserIdRef.current &&
@@ -99,7 +97,7 @@ const useSocket = () => {
         // });
 
         return () => {
-            // socket.off("notify");
+            socket.off('notify');
             socket.off('end-session');
             socket.off('blocked');
             socket.off('unblocked');

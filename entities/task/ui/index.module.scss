@@ -92,3 +92,39 @@
         padding: 0;
     }
 }
+
+.taskItemMatch{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.taskItemMatchProgress{
+    flex: 1;
+    position: relative;
+    border-radius: 50px;
+    height: 4px;
+    background: var(--white);
+}
+
+.taskItemMatchProgressLine{
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50px;
+    transition: .2s linear;
+}
+
+.taskItemMatchProgressLine.green{
+    background: var(--success);
+}
+
+.taskItemMatchProgressLine.orange{
+    background: orange;
+}
+
+.taskItemMatchProgressLine.red{
+    background: var(--error);
+}

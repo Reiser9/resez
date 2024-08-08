@@ -16,14 +16,29 @@ type Props = {
     subtitle?: string;
     text?: string;
     size?: 'default' | 'small';
+    onClose?: () => void;
     children: React.ReactNode;
 };
 
-const Modal: React.FC<Props> = ({ value, setValue, title, subtitle, text, size = 'default', children }) => {
+const Modal: React.FC<Props> = ({
+    value,
+    setValue,
+    title,
+    subtitle,
+    text,
+    size = 'default',
+    onClose = () => {},
+    children,
+}) => {
+    const closeModal = () => {
+        setValue(false);
+        onClose();
+    };
+
     React.useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
-                setValue(false);
+                closeModal();
             }
         };
 
@@ -41,7 +56,7 @@ const Modal: React.FC<Props> = ({ value, setValue, title, subtitle, text, size =
             className={cn(styles.modalOverlay, {
                 [styles.active]: value,
             })}
-            onClick={() => setValue(false)}
+            onClick={closeModal}
         >
             <div className={cn(styles.modalWrapper, styles[size])}>
                 <div
@@ -61,7 +76,7 @@ const Modal: React.FC<Props> = ({ value, setValue, title, subtitle, text, size =
                             )}
                         </div>
 
-                        <button className={styles.modalCrossButton} onClick={() => setValue(false)}>
+                        <button className={styles.modalCrossButton} onClick={closeModal}>
                             <Cross />
                         </button>
                     </div>

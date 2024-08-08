@@ -30,6 +30,7 @@ const NotifyPage = () => {
 
     const revalidateNotify = () => {
         queryClient.invalidateQueries({ queryKey: ['notify'] });
+        queryClient.invalidateQueries({ queryKey: ['notify_count'] });
     };
 
     const resetRequest = () => {
@@ -42,9 +43,9 @@ const NotifyPage = () => {
 
     return (
         <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
+            <div className={base.titleInner} style={{ minHeight: 44 }}>
                 <Text variant="h3">
-                    Уведомления
+                    Уведомления{' '}
                     {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 

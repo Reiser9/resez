@@ -8,7 +8,7 @@ import base from '@/shared/styles/base.module.scss';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import { Button } from '@/shared/ui/Button';
+import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotifyItem } from '@/shared/ui/Notify';
 import useNotify from '@/features/notify/useNotify';
 import { NotifyItemSkeleton } from '@/shared/ui/Skeleton';
@@ -28,6 +28,11 @@ const UnreadNotifyPage = () => {
         },
     });
 
+    const revalidateNotify = () => {
+        queryClient.invalidateQueries({ queryKey: ['notify'] });
+        queryClient.invalidateQueries({ queryKey: ['notify_count'] });
+    };
+
     const resetRequest = () => {
         queryClient.resetQueries({ queryKey: ['notify'] });
     };
@@ -37,16 +42,20 @@ const UnreadNotifyPage = () => {
     };
 
     const readAllNotifiesHandler = () => {
-        readAllNotifies(() => resetRequest());
+        readAllNotifies(() => revalidateNotify());
     };
 
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
-                <Text variant="h3">
-                    Уведомления
-                    {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
-                </Text>
+                <div className={base.titleWrapper}>
+                    <Text variant="h3">
+                        Уведомления{' '}
+                        {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
+                    </Text>
+
+                    <ReloadButton onClick={resetRequest} disabled={isPending} />
+                </div>
 
                 <Button
                     auto
@@ -78,6 +87,7 @@ const UnreadNotifyPage = () => {
                                 data={data}
                                 callback={() => readNotify(data.id)}
                                 loading={notifyIsLoading.includes(data.id)}
+                                unread
                             />
                         )),
                     )}

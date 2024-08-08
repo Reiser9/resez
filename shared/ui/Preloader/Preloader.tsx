@@ -1,13 +1,14 @@
-import { HTMLAttributes } from "react";
-import cn from "classnames";
+import { HTMLAttributes } from 'react';
+import cn from 'classnames';
 
-import styles from "./index.module.scss";
+import styles from './index.module.scss';
 
 type Props = {
     theme?: 'primary' | 'danger';
     small?: boolean;
     fill?: boolean;
     page?: boolean;
+    wrapperClassName?: string;
 } & HTMLAttributes<HTMLDivElement>;
 
 const Preloader: React.FC<Props> = ({
@@ -16,11 +17,12 @@ const Preloader: React.FC<Props> = ({
     fill = false,
     page = false,
     className,
+    wrapperClassName,
     ...props
 }) => {
     return (
         <div
-            className={cn(styles.preloaderInner, {
+            className={cn(styles.preloaderInner, wrapperClassName, {
                 [styles.fill]: fill,
                 [styles.page]: page,
             })}

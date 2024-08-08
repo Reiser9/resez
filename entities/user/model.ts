@@ -63,32 +63,43 @@ export type User = {
     balance: number;
 };
 
+export type UserShort = {
+    id: number;
+    nickname: string;
+    avatar: string;
+};
+
 export type UserAdmin = {
     id: number;
     nickname: string;
+    firstName: string;
+    lastName: string;
+    registrationDate: Date;
+    telegramUsername: string;
     isVerified: boolean;
     isBlocked: boolean;
     blockReason: string;
     avatar: string;
-    firstName: string;
-    lastName: string;
-    registrationDate: Date;
     status: string;
     levelInfo: {
         level: number;
         xp: number;
         limit: number;
     };
+    roles: Role[];
+    balance: number;
+    subscription: {
+        id: number;
+        subscription: string;
+    };
     activity: {
         isOnline: boolean;
         lastSeen: Date;
     } | null;
-    subscription: {
-        name: string;
-        canUploadImages: boolean;
-    };
-    roles: Role[];
-    balance: number;
+};
+
+export type UsersShortAdmin = Paggination & {
+    users: UserShort[];
 };
 
 export type UsersAdmin = Paggination & {

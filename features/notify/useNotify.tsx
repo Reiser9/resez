@@ -3,7 +3,7 @@
 import React from 'react';
 
 import useRequest from '@/shared/hooks/useRequest';
-import { Notifies, Notify } from '@/entities/notify';
+import { Notifies, Notify, NotifyType } from '@/entities/notify';
 import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
@@ -15,11 +15,11 @@ const useNotify = () => {
     const { alertNotify } = useAlert();
 
     const getPaginationNotifies = async (page: number, unread = false) => {
-        const limit = 9;
+        const limit = 10;
         const queryString = buildQueryString({
             offset: page * limit,
             limit,
-            unread,
+            unread: unread ? unread : '',
         });
 
         const response = await request<Notifies>({
@@ -71,36 +71,43 @@ const useNotify = () => {
 
     const sendNotify = async (
         title: string,
-        sender: string,
+        author: string,
         userIDs: number[] | string[],
         date: string,
         content: string,
-        type = 1,
+        type: string | null,
         successCallback = () => {},
     ) => {
         const titleTrim = title?.trim();
-        const senderTrim = sender?.trim();
+        const authorTrim = author?.trim();
 
         if (!titleTrim) {
             return alertNotify('Предупреждение', 'Заголовок не может быть пустым', 'warn');
         }
 
-        setIsLoading(true);
+        let notifyData: {
+            title: string;
+            content: string;
+            users: number[] | string[];
+            author: string;
+            date?: string;
+            notifyTypeId?: number | string;
+        } = {
+            title,
+            content,
+            users: userIDs || [],
+            author: authorTrim,
+            ...(date && { date }),
+            ...(type && { notifyTypeId: type }),
+        };
 
+        setIsLoading(true);
         const response = await request({
             url: 'admin/notify',
             method: 'POST',
             isAuth: true,
-            data: {
-                title,
-                // sender: senderTrim,
-                // userIDs: userIDs || [],
-                // date,
-                content,
-                notifyTypeId: type,
-            },
+            data: notifyData,
         });
-
         setIsLoading(false);
 
         if (catchRequestError(response)) {
@@ -111,6 +118,38 @@ const useNotify = () => {
         successCallback();
     };
 
+    const getUnreadNotifies = async (successCallback = () => {}) => {
+        const response = await request<{ count: number }>({
+            url: '/notify/unread-count',
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data.count;
+        }
+    };
+
+    const getNotifyTypes = async () => {
+        const response = await request<{ types: NotifyType[] }>({
+            url: '/admin/notify-type',
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.types;
+        }
+    };
+
     return {
         isLoading,
         notifyIsLoading,
@@ -118,6 +157,8 @@ const useNotify = () => {
         readAllNotifies,
         readNotifyById,
         sendNotify,
+        getUnreadNotifies,
+        getNotifyTypes,
     };
 };
 

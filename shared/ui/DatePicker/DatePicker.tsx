@@ -46,7 +46,7 @@ const DatePicker: React.FC<Props> = ({
                 format={format}
                 placeholder={placeholder}
                 disabledDate={disablePrevDate ? disabledDate : undefined}
-                suffixIcon={<Date width="18" />}
+                suffixIcon={<Date width="18" style={{ color: 'var(--text)' }} />}
                 allowClear={false}
                 className={cn(styles.datePicker, className)}
                 value={value}

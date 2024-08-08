@@ -1,33 +1,47 @@
-"use client";
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
+import dynamic from 'next/dynamic';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 import styles from './index.module.scss';
 
 import { formatDate } from '../../../utils/formatDate';
-
-import { CustomHtmlParser } from '../../CustomHtmlParser';
 import { Button } from '../../Button';
 import { Modal } from '../../Modal';
 import { Text } from '../../Text';
 import { getNotifyType } from '@/shared/utils/getNotifyType';
 import { Notify } from '@/entities/notify';
+import { DynamicSkeleton } from '../../Skeleton';
+
+const CustomHtmlParser = dynamic(() => import('../../CustomHtmlParser/CustomHtmlParser'), {
+    ssr: false,
+    loading: () => <DynamicSkeleton />,
+});
 
 type Props = {
     data?: Notify;
     loading?: boolean;
+    unread?: boolean;
     callback?: () => void;
 };
 
-const NotifyItem: React.FC<Props> = ({ data, loading = false, callback = () => {} }) => {
-    const { title, content, type, date, isRead, sender } = data || {};
+const NotifyItem: React.FC<Props> = ({ data, loading = false, unread = false, callback = () => {} }) => {
+    const queryClient = useQueryClient();
 
-    const [modal, setModal] = React.useState<boolean>(false);
+    const { title, content, type, date, isRead, author } = data || {};
+
+    const [modal, setModal] = React.useState(false);
     const notifyType = getNotifyType(type);
+
+    const revalidateRequest = () => {
+        queryClient.invalidateQueries({ queryKey: ['notify'] });
+        queryClient.invalidateQueries({ queryKey: ['notify_count'] });
+    };
 
     const readNotify = () => {
         setModal(true);
@@ -56,9 +70,9 @@ const NotifyItem: React.FC<Props> = ({ data, loading = false, callback = () => {
                     )}
 
                     <span className={styles.notifyItemTitleInner}>
-                        {sender && (
+                        {author && (
                             <Text variant="text2" className={styles.notifyItemFrom}>
-                                <span>От:</span> {sender}
+                                <span>От:</span> {author}
                             </Text>
                         )}
 
@@ -78,7 +92,7 @@ const NotifyItem: React.FC<Props> = ({ data, loading = false, callback = () => {
 
                 {content && (
                     <div className={cn(typography.text, styles.notifyItemTextContent, base.format)}>
-                        {/* <CustomHtmlParser html={content} /> */}
+                        <CustomHtmlParser html={content} />
                     </div>
                 )}
 
@@ -97,9 +111,15 @@ const NotifyItem: React.FC<Props> = ({ data, loading = false, callback = () => {
                 </div>
             </div>
 
-            <Modal value={modal} setValue={setModal} title={title} subtitle={formatDate(date)}>
+            <Modal
+                value={modal}
+                setValue={setModal}
+                onClose={unread ? () => setTimeout(revalidateRequest, 200) : () => {}}
+                title={title}
+                subtitle={formatDate(date)}
+            >
                 <div className={base.format}>
-                    {/* <CustomHtmlParser html={content} /> */}
+                    <CustomHtmlParser html={content} />
 
                     {notifyType?.name === 'session' && (
                         <Text className={styles.notifySessionLink}>

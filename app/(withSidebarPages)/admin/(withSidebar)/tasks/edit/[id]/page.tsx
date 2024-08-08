@@ -25,7 +25,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Text } from '@/shared/ui/Text';
 import { convertHtmlToEditorBlocks, getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
-import { Delete, Plus } from '@/shared/icons';
+import { Delete, Plus, ScanEye } from '@/shared/icons';
+import { Modal } from '@/shared/ui/Modal';
+import { SubjectTask } from '@/entities/task';
+import TaskItem from '@/entities/task/ui/TaskItem';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -52,11 +55,20 @@ const AdminTaskEdit = () => {
     const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
 
+    const [modalCheckMatch, setModalCheckMatch] = React.useState(false);
+    const [matchesIsLoading, setMatchesIsLoading] = React.useState(false);
+    const [matches, setMatches] = React.useState<
+        {
+            task: SubjectTask;
+            percent: number;
+        }[]
+    >();
+
     const taskRef = React.useRef<EditorCore | null>(null);
     const solutionRef = React.useRef<EditorCore | null>(null);
 
     const { getSubjectThemes, getSubjectSubThemes } = useSubjects();
-    const { editTask, getTaskById } = useTask();
+    const { editTask, getTaskById, checkMatchTasks } = useTask();
     const { alertNotify } = useAlert();
     const router = useRouter();
 
@@ -89,6 +101,35 @@ const AdminTaskEdit = () => {
         queryFn: () => getSubjectSubThemes(String(theme)),
         enabled: !!theme,
     });
+
+    const getMatchTasks = async () => {
+        if (!taskRef.current || !id) {
+            return;
+        }
+
+        if (!subjectId) {
+            return alertNotify('Предупреждение', 'Для проверки схожести заданий нужно указать предмет задания', 'warn');
+        }
+
+        const taskData = await taskRef.current.save();
+
+        const taskContent = getHtmlInEditor(taskData.blocks);
+
+        if (!taskContent) {
+            return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
+        }
+
+        setMatchesIsLoading(true);
+        const matches = await checkMatchTasks(subjectId, taskContent, String(id));
+        setMatchesIsLoading(false);
+
+        if (!matches) {
+            return;
+        }
+
+        setMatches(matches);
+        setModalCheckMatch(true);
+    };
 
     const addAnswer = () => {
         if (!answer) {
@@ -236,119 +277,141 @@ const AdminTaskEdit = () => {
     }
 
     return (
-        <CreatePageDefault
-            title="Редактирование задания"
-            button={
-                subTheme && (
-                    <Button auto levitation onClick={editTaskHandler}>
-                        Сохранить
-                    </Button>
-                )
-            }
-        >
-            <div className={base.formMedium}>
-                <div className={base.baseWrapperGap4}>
-                    <Text variant="text3">Предмет</Text>
+        <>
+            <CreatePageDefault
+                title="Редактирование задания"
+                button={
+                    subTheme && (
+                        <Button auto levitation onClick={editTaskHandler}>
+                            Сохранить
+                        </Button>
+                    )
+                }
+            >
+                <div className={base.formMedium}>
+                    <div className={base.baseWrapperGap4}>
+                        <Text variant="text3">Предмет</Text>
 
-                    <div className={styles.selectDisabled}>{subject}</div>
-                </div>
-
-                {subject && (
-                    <Select
-                        title="Номер задания"
-                        notContentText="Заданий не найдено"
-                        value={theme}
-                        onChange={(value) => {
-                            setTheme(value);
-                            setThemesFilter(themes);
-                        }}
-                        loading={themesIsLoading}
-                        options={themesFilter?.map((data) => {
-                            return {
-                                label: `${data.number}. ${data.theme}`,
-                                value: String(data.id),
-                            };
-                        })}
-                        showSearch
-                        onSearch={handleSearchThemes}
-                        filterOption={false}
-                    />
-                )}
-
-                {theme && (
-                    <Select
-                        title="Тема"
-                        notContentText="Тем не найдено"
-                        value={subTheme}
-                        onChange={(value) => {
-                            setSubTheme(value);
-                            setSubThemesFilter(subThemes);
-                        }}
-                        loading={subThemesIsLoading}
-                        options={subThemesFilter?.map((data) => {
-                            return {
-                                label: data.subTheme,
-                                value: String(data.id),
-                            };
-                        })}
-                        showSearch
-                        onSearch={handleSearchSubThemes}
-                        filterOption={false}
-                    />
-                )}
-
-                {checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS]) && (
-                    <Checkbox checked={isVerified} onChange={(e) => setIsVerified(e.target.checked)}>
-                        Задание проверено
-                    </Checkbox>
-                )}
-
-                <Editor title="Задание" editorRef={taskRef} id="taskEditor" />
-                <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
-
-                <div className={styles.answerWrapper}>
-                    <Text variant="text3">Ответ{!!answers.length && 'ы'}</Text>
-                    {answers.map((answer, id) => (
-                        <div key={id} className={styles.answerItem}>
-                            <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
-
-                            <IconButton
-                                variant="danger"
-                                small
-                                circle
-                                className={styles.answerItemDelete}
-                                onClick={() => removeAnswer(id)}
-                            >
-                                <Delete />
-                            </IconButton>
-                        </div>
-                    ))}
-
-                    <div className={styles.answerItem}>
-                        <Input value={answer} setValue={setAnswer} />
-
-                        {!!answers.length && (
-                            <IconButton
-                                variant="danger"
-                                small
-                                circle
-                                className={styles.answerItemDelete}
-                                onClick={removeAnswerForm}
-                            >
-                                <Delete />
-                            </IconButton>
-                        )}
+                        <div className={styles.selectDisabled}>{subject}</div>
                     </div>
+
+                    {subject && (
+                        <Select
+                            title="Номер задания"
+                            notContentText="Заданий не найдено"
+                            value={theme}
+                            onChange={(value) => {
+                                setTheme(value);
+                                setThemesFilter(themes);
+                            }}
+                            loading={themesIsLoading}
+                            options={themesFilter?.map((data) => {
+                                return {
+                                    label: `${data.number}. ${data.theme}`,
+                                    value: String(data.id),
+                                };
+                            })}
+                            showSearch
+                            onSearch={handleSearchThemes}
+                            filterOption={false}
+                        />
+                    )}
+
+                    {theme && (
+                        <Select
+                            title="Тема"
+                            notContentText="Тем не найдено"
+                            value={subTheme}
+                            onChange={(value) => {
+                                setSubTheme(value);
+                                setSubThemesFilter(subThemes);
+                            }}
+                            loading={subThemesIsLoading}
+                            options={subThemesFilter?.map((data) => {
+                                return {
+                                    label: data.subTheme,
+                                    value: String(data.id),
+                                };
+                            })}
+                            showSearch
+                            onSearch={handleSearchSubThemes}
+                            filterOption={false}
+                        />
+                    )}
+
+                    {checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS]) && (
+                        <Checkbox checked={isVerified} onChange={(e) => setIsVerified(e.target.checked)}>
+                            Задание проверено
+                        </Checkbox>
+                    )}
+
+                    <Editor title="Задание" editorRef={taskRef} id="taskEditor" />
+
+                    <Button variant="light" auto onClick={getMatchTasks} loading={matchesIsLoading}>
+                        <ScanEye />
+                        Проверить схожесть
+                    </Button>
+
+                    <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
+
+                    <div className={styles.answerWrapper}>
+                        <Text variant="text3">Ответ{!!answers.length && 'ы'}</Text>
+                        {answers.map((answer, id) => (
+                            <div key={id} className={styles.answerItem}>
+                                <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+
+                                <IconButton
+                                    variant="danger"
+                                    small
+                                    circle
+                                    className={styles.answerItemDelete}
+                                    onClick={() => removeAnswer(id)}
+                                >
+                                    <Delete />
+                                </IconButton>
+                            </div>
+                        ))}
+
+                        <div className={styles.answerItem}>
+                            <Input value={answer} setValue={setAnswer} />
+
+                            {!!answers.length && (
+                                <IconButton
+                                    variant="danger"
+                                    small
+                                    circle
+                                    className={styles.answerItemDelete}
+                                    onClick={removeAnswerForm}
+                                >
+                                    <Delete />
+                                </IconButton>
+                            )}
+                        </div>
+                    </div>
+
+                    <Button variant="light" auto onClick={addAnswer}>
+                        <Plus />
+                        Добавить ответ
+                    </Button>
+
+                    <Input title="Источник" value={source} setValue={setSource} />
                 </div>
+            </CreatePageDefault>
 
-                <Button variant="light" auto onClick={addAnswer}>
-                    <Plus />
-                    Добавить ответ
-                </Button>
-
-                <Input title="Источник" value={source} setValue={setSource} />
-            </div>
-        </CreatePageDefault>
+            <Modal value={modalCheckMatch} setValue={setModalCheckMatch} title="Схожие задания">
+                <div className={styles.matchItems}>
+                    {matches?.map((data) => (
+                        <TaskItem
+                            key={data.task.id}
+                            data={data.task}
+                            edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                            remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                            matchPercent={data.percent}
+                        />
+                    ))}
+                </div>
+            </Modal>
+        </>
     );
 };
 

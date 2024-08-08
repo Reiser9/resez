@@ -4,7 +4,7 @@ import React from 'react';
 
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { UserAdmin, UsersAdmin } from '@/entities/user';
+import type { UserAdmin, UsersAdmin, UsersShortAdmin } from '@/entities/user';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useNotify = () => {
@@ -13,14 +13,37 @@ const useNotify = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationUsers = async (page: number) => {
-        const limit = 6;
+    const getPaginationUsers = async (page: number, search = '') => {
+        const limit = 9;
         const queryString = buildQueryString({
             offset: page * limit,
             limit,
+            search,
         });
 
         const response = await request<UsersAdmin>({
+            url: `/admin/user?${queryString}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getPaginationUsersShort = async (page: number, search = '') => {
+        const limit = 5;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            search,
+        });
+
+        const response = await request<UsersShortAdmin>({
             url: `/admin/user?${queryString}`,
             isAuth: true,
         });
@@ -92,6 +115,7 @@ const useNotify = () => {
     return {
         usersIsLoading,
         getPaginationUsers,
+        getPaginationUsersShort,
         blockUser,
         unblockUser,
         changeUserBalance,

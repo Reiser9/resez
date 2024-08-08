@@ -27,13 +27,14 @@ const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/Cust
 
 type Props = {
     data: SubjectTask;
-    edit: boolean;
-    remove: boolean;
+    edit?: boolean;
+    remove?: boolean;
     verify?: boolean;
     href?: string;
     archiveCallback?: () => void;
     restoreCallback?: () => void;
     toggleVerify?: () => void;
+    matchPercent?: number;
 };
 
 const TaskItem: React.FC<Props> = ({
@@ -45,6 +46,7 @@ const TaskItem: React.FC<Props> = ({
     archiveCallback,
     restoreCallback,
     toggleVerify,
+    matchPercent,
 }) => {
     const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source } = data || {};
     const { avatar, nickname, id: userId } = user;
@@ -158,6 +160,25 @@ const TaskItem: React.FC<Props> = ({
                 )}
 
                 {source && <Text fontWeight={600}>Источник: {source}</Text>}
+
+                {matchPercent && (
+                    <div className={styles.taskItemMatch}>
+                        <Text variant="text2" fontWeight={600}>
+                            {matchPercent}%
+                        </Text>
+
+                        <div className={styles.taskItemMatchProgress}>
+                            <div
+                                className={cn(styles.taskItemMatchProgressLine, {
+                                    [styles.green]: matchPercent <= 30,
+                                    [styles.orange]: matchPercent < 90 && matchPercent > 30,
+                                    [styles.red]: matchPercent >= 90,
+                                })}
+                                style={{ width: `${matchPercent}%` }}
+                            ></div>
+                        </div>
+                    </div>
+                )}
 
                 {/* {loading && <LoaderForItem />} */}
             </div>

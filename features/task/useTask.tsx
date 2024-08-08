@@ -2,7 +2,7 @@
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTasks, PagginationTasksById, SubjectTaskById, SubThemeInfo } from '@/entities/task';
+import { PagginationTasks, PagginationTasksById, SubjectTask, SubjectTaskById, SubThemeInfo } from '@/entities/task';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useTask = () => {
@@ -217,6 +217,39 @@ const useTask = () => {
         }
     };
 
+    const checkMatchTasks = async (
+        subjectId: number | string,
+        task: string,
+        excludeTaskId?: number | string,
+        successCallback = () => {},
+    ) => {
+        const response = await request<{
+            matches: {
+                task: SubjectTask;
+                percent: number;
+            }[];
+        }>({
+            url: '/education-ms/admin/task/match',
+            isAuth: true,
+            method: 'POST',
+            data: {
+                subjectId,
+                task,
+                excludeTaskId,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data.matches;
+        }
+    };
+
     return {
         getPagginationTasks,
         createTask,
@@ -226,6 +259,7 @@ const useTask = () => {
         getTasksBySubThemeId,
         getSubThemeInfo,
         archiveTask,
+        checkMatchTasks,
     };
 };
 

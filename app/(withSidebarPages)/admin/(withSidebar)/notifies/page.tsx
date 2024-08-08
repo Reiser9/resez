@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Checkbox, TimePicker } from 'antd';
+import { Checkbox, TimePicker, Select as SelectAnt } from 'antd';
 import { Dayjs } from 'dayjs';
 import dynamic from 'next/dynamic';
 
@@ -15,12 +15,17 @@ import { Button } from '@/shared/ui/Button';
 import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
-import { Clock } from '@/shared/icons';
+import { ArrowBottom, Clock, Cross } from '@/shared/icons';
 import useNotify from '@/features/notify/useNotify';
 import { EditorCore } from '@/shared/ui/Editor/Editor';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { Select } from '@/shared/ui/Select';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { useQuery } from '@tanstack/react-query';
+import { useUsers } from '@/features/user';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
     ssr: false,
@@ -30,25 +35,43 @@ const Editor = dynamic(() => import('@/shared/ui/Editor').then((module) => modul
 const AdminNotifies = () => {
     const [title, setTitle] = React.useState('');
     const [author, setAuthor] = React.useState('');
-    const [date, setDate] = React.useState<Dayjs>();
+    const [date, setDate] = React.useState<Dayjs | null>();
     const [time, setTime] = React.useState<Dayjs>();
 
     const [searchValue, setSearchValue] = React.useState('');
     const [userSelectOpen, setUserSelectOpen] = React.useState(false);
     const [userOptions, setUserOptions] = React.useState<string[]>([]);
-    const [userIDs, setUserIDs] = React.useState<number[]>([]);
+    const [userIDs, setUserIDs] = React.useState<string[]>([]);
 
-    const [type, setType] = React.useState(1);
-    const [typeOptions, setTypeOptions] = React.useState([]);
+    const [type, setType] = React.useState<string | null>(null);
 
     const [sendAnonim, setSendAnonim] = React.useState(false);
     const [sendForOne, setSendForOne] = React.useState(false);
     const [delayedSend, setDelayedSend] = React.useState(false);
 
-    const { sendNotify } = useNotify();
+    const { isLoading, sendNotify, getNotifyTypes } = useNotify();
     const { alertNotify } = useAlert();
+    const { getPaginationUsersShort } = useUsers();
+    const userSearchDebounce = useDebounce(searchValue, 500);
 
-    // const searchUsersRef = React.useRef(null);
+    const {
+        data: notifyTypes,
+        isPending,
+        error,
+    } = useQuery({
+        queryKey: ['notify_types'],
+        queryFn: getNotifyTypes,
+    });
+
+    const {
+        data: users,
+        isPending: usersIsLoading,
+        error: usersError,
+    } = useQuery({
+        queryKey: ['users_short_search', userSearchDebounce],
+        queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
+    });
+
     const editorRef = React.useRef<EditorCore | null>(null);
 
     const createNotify = async () => {
@@ -82,51 +105,10 @@ const AdminNotifies = () => {
             setSendAnonim(false);
             setSendForOne(false);
             setDelayedSend(false);
+            setType(null);
+            editorRef.current?.clear();
         });
     };
-
-    const searchUsersHandler = () => {
-        setUserOptions([]);
-        // searchUsers(searchValue, true).then((users) => {
-        //     if (!users) {
-        //         return;
-        //     }
-
-        //     setUserOptions(users.users);
-        // });
-    };
-
-    const handleDropdownVisibleUsersChange = (open: boolean) => {
-        setUserSelectOpen(open);
-
-        if (open && userOptions.length === 0) {
-            searchUsersHandler();
-        }
-    };
-
-    // const handleDropdownVisibleTypeChange = (open) => {
-    //     if (open && typeOptions.length === 0) {
-    //         getNotifyTypes().then((types) => {
-    //             if (!types) {
-    //                 return;
-    //             }
-
-    //             setTypeOptions(types.data.notifyTypes);
-    //         });
-    //     }
-    // };
-
-    // React.useEffect(() => {
-    //     if (!userSelectOpen) {
-    //         return;
-    //     }
-
-    //     searchUsersRef.current = setTimeout(searchUsersHandler, 500);
-
-    //     return () => {
-    //         clearTimeout(searchUsersRef.current);
-    //     };
-    // }, [searchValue]);
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -135,13 +117,7 @@ const AdminNotifies = () => {
             </div>
 
             <div className={base.formMedium}>
-                <Input
-                    value={title}
-                    setValue={setTitle}
-                    title="Заголовок"
-                    lengthLimit={100}
-                    trackLength
-                />
+                <Input value={title} setValue={setTitle} title="Заголовок" lengthLimit={100} trackLength />
 
                 <Checkbox checked={sendAnonim} onChange={(e) => setSendAnonim(e.target.checked)}>
                     Отправить от имени
@@ -158,36 +134,48 @@ const AdminNotifies = () => {
                     />
                 )}
 
-                {/* <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
+                <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
                     Отправить пользователю
-                </Checkbox> */}
+                </Checkbox>
 
-                {/* {sendForOne && (
-                    <Select
-                        showSearch
-                        placeholder="Пользователь"
-                        mode="multiple"
-                        maxTagCount="responsive"
-                        notContentText="Пользователей не найдено"
-                        loading={false}
-                        onSearch={(value: string) => setSearchValue(value.trim())}
-                        onDropdownVisibleChange={handleDropdownVisibleUsersChange}
-                        onChange={(value: number[]) => setUserIDs(value)}
-                        filterOption={false}
-                        // options={userOptions.map((data) => {
-                        //     return {
-                        //         label: data.nickname,
-                        //         value: data.id,
-                        //     };
-                        // })}
-                    />
-                )} */}
+                {sendForOne && (
+                    <div className={base.baseWrapperGap4}>
+                        <Text variant="text3">Пользователь</Text>
 
-                {/* <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
+                        <SelectAnt
+                            onChange={(value) => setUserIDs(value)}
+                            allowClear={false}
+                            suffixIcon={<ArrowBottom width="16" />}
+                            notFoundContent={
+                                usersIsLoading ? (
+                                    <Preloader small wrapperClassName={styles.loader} />
+                                ) : (
+                                    <NotContent text="Пользователей не найдено" />
+                                )
+                            }
+                            loading={usersIsLoading}
+                            removeIcon={<Cross width="14" />}
+                            options={users?.users.map((data) => {
+                                return {
+                                    label: data.nickname,
+                                    value: String(data.id),
+                                };
+                            })}
+                            showSearch
+                            mode="multiple"
+                            maxTagCount="responsive"
+                            filterOption={false}
+                            onSearch={(value) => setSearchValue(value.trim())}
+                            className={styles.notifyUserSelect}
+                        />
+                    </div>
+                )}
+
+                <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
                     Отложенная отправка
-                </Checkbox> */}
+                </Checkbox>
 
-                {/* {delayedSend && (
+                {delayedSend && (
                     <div className={styles.notifiesDelayInner}>
                         <DatePicker
                             disablePrevDate
@@ -196,6 +184,7 @@ const AdminNotifies = () => {
                             value={date}
                             setValue={setDate}
                         />
+
                         <TimePicker
                             placeholder="Выберите время"
                             format="HH:mm"
@@ -205,26 +194,28 @@ const AdminNotifies = () => {
                             suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
                         />
                     </div>
-                )} */}
+                )}
 
-                {/* <Select
-                    placeholder="Тип уведомления"
-                    notContentText="Типов уведомления не найдено"
-                    loading={notifyTypesIsLoading}
-                    onDropdownVisibleChange={handleDropdownVisibleTypeChange}
-                    onChange={(value) => setType(value)}
-                    options={typeOptions.map((data) => {
-                        return {
-                            label: data.type,
-                            value: data.id,
-                        };
-                    })}
-                />*/}
+                {!!notifyTypes?.length && (
+                    <Select
+                        title="Тип уведомления"
+                        notContentText="Типов уведомления не найдено"
+                        loading={isPending}
+                        onChange={(value) => setType(value)}
+                        value={type}
+                        options={notifyTypes?.map((data) => {
+                            return {
+                                label: data.type,
+                                value: String(data.id),
+                            };
+                        })}
+                    />
+                )}
 
                 <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
             </div>
 
-            <Button auto onClick={createNotify} levitation>
+            <Button auto onClick={createNotify} loading={isLoading} levitation>
                 Отправить
             </Button>
         </div>
