@@ -107,7 +107,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                         </div>
                     )}
 
-                    <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
+                    <Badge image={avatar} text={nickname || "R"} style={{ width: 92, height: 92 }} />
 
                     <div
                         className={styles.avatarItemAvatarWrapper}

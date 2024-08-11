@@ -150,7 +150,7 @@ const MemoryCards = () => {
                         <div
                             className={cn(styles.typeCardsResult, {
                                 [styles.active]: currentCardNumber === data?.cards?.length || isFetching,
-                                [styles.show]: resultBlock
+                                [styles.show]: resultBlock,
                             })}
                         >
                             <Text variant="h3">Результат:</Text>

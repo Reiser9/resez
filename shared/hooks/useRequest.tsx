@@ -16,6 +16,7 @@ type requestProps = {
     isAuth?: boolean;
     data?: object;
     headers?: object;
+    baseURL?: string;
     callback?: () => void;
 };
 
@@ -111,6 +112,7 @@ const useRequest = () => {
         isAuth = false,
         data = {},
         headers = {},
+        baseURL = '',
     }: requestProps): Promise<RequestResult<T>> => {
         const accessToken = isAuth ? localStorage.getItem('accessToken') : null;
 
@@ -126,6 +128,7 @@ const useRequest = () => {
                 url,
                 headers: reqHeaders,
                 data,
+                ...(baseURL && { baseURL }),
             });
 
             return response;

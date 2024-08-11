@@ -29,6 +29,7 @@ import { Delete, Plus, ScanEye } from '@/shared/icons';
 import { Modal } from '@/shared/ui/Modal';
 import { SubjectTask } from '@/entities/task';
 import TaskItem from '@/entities/task/ui/TaskItem';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -300,10 +301,7 @@ const AdminTaskEdit = () => {
                             title="Номер задания"
                             notContentText="Заданий не найдено"
                             value={theme}
-                            onChange={(value) => {
-                                setTheme(value);
-                                setThemesFilter(themes);
-                            }}
+                            onChange={(value) => setTheme(value)}
                             loading={themesIsLoading}
                             options={themesFilter?.map((data) => {
                                 return {
@@ -322,10 +320,7 @@ const AdminTaskEdit = () => {
                             title="Тема"
                             notContentText="Тем не найдено"
                             value={subTheme}
-                            onChange={(value) => {
-                                setSubTheme(value);
-                                setSubThemesFilter(subThemes);
-                            }}
+                            onChange={(value) => setSubTheme(value)}
                             loading={subThemesIsLoading}
                             options={subThemesFilter?.map((data) => {
                                 return {
@@ -400,15 +395,19 @@ const AdminTaskEdit = () => {
 
             <Modal value={modalCheckMatch} setValue={setModalCheckMatch} title="Схожие задания">
                 <div className={styles.matchItems}>
-                    {matches?.map((data) => (
-                        <TaskItem
-                            key={data.task.id}
-                            data={data.task}
-                            edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                            remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                            matchPercent={data.percent}
-                        />
-                    ))}
+                    {!!matches?.length ? (
+                        matches?.map((data) => (
+                            <TaskItem
+                                key={data.task.id}
+                                data={data.task}
+                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                matchPercent={data.percent}
+                            />
+                        ))
+                    ) : (
+                        <NotContent text="Схожих заданий не найдено" />
+                    )}
                 </div>
             </Modal>
         </>

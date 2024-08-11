@@ -36,7 +36,7 @@ const MemoryLiked = () => {
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
         queryKey: ['collections_liked'],
-        queryFn: (page) => getLikedPaginationCollections(page, searchValue),
+        queryFn: (page) => getLikedPaginationCollections(page.pageParam, searchValue),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;

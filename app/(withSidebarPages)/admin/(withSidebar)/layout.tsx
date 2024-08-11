@@ -4,10 +4,9 @@ import { Metadata } from 'next';
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
-import { InnerPageSidebar } from '@/shared/ui/InnerPageSidebar';
-import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import AdminSidebar from './AdminSidebar';
 
 export const metadata: Metadata = {
     title: 'ResEz - Админка',
@@ -20,20 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className={pws.wrapper}>
                     <div className={pws.content}>{children}</div>
 
-                    <InnerPageSidebar>
-                        <SidebarLink href="/admin" end>
-                            Главная
-                        </SidebarLink>
-                        <SidebarLink href="/admin/notifies">Уведомления</SidebarLink>
-                        <SidebarLink href="/admin/users">Пользователи</SidebarLink>
-                        <SidebarLink href="/admin/roles">Роли</SidebarLink>
-                        <SidebarLink href="/admin/warns">Жалобы</SidebarLink>
-                        <SidebarLink href="/admin/archive">Архив</SidebarLink>
-                        <SidebarLink href="/admin/subjects">Предметы</SidebarLink>
-                        <SidebarLink href="/admin/tasks">Задания</SidebarLink>
-                        <SidebarLink href="/admin/tests">Тесты</SidebarLink>
-                        <SidebarLink href="/admin/store/products">Магазин</SidebarLink>
-                    </InnerPageSidebar>
+                    <AdminSidebar />
                 </div>
             </ContentWrapper>
         </PrivateWrapper>

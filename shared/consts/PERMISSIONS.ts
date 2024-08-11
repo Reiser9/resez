@@ -27,10 +27,10 @@ export const PERMISSIONS = {
     VERIFY_TASKS: 'Верификация заданий',
     COMPLAINTS: 'Жалобы',
     ARCHIVE: 'Архив',
-    STORE: "Магазин",
-    CREATE_PRODUCTS: "Создание товаров",
-    UPDATE_PRODUCTS: "Редактирование товаров",
-    DELETE_PRODUCTS: "Удаление товаров",
-    ASSIGN_PRODUCTS: "Выдача товаров",
-    PUBLISH_PRODUCTS: "Публикация товаров"
+    STORE: 'Магазин',
+    CREATE_PRODUCTS: 'Создание товаров',
+    UPDATE_PRODUCTS: 'Редактирование товаров',
+    DELETE_PRODUCTS: 'Удаление товаров',
+    ASSIGN_PRODUCTS: 'Выдача товаров',
+    PUBLISH_PRODUCTS: 'Публикация товаров',
 };

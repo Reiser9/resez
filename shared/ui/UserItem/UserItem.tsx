@@ -159,7 +159,13 @@ const UserItem: React.FC<Props> = ({
                         </div>
                     </TextPoint>
 
-                    {telegramUsername && <TextPoint title="Телеграм никнейм" text={telegramUsername} />}
+                    {telegramUsername && (
+                        <TextPoint title="Телеграм никнейм">
+                            <a href={`https://t.me/${telegramUsername}`} className={styles.telegramLink}>
+                                @{telegramUsername}
+                            </a>
+                        </TextPoint>
+                    )}
                 </div>
 
                 <div className={styles.userItemWrapper}>
@@ -189,7 +195,11 @@ const UserItem: React.FC<Props> = ({
                             <>
                                 {notify && (
                                     <Tooltip title="Уведомление">
-                                        <IconButton variant="light" className={styles.userItemButtonIcons}>
+                                        <IconButton
+                                            variant="light"
+                                            href={`/admin/notifies?users=${id}`}
+                                            className={styles.userItemButtonIcons}
+                                        >
                                             <Notify />
                                         </IconButton>
                                     </Tooltip>

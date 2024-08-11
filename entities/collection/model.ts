@@ -39,8 +39,8 @@ export type PairDTO = {
     answerPicture?: string;
 };
 
-export type CollectionSingle = Collection & {
-    pairs: Pair[];
+export type PairsCollectionById = Paggination & {
+    cards: Pair[];
 };
 
 export type Excel = {

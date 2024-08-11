@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Checkbox, TimePicker, Select as SelectAnt } from 'antd';
+import { Checkbox, TimePicker, Select as SelectAnt, Space } from 'antd';
 import { Dayjs } from 'dayjs';
 import dynamic from 'next/dynamic';
 
@@ -26,6 +26,11 @@ import { useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
+import { useSearchParams } from 'next/navigation';
+import { Badge } from '@/shared/ui/Badge';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { checkPermission } from '@/shared/utils/checkPermissions';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
     ssr: false,
@@ -39,8 +44,6 @@ const AdminNotifies = () => {
     const [time, setTime] = React.useState<Dayjs>();
 
     const [searchValue, setSearchValue] = React.useState('');
-    const [userSelectOpen, setUserSelectOpen] = React.useState(false);
-    const [userOptions, setUserOptions] = React.useState<string[]>([]);
     const [userIDs, setUserIDs] = React.useState<string[]>([]);
 
     const [type, setType] = React.useState<string | null>(null);
@@ -53,6 +56,10 @@ const AdminNotifies = () => {
     const { alertNotify } = useAlert();
     const { getPaginationUsersShort } = useUsers();
     const userSearchDebounce = useDebounce(searchValue, 500);
+
+    const searchParams = useSearchParams();
+    const usersIds = searchParams.get('users');
+    const permissions = useAppSelector((state) => state.user.user?.permissions);
 
     const {
         data: notifyTypes,
@@ -70,6 +77,7 @@ const AdminNotifies = () => {
     } = useQuery({
         queryKey: ['users_short_search', userSearchDebounce],
         queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
+        enabled: checkPermission(permissions, [PERMISSIONS.USERS]),
     });
 
     const editorRef = React.useRef<EditorCore | null>(null);
@@ -110,6 +118,13 @@ const AdminNotifies = () => {
         });
     };
 
+    React.useEffect(() => {
+        if (usersIds) {
+            setSendForOne(true);
+            setUserIDs(usersIds.split(','));
+        }
+    }, [usersIds]);
+
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
@@ -124,51 +139,64 @@ const AdminNotifies = () => {
                 </Checkbox>
 
                 {sendAnonim && (
-                    <Input
-                        value={author}
-                        setValue={setAuthor}
-                        placeholder="Имя / никнейм"
-                        title="От кого отправить"
-                        lengthLimit={30}
-                        trackLength
-                    />
+                    <Input value={author} setValue={setAuthor} title="Имя отправителя" lengthLimit={30} trackLength />
                 )}
 
-                <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
-                    Отправить пользователю
-                </Checkbox>
+                {checkPermission(permissions, [PERMISSIONS.USERS]) && (
+                    <>
+                        <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
+                            Отправить пользователю
+                        </Checkbox>
 
-                {sendForOne && (
-                    <div className={base.baseWrapperGap4}>
-                        <Text variant="text3">Пользователь</Text>
+                        {sendForOne && (
+                            <div className={base.baseWrapperGap4}>
+                                <Text variant="text3">Пользователь</Text>
 
-                        <SelectAnt
-                            onChange={(value) => setUserIDs(value)}
-                            allowClear={false}
-                            suffixIcon={<ArrowBottom width="16" />}
-                            notFoundContent={
-                                usersIsLoading ? (
-                                    <Preloader small wrapperClassName={styles.loader} />
-                                ) : (
-                                    <NotContent text="Пользователей не найдено" />
-                                )
-                            }
-                            loading={usersIsLoading}
-                            removeIcon={<Cross width="14" />}
-                            options={users?.users.map((data) => {
-                                return {
-                                    label: data.nickname,
-                                    value: String(data.id),
-                                };
-                            })}
-                            showSearch
-                            mode="multiple"
-                            maxTagCount="responsive"
-                            filterOption={false}
-                            onSearch={(value) => setSearchValue(value.trim())}
-                            className={styles.notifyUserSelect}
-                        />
-                    </div>
+                                <SelectAnt
+                                    value={userIDs}
+                                    onChange={(value) => setUserIDs(value)}
+                                    allowClear={false}
+                                    suffixIcon={<ArrowBottom width="16" />}
+                                    notFoundContent={
+                                        usersIsLoading ? (
+                                            <Preloader small wrapperClassName={styles.loader} />
+                                        ) : (
+                                            <NotContent text="Пользователей не найдено" />
+                                        )
+                                    }
+                                    loading={usersIsLoading}
+                                    removeIcon={<Cross width="14" />}
+                                    options={users?.users.map((data) => {
+                                        return {
+                                            label: data.nickname,
+                                            value: String(data.id),
+                                            id: `ID: ${data.id}`,
+                                            avatar: data.avatar,
+                                        };
+                                    })}
+                                    optionRender={({ data }) => (
+                                        <div className={styles.userSelectOption}>
+                                            <div className={base.titleWrapper}>
+                                                <Badge image={data.avatar} text={data.label} size="small" />
+
+                                                <Text variant="text2">{data.label}</Text>
+                                            </div>
+
+                                            <Text variant="text2" fontWeight={600}>
+                                                {data.id}
+                                            </Text>
+                                        </div>
+                                    )}
+                                    showSearch
+                                    mode="multiple"
+                                    maxTagCount="responsive"
+                                    filterOption={false}
+                                    onSearch={(value) => setSearchValue(value.trim())}
+                                    className={styles.notifyUserSelect}
+                                />
+                            </div>
+                        )}
+                    </>
                 )}
 
                 <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>

@@ -90,6 +90,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
+        enabled: checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
     });
 
     const {
@@ -99,7 +100,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['themes', subject],
         queryFn: () => getSubjectThemes(String(subject)),
-        enabled: !!subject,
+        enabled: !!subject && checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
     });
 
     const {
@@ -109,7 +110,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
-        enabled: !!theme,
+        enabled: !!theme && checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
     });
 
     const toggleVerifyHandler = (id: number) => {
@@ -292,74 +293,78 @@ const AdminTests = () => {
             </div>
 
             <Modal value={tasksFilter} setValue={setTasksFilter} title="Фильтры" size="small">
-                <Select
-                    title="Предмет"
-                    notContentText="Предметов не найдено"
-                    loading={subjectsIsLoading}
-                    value={subject}
-                    onChange={(value) => {
-                        setSubject(value);
-                        setSubjectsFilter(subjects);
-                        setTheme(null);
-                        setSubTheme(null);
-                    }}
-                    clear
-                    options={subjectsFilter?.map((data) => {
-                        return {
-                            label: data.subject,
-                            value: String(data.id),
-                        };
-                    })}
-                    showSearch
-                    onSearch={handleSearchSubject}
-                    filterOption={false}
-                />
+                {checkPermission(permissions, [PERMISSIONS.SUBJECTS]) && (
+                    <>
+                        <Select
+                            title="Предмет"
+                            notContentText="Предметов не найдено"
+                            loading={subjectsIsLoading}
+                            value={subject}
+                            onChange={(value) => {
+                                setSubject(value);
+                                setSubjectsFilter(subjects);
+                                setTheme(null);
+                                setSubTheme(null);
+                            }}
+                            clear
+                            options={subjectsFilter?.map((data) => {
+                                return {
+                                    label: data.subject,
+                                    value: String(data.id),
+                                };
+                            })}
+                            showSearch
+                            onSearch={handleSearchSubject}
+                            filterOption={false}
+                        />
 
-                {subject && (
-                    <Select
-                        title="Задание"
-                        notContentText="Заданий не найдено"
-                        loading={themesIsLoading}
-                        value={theme}
-                        onChange={(value) => {
-                            setTheme(value);
-                            setThemesFilter(themes);
-                            setSubTheme(null);
-                        }}
-                        clear
-                        options={themesFilter?.map((data) => {
-                            return {
-                                label: `${data.number}. ${data.theme}`,
-                                value: String(data.id),
-                            };
-                        })}
-                        showSearch
-                        onSearch={handleSearchThemes}
-                        filterOption={false}
-                    />
-                )}
+                        {subject && (
+                            <Select
+                                title="Задание"
+                                notContentText="Заданий не найдено"
+                                loading={themesIsLoading}
+                                value={theme}
+                                onChange={(value) => {
+                                    setTheme(value);
+                                    setThemesFilter(themes);
+                                    setSubTheme(null);
+                                }}
+                                clear
+                                options={themesFilter?.map((data) => {
+                                    return {
+                                        label: `${data.number}. ${data.theme}`,
+                                        value: String(data.id),
+                                    };
+                                })}
+                                showSearch
+                                onSearch={handleSearchThemes}
+                                filterOption={false}
+                            />
+                        )}
 
-                {theme && (
-                    <Select
-                        title="Тема"
-                        notContentText="Тем не найдено"
-                        loading={subThemesIsLoading}
-                        value={subTheme}
-                        onChange={(value) => {
-                            setSubTheme(value);
-                            setSubThemesFilter(subThemes);
-                        }}
-                        clear
-                        options={subThemesFilter?.map((data) => {
-                            return {
-                                label: data.subTheme,
-                                value: String(data.id),
-                            };
-                        })}
-                        showSearch
-                        onSearch={handleSearchSubThemes}
-                        filterOption={false}
-                    />
+                        {theme && (
+                            <Select
+                                title="Тема"
+                                notContentText="Тем не найдено"
+                                loading={subThemesIsLoading}
+                                value={subTheme}
+                                onChange={(value) => {
+                                    setSubTheme(value);
+                                    setSubThemesFilter(subThemes);
+                                }}
+                                clear
+                                options={subThemesFilter?.map((data) => {
+                                    return {
+                                        label: data.subTheme,
+                                        value: String(data.id),
+                                    };
+                                })}
+                                showSearch
+                                onSearch={handleSearchSubThemes}
+                                filterOption={false}
+                            />
+                        )}
+                    </>
                 )}
 
                 <Select

@@ -52,11 +52,11 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink 
             <div className={styles.taskTestItem}>
                 <div className={base.titleInner}>
                     {taskWithLink ? (
-                        <Link href={`/task/${id}`} className={base.titleWrapper}>
+                        <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
                             {taskInfoContent()}
                         </Link>
                     ) : (
-                        <div className={base.titleWrapper}>{taskInfoContent()}</div>
+                        <div className={styles.taskItemWrapper}>{taskInfoContent()}</div>
                     )}
 
                     {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>

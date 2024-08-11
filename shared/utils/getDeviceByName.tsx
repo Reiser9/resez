@@ -1,4 +1,4 @@
-import { Desktop, Mobile, Tablet, Tv, Unknown } from '../icons';
+import { Bot, Desktop, Mobile, Tablet, Tv, Unknown } from '../icons';
 
 export const getDeviceByName = (name: string | undefined) => {
     switch (name) {
@@ -21,6 +21,11 @@ export const getDeviceByName = (name: string | undefined) => {
             return {
                 icon: <Tv />,
                 name: 'Телевизор',
+            };
+        case 'tv':
+            return {
+                icon: <Bot />,
+                name: 'Бот',
             };
         default:
             return {

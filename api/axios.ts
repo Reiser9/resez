@@ -8,7 +8,7 @@ const axiosInstance: AxiosInstance = axios.create({
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
-    }
+    },
 });
 
 const publicEndpoints = [

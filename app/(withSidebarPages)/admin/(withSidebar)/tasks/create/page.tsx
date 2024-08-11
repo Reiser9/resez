@@ -28,6 +28,7 @@ import { Text } from '@/shared/ui/Text';
 import { SubjectTask } from '@/entities/task';
 import { Modal } from '@/shared/ui/Modal';
 import TaskItem from '@/entities/task/ui/TaskItem';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -264,10 +265,7 @@ const AdminTaskCreate = () => {
                         notContentText="Предметов не найдено"
                         loading={subjectsIsLoading}
                         value={subject}
-                        onChange={(value) => {
-                            setSubject(value);
-                            setSubjectsFilter(subjects);
-                        }}
+                        onChange={(value) => setSubject(value)}
                         options={subjectsFilter?.map((data) => {
                             return {
                                 label: data.subject,
@@ -285,10 +283,7 @@ const AdminTaskCreate = () => {
                             notContentText="Заданий не найдено"
                             loading={themesIsLoading}
                             value={theme}
-                            onChange={(value) => {
-                                setTheme(value);
-                                setThemesFilter(themes);
-                            }}
+                            onChange={(value) => setTheme(value)}
                             options={themesFilter?.map((data) => {
                                 return {
                                     label: `${data.number}. ${data.theme}`,
@@ -307,10 +302,7 @@ const AdminTaskCreate = () => {
                             notContentText="Тем не найдено"
                             loading={subThemesIsLoading}
                             value={subTheme}
-                            onChange={(value) => {
-                                setSubTheme(value);
-                                setSubThemesFilter(subThemes);
-                            }}
+                            onChange={(value) => setSubTheme(value)}
                             options={subThemesFilter?.map((data) => {
                                 return {
                                     label: data.subTheme,
@@ -388,15 +380,19 @@ const AdminTaskCreate = () => {
 
             <Modal value={modalCheckMatch} setValue={setModalCheckMatch} title="Схожие задания">
                 <div className={styles.matchItems}>
-                    {matches?.map((data) => (
-                        <TaskItem
-                            key={data.task.id}
-                            data={data.task}
-                            edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                            remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                            matchPercent={data.percent}
-                        />
-                    ))}
+                    {!!matches?.length ? (
+                        matches?.map((data) => (
+                            <TaskItem
+                                key={data.task.id}
+                                data={data.task}
+                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                matchPercent={data.percent}
+                            />
+                        ))
+                    ) : (
+                        <NotContent text="Схожих заданий не найдено" />
+                    )}
                 </div>
             </Modal>
         </>

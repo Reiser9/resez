@@ -4,9 +4,8 @@ import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import parse from 'html-react-parser';
-import Dotdotdot from 'react-dotdotdot';
 import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
@@ -42,6 +41,9 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
 import CollectionSettings from './CollectionSettings';
 import { Copy } from '@/shared/icons/Copy';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { SearchInput } from '@/shared/ui/SearchInput';
+import { CatalogItemSkeleton } from '@/shared/ui/Skeleton';
 
 const MemoryCardInfo = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -51,14 +53,37 @@ const MemoryCardInfo = () => {
     const [showAnswers, setShowAnswers] = React.useState(false);
     const [settingsModal, setSettingsModal] = React.useState(false);
 
+    const [search, setSearch] = React.useState('');
+
+    const searchValue = useDebounce(search, 500);
+
     const { id } = useParams();
-    const { getCollectionById, deleteCollectionById, likeCollection } = useCollections();
+    const { getCollectionById, deleteCollectionById, likeCollection, getPairsCollectionById } = useCollections();
     const userId = useAppSelector((state) => state.user.user?.id);
     const router = useRouter();
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['collection_by_id', id],
         queryFn: () => getCollectionById(String(id), () => router.push('/training/memory')),
+        enabled: !!id,
+    });
+
+    const {
+        data: collectionPairs,
+        isPending: collectionPairsIsLoading,
+        error: collectionPairsError,
+        fetchNextPage,
+        isFetchingNextPage,
+        hasNextPage,
+    } = useInfiniteQuery({
+        queryKey: ['pairs_collection_by_id', id, searchValue],
+        queryFn: (param) => getPairsCollectionById(param.pageParam, String(id), searchValue),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
+
+            return nextPage;
+        },
         enabled: !!id,
     });
 
@@ -70,7 +95,6 @@ const MemoryCardInfo = () => {
 
     const {
         collection: collectionName,
-        pairs,
         isPrivate,
         pairsCount,
         description,
@@ -252,34 +276,63 @@ const MemoryCardInfo = () => {
                             </button>
                         </div>
 
+                        <SearchInput value={search} setValue={setSearch} />
+
                         <div className={base.contentItems}>
-                            {pairs?.map((data) => (
-                                <div key={data.id} className={cn(base.item2, styles.memoCollectionPair)}>
-                                    <TextPoint title="Термин">
-                                        {data.questionPicture && (
-                                            <div className={styles.memoCollectionPairImage}>
-                                                <Image src={data.questionPicture} alt="image" fill />
-                                            </div>
-                                        )}
-
-                                        <div className={styles.memoCollectionPairText}>
-                                            {parse(data.questionText)}
-                                        </div>
-                                    </TextPoint>
-
-                                    <TextPoint blur={!showAnswers} title="Определение">
-                                        {data.answerPicture && (
-                                            <div className={styles.memoCollectionPairImage}>
-                                                <Image src={data.answerPicture} alt="image" fill />
-                                            </div>
-                                        )}
-
-                                        <div className={styles.memoCollectionPairText}>
-                                            {parse(data.answerText)}
-                                        </div>
-                                    </TextPoint>
+                            {collectionPairsIsLoading ? (
+                                <div className={base.contentItems}>
+                                    {[...Array(4)].map((_, id) => (
+                                        <CatalogItemSkeleton key={id} />
+                                    ))}
                                 </div>
-                            ))}
+                            ) : error ? (
+                                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                            ) : collectionPairs?.pages[0]?.totalCount ? (
+                                <div className={base.contentItems}>
+                                    {collectionPairs?.pages.map((pair) =>
+                                        pair?.cards?.map((data) => (
+                                            <div key={data.id} className={cn(base.item2, styles.memoCollectionPair)}>
+                                                <TextPoint title="Термин">
+                                                    {data.questionPicture && (
+                                                        <div className={styles.memoCollectionPairImage}>
+                                                            <Image src={data.questionPicture} alt="image" fill />
+                                                        </div>
+                                                    )}
+
+                                                    <div className={styles.memoCollectionPairText}>
+                                                        {parse(data.questionText)}
+                                                    </div>
+                                                </TextPoint>
+
+                                                <TextPoint blur={!showAnswers} title="Определение">
+                                                    {data.answerPicture && (
+                                                        <div className={styles.memoCollectionPairImage}>
+                                                            <Image src={data.answerPicture} alt="image" fill />
+                                                        </div>
+                                                    )}
+
+                                                    <div className={styles.memoCollectionPairText}>
+                                                        {parse(data.answerText)}
+                                                    </div>
+                                                </TextPoint>
+                                            </div>
+                                        )),
+                                    )}
+                                </div>
+                            ) : (
+                                <NotContent text="Терминов не найдено" />
+                            )}
+
+                            {hasNextPage && (
+                                <Button
+                                    auto
+                                    onClick={fetchNextPage}
+                                    loading={isFetchingNextPage}
+                                    className={base.buttonShowMore}
+                                >
+                                    Показать еще
+                                </Button>
+                            )}
                         </div>
                     </div>
 

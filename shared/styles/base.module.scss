@@ -76,10 +76,13 @@
     flex-wrap: nowrap;
 }
 
-.titleWrapper {
+.titleWrapper, .titleWrapperWrap {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.titleWrapperWrap{
     flex-wrap: wrap;
 }
 

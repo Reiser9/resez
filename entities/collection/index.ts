@@ -1,6 +1,6 @@
 export type {
     Collection,
-    CollectionSingle,
+    PairsCollectionById,
     Pair,
     CollectionDTO,
     Collections,

@@ -8,13 +8,13 @@ import type {
     Collection,
     CollectionChoice,
     CollectionSettings,
-    CollectionSingle,
     CollectionValidation,
     CollectionWrite,
     Collections,
     MatchItem,
     Pair,
     PairDTO,
+    PairsCollectionById,
 } from '@/entities/collection';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
@@ -26,6 +26,7 @@ const useCollections = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
+    // Получить коллекции с пагинацией
     const getPaginationCollections = async (page: number, search: string) => {
         const limit = 9;
         const queryString = buildQueryString({
@@ -48,10 +49,17 @@ const useCollections = () => {
         }
     };
 
-    const getLikedPaginationCollections = async ({ pageParam }: { pageParam: number }, search: string) => {
+    // Получить понравившиеся коллекции с пагинацией
+    const getLikedPaginationCollections = async (page: number, search: string) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            search,
+        });
+
         const response = await request<Collections>({
-            url: `/memory-ms/collection/liked?offset=${pageParam * limit}&limit=${limit}&search=${search}`,
+            url: `/memory-ms/collection/liked?${queryString}`,
             isAuth: true,
         });
 
@@ -64,8 +72,9 @@ const useCollections = () => {
         }
     };
 
+    // Получение информации о коллекции по id
     const getCollectionById = async (id: string | number, failedCallback = () => {}) => {
-        const response = await request<{ collection: CollectionSingle }>({
+        const response = await request<{ collection: Collection & { pairs: Pair[] } }>({
             url: `/memory-ms/collection/${id}`,
             isAuth: true,
         });
@@ -79,6 +88,30 @@ const useCollections = () => {
         }
     };
 
+    // Получение пар для коллекции на странице коллекций по id коллекции
+    const getPairsCollectionById = async (page: number, id: string | number, search: string) => {
+        const limit = 10;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            search,
+        });
+
+        const response = await request<PairsCollectionById>({
+            url: `/memory-ms/collection/${id}/pairs?${queryString}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    // Удалить коллекцию по id
     const deleteCollectionById = async (id: string, successCallback = () => {}) => {
         setCollectionsIsLoading((prev) => [...prev, id]);
         const response = await request<{ collection: Collection }>({
@@ -100,6 +133,7 @@ const useCollections = () => {
         }
     };
 
+    // Загрузить изображение при создании коллекции
     const uploadImage = async (data: FormData) => {
         const response = await request<{ url: string }>({
             url: `/memory-ms/upload`,
@@ -120,6 +154,7 @@ const useCollections = () => {
         }
     };
 
+    // Создать коллекцию
     const createCollection = async (
         collection: string,
         description: string,
@@ -127,7 +162,7 @@ const useCollections = () => {
         pairs: PairDTO[],
         successCallback = () => {},
     ) => {
-        const response = await request<CollectionSingle>({
+        const response = await request<Collection>({
             url: `/memory-ms/collection`,
             isAuth: true,
             method: 'POST',
@@ -151,6 +186,7 @@ const useCollections = () => {
         }
     };
 
+    // Редактировать коллекцию
     const updateCollection = async (
         id: number,
         collection: string,
@@ -159,7 +195,7 @@ const useCollections = () => {
         pairs: PairDTO[],
         successCallback = () => {},
     ) => {
-        const response = await request<CollectionSingle>({
+        const response = await request<Collection>({
             url: `/memory-ms/collection/${id}`,
             isAuth: true,
             method: 'PATCH',
@@ -183,6 +219,7 @@ const useCollections = () => {
         }
     };
 
+    // Получить настройки коллекции
     const getCollectionSettings = async () => {
         const response = await request<{ settings: CollectionSettings }>({
             url: `/memory-ms/settings`,
@@ -198,6 +235,7 @@ const useCollections = () => {
         }
     };
 
+    // Обновить настройки коллекции
     const updateSettings = async (data: CollectionSettings, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ settings: CollectionSettings }>({
@@ -216,6 +254,7 @@ const useCollections = () => {
         alertNotify('Успешно', 'Настройки сохранены');
     };
 
+    // Получить пары коллекции при игре в карточки (сделать с учетом пагинации)
     const getPairsCollection = async (id: string | number) => {
         const response = await request<{ cards: Pair[] }>({
             url: `/memory-ms/collection/${id}/cards?limit=500`,
@@ -231,6 +270,7 @@ const useCollections = () => {
         }
     };
 
+    // Получить коллекцию вопросов для теста
     const getTestCollection = async (id: string | number) => {
         const response = await request<{ test: (CollectionChoice | CollectionWrite | CollectionValidation)[] }>({
             url: `/memory-ms/collection/${id}/test`,
@@ -246,6 +286,7 @@ const useCollections = () => {
         }
     };
 
+    // Получить коллекцию вопросов для совпадений
     const getMatchesCollection = async (id: string | number) => {
         const response = await request<{ matches: MatchItem[] }>({
             url: `/memory-ms/collection/${id}/match`,
@@ -261,6 +302,7 @@ const useCollections = () => {
         }
     };
 
+    // Поставить лайк коллекции
     const likeCollection = async (id: string | number, successCallback = () => {}) => {
         const response = await request({
             url: `/memory-ms/like/${id}`,
@@ -274,6 +316,7 @@ const useCollections = () => {
         successCallback();
     };
 
+    // Получить популярные коллекции
     const getPopularCollections = async () => {
         const response = await request<{ collections: Collection[] }>({
             url: `/memory-ms/collection/popular`,
@@ -289,6 +332,7 @@ const useCollections = () => {
         }
     };
 
+    // Получить коллекции пользователя по никнейму
     const getUserCollectionsByNickname = async (offset: number, nickname: string, search: string) => {
         const limit = 9;
         const response = await request<Collections>({
@@ -312,6 +356,7 @@ const useCollections = () => {
         getPaginationCollections,
         getLikedPaginationCollections,
         getCollectionById,
+        getPairsCollectionById,
         getPairsCollection,
         deleteCollectionById,
         uploadImage,

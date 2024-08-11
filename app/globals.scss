@@ -321,6 +321,10 @@ input::placeholder {
     transform: translateY(-50%);
 }
 
+:where(.css-dev-only-do-not-override-obyg6y).ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled){
+    background: var(--hover)!important;
+}
+
 /* Custom datepicker antd */
 .ant-picker-dropdown .ant-picker-cell, .ant-picker-dropdown .ant-picker-header button {
     cursor: default !important;

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import base from '@/shared/styles/base.module.scss';
@@ -16,6 +18,10 @@ const CreatePageDefault: React.FC<Props> = ({ title, button, rightButton, childr
     React.useEffect(() => {
         const handleWindowClose = (event: BeforeUnloadEvent) => {
             event.preventDefault();
+            const confirmationMessage =
+                'Вы уверены, что хотите покинуть страницу? Внесенные изменения могут быть потеряны.';
+            event.returnValue = confirmationMessage;
+            return confirmationMessage;
         };
 
         window.addEventListener('beforeunload', handleWindowClose);

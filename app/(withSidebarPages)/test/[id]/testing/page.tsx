@@ -25,6 +25,9 @@ import TaskTestItem from '@/entities/task/ui/TaskTestItem';
 import { formatMinutesToDuration } from '@/shared/utils/formatMinutes';
 import TaskTestItemWithAnswer from '@/entities/task/ui/TaskTestItemWithAnswer';
 import { TestResult } from '@/entities/test';
+import { useCountdown } from '@/shared/hooks/useCoundown';
+import { formatTime } from '@/shared/utils/formatSeconds';
+import { useHandlers } from '@/features/collection';
 
 type TaskAnswer = { id: string | number; answer: string };
 type TaskDetailed = { id: string | number; primaryScore: number | string };
@@ -65,6 +68,8 @@ const TestingTestById = () => {
     });
 
     const { subject, tasks, durationMinutes, isExam } = test || {};
+    const { elapsedTime, remainingTime, isPaused, pause, resume, reset } = useCountdown((durationMinutes || 0) * 60, 1000, () => setStep(2));
+    const { scrollTop } = useHandlers();
 
     const setAnswerHandler = (id: number, value: string) => {
         let newTasksAnswer = [...tasksAnswer];
@@ -95,12 +100,19 @@ const TestingTestById = () => {
     };
 
     const checkDetailedTasksHandler = async () => {
+        pause();
         setStep(2);
     };
 
-    const restartTest = () => {};
+    const togglePauseCountdown = () => {
+        if (isPaused) {
+            resume();
+        } else {
+            pause();
+        }
+    };
 
-    React.useEffect(() => {
+    const fillEmptyAnswers = () => {
         if (test && test.tasks) {
             const { tasks } = test;
 
@@ -125,8 +137,16 @@ const TestingTestById = () => {
             setTasksAnswer(simpleTasks);
             setTasksDetailed(detailedTasks);
         }
-        console.log('111');
-    }, [test]);
+    };
+
+    const restartTest = () => {
+        reset();
+        resume();
+        fillEmptyAnswers();
+        scrollTop();
+    };
+
+    React.useEffect(fillEmptyAnswers, [test]);
 
     return (
         <>
@@ -258,7 +278,7 @@ const TestingTestById = () => {
                                                 variant="light"
                                                 onClick={() => {
                                                     setStep((prev) => prev - 1);
-                                                    // pauseResume();
+                                                    resume();
                                                 }}
                                             >
                                                 Назад
@@ -281,17 +301,17 @@ const TestingTestById = () => {
                             </div>
 
                             <InfoSidebar value={sidebarActive} setValue={setSidebarActive}>
-                                {/* {step !== 3 && (
+                                {step !== 3 && (
                                     <div className={styles.testInfoWrapper}>
                                         <TextPoint title="Прошло:" className={styles.testInfoItem}>
-                                            <Text variant="h4">{elapsedTime}</Text>
+                                            <Text variant="h4">{formatTime(elapsedTime)}</Text>
                                         </TextPoint>
 
                                         <TextPoint title="Осталось:" className={styles.testInfoItem}>
-                                            <Text variant="h4">00:00</Text>
+                                            <Text variant="h4">{formatTime(remainingTime)}</Text>
                                         </TextPoint>
                                     </div>
-                                )} */}
+                                )}
 
                                 <TextPoint title="Предмет:">
                                     <Text variant="h4">{subject}</Text>
@@ -301,9 +321,9 @@ const TestingTestById = () => {
                                     <Text variant="h4">{formatMinutesToDuration(durationMinutes)}</Text>
                                 </TextPoint>
 
-                                {/* {step === 1 && (
+                                {step === 1 && (
                                     <div className={styles.testInfoButtons}>
-                                        <button className={styles.testInfoButton}>
+                                        <button className={styles.testInfoButton} onClick={togglePauseCountdown}>
                                             {!isPaused ? <Pause /> : <Play />}
 
                                             {!isPaused ? 'Пауза' : 'Продолжить'}
@@ -312,6 +332,7 @@ const TestingTestById = () => {
                                         <button
                                             className={cn(styles.testInfoButton, styles.danger)}
                                             onClick={() => {
+                                                pause();
                                                 setConfirmRestart(true);
                                                 setSidebarActive(false);
                                             }}
@@ -320,21 +341,22 @@ const TestingTestById = () => {
                                             Начать заново
                                         </button>
                                     </div>
-                                )} */}
+                                )}
                             </InfoSidebar>
                         </div>
                     </div>
                 </div>
             </ContentWrapper>
 
-            {/* <ConfirmModal
+            <ConfirmModal
                 value={confirmRestart}
                 setValue={setConfirmRestart}
                 callback={restartTest}
+                rejectCallback={resume}
                 text="Вы действительно хотите начать тест заново? Прогресс теста не будет сохранен"
                 rejectText="Продолжить решать"
                 confirmText="Начать заново"
-            /> */}
+            />
         </>
     );
 };

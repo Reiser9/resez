@@ -102,7 +102,9 @@ const TestValidationItem = React.forwardRef(
                         <Text fontWeight={600}>Выберите ответ:</Text>
                     )}
 
-                    {showResult && !isCorrect && <Text fontWeight={600}>Правильное определение: {correctAnswer}</Text>}
+                    {showResult && !isCorrect && (
+                        <Text fontWeight={600}>Правильное определение: {parse(correctAnswer || '')}</Text>
+                    )}
 
                     <div className={styles.testItemVariants}>
                         <button

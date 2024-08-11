@@ -1,1 +1,1 @@
-export type { AdminStats } from './model';
+export type { AdminStats, WarnsPaggination, Warn } from './model';

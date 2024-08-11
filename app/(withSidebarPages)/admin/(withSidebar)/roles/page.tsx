@@ -48,7 +48,7 @@ const AdminRoles = () => {
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
-                        Роли {!isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                        Роли {!isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />

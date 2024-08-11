@@ -44,17 +44,16 @@ const useFile = () => {
         }
     };
 
-    // http://localhost:8084/admin/upload/file
-
     const uploadFile = async (file: FormData) => {
         const response = await request({
-            url: '/education-ms/admin/upload/file',
+            url: '/admin/upload/file',
             data: file,
             method: 'POST',
             isAuth: true,
             headers: {
                 'Content-type': 'multipart/form-data',
             },
+            baseURL: process.env.NEXT_PUBLIC_EDUCATION_UPLOAD_FILE_URL,
         });
 
         if (catchRequestError(response)) {

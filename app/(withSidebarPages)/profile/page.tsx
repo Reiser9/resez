@@ -70,6 +70,7 @@ const ProfilePage = () => {
         }
     }, [contentUrl, contentType]);
 
+    // Сделать на реакт квери
     React.useEffect(() => {
         getProfileData();
     }, []);

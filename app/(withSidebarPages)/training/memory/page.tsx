@@ -94,7 +94,7 @@ const Memory = () => {
                     </div>
                 ) : popularCollectionsError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data?.pages[0]?.totalCount === 0 ? (
+                ) : !popularCollections?.length ? (
                     <NotContent text="Коллекций не найдено" />
                 ) : (
                     <div className={base.contentItems}>

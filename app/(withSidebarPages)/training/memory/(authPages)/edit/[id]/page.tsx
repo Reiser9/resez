@@ -94,7 +94,7 @@ const MemoryEdit = () => {
     React.useEffect(() => {
         if (data) {
             if(data.user.id !== userId){
-                return router.replace("/training/memo");
+                return router.replace("/training/memory");
             }
 
             const { collection, description, isPrivate, pairs } = data;
