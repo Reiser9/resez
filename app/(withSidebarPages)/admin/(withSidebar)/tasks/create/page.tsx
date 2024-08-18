@@ -211,6 +211,22 @@ const AdminTaskCreate = () => {
     };
 
     React.useEffect(() => {
+        if (subject) {
+            setTheme(null);
+            setThemes([]);
+            setSubTheme(null);
+            setSubThemes([]);
+        }
+    }, [subject]);
+
+    React.useEffect(() => {
+        if (theme) {
+            setSubTheme(null);
+            setSubThemes([]);
+        }
+    }, [theme]);
+
+    React.useEffect(() => {
         if (subjectsData) {
             setSubjects(subjectsData.subjects);
             setSubjectsFilter(subjectsData.subjects);
@@ -230,22 +246,6 @@ const AdminTaskCreate = () => {
             setSubThemesFilter(subThemesData);
         }
     }, [subThemesData]);
-
-    React.useEffect(() => {
-        if (subject) {
-            setTheme(null);
-            setThemes([]);
-            setSubTheme(null);
-            setSubThemes([]);
-        }
-    }, [subject]);
-
-    React.useEffect(() => {
-        if (theme) {
-            setSubTheme(null);
-            setSubThemes([]);
-        }
-    }, [theme]);
 
     return (
         <>

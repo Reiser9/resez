@@ -15,19 +15,29 @@ const useSpeakText = () => {
             newSpeech.rate = rate;
             newSpeech.pitch = pitch;
 
+            const handleStart = () => {
+                setIsSpeaking(true);
+            };
+
+            const handleEnd = () => {
+                setIsSpeaking(false);
+            };
+
+            const handleError = () => {
+                setIsSpeaking(false);
+            };
+
+            newSpeech.addEventListener('start', handleStart);
+            newSpeech.addEventListener('end', handleEnd);
+            newSpeech.addEventListener('error', handleError);
+
             speechSynthesis.speak(newSpeech);
 
-            newSpeech.addEventListener('start', () => {
-                setIsSpeaking(true);
-            });
-
-            newSpeech.addEventListener('end', () => {
-                setIsSpeaking(false);
-            });
-
-            newSpeech.addEventListener('error', () => {
-                setIsSpeaking(false);
-            });
+            return () => {
+                newSpeech.removeEventListener('start', handleStart);
+                newSpeech.removeEventListener('end', handleEnd);
+                newSpeech.removeEventListener('error', handleError);
+            };
         } else {
             alert('Ваш браузер не поддерживает прослушивание текста');
         }

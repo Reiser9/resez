@@ -10,7 +10,7 @@ const useWarn = () => {
     const { alertNotify } = useAlert();
 
     const getPagginationWarns = async (page: number) => {
-        const limit = 10;
+        const limit = 9;
         const queryString = buildQueryString({
             offset: page * limit,
             limit,
@@ -54,7 +54,7 @@ const useWarn = () => {
 
     const readWarn = async (id: number | string, successCallback = () => {}) => {
         const response = await request({
-            url: '/feedback',
+            url: `/admin/feedback/${id}/read`,
             isAuth: true,
             method: 'PATCH',
         });
@@ -73,7 +73,7 @@ const useWarn = () => {
     return {
         getPagginationWarns,
         createWarn,
-        readWarn
+        readWarn,
     };
 };
 

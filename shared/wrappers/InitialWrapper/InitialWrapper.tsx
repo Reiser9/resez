@@ -4,11 +4,12 @@ import React from 'react';
 
 import useSocket from '@/shared/hooks/useSocket';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Ban } from '@/shared/ui/Ban';
-import { VerificationCode } from '@/shared/ui/VerificationCode';
+import { VerificationCode } from '@/widgets/VerificationCode';
 import { useCheckAuth } from '@/features/user';
+
 import { Preloader } from '@/shared/ui/Preloader';
 import { ServerNotAvailable } from '@/shared/ui/ServerNotAvailable';
+import { Ban } from '@/shared/ui/Ban';
 
 const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
     useCheckAuth();

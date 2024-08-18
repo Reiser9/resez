@@ -2,19 +2,22 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
+import type { SubjectTaskById } from '../model';
+import { Archive, Check, DotsHorizontal, Edit, Notebook, Warn } from '@/shared/icons';
+
 import { Spoiler } from '@/shared/ui/Spoiler';
-import { Input } from '@/shared/ui/Input';
-import { DynamicSkeleton } from '@/shared/ui/Skeleton';
-import { Text } from '@/shared/ui/Text';
-import { Modal } from '@/shared/ui/Modal';
 import { Button, IconButton } from '@/shared/ui/Button';
-import { SubjectTaskById } from '../model';
-import { Warn } from '@/shared/icons';
-import Link from 'next/link';
+import { Modal } from '@/shared/ui/Modal';
+import { Text } from '@/shared/ui/Text';
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { Input } from '@/shared/ui/Input';
+import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -25,13 +28,29 @@ type Props = {
     data: SubjectTaskById;
     showAnswer?: boolean;
     taskWithLink?: boolean;
+    edit?: boolean;
+    remove?: boolean;
+    removeCallback?: () => void;
+    verify?: boolean;
 };
 
-const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink = false }) => {
-    const { task, solution, answers, subjectTask, id, source, subTheme, subject } = data || {};
+const TaskTestItem: React.FC<Props> = ({
+    data,
+    showAnswer = false,
+    taskWithLink = false,
+    edit = false,
+    remove = false,
+    removeCallback = () => {},
+    verify = false,
+}) => {
+    const { task, solution, answers, subjectTask, id, source, subTheme, subject, isVerified } = data || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
+
+    const [actionMenu, setActionMenu] = React.useState(false);
+
+    const router = useRouter();
 
     const taskInfoContent = () => {
         return (
@@ -62,6 +81,46 @@ const TaskTestItem: React.FC<Props> = ({ data, showAnswer = false, taskWithLink 
                     {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
                         <Warn />
                     </IconButton> */}
+
+                    {(edit || remove) && (
+                        <HoverMenu
+                            value={actionMenu}
+                            setValue={setActionMenu}
+                            button={
+                                <IconButton small variant="light" onClick={() => setActionMenu((prev) => !prev)}>
+                                    <DotsHorizontal />
+                                </IconButton>
+                            }
+                        >
+                            {/* {verify && (
+                                <MenuLink>
+                                    {isVerified ? (
+                                        <>
+                                            <Notebook />В черновик
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check />
+                                            Верифицировать
+                                        </>
+                                    )}
+                                </MenuLink>
+                            )} */}
+
+                            {edit && (
+                                <MenuLink onClick={() => router.push(`/admin/tasks/edit/${id}`)}>
+                                    <Edit />
+                                    Редактировать
+                                </MenuLink>
+                            )}
+
+                            {/* {remove && (
+                                <MenuLink onClick={removeCallback} danger>
+                                    <Archive />В архив
+                                </MenuLink>
+                            )} */}
+                        </HoverMenu>
+                    )}
                 </div>
 
                 {task && (

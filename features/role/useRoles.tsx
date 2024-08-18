@@ -115,6 +115,25 @@ const useRoles = () => {
         successCallback();
     };
 
+    const assignRole = async (userId: string | number, roleId: string | number, successCallback = () => {}) => {
+        const response = await request<RoleDTO>({
+            url: `/admin/role/assign`,
+            isAuth: true,
+            method: 'POST',
+            data: {
+                userId,
+                roleId,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        alertNotify('Успешно', 'Роль выдана', 'success');
+        successCallback();
+    };
+
     return {
         isLoading,
         roleIsLoading,
@@ -124,6 +143,7 @@ const useRoles = () => {
         createRole,
         editRole,
         deleteRole,
+        assignRole,
     };
 };
 

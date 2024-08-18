@@ -23,7 +23,7 @@ type Props = {
 };
 
 const WarnItem: React.FC<Props> = ({ data, readWarnCallback = () => {} }) => {
-    const { id, createdAt, text, user } = data || {};
+    const { id, createdAt, text, user, isRead } = data || {};
     const { avatar, nickname } = user || {};
 
     const [modalText, setModalText] = React.useState(false);
@@ -34,9 +34,11 @@ const WarnItem: React.FC<Props> = ({ data, readWarnCallback = () => {} }) => {
 
     return (
         <>
-            <div className={cn(base.item3, styles.warnItem, {
-                [styles.readed]: false
-            })}>
+            <div
+                className={cn(base.item3, styles.warnItem, {
+                    [styles.readed]: isRead,
+                })}
+            >
                 <div className={styles.warnItemWrapper}>
                     <div className={base.titleInner}>
                         {user ? (

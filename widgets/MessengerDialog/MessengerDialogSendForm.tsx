@@ -2,16 +2,17 @@
 
 import React, { FormEvent } from 'react';
 import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
+import type { Message } from '@/entities/messenger';
 import { Clip, Cross, Microphone, Send, Warn } from '@/shared/icons';
-import { IconButton } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
 import { useMessenger } from '@/features/messenger';
-import { useQueryClient } from '@tanstack/react-query';
-import { Message } from '@/entities/messenger';
+
 import { Text } from '@/shared/ui/Text';
+import { Input } from '@/shared/ui/Input';
+import { IconButton } from '@/shared/ui/Button';
 
 type Props = {
     dialogId: string | undefined;
@@ -32,15 +33,16 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     isEditedMessage,
     setIsEditedMessage,
     editMessage,
-    isKicked = false
+    isKicked = false,
 }) => {
     const [message, setMessage] = React.useState('');
     const [sendingMessage, setSendingMessage] = React.useState(false);
 
+    const queryClient = useQueryClient();
+
     const sendMessageInputRef = React.useRef<HTMLInputElement>(null);
 
     const { sendMessageInChat, editMessage: editMessageHandler } = useMessenger();
-    const queryClient = useQueryClient();
 
     const revalidateChat = async () => {
         await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
@@ -108,70 +110,71 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
 
     return (
         <div className={styles.messangerDialogSendInner}>
-            {isKicked
-            ? <div className={styles.messangerDialogSendKick}>
-                <Warn />
+            {isKicked ? (
+                <div className={styles.messangerDialogSendKick}>
+                    <Warn />
 
-                <Text variant='text'>Вас исключили из чата</Text>
-            </div>
-            : <>
-                {replyMessage ? (
-                    <div className={styles.messangerDialogReply}>
-                        <div className={styles.messangerDialogReplyInfo}>
-                            <Text>{replyMessage.sender.nickname}</Text>
-                            <Text
-                                variant="text2"
-                                className={styles.messangerDialogReplyMessageWrapper}
-                                textClassName={styles.messangerDialogReplyMessage}
-                            >
-                                {replyMessage.message}
-                            </Text>
-                        </div>
-
-                        <IconButton
-                            small
-                            circle
-                            variant="light"
-                            onClick={() => setReplyMessage(null)}
-                            style={{ width: 30, height: 30 }}
-                        >
-                            <Cross />
-                        </IconButton>
-                    </div>
-                ) : (
-                    isEditedMessage && (
+                    <Text variant="text">Вас исключили из чата</Text>
+                </div>
+            ) : (
+                <>
+                    {replyMessage ? (
                         <div className={styles.messangerDialogReply}>
                             <div className={styles.messangerDialogReplyInfo}>
-                                <Text>Редактирование сообщения</Text>
+                                <Text>{replyMessage.sender.nickname}</Text>
+                                <Text
+                                    variant="text2"
+                                    className={styles.messangerDialogReplyMessageWrapper}
+                                    textClassName={styles.messangerDialogReplyMessage}
+                                >
+                                    {replyMessage.message}
+                                </Text>
                             </div>
 
                             <IconButton
                                 small
                                 circle
                                 variant="light"
-                                onClick={() => setIsEditedMessage(false)}
+                                onClick={() => setReplyMessage(null)}
                                 style={{ width: 30, height: 30 }}
                             >
                                 <Cross />
                             </IconButton>
                         </div>
-                    )
-                )}
+                    ) : (
+                        isEditedMessage && (
+                            <div className={styles.messangerDialogReply}>
+                                <div className={styles.messangerDialogReplyInfo}>
+                                    <Text>Редактирование сообщения</Text>
+                                </div>
 
-                <form className={styles.messangerDialogSendWrapper} onSubmit={sendMessage}>
-                    {/* <IconButton>
+                                <IconButton
+                                    small
+                                    circle
+                                    variant="light"
+                                    onClick={() => setIsEditedMessage(false)}
+                                    style={{ width: 30, height: 30 }}
+                                >
+                                    <Cross />
+                                </IconButton>
+                            </div>
+                        )
+                    )}
+
+                    <form className={styles.messangerDialogSendWrapper} onSubmit={sendMessage}>
+                        {/* <IconButton>
                         <Clip />
                     </IconButton> */}
 
-                    <Input
-                        ref={sendMessageInputRef}
-                        value={message}
-                        setValue={setMessage}
-                        placeholder="Напишите сообщение"
-                    />
+                        <Input
+                            ref={sendMessageInputRef}
+                            value={message}
+                            setValue={setMessage}
+                            placeholder="Напишите сообщение"
+                        />
 
-                    <IconButton className={styles.sendButton} disabled={sendingMessage}>
-                        {/* <Microphone
+                        <IconButton className={styles.sendButton} disabled={sendingMessage}>
+                            {/* <Microphone
                             className={cn(styles.iconButton, {
                                 [styles.fade]: !message,
                             })}
@@ -183,12 +186,11 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                             })}
                         /> */}
 
-                        <Send
-                            className={cn(styles.iconButton, styles.fade)}
-                        />
-                    </IconButton>
-                </form>
-            </>}
+                            <Send className={cn(styles.iconButton, styles.fade)} />
+                        </IconButton>
+                    </form>
+                </>
+            )}
         </div>
     );
 };

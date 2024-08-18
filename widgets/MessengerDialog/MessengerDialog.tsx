@@ -7,33 +7,35 @@ import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
 
+import type { Message as MessageType } from '@/entities/messenger';
 import { Cross, Message, Send } from '@/shared/icons';
-import { DialogMessageItem } from '@/shared/ui/DialogMessageItem';
-import { NotContent } from '@/shared/ui/NotContent';
-import { Preloader } from '@/shared/ui/Preloader';
 import { formatDate } from '@/shared/utils/formatDate';
 import { useMessenger } from '@/features/messenger';
 import { MessengerDialogTopBar } from './MessengerDialogTopBar';
 import { MessengerDialogSendForm } from './MessengerDialogSendForm';
-import { Message as MessageType } from '@/entities/messenger';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
+import { DialogMessageItem } from '@/shared/ui/DialogMessageItem';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
 
 type Props = {
     dialogId: string | undefined;
 };
 
 export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
-    const messagerDialogRef = React.useRef<null | HTMLDivElement>(null);
-
     const [selectedMessegesIDs, setSelectedMessegesIDs] = React.useState<MessageType[]>([]);
     const [replyMessage, setReplyMessage] = React.useState<MessageType | null>(null);
-
+    
     const [isEditedMessage, setIsEditedMessage] = React.useState(false);
     const [editMessage, setEditMessage] = React.useState<MessageType>();
+    
+    const router = useRouter();
 
+    const messagerDialogRef = React.useRef<null | HTMLDivElement>(null);
+    const currentMessagesRef = React.useRef<MessageType>();
     let currentDate: null | string;
 
-    const router = useRouter();
     const { getChatById } = useMessenger();
     const myId = useAppSelector(state => state.user.user?.id);
 
@@ -43,7 +45,6 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
         enabled: !!dialogId,
     });
 
-    const currentMessagesRef = React.useRef<MessageType>();
     
     const selectMessage = (message: MessageType) => {
         setSelectedMessegesIDs((prev) => {

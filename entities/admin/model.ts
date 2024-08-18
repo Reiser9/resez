@@ -20,4 +20,5 @@ export type Warn = {
         avatar: string;
     };
     createdAt: Date;
+    isRead: boolean;
 };

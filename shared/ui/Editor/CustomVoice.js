@@ -26,7 +26,22 @@ export class CustomVoice {
         input.type = 'file';
         input.accept = '.mp3, .ogg';
         input.style.display = 'none';
-        input.addEventListener('change', this.handleFileChange);
+
+        const handleFileChange = (event) => {
+            this.handleFileChange(event);
+        };
+
+        input.addEventListener('change', handleFileChange);
+
+        input._handleFileChange = handleFileChange;
+
+        input.removeEventListenerAndCleanup = () => {
+            if (input._handleFileChange) {
+                input.removeEventListener('change', input._handleFileChange);
+                delete input._handleFileChange;
+            }
+        };
+
         return input;
     };
 

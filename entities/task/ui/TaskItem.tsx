@@ -19,6 +19,7 @@ import { formatDate } from '@/shared/utils/formatDate';
 import { SubjectTask } from '../model';
 import { Badge } from '@/shared/ui/Badge';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -49,7 +50,7 @@ const TaskItem: React.FC<Props> = ({
     matchPercent,
 }) => {
     const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source } = data || {};
-    const { avatar, nickname, id: userId } = user;
+    const { avatar, nickname } = user;
 
     const router = useRouter();
 
@@ -133,16 +134,18 @@ const TaskItem: React.FC<Props> = ({
                     </div>
 
                     <div className={base.titleInner}>
-                        <div className={base.titleWrapper}>
+                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
                             <Badge text={nickname} image={avatar} />
 
                             <Text>{nickname}</Text>
-                        </div>
+                        </Link>
 
                         <div className={base.titleWrapper}>
-                            <Text variant="text2" className={styles.taskItemDate}>
-                                {formatDate(createdAt)}
-                            </Text>
+                            <Tooltip title="Дата создания">
+                                <Text variant="text2" className={styles.taskItemDate}>
+                                    {getFormattedDate(createdAt)}
+                                </Text>
+                            </Tooltip>
 
                             {isVerified && (
                                 <Tooltip title="Проверено">
@@ -184,7 +187,7 @@ const TaskItem: React.FC<Props> = ({
             </div>
 
             <ConfirmModal
-                text="Вы действительно хотите удалить задание?"
+                text="Вы действительно хотите архивировать задание? Задание больше не будет доступно пользователям"
                 value={confirmDelete}
                 setValue={setConfirmDelete}
                 callback={archiveCallback}

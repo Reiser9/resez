@@ -7,15 +7,20 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import base from '@/shared/styles/base.module.scss';
 import styles from '../../[id]/index.module.scss';
 
+import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useTask } from '@/features/task';
-import { Preloader } from '@/shared/ui/Preloader';
-import { TextPoint } from '@/shared/ui/TextPoint';
-import { Text } from '@/shared/ui/Text';
-import { InfoSidebar } from '@/shared/ui/InfoSidebar';
 import TaskTestItem from '@/entities/task/ui/TaskTestItem';
-import { Button } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
+import { checkPermission } from '@/shared/utils/checkPermissions';
+
+import { InfoSidebar } from '@/shared/ui/InfoSidebar';
+import { Preloader } from '@/shared/ui/Preloader';
+import { Text } from '@/shared/ui/Text';
+import { TextPoint } from '@/shared/ui/TextPoint';
+import { Button } from '@/shared/ui/Button';
+import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
+import { NotContent } from '@/shared/ui/NotContent';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 const TaskSubThemePage = () => {
     const { id } = useParams();
@@ -23,6 +28,7 @@ const TaskSubThemePage = () => {
     const [infoMenu, setInfoMenu] = React.useState(false);
 
     const { getTasksBySubThemeId, getSubThemeInfo } = useTask();
+    const permissions = useAppSelector((state) => state.user.user?.permissions);
 
     const { data, isLoading, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['task_by_subtheme_id', id],
@@ -48,17 +54,13 @@ const TaskSubThemePage = () => {
 
     const { number, subTheme, subject, theme } = subthemeInfo || {};
 
-    if (isLoading) {
-        return <Preloader page />;
-    }
-
     return (
         <div className={styles.taskInner}>
             <div className={base.taskContent}>
                 {isLoading ? (
                     <div className={base.contentItems}>
-                        {[...Array(3)].map((_, id) => (
-                            <p key={id}>Загрузка..</p>
+                        {[...Array(4)].map((_, id) => (
+                            <TaskItemSkeleton key={id} />
                         ))}
                     </div>
                 ) : error ? (
@@ -66,9 +68,18 @@ const TaskSubThemePage = () => {
                 ) : data?.pages[0]?.totalCount === 0 ? (
                     <NotContent text="Заданий не найдено" />
                 ) : (
-                    <div className={base.contentItems}>
+                    <div className={styles.tasksContent}>
                         {data?.pages.map((task) =>
-                            task?.tasks.map((data) => <TaskTestItem key={data.id} data={data} taskWithLink />),
+                            task?.tasks.map((data) => (
+                                <TaskTestItem
+                                    key={data.id}
+                                    data={data}
+                                    taskWithLink
+                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_TASKS])}
+                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_TASKS])}
+                                    verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
+                                />
+                            )),
                         )}
                     </div>
                 )}
@@ -88,19 +99,19 @@ const TaskSubThemePage = () => {
                 ) : (
                     <>
                         <TextPoint title="Предмет:">
-                            <Text variant="h4">{subject}</Text>
+                            <Text variant="h4">{subject || '-'}</Text>
                         </TextPoint>
 
                         <TextPoint title="Номер задания:">
-                            <Text variant="h4">{number}</Text>
+                            <Text variant="h4">{number || '-'}</Text>
                         </TextPoint>
 
                         <TextPoint title="Тема:">
-                            <Text variant="h4">{theme}</Text>
+                            <Text variant="h4">{theme || '-'}</Text>
                         </TextPoint>
 
                         <TextPoint title="Подтема:">
-                            <Text variant="h4">{subTheme}</Text>
+                            <Text variant="h4">{subTheme || '-'}</Text>
                         </TextPoint>
                     </>
                 )}

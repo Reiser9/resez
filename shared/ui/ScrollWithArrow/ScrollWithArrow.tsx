@@ -68,8 +68,8 @@ const ScrollWithArrows: React.FC<Props> = ({ scrollValue = 200, children }) => {
         window.addEventListener('resize', updateMaxScroll);
 
         return () => {
-            observer.disconnect();
             window.removeEventListener('resize', updateMaxScroll);
+            observer.disconnect();
         };
     }, []);
 

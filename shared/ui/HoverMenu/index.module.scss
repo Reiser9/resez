@@ -74,6 +74,8 @@
     flex-direction: column;
     align-items: flex-start;
     transition: .2s ease-in-out;
+    max-height: calc(100dvh - 65px);
+    overflow-y: auto;
 }
 
 @media (any-hover: none) and (max-width: 768px) {

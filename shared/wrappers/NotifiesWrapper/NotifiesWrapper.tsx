@@ -5,6 +5,7 @@ import React from 'react';
 import styles from './index.module.scss';
 
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
 import { Notify } from '@/shared/ui/Notify';
 
 const NotifiesWrapper = ({ children }: { children: React.ReactNode }) => {

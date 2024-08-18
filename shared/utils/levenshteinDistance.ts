@@ -27,5 +27,5 @@ export const levenshteinDistanceOptimized = (a: string, b: string) => {
 export const percentCorrectAnswer = (a: string, b: string) => {
     const distanceLevin = levenshteinDistanceOptimized(a, b);
 
-    return (100 - (distanceLevin / a.length) * 100);
+    return 100 - (distanceLevin / a.length) * 100;
 };

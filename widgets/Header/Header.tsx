@@ -4,31 +4,32 @@ import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { Switch } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
 import { ArrowBottom, Cross, Enter, Exit, Menu, Moon, Notify, ResCoin, Snowflake, Trophy, User } from '@/shared/icons';
-import { Badge } from '@/shared/ui/Badge';
-import { Text } from '@/shared/ui/Text';
-import { HoverMenu } from '@/shared/ui/HoverMenu';
-import { Logo } from '@/shared/ui/Logo';
 import { useEventContext } from '@/shared/context/EventProvider';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useLogout } from '@/features/user';
-import { ConfirmModal } from '@/shared/ui/Modal';
 import { getHolidayEvent } from '@/shared/utils/getHolidayEvent';
-import { useQuery } from '@tanstack/react-query';
 import useNotify from '@/features/notify/useNotify';
+
+import { ConfirmModal } from '@/shared/ui/Modal';
+import { Logo } from '@/shared/ui/Logo';
+import { HoverMenu } from '@/shared/ui/HoverMenu';
+import { Text } from '@/shared/ui/Text';
+import { Badge } from '@/shared/ui/Badge';
 
 type Props = {
     empty?: boolean;
 };
 
 const Header: React.FC<Props> = ({ empty = false }) => {
-    const [profileMenu, setProfileMenu] = React.useState<boolean>(false);
-    const [confirmLogout, setConfirmLogout] = React.useState<boolean>(false);
+    const [profileMenu, setProfileMenu] = React.useState(false);
+    const [confirmLogout, setConfirmLogout] = React.useState(false);
 
     const profileMenuRef = React.useRef<HTMLDivElement>(null);
 
@@ -166,7 +167,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         Уведомления
                                         {!!unreadNotifiesCount && (
                                             <span className={styles.headerProfileNotifyCount}>
-                                                {unreadNotifiesCount > 9 ? "9+" : unreadNotifiesCount}
+                                                {unreadNotifiesCount > 9 ? '9+' : unreadNotifiesCount}
                                             </span>
                                         )}
                                     </Link>

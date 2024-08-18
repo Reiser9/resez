@@ -6,35 +6,31 @@ import cn from 'classnames';
 
 import styles from './index.module.scss';
 
-import { Code, Console, Fire, Lifebuoy, Message, Store, Telegram, Tests, Training, Vk, Youtube } from '@/shared/icons';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { Code, Fire, Lifebuoy, Message, Store, Telegram, Tests, Training, Vk, Youtube } from '@/shared/icons';
 import { SidebarLink } from '@/shared/ui/SidebarLink';
-import { Button } from '@/shared/ui/Button';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { Modal } from '@/shared/ui/Modal';
-import { Text } from '@/shared/ui/Text';
-import { Input } from '@/shared/ui/Input';
 import useWarn from '@/features/admin/warns/useWarn';
 import useAlert from '@/shared/hooks/useAlert';
 
-const Sidebar = () => {
-    const sidebarRef = React.useRef<HTMLDivElement>(null);
-    const { showSidebar, setShowSidebar } = useSidebarContext();
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+import { Input } from '@/shared/ui/Input';
+import { Text } from '@/shared/ui/Text';
+import { Modal } from '@/shared/ui/Modal';
+import { Button } from '@/shared/ui/Button';
 
+const Sidebar = () => {
     const [modalSupport, setModalSupport] = React.useState(false);
     const [supportText, setSupportText] = React.useState('');
 
+    const sidebarRef = React.useRef<HTMLDivElement>(null);
+
+    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { showSidebar, setShowSidebar } = useSidebarContext();
+
     const { createWarn } = useWarn();
     const { alertNotify } = useAlert();
-
-    const outsideSidebarClick = (e: MouseEvent) => {
-        if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
-            setShowSidebar(false);
-        }
-    };
 
     const closeSidebar = () => {
         setShowSidebar(false);
@@ -52,6 +48,12 @@ const Sidebar = () => {
     };
 
     React.useEffect(() => {
+        const outsideSidebarClick = (e: MouseEvent) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node)) {
+                closeSidebar();
+            }
+        };
+
         window.addEventListener('click', outsideSidebarClick);
 
         return () => {
@@ -101,9 +103,9 @@ const Sidebar = () => {
                     )}
 
                     {/* <SidebarLink href="/config">
-                    <Console />
-                    Конфигурация
-                </SidebarLink> */}
+                        <Console />
+                        Конфигурация
+                    </SidebarLink> */}
                 </div>
 
                 <div className={styles.sidebarFooter}>

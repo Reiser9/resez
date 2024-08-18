@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
+import { redirect } from 'next/navigation';
+
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import { checkPermission } from '@/shared/utils/checkPermissions';
 
 import { Preloader } from '@/shared/ui/Preloader';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import { redirect } from 'next/navigation';
-import { checkPermission } from '@/shared/utils/checkPermissions';
 
 const PrivateWrapper = ({ permissions = [], children }: { permissions: string[]; children: React.ReactNode }) => {
     const { appIsLoading, authIsLoading } = useAppSelector((state) => state.app);

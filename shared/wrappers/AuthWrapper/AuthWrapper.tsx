@@ -4,6 +4,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
 import { Preloader } from '@/shared/ui/Preloader';
 
 const AuthWrapper = ({ children }: { children: React.ReactNode }) => {

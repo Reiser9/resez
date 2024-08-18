@@ -2,13 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 type AppStateType = {
-    dialogsScrollPosition: number,
-    currentDialogId: string | null
+    dialogsScrollPosition: number;
+    currentDialogId: string | null;
 };
 
 const initialState: AppStateType = {
     dialogsScrollPosition: 0,
-    currentDialogId: null
+    currentDialogId: null,
 };
 
 export const messengerSlice = createSlice({

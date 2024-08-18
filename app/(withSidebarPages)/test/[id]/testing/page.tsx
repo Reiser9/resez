@@ -68,7 +68,11 @@ const TestingTestById = () => {
     });
 
     const { subject, tasks, durationMinutes, isExam } = test || {};
-    const { elapsedTime, remainingTime, isPaused, pause, resume, reset } = useCountdown((durationMinutes || 0) * 60, 1000, () => setStep(2));
+    const { elapsedTime, remainingTime, isPaused, pause, resume, reset } = useCountdown(
+        (durationMinutes || 0) * 60,
+        1000,
+        () => setStep(2),
+    );
     const { scrollTop } = useHandlers();
 
     const setAnswerHandler = (id: number, value: string) => {
@@ -148,6 +152,12 @@ const TestingTestById = () => {
 
     React.useEffect(fillEmptyAnswers, [test]);
 
+    React.useEffect(() => {
+        if (step === 2 && !detailedAnswerTasksIsLoading && detailedAnswerTasks && detailedAnswerTasks.length === 0) {
+            checkResult();
+        }
+    }, [step, detailedAnswerTasks, detailedAnswerTasksIsLoading]);
+
     return (
         <>
             <ContentWrapper>
@@ -156,8 +166,12 @@ const TestingTestById = () => {
                         <div className={styles.taskInner}>
                             <div className={base.taskContent}>
                                 {step === 1 &&
-                                    test?.tasks.map((data, id) => (
-                                        <TaskTestItemWithAnswer key={id} data={data} setValue={setAnswerHandler} />
+                                    (testIsLoading ? (
+                                        <Preloader page small />
+                                    ) : (
+                                        test?.tasks.map((data, id) => (
+                                            <TaskTestItemWithAnswer key={id} data={data} setValue={setAnswerHandler} />
+                                        ))
                                     ))}
 
                                 {step === 2 &&
@@ -229,7 +243,7 @@ const TestingTestById = () => {
                                                             key={data.id}
                                                             id={String(data.number)}
                                                             text={data.answer || '-'}
-                                                            value={data.correctAnswers.join(' или ')}
+                                                            value={data.correctAnswers.join(' или ') || '-'}
                                                             status={data.isCorrect ? 'success' : 'error'}
                                                         />
                                                     ))}
@@ -270,7 +284,7 @@ const TestingTestById = () => {
                                     </div>
                                 )}
 
-                                {step < 3 && (
+                                {step < 3 && !detailedAnswerTasksIsLoading && !testIsLoading && (
                                     <div className={styles.taskTestButtons}>
                                         {step > 1 && (
                                             <Button

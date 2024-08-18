@@ -2,26 +2,27 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Tooltip } from 'antd';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+// import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 
 import { Cross, Photo, Plus, Search, User } from '@/shared/icons';
-import DialogItem from '@/shared/ui/DialogItem/DialogItem';
 import { useChat, useMessenger } from '@/features/messenger';
-import { Preloader } from '@/shared/ui/Preloader';
-import { NotContent } from '@/shared/ui/NotContent';
-import { Modal } from '@/shared/ui/Modal';
-import { Input } from '@/shared/ui/Input';
-import { File } from '@/shared/ui/File';
-import { Button } from '@/shared/ui/Button';
 import useSearchUser from '@/features/user/search/useSearchUser';
-import { UserAddItem } from '@/shared/ui/UserAddItem';
 import { setDialogsScrollPosition } from '@/store/slices/messenger';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useRedux';
+
+import { UserAddItem } from '@/shared/ui/UserAddItem';
+import { Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/ui/Button';
+import { Preloader } from '@/shared/ui/Preloader';
+import { File } from '@/shared/ui/File';
+import { Modal } from '@/shared/ui/Modal';
+import { NotContent } from '@/shared/ui/NotContent';
+import { DialogItem } from '@/shared/ui/DialogItem';
 
 type Props = {
     dialogId: string | undefined;
@@ -98,7 +99,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
     const setScrollDialogs = () => {
         const currentElement = chatListRef.current;
 
-        if(currentElement){
+        if (currentElement) {
             dispatch(setDialogsScrollPosition(currentElement.scrollTop));
         }
     };
@@ -172,12 +173,17 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                                 )}
                             </label>
 
-                            {chatAvatarPreview && <button className={styles.messangerChatAvatarDelete} onClick={() => {
-                                setChatAvatarPreview(null);
-                                setChatAvatar(null);
-                            }}>
-                                <Cross />
-                            </button>}
+                            {chatAvatarPreview && (
+                                <button
+                                    className={styles.messangerChatAvatarDelete}
+                                    onClick={() => {
+                                        setChatAvatarPreview(null);
+                                        setChatAvatar(null);
+                                    }}
+                                >
+                                    <Cross />
+                                </button>
+                            )}
                         </div>
 
                         <Input value={chatName} setValue={setChatName} placeholder="Название" lengthLimit={75} />

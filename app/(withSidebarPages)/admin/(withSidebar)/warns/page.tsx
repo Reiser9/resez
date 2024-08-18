@@ -40,7 +40,7 @@ const AdminWarns = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Жалобы {!isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                    Жалобы {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />

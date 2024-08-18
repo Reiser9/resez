@@ -5,12 +5,13 @@ import Link from 'next/link';
 import cn from 'classnames';
 import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Checkbox, Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 
-import { Button, IconButton } from '@/shared/ui/Button';
+import type { ChatInfo, Message } from '@/entities/messenger/model';
 import {
     ArrowLeft,
     Block,
@@ -27,18 +28,18 @@ import {
     Enter,
     Pencil,
 } from '@/shared/icons';
+import { useChat, useMessenger } from '@/features/messenger';
+import { copyText } from '@/shared/utils/copyText';
+import { getFormattedDate } from '@/shared/utils/getFormattedDate';
+
+// import { Input } from '@/shared/ui/Input';
+import { File } from '@/shared/ui/File';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Text } from '@/shared/ui/Text';
-import { ChatInfo, Message } from '@/entities/messenger/model';
-import { ConfirmModal, Modal } from '@/shared/ui/Modal';
-import { Input } from '@/shared/ui/Input';
-import { Badge } from '@/shared/ui/Badge';
+import { Button, IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
-import { useChat, useMessenger } from '@/features/messenger';
-import { Checkbox, Tooltip } from 'antd';
-import { copyText } from '@/shared/utils/copyText';
-import { File } from '@/shared/ui/File';
-import { getFormattedDate } from '@/shared/utils/getFormattedDate';
+import { Badge } from '@/shared/ui/Badge';
+import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 
 type Props = {
     selectedMessegesIDs: Message[];
@@ -69,11 +70,12 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
 
     const [chatLinkCopied, setChatLinkCopied] = React.useState(false);
 
+    const queryClient = useQueryClient();
+    const router = useRouter();
+
     const { deleteUserFromChat, getChatUsers, leaveFromChat, returnInChat, updateChatAvatar, removeChatAvatar } =
         useChat();
     const { clearChatHistory } = useMessenger();
-    const router = useRouter();
-    const queryClient = useQueryClient();
 
     const { data: chatUsers, isLoading } = useQuery({
         queryKey: ['messanger_chat_users', id],

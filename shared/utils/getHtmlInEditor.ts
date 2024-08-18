@@ -64,7 +64,7 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
                 break;
             case 'files':
                 if (block.data?.fileUrl) {
-                    html += `<a href="${block.data?.fileUrl}" target="_blanc">${
+                    html += `<a href="${block.data?.fileUrl}" target="_blanc" download>${
                         block.data?.fileName || 'Файл без названия'
                     }</a>`;
                 }

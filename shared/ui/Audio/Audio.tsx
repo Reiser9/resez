@@ -21,7 +21,7 @@ const Audio: React.FC<Props> = ({ audio }) => {
     const audioRef = React.useRef<HTMLAudioElement>(null);
 
     const togglePlay = () => {
-        document.querySelectorAll('audio').forEach(audio => {
+        document.querySelectorAll('audio').forEach((audio) => {
             audio.pause();
         });
 
@@ -76,35 +76,33 @@ const Audio: React.FC<Props> = ({ audio }) => {
 
     React.useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.addEventListener('playing', () => {
+            const handlePlaying = () => {
                 setIsPlaying(true);
                 setIsEnded(false);
-            });
+            };
 
-            audioRef.current.addEventListener('ended', () => {
+            const handleEnded = () => {
                 setIsPlaying(false);
                 setIsEnded(true);
                 setCurrentTime('00:00');
                 setProgress(0);
-            });
+            };
 
-            audioRef.current.addEventListener('pause', () => {
+            const handlePause = () => {
                 setIsPlaying(false);
-            });
+            };
+
+            const audioElement = audioRef.current;
+
+            audioElement.addEventListener('playing', handlePlaying);
+            audioElement.addEventListener('ended', handleEnded);
+            audioElement.addEventListener('pause', handlePause);
 
             return () => {
-                if (audioRef.current) {
-                    audioRef.current.removeEventListener('playing', () => {
-                        setIsPlaying(true);
-                    });
-                    audioRef.current.removeEventListener('ended', () => {
-                        setIsPlaying(false);
-                        setCurrentTime('00:00');
-                        setProgress(0);
-                    });
-                    audioRef.current.removeEventListener('pause', () => {
-                        setIsPlaying(false);
-                    });
+                if (audioElement) {
+                    audioElement.removeEventListener('playing', handlePlaying);
+                    audioElement.removeEventListener('ended', handleEnded);
+                    audioElement.removeEventListener('pause', handlePause);
                 }
             };
         }
