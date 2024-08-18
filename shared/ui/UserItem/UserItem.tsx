@@ -161,7 +161,11 @@ const UserItem: React.FC<Props> = ({
 
                     {telegramUsername && (
                         <TextPoint title="Телеграм никнейм">
-                            <a href={`https://t.me/${telegramUsername}`} className={styles.telegramLink}>
+                            <a
+                                href={`https://t.me/${telegramUsername}`}
+                                className={styles.telegramLink}
+                                target="_blanc"
+                            >
                                 @{telegramUsername}
                             </a>
                         </TextPoint>

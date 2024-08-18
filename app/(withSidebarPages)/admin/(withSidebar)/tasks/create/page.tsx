@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import base from '@/shared/styles/base.module.scss';
 import styles from '../index.module.scss';
 
-import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { Select } from '@/shared/ui/Select';
 import { Input } from '@/shared/ui/Input';
@@ -29,6 +29,7 @@ import { SubjectTask } from '@/entities/task';
 import { Modal } from '@/shared/ui/Modal';
 import TaskItem from '@/entities/task/ui/TaskItem';
 import { NotContent } from '@/shared/ui/NotContent';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -248,8 +249,8 @@ const AdminTaskCreate = () => {
     }, [subThemesData]);
 
     return (
-        <>
-            <CreatePageDefault
+        <PrivateWrapper permissions={[PERMISSIONS.CREATE_TASKS]}>
+            <CreatePageWrapper
                 title="Создание задания"
                 button={
                     subTheme && (
@@ -376,7 +377,7 @@ const AdminTaskCreate = () => {
                         </>
                     )}
                 </div>
-            </CreatePageDefault>
+            </CreatePageWrapper>
 
             <Modal value={modalCheckMatch} setValue={setModalCheckMatch} title="Схожие задания">
                 <div className={styles.matchItems}>
@@ -395,7 +396,7 @@ const AdminTaskCreate = () => {
                     )}
                 </div>
             </Modal>
-        </>
+        </PrivateWrapper>
     );
 };
 

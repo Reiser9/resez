@@ -8,7 +8,7 @@ import { setServerIsAvailable } from '@/store/slices/app';
 import { setUserData } from '@/store/slices/user';
 import { socket } from '@/api/socket';
 import useAlert from './useAlert';
-import { Error } from '@/api/types';
+import type { Error } from '@/api/types';
 
 type requestProps = {
     url?: string;
@@ -63,19 +63,22 @@ const useRequest = () => {
         }
 
         switch (response.response?.status) {
-            // case 500:
-            //     return;
+            case 500:
+                throw new Error('Сервер не работает');
             case 403:
-                return alertNotify('Ошибка', 'Доступ ограничен', 'error');
+                alertNotify('Ошибка', 'Доступ ограничен', 'error');
+                throw new Error('Доступ ограничен');
             case 429:
-                return alertNotify('Чуть помедленнее', 'Слишком много запросов, пожалуйста, подождите', 'warn');
+                alertNotify('Чуть помедленнее', 'Слишком много запросов, пожалуйста, подождите', 'warn');
+                throw new Error('Слишком много запросов, пожалуйста, подождите');
             case 413:
-                return alertNotify('Ошибка', 'Размер файла не должен превышать 1 МБ', 'error');
+                alertNotify('Ошибка', 'Размер файла не должен превышать 1 МБ', 'error');
+                throw new Error('Размер файла не должен превышать 1 МБ');
             default:
                 if (customLogic) {
-                    return customLogic();
+                    customLogic();
                 } else {
-                    return alertNotify(
+                    alertNotify(
                         'Ошибка',
                         errorMessage
                             ? errorMessage
@@ -83,20 +86,9 @@ const useRequest = () => {
                         'error',
                     );
                 }
+                throw new Error();
         }
     };
-
-    // const noAuthController = async (callback = () => {}) => {
-    //     const token = await request<{ accessToken: string }>({ url: '/auth/refresh', isAuth: true });
-
-    //     if (!('data' in token)) {
-    //         return clearLocalData();
-    //     }
-
-    //     localStorage.setItem('accessToken', token.data.accessToken);
-
-    //     callback();
-    // };
 
     const catchRequestError = (response: AxiosResponse | AxiosError<Error>) => {
         if (!('data' in response)) {

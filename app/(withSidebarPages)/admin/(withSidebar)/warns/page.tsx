@@ -12,6 +12,8 @@ import { Cross } from '@/shared/icons';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import useWarn from '@/features/admin/warns/useWarn';
 import WarnItem from '@/entities/admin/ui/WarnItem';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 const AdminWarns = () => {
     const queryClient = useQueryClient();
@@ -37,45 +39,48 @@ const AdminWarns = () => {
     });
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <Text variant="h3">
-                    Жалобы {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
-                </Text>
+        <PrivateWrapper permissions={[PERMISSIONS.COMPLAINTS]}>
+            <div className={base.baseWrapperGap16}>
+                <div className={base.titleInner}>
+                    <Text variant="h3">
+                        Жалобы{' '}
+                        {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                    </Text>
 
-                <ReloadButton onClick={resetRequest} disabled={isPending} />
+                    <ReloadButton onClick={resetRequest} disabled={isPending} />
+                </div>
+
+                {isPending ? (
+                    <div className={base.contentItems}>
+                        {[...Array(3)].map((_, id) => (
+                            <CollectionItemSkeleton key={id} />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                ) : data.pages[0]?.totalCount ? (
+                    <div className={base.contentItems}>
+                        {data?.pages.map((role) =>
+                            role?.feedback?.map((data) => (
+                                <WarnItem
+                                    key={data.id}
+                                    data={data}
+                                    readWarnCallback={() => readWarn(data.id, revalidateWarns)}
+                                />
+                            )),
+                        )}
+                    </div>
+                ) : (
+                    <NotContent text="Жалоб не найдено" />
+                )}
+
+                {!error && hasNextPage && (
+                    <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
+                        Показать еще
+                    </Button>
+                )}
             </div>
-
-            {isPending ? (
-                <div className={base.contentItems}>
-                    {[...Array(3)].map((_, id) => (
-                        <CollectionItemSkeleton key={id} />
-                    ))}
-                </div>
-            ) : error ? (
-                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
-                <div className={base.contentItems}>
-                    {data?.pages.map((role) =>
-                        role?.feedback?.map((data) => (
-                            <WarnItem
-                                key={data.id}
-                                data={data}
-                                readWarnCallback={() => readWarn(data.id, revalidateWarns)}
-                            />
-                        )),
-                    )}
-                </div>
-            ) : (
-                <NotContent text="Жалоб не найдено" />
-            )}
-
-            {hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
-            )}
-        </div>
+        </PrivateWrapper>
     );
 };
 

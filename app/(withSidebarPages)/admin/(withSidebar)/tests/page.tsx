@@ -17,6 +17,7 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useTest } from '@/features/test';
 import TestItem from '@/entities/test/ui/TestItem';
 import { TestItemSkeleton } from '@/shared/ui/Skeleton';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const AdminTests = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -44,66 +45,68 @@ const AdminTests = () => {
     });
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <Text variant="h3">
-                        Тесты{' '}
-                        {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
-                    </Text>
+        <PrivateWrapper permissions={[PERMISSIONS.TESTS]}>
+            <div className={base.baseWrapperGap16}>
+                <div className={base.titleInner}>
+                    <div className={base.titleWrapper}>
+                        <Text variant="h3">
+                            Тесты{' '}
+                            {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                        </Text>
 
-                    <ReloadButton onClick={resetRequest} disabled={isPending} />
-                </div>
-
-                {checkPermission(permissions, [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && (
-                    <Tooltip title="Создать">
-                        <IconButton small variant="light" href="/admin/tests/create" circle>
-                            <Plus />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </div>
-
-            {isPending ? (
-                <div className={base.contentItems}>
-                    {[...Array(3)].map((_, id) => (
-                        <TestItemSkeleton key={id} />
-                    ))}
-                </div>
-            ) : error ? (
-                <NotContent text="Ошибка при загрузке тестов" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
-                <div className={cn(base.baseWrapperGap16, base.aic)}>
-                    <div className={base.contentItems}>
-                        {data?.pages.map((test) =>
-                            test?.tests.map((data) => (
-                                <TestItem
-                                    key={data.id}
-                                    data={data}
-                                    // loading={subjectIsLoading.includes(data.id)}
-                                    // edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                                    removeCallback={() => deleteTest(data.id, revalidateRequest)}
-                                />
-                            )),
-                        )}
+                        <ReloadButton onClick={resetRequest} disabled={isPending} />
                     </div>
 
-                    {hasNextPage && (
-                        <Button
-                            auto
-                            onClick={fetchNextPage}
-                            loading={isFetchingNextPage}
-                            className={base.buttonShowMore}
-                        >
-                            Показать еще
-                        </Button>
+                    {checkPermission(permissions, [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && (
+                        <Tooltip title="Создать">
+                            <IconButton small variant="light" href="/admin/tests/create" circle>
+                                <Plus />
+                            </IconButton>
+                        </Tooltip>
                     )}
                 </div>
-            ) : (
-                <NotContent text="Тестов не найдено" />
-            )}
-        </div>
+
+                {isPending ? (
+                    <div className={base.contentItems}>
+                        {[...Array(3)].map((_, id) => (
+                            <TestItemSkeleton key={id} />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <NotContent text="Ошибка при загрузке тестов" icon={<Cross />} danger />
+                ) : data.pages[0]?.totalCount ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={base.contentItems}>
+                            {data?.pages.map((test) =>
+                                test?.tests.map((data) => (
+                                    <TestItem
+                                        key={data.id}
+                                        data={data}
+                                        // loading={subjectIsLoading.includes(data.id)}
+                                        // edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                        removeCallback={() => deleteTest(data.id, revalidateRequest)}
+                                    />
+                                )),
+                            )}
+                        </div>
+
+                        {hasNextPage && (
+                            <Button
+                                auto
+                                onClick={fetchNextPage}
+                                loading={isFetchingNextPage}
+                                className={base.buttonShowMore}
+                            >
+                                Показать еще
+                            </Button>
+                        )}
+                    </div>
+                ) : (
+                    <NotContent text="Тестов не найдено" />
+                )}
+            </div>
+        </PrivateWrapper>
     );
 };
 

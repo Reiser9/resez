@@ -15,6 +15,7 @@ import { UserAdminItemSkeleton } from '@/shared/ui/Skeleton';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const AdminUsers = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -42,50 +43,52 @@ const AdminUsers = () => {
     };
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <Text variant="h3">
-                    Пользователи{' '}
-                    {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
-                </Text>
+        <PrivateWrapper permissions={[PERMISSIONS.USERS]}>
+            <div className={base.baseWrapperGap16}>
+                <div className={base.titleInner}>
+                    <Text variant="h3">
+                        Пользователи{' '}
+                        {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
+                    </Text>
 
-                <ReloadButton onClick={resetRequest} disabled={isPending} />
+                    <ReloadButton onClick={resetRequest} disabled={isPending} />
+                </div>
+
+                {isPending ? (
+                    <div className={base.contentItems}>
+                        {[...Array(3)].map((_, id) => (
+                            <UserAdminItemSkeleton key={id} />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                ) : data?.pages[0]?.totalCount === 0 ? (
+                    <NotContent text="Пользователей не найдено" />
+                ) : (
+                    <div className={base.contentItems}>
+                        {data?.pages.map((user) =>
+                            user?.users.map((data) => (
+                                <UserItem
+                                    key={data.id}
+                                    data={data}
+                                    userBlock={(reason: string) => blockUser(data.id, reason, () => revalidateUsers())}
+                                    userUnblock={() => unblockUser(data.id, () => revalidateUsers())}
+                                    notify={checkPermission(permissions, [PERMISSIONS.NOTIFIES])}
+                                    block={checkPermission(permissions, [PERMISSIONS.BLOCK_USERS])}
+                                    loading={usersIsLoading.includes(data.id)}
+                                />
+                            )),
+                        )}
+                    </div>
+                )}
+
+                {hasNextPage && (
+                    <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
+                        Показать еще
+                    </Button>
+                )}
             </div>
-
-            {isPending ? (
-                <div className={base.contentItems}>
-                    {[...Array(3)].map((_, id) => (
-                        <UserAdminItemSkeleton key={id} />
-                    ))}
-                </div>
-            ) : error ? (
-                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data?.pages[0]?.totalCount === 0 ? (
-                <NotContent text="Пользователей не найдено" />
-            ) : (
-                <div className={base.contentItems}>
-                    {data?.pages.map((user) =>
-                        user?.users.map((data) => (
-                            <UserItem
-                                key={data.id}
-                                data={data}
-                                userBlock={(reason: string) => blockUser(data.id, reason, () => revalidateUsers())}
-                                userUnblock={() => unblockUser(data.id, () => revalidateUsers())}
-                                notify={checkPermission(permissions, [PERMISSIONS.NOTIFIES])}
-                                block={checkPermission(permissions, [PERMISSIONS.BLOCK_USERS])}
-                                loading={usersIsLoading.includes(data.id)}
-                            />
-                        )),
-                    )}
-                </div>
-            )}
-
-            {hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
-            )}
-        </div>
+        </PrivateWrapper>
     );
 };
 

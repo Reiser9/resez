@@ -1,0 +1,15 @@
+import React from 'react';
+
+import pws from '@/shared/styles/pageWithSidebar.module.scss';
+
+import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <ContentWrapper>
+            <div className={pws.wrapper}>
+                <div className={pws.contentFull}>{children}</div>
+            </div>
+        </ContentWrapper>
+    );
+}

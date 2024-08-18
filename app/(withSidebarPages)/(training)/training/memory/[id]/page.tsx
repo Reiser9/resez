@@ -247,19 +247,19 @@ const MemoryCardInfo = () => {
                     </div>
 
                     <div className={cn(base.contentItems, styles.memoCollectionTypes)}>
-                        <LinkBlock title="Карточки" href={`${id}/cards`} className={base.item4}>
+                        <LinkBlock title="Карточки" href={`/memory/${id}/cards`} className={base.item4}>
                             <TypesCards />
                         </LinkBlock>
 
-                        <LinkBlock title="Тест" href={`${id}/test`} className={base.item4}>
+                        <LinkBlock title="Тест" href={`/memory/${id}/test`} className={base.item4}>
                             <TypesTest />
                         </LinkBlock>
 
-                        <LinkBlock title="Заучивание" href={`${id}/learn`} disabled className={base.item4}>
+                        <LinkBlock title="Заучивание" href={`/memory/${id}/learn`} disabled className={base.item4}>
                             <TypesLearn />
                         </LinkBlock>
 
-                        <LinkBlock title="Подбор" href={`${id}/selection`} disabled className={base.item4}>
+                        <LinkBlock title="Подбор" href={`/memory/${id}/selection`} disabled className={base.item4}>
                             <TypesSelection />
                         </LinkBlock>
                     </div>

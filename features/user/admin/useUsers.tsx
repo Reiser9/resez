@@ -38,6 +38,7 @@ const useNotify = () => {
     const getPaginationUsersShort = async (page: number, search = '') => {
         const limit = 5;
         const queryString = buildQueryString({
+            short: true,
             offset: page * limit,
             limit,
             search,

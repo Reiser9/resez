@@ -15,7 +15,6 @@ import { IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
 import { Tooltip } from 'antd';
-import { formatDate } from '@/shared/utils/formatDate';
 import { SubjectTask } from '../model';
 import { Badge } from '@/shared/ui/Badge';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
@@ -74,7 +73,7 @@ const TaskItem: React.FC<Props> = ({
                             {subTheme && <p className={styles.taskTheme}>{subTheme}</p>}
                         </Link>
 
-                        {(edit || remove) && (
+                        {(edit || remove || verify) && (
                             <HoverMenu
                                 button={
                                     <IconButton variant="light" small onClick={() => setActionMenu((prev) => !prev)}>
@@ -182,8 +181,6 @@ const TaskItem: React.FC<Props> = ({
                         </div>
                     </div>
                 )}
-
-                {/* {loading && <LoaderForItem />} */}
             </div>
 
             <ConfirmModal

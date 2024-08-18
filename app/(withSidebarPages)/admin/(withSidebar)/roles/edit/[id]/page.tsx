@@ -18,14 +18,16 @@ import { CONFIG } from '@/shared/consts/CONFIG';
 import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { TreePermission } from '../../create/page';
 import { Permissions } from '@/entities/role';
-import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
-import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { RolePreview } from '@/shared/ui/Preview/RolePreview';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 const AdminEditRole = () => {
     const { id } = useParams();
-    const [name, setName] = React.useState<string>('');
+    const [name, setName] = React.useState('');
 
     const [textColor, setTextColor] = React.useState<string | Color>(CONFIG.BASE_COLOR);
     const [textColorFormatHex, setTextColorFormatHex] = React.useState<'hex' | 'rgb' | 'hsb' | undefined>('hex');
@@ -48,7 +50,7 @@ const AdminEditRole = () => {
         [backgroundColor],
     );
 
-    const [backgroundColorAuto, setBackgroundColorAuto] = React.useState<boolean>(false);
+    const [backgroundColorAuto, setBackgroundColorAuto] = React.useState(false);
 
     const [currentPermissions, setCurrentPermissions] = React.useState<TreePermission[]>([]);
     const [permission, setPermission] = React.useState<Key[]>([]);
@@ -69,7 +71,7 @@ const AdminEditRole = () => {
         isLoading: permissionsIsLoading,
         error: permissionsError,
     } = useQuery({
-        queryKey: ['permissions', id],
+        queryKey: ['permissions'],
         queryFn: getAllPermissions,
     });
 
@@ -136,70 +138,74 @@ const AdminEditRole = () => {
     }
 
     return (
-        <CreatePageDefault
-            title="Редактирование роли"
-            button={
-                <Button auto onClick={editRoleHandler} levitation>
-                    Сохранить
-                </Button>
-            }
-        >
-            <div className={base.form}>
-                <RolePreview
-                    name={name}
-                    textColor={textHexString}
-                    backgroundColor={backgroundColorAuto ? convertHexToOpacityHex(textHexString) : backgroundHexString}
-                />
-
-                <Input
-                    value={name}
-                    setValue={setName}
-                    title="Название роли"
-                    placeholder="Админ, модератор, хелпер.."
-                    trackLength
-                    lengthLimit={30}
-                />
-
-                <ColorPickerInput
-                    title="Выберите цвет текста"
-                    hexString={textHexString}
-                    value={textColor}
-                    format={textColorFormatHex}
-                    onFormatChange={setTextColorFormatHex}
-                    onChangeComplete={(color) => setTextColor(color)}
-                />
-
-                <Checkbox checked={backgroundColorAuto} onChange={(e) => setBackgroundColorAuto(e.target.checked)}>
-                    Сгенировать фоновый цвет автоматически
-                </Checkbox>
-
-                {!backgroundColorAuto && (
-                    <ColorPickerInput
-                        title="Выберите цвет фона"
-                        hexString={backgroundHexString}
-                        value={backgroundColor}
-                        format={backgroundColorFormatHex}
-                        onFormatChange={setBackgroundColorFormatHex}
-                        onChangeComplete={(color) => setBackgroundColor(color)}
+        <PrivateWrapper permissions={[PERMISSIONS.UPDATE_ROLES]}>
+            <CreatePageWrapper
+                title="Редактирование роли"
+                button={
+                    <Button auto onClick={editRoleHandler} levitation>
+                        Сохранить
+                    </Button>
+                }
+            >
+                <div className={base.form}>
+                    <RolePreview
+                        name={name}
+                        textColor={textHexString}
+                        backgroundColor={
+                            backgroundColorAuto ? convertHexToOpacityHex(textHexString) : backgroundHexString
+                        }
                     />
-                )}
 
-                {permissionsError ? (
-                    <NotContent text="Ошибка загрузки прав доступа" danger icon={<Cross />} />
-                ) : (
-                    <div style={{ width: '100%', display: 'flex' }}>
-                        <Tree
-                            selectable={false}
-                            checkable
-                            defaultExpandAll
-                            onCheck={onCheckPermission}
-                            checkedKeys={permission}
-                            treeData={currentPermissions}
+                    <Input
+                        value={name}
+                        setValue={setName}
+                        title="Название роли"
+                        placeholder="Админ, модератор, хелпер.."
+                        trackLength
+                        lengthLimit={30}
+                    />
+
+                    <ColorPickerInput
+                        title="Выберите цвет текста"
+                        hexString={textHexString}
+                        value={textColor}
+                        format={textColorFormatHex}
+                        onFormatChange={setTextColorFormatHex}
+                        onChangeComplete={(color) => setTextColor(color)}
+                    />
+
+                    <Checkbox checked={backgroundColorAuto} onChange={(e) => setBackgroundColorAuto(e.target.checked)}>
+                        Сгенировать фоновый цвет автоматически
+                    </Checkbox>
+
+                    {!backgroundColorAuto && (
+                        <ColorPickerInput
+                            title="Выберите цвет фона"
+                            hexString={backgroundHexString}
+                            value={backgroundColor}
+                            format={backgroundColorFormatHex}
+                            onFormatChange={setBackgroundColorFormatHex}
+                            onChangeComplete={(color) => setBackgroundColor(color)}
                         />
-                    </div>
-                )}
-            </div>
-        </CreatePageDefault>
+                    )}
+
+                    {permissionsError ? (
+                        <NotContent text="Ошибка загрузки прав доступа" danger icon={<Cross />} />
+                    ) : (
+                        <div style={{ width: '100%', display: 'flex' }}>
+                            <Tree
+                                selectable={false}
+                                checkable
+                                defaultExpandAll
+                                onCheck={onCheckPermission}
+                                checkedKeys={permission}
+                                treeData={currentPermissions}
+                            />
+                        </div>
+                    )}
+                </div>
+            </CreatePageWrapper>
+        </PrivateWrapper>
     );
 };
 

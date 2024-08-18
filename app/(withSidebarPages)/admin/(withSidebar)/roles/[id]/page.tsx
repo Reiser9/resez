@@ -21,13 +21,13 @@ import { NotContent } from '@/shared/ui/NotContent';
 
 const AdminRolePage = () => {
     const { id } = useParams();
-    const [name, setName] = React.useState<string>('');
+    const [name, setName] = React.useState('');
 
     const [currentPermissions, setCurrentPermissions] = React.useState<TreePermission[]>([]);
     const [permission, setPermission] = React.useState<Key[]>([]);
 
-    const [actionMenu, setActionMenu] = React.useState<boolean>(false);
-    const [confirmDelete, setConfirmDelete] = React.useState<boolean>(false);
+    const [actionMenu, setActionMenu] = React.useState(false);
+    const [confirmDelete, setConfirmDelete] = React.useState(false);
 
     const { getAllPermissions } = usePermissions();
     const { rolesIsLoading, getCurrentRole, deleteRole } = useRoles();
@@ -45,10 +45,10 @@ const AdminRolePage = () => {
 
     const {
         data: permissions,
-        isLoading,
+        isLoading: permissionsIsLoading,
         error: permissionsError,
     } = useQuery({
-        queryKey: ['permissions', id],
+        queryKey: ['permissions'],
         queryFn: getAllPermissions,
     });
 
@@ -58,10 +58,6 @@ const AdminRolePage = () => {
             key: item.id.toString(),
             children: formatArrayToTree(item.childrens) ?? [],
         }));
-
-    React.useEffect(() => {
-        getAllPermissions();
-    }, []);
 
     React.useEffect(() => {
         if (!permissions || permissions.length === 0) {
@@ -83,7 +79,7 @@ const AdminRolePage = () => {
         }
     }, [data]);
 
-    if (roleIsLoading || isLoading) {
+    if (roleIsLoading) {
         return <Preloader page />;
     }
 
@@ -128,12 +124,14 @@ const AdminRolePage = () => {
                     </HoverMenu>
                 </div>
 
-                {permissionsError ? (
-                    <NotContent text="Ошибка загрузки прав доступа" danger icon={<Cross />} />
-                ) : (
-                    <div className={styles.roleContent}>
-                        <div className={styles.roleInfo}>
-                            <div style={{ width: '100%', display: 'flex' }}>
+                <div className={styles.roleContent}>
+                    <div className={styles.roleInfo}>
+                        <div style={{ width: '100%', display: 'flex' }}>
+                            {permissionsIsLoading ? (
+                                <Preloader small page />
+                            ) : permissionsError ? (
+                                <NotContent text="Ошибка загрузки прав доступа" danger icon={<Cross />} />
+                            ) : (
                                 <Tree
                                     selectable={false}
                                     checkable
@@ -142,10 +140,12 @@ const AdminRolePage = () => {
                                     treeData={currentPermissions}
                                     disabled
                                 />
-                            </div>
+                            )}
                         </div>
                     </div>
-                )}
+
+                    {/* Другой блок */}
+                </div>
             </div>
 
             <ConfirmModal

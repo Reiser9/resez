@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
@@ -22,6 +22,8 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useAvatar } from '@/features/store';
 import PositionController from '../PositionController';
 import useAlert from '@/shared/hooks/useAlert';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 type ProductTypes = 'Украшение аватарки' | 'Баннер' | 'Тема' | 'Эффект чата' | 'Статус' | 'Наклейка';
 type ProductConditions = 'free' | 'event' | 'achievement' | 'buy' | 'subscription';
@@ -241,306 +243,310 @@ const AdminStoreCreate = () => {
     }, [productAnimationFile]);
 
     return (
-        <CreatePageDefault
-            title="Создание товара"
-            button={
-                <Button auto levitation onClick={createAvatarHandler}>
-                    Создать
-                </Button>
-            }
-        >
-            <div className={base.formMedium}>
-                <Input
-                    value={name}
-                    setValue={setName}
-                    title="Название товара"
-                    placeholder="Кошечка, бантик, корзинка..."
-                    trackLength
-                    lengthLimit={50}
-                />
+        <PrivateWrapper permissions={[PERMISSIONS.CREATE_PRODUCTS]}>
+            <CreatePageWrapper
+                title="Создание товара"
+                button={
+                    <Button auto levitation onClick={createAvatarHandler}>
+                        Создать
+                    </Button>
+                }
+            >
+                <div className={base.formMedium}>
+                    <Input
+                        value={name}
+                        setValue={setName}
+                        title="Название товара"
+                        placeholder="Кошечка, бантик, корзинка..."
+                        trackLength
+                        lengthLimit={50}
+                    />
 
-                <Select<ProductTypes>
-                    title="Тип товара"
-                    placeholder="Выберите тип товара"
-                    value={type}
-                    setValue={setType}
-                    options={productTypes}
-                />
+                    <Select<ProductTypes>
+                        title="Тип товара"
+                        placeholder="Выберите тип товара"
+                        value={type}
+                        setValue={setType}
+                        options={productTypes}
+                    />
 
-                <Select<ProductConditions>
-                    title="Условие получения"
-                    placeholder="Выберите условие"
-                    value={condition}
-                    setValue={setCondition}
-                    options={productConditions}
-                />
+                    <Select<ProductConditions>
+                        title="Условие получения"
+                        placeholder="Выберите условие"
+                        value={condition}
+                        setValue={setCondition}
+                        options={productConditions}
+                    />
 
-                {condition === 'buy' && <Input value={price} setValue={setPrice} type="number" title="Цена товара" />}
+                    {condition === 'buy' && (
+                        <Input value={price} setValue={setPrice} type="number" title="Цена товара" />
+                    )}
 
-                {condition === 'free' && (
-                    <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                        Пользователь может получить товар бесплатно
-                    </Text>
-                )}
+                    {condition === 'free' && (
+                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
+                            Пользователь может получить товар бесплатно
+                        </Text>
+                    )}
 
-                {condition === 'event' && (
-                    <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                        Пользователь может получить товар в определенное время: --:--
-                    </Text>
-                )}
+                    {condition === 'event' && (
+                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
+                            Пользователь может получить товар в определенное время: --:--
+                        </Text>
+                    )}
 
-                {condition === 'achievement' && (
-                    <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                        Пользователь может получить товар, выполнив достижение: название достижения
-                    </Text>
-                )}
+                    {condition === 'achievement' && (
+                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
+                            Пользователь может получить товар, выполнив достижение: название достижения
+                        </Text>
+                    )}
 
-                {condition === 'buy' && (
-                    <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                        Пользователь может получить товар за валюту: {price || 0} ResCoin
-                    </Text>
-                )}
+                    {condition === 'buy' && (
+                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
+                            Пользователь может получить товар за валюту: {price || 0} ResCoin
+                        </Text>
+                    )}
 
-                {condition === 'subscription' && (
-                    <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                        Пользователь может получить товар за подписку: название подписки
-                    </Text>
-                )}
+                    {condition === 'subscription' && (
+                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
+                            Пользователь может получить товар за подписку: название подписки
+                        </Text>
+                    )}
 
-                {condition && (
-                    <>
-                        <div className={styles.createProductTabs}>
-                            <button
-                                className={cn(styles.createProductTab, {
-                                    [styles.active]: view === 'static',
-                                })}
-                                onClick={() => setView('static')}
-                            >
-                                Статика
-                            </button>
-
-                            <button
-                                className={cn(styles.createProductTab, {
-                                    [styles.active]: view === 'animation',
-                                })}
-                                onClick={() => setView('animation')}
-                            >
-                                Анимация
-                            </button>
-                        </div>
-
-                        {view === 'static' && (
-                            <>
-                                <File
-                                    id="productImage"
-                                    setImgPreview={setProductImagePreview}
-                                    setFile={setProductImage}
-                                    accept="image/png, image/jpeg, image/svg+xml, image/gif"
-                                />
-
-                                <label
-                                    htmlFor="productImage"
-                                    className={cn(styles.createProductImage, {
-                                        [styles.imageFill]: productImage,
+                    {condition && (
+                        <>
+                            <div className={styles.createProductTabs}>
+                                <button
+                                    className={cn(styles.createProductTab, {
+                                        [styles.active]: view === 'static',
                                     })}
+                                    onClick={() => setView('static')}
                                 >
-                                    {productImagePreview ? (
-                                        <Image src={productImagePreview.toString()} alt="image" fill />
-                                    ) : (
-                                        <Photo />
-                                    )}
+                                    Статика
+                                </button>
+
+                                <button
+                                    className={cn(styles.createProductTab, {
+                                        [styles.active]: view === 'animation',
+                                    })}
+                                    onClick={() => setView('animation')}
+                                >
+                                    Анимация
+                                </button>
+                            </div>
+
+                            {view === 'static' && (
+                                <>
+                                    <File
+                                        id="productImage"
+                                        setImgPreview={setProductImagePreview}
+                                        setFile={setProductImage}
+                                        accept="image/png, image/jpeg, image/svg+xml, image/gif"
+                                    />
+
+                                    <label
+                                        htmlFor="productImage"
+                                        className={cn(styles.createProductImage, {
+                                            [styles.imageFill]: productImage,
+                                        })}
+                                    >
+                                        {productImagePreview ? (
+                                            <Image src={productImagePreview.toString()} alt="image" fill />
+                                        ) : (
+                                            <Photo />
+                                        )}
+
+                                        {productImagePreview && (
+                                            <IconButton
+                                                small
+                                                circle
+                                                variant="danger"
+                                                className={styles.createProductImageDelete}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setProductImagePreview(null);
+                                                    setProductImage(null);
+                                                }}
+                                            >
+                                                <Delete />
+                                            </IconButton>
+                                        )}
+                                    </label>
 
                                     {productImagePreview && (
-                                        <IconButton
-                                            small
-                                            circle
-                                            variant="danger"
-                                            className={styles.createProductImageDelete}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                setProductImagePreview(null);
-                                                setProductImage(null);
-                                            }}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    )}
-                                </label>
+                                        <>
+                                            <Text variant="text2" fontWeight={500} center>
+                                                Выберите позицию товара
+                                            </Text>
 
-                                {productImagePreview && (
-                                    <>
-                                        <Text variant="text2" fontWeight={500} center>
-                                            Выберите позицию товара
-                                        </Text>
+                                            <div className={styles.createProductPosition}>
+                                                <Badge
+                                                    image={avatar}
+                                                    text={nickname}
+                                                    style={{ width: 92, height: 92 }}
+                                                    className={styles.createProductCurrentAvatar}
+                                                />
 
-                                        <div className={styles.createProductPosition}>
-                                            <Badge
-                                                image={avatar}
-                                                text={nickname}
-                                                style={{ width: 92, height: 92 }}
-                                                className={styles.createProductCurrentAvatar}
-                                            />
-
-                                            <Rnd
-                                                bounds="parent"
-                                                size={{ width, height }}
-                                                position={position}
-                                                onResize={handleResize}
-                                                onDragStop={handleDragStop}
-                                                onDragStart={handleDragStart}
-                                                lockAspectRatio={aspectRatio}
-                                                minWidth={minWidth}
-                                                minHeight={minHeight / aspectRatio}
-                                                maxWidth={maxWidth}
-                                                maxHeight={maxHeight / aspectRatio}
-                                                enableResizing={{
-                                                    bottomRight: true,
-                                                    bottomLeft: true,
-                                                    topRight: true,
-                                                    topLeft: true,
-                                                }}
-                                            >
-                                                <div
-                                                    className={cn(styles.createProductPositionImage, {
-                                                        [styles.opacity]: draggable,
-                                                    })}
+                                                <Rnd
+                                                    bounds="parent"
+                                                    size={{ width, height }}
+                                                    position={position}
+                                                    onResize={handleResize}
+                                                    onDragStop={handleDragStop}
+                                                    onDragStart={handleDragStart}
+                                                    lockAspectRatio={aspectRatio}
+                                                    minWidth={minWidth}
+                                                    minHeight={minHeight / aspectRatio}
+                                                    maxWidth={maxWidth}
+                                                    maxHeight={maxHeight / aspectRatio}
+                                                    enableResizing={{
+                                                        bottomRight: true,
+                                                        bottomLeft: true,
+                                                        topRight: true,
+                                                        topLeft: true,
+                                                    }}
                                                 >
-                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img
-                                                        src={productImagePreview.toString()}
-                                                        alt="image"
-                                                        ref={imageRef}
-                                                        onLoad={() => {
-                                                            if (imageRef.current) {
-                                                                const img = imageRef.current;
-                                                                const aspectRatio =
-                                                                    img.naturalWidth / img.naturalHeight;
-                                                                setAspectRatio(aspectRatio);
+                                                    <div
+                                                        className={cn(styles.createProductPositionImage, {
+                                                            [styles.opacity]: draggable,
+                                                        })}
+                                                    >
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img
+                                                            src={productImagePreview.toString()}
+                                                            alt="image"
+                                                            ref={imageRef}
+                                                            onLoad={() => {
+                                                                if (imageRef.current) {
+                                                                    const img = imageRef.current;
+                                                                    const aspectRatio =
+                                                                        img.naturalWidth / img.naturalHeight;
+                                                                    setAspectRatio(aspectRatio);
 
-                                                                if (img.naturalHeight > maxHeight) {
-                                                                    setHeight(maxHeight);
-                                                                    setWidth(maxHeight / aspectRatio);
-                                                                } else if (img.naturalWidth > maxWidth) {
-                                                                    setWidth(maxWidth);
-                                                                    setHeight(maxWidth / aspectRatio);
-                                                                } else {
-                                                                    setWidth(img.naturalWidth);
-                                                                    setHeight(img.naturalWidth / aspectRatio);
+                                                                    if (img.naturalHeight > maxHeight) {
+                                                                        setHeight(maxHeight);
+                                                                        setWidth(maxHeight / aspectRatio);
+                                                                    } else if (img.naturalWidth > maxWidth) {
+                                                                        setWidth(maxWidth);
+                                                                        setHeight(maxWidth / aspectRatio);
+                                                                    } else {
+                                                                        setWidth(img.naturalWidth);
+                                                                        setHeight(img.naturalWidth / aspectRatio);
+                                                                    }
                                                                 }
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                            </Rnd>
-                                        </div>
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </Rnd>
+                                            </div>
 
-                                        <PositionController
-                                            position={position}
-                                            setPosition={setPosition}
-                                            maxWidth={maxWidth}
-                                            maxHeight={maxHeight}
-                                            width={width}
-                                            height={height}
-                                        />
-                                    </>
-                                )}
-                            </>
-                        )}
-
-                        {view === 'animation' && (
-                            <>
-                                <File id="productAnimation" setFile={setProductAnimationFile} accept=".json" />
-
-                                <label htmlFor="productAnimation" className={styles.createProductAnimation}>
-                                    <FileEmpty />
-                                    {productAnimationFile ? productAnimationFile.name : 'Выберите файл'}
-
-                                    {productAnimationFile && (
-                                        <IconButton
-                                            small
-                                            circle
-                                            variant="danger"
-                                            className={styles.createProductImageDelete}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                setProductAnimationFile(null);
-                                                setAnimationData(null);
-                                            }}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    )}
-                                </label>
-
-                                {animationError && (
-                                    <Text variant="text2" fontWeight={600} style={{ color: 'var(--error)' }}>
-                                        {animationError}
-                                    </Text>
-                                )}
-
-                                {animationData && (
-                                    <>
-                                        <Text variant="text2" fontWeight={500} center>
-                                            Выберите позицию товара
-                                        </Text>
-
-                                        <div className={styles.createProductPosition}>
-                                            <Badge
-                                                image={avatar}
-                                                text={nickname}
-                                                style={{ width: 92, height: 92 }}
-                                                className={styles.createProductCurrentAvatar}
-                                            />
-
-                                            <Rnd
-                                                bounds="parent"
-                                                size={{ width, height }}
+                                            <PositionController
                                                 position={position}
-                                                onResize={handleResize}
-                                                onDragStop={handleDragStop}
-                                                onDragStart={handleDragStart}
-                                                lockAspectRatio={aspectRatio}
-                                                minWidth={minWidth}
-                                                minHeight={minHeight / aspectRatio}
+                                                setPosition={setPosition}
                                                 maxWidth={maxWidth}
-                                                maxHeight={maxHeight / aspectRatio}
-                                                enableResizing={{
-                                                    bottomRight: true,
-                                                    bottomLeft: true,
-                                                    topRight: true,
-                                                    topLeft: true,
+                                                maxHeight={maxHeight}
+                                                width={width}
+                                                height={height}
+                                            />
+                                        </>
+                                    )}
+                                </>
+                            )}
+
+                            {view === 'animation' && (
+                                <>
+                                    <File id="productAnimation" setFile={setProductAnimationFile} accept=".json" />
+
+                                    <label htmlFor="productAnimation" className={styles.createProductAnimation}>
+                                        <FileEmpty />
+                                        {productAnimationFile ? productAnimationFile.name : 'Выберите файл'}
+
+                                        {productAnimationFile && (
+                                            <IconButton
+                                                small
+                                                circle
+                                                variant="danger"
+                                                className={styles.createProductImageDelete}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setProductAnimationFile(null);
+                                                    setAnimationData(null);
                                                 }}
                                             >
-                                                <div
-                                                    className={cn(styles.createProductPositionImage, {
-                                                        [styles.opacity]: draggable,
-                                                    })}
-                                                >
-                                                    <Lottie
-                                                        animationData={animationData}
-                                                        className={styles.createProductAnimationPreview}
-                                                        ref={imageRef}
-                                                    />
-                                                </div>
-                                            </Rnd>
-                                        </div>
+                                                <Delete />
+                                            </IconButton>
+                                        )}
+                                    </label>
 
-                                        <PositionController
-                                            position={position}
-                                            setPosition={setPosition}
-                                            maxWidth={maxWidth}
-                                            maxHeight={maxHeight}
-                                            width={width}
-                                            height={height}
-                                        />
-                                    </>
-                                )}
-                            </>
-                        )}
-                    </>
-                )}
-            </div>
-        </CreatePageDefault>
+                                    {animationError && (
+                                        <Text variant="text2" fontWeight={600} style={{ color: 'var(--error)' }}>
+                                            {animationError}
+                                        </Text>
+                                    )}
+
+                                    {animationData && (
+                                        <>
+                                            <Text variant="text2" fontWeight={500} center>
+                                                Выберите позицию товара
+                                            </Text>
+
+                                            <div className={styles.createProductPosition}>
+                                                <Badge
+                                                    image={avatar}
+                                                    text={nickname}
+                                                    style={{ width: 92, height: 92 }}
+                                                    className={styles.createProductCurrentAvatar}
+                                                />
+
+                                                <Rnd
+                                                    bounds="parent"
+                                                    size={{ width, height }}
+                                                    position={position}
+                                                    onResize={handleResize}
+                                                    onDragStop={handleDragStop}
+                                                    onDragStart={handleDragStart}
+                                                    lockAspectRatio={aspectRatio}
+                                                    minWidth={minWidth}
+                                                    minHeight={minHeight / aspectRatio}
+                                                    maxWidth={maxWidth}
+                                                    maxHeight={maxHeight / aspectRatio}
+                                                    enableResizing={{
+                                                        bottomRight: true,
+                                                        bottomLeft: true,
+                                                        topRight: true,
+                                                        topLeft: true,
+                                                    }}
+                                                >
+                                                    <div
+                                                        className={cn(styles.createProductPositionImage, {
+                                                            [styles.opacity]: draggable,
+                                                        })}
+                                                    >
+                                                        <Lottie
+                                                            animationData={animationData}
+                                                            className={styles.createProductAnimationPreview}
+                                                            ref={imageRef}
+                                                        />
+                                                    </div>
+                                                </Rnd>
+                                            </div>
+
+                                            <PositionController
+                                                position={position}
+                                                setPosition={setPosition}
+                                                maxWidth={maxWidth}
+                                                maxHeight={maxHeight}
+                                                width={width}
+                                                height={height}
+                                            />
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </>
+                    )}
+                </div>
+            </CreatePageWrapper>
+        </PrivateWrapper>
     );
 };
 

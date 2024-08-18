@@ -5,21 +5,24 @@ import { Checkbox, Tree } from 'antd';
 import { useRouter } from 'next/navigation';
 import { Color } from 'antd/es/color-picker';
 import { TreeProps } from 'antd/lib';
+import { useQuery } from '@tanstack/react-query';
 
-import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { ColorPickerInput, Input } from '@/shared/ui/Input';
-import { BackButton, Button } from '@/shared/ui/Button';
 import { CONFIG } from '@/shared/consts/CONFIG';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Preloader } from '@/shared/ui/Preloader';
 import { convertHexToOpacityHex } from '@/shared/utils/convertHexToOpacityHex';
 import { usePermissions, useRoles } from '@/features/role';
-import { Permissions } from '@/entities/role';
+import type { Permissions } from '@/entities/role';
 import RolePreview from '@/shared/ui/Preview/RolePreview/RolePreview';
-import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+
+import { Button } from '@/shared/ui/Button';
+import { ColorPickerInput, Input } from '@/shared/ui/Input';
+import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Cross } from '@/shared/icons';
 
 export type TreePermission = {
     title: string;
@@ -39,8 +42,7 @@ const AdminCreateRole = () => {
     );
 
     const { isLoading, createRole } = useRoles();
-    const { isLoading: permissionsIsLoading, getAllPermissions } = usePermissions();
-    const { permissions } = useAppSelector((state) => state.role);
+    const { getAllPermissions } = usePermissions();
     const router = useRouter();
 
     const textHexString = React.useMemo(
@@ -52,11 +54,20 @@ const AdminCreateRole = () => {
         [backgroundColor],
     );
 
-    const [backgroundColorAuto, setBackgroundColorAuto] = React.useState<boolean>(true);
+    const [backgroundColorAuto, setBackgroundColorAuto] = React.useState(true);
 
     const [currentPermissions, setCurrentPermissions] = React.useState<TreePermission[]>([]);
     const [permission, setPermission] = React.useState<Key[]>([]);
     const [permissionHalf, setPermissionHalf] = React.useState<Key[]>([]);
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['permissions'],
+        queryFn: getAllPermissions,
+    });
 
     const onCheckPermission: TreeProps['onCheck'] = (value, elem) => {
         if (!('checked' in value)) {
@@ -89,10 +100,6 @@ const AdminCreateRole = () => {
         }));
 
     React.useEffect(() => {
-        getAllPermissions();
-    }, []);
-
-    React.useEffect(() => {
         if (!permissions || permissions.length === 0) {
             return;
         }
@@ -101,71 +108,77 @@ const AdminCreateRole = () => {
         setCurrentPermissions(formattedPermissions);
     }, [permissions]);
 
-    if (permissionsIsLoading) {
-        return <Preloader page />;
-    }
-
     return (
-        <CreatePageDefault
-            title="Создание роли"
-            button={
-                <Button auto onClick={createRoleHandler} loading={isLoading} levitation>
-                    Создать
-                </Button>
-            }
-        >
-            <div className={base.form}>
-                <RolePreview
-                    name={name}
-                    textColor={textHexString}
-                    backgroundColor={backgroundColorAuto ? convertHexToOpacityHex(textHexString) : backgroundHexString}
-                />
+        <PrivateWrapper permissions={[PERMISSIONS.CREATE_ROLES]}>
+            <CreatePageWrapper
+                title="Создание роли"
+                button={
+                    <Button auto onClick={createRoleHandler} loading={isLoading} levitation>
+                        Создать
+                    </Button>
+                }
+            >
+                <div className={base.form}>
+                    <RolePreview
+                        name={name}
+                        textColor={textHexString}
+                        backgroundColor={
+                            backgroundColorAuto ? convertHexToOpacityHex(textHexString) : backgroundHexString
+                        }
+                    />
 
-                <Input
-                    value={name}
-                    setValue={setName}
-                    title="Название роли"
-                    placeholder="Админ, модератор, хелпер.."
-                    trackLength
-                    lengthLimit={30}
-                />
+                    <Input
+                        value={name}
+                        setValue={setName}
+                        title="Название роли"
+                        placeholder="Админ, модератор, хелпер.."
+                        trackLength
+                        lengthLimit={30}
+                    />
 
-                <ColorPickerInput
-                    title="Выберите цвет текста"
-                    hexString={textHexString}
-                    value={textColor}
-                    format={textColorFormatHex}
-                    onFormatChange={setTextColorFormatHex}
-                    onChangeComplete={(color) => setTextColor(color)}
-                />
-
-                <Checkbox checked={backgroundColorAuto} onChange={(e) => setBackgroundColorAuto(e.target.checked)}>
-                    Сгенировать фоновый цвет автоматически
-                </Checkbox>
-
-                {!backgroundColorAuto && (
                     <ColorPickerInput
-                        title="Выберите цвет фона"
-                        hexString={backgroundHexString}
-                        value={backgroundColor}
-                        format={backgroundColorFormatHex}
-                        onFormatChange={setBackgroundColorFormatHex}
-                        onChangeComplete={(color) => setBackgroundColor(color)}
+                        title="Выберите цвет текста"
+                        hexString={textHexString}
+                        value={textColor}
+                        format={textColorFormatHex}
+                        onFormatChange={setTextColorFormatHex}
+                        onChangeComplete={(color) => setTextColor(color)}
                     />
-                )}
 
-                <div style={{ width: '100%', display: 'flex' }}>
-                    <Tree
-                        selectable={false}
-                        checkable
-                        defaultExpandAll
-                        onCheck={onCheckPermission}
-                        checkedKeys={permission}
-                        treeData={currentPermissions}
-                    />
+                    <Checkbox checked={backgroundColorAuto} onChange={(e) => setBackgroundColorAuto(e.target.checked)}>
+                        Сгенировать фоновый цвет автоматически
+                    </Checkbox>
+
+                    {!backgroundColorAuto && (
+                        <ColorPickerInput
+                            title="Выберите цвет фона"
+                            hexString={backgroundHexString}
+                            value={backgroundColor}
+                            format={backgroundColorFormatHex}
+                            onFormatChange={setBackgroundColorFormatHex}
+                            onChangeComplete={(color) => setBackgroundColor(color)}
+                        />
+                    )}
+
+                    <div style={{ width: '100%', display: 'flex' }}>
+                        {permissionsIsLoading ? (
+                            <Preloader small page />
+                        ) : permissionsError ? (
+                            <NotContent text="Ошибка загрузки привилегий" danger icon={<Cross />} />
+                        ) : (
+                            <Tree
+                                selectable={false}
+                                checkable
+                                defaultExpandAll
+                                onCheck={onCheckPermission}
+                                checkedKeys={permission}
+                                treeData={currentPermissions}
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
-        </CreatePageDefault>
+            </CreatePageWrapper>
+        </PrivateWrapper>
     );
 };
 

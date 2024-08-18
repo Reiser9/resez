@@ -1,0 +1,32 @@
+import React from 'react';
+import { Metadata } from 'next';
+
+import pws from '@/shared/styles/pageWithSidebar.module.scss';
+
+import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
+import { InnerPageSidebar } from '@/shared/ui/InnerPageSidebar';
+import { SidebarLink } from '@/shared/ui/SidebarLink';
+
+export const metadata: Metadata = {
+    title: 'ResEz - Тренинг',
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <ContentWrapper>
+            <div className={pws.wrapper}>
+                <div className={pws.content}>{children}</div>
+
+                <InnerPageSidebar>
+                    <SidebarLink href="/training" end>
+                        Главная
+                    </SidebarLink>
+                    <SidebarLink href="/training/memory">Тренировка памяти</SidebarLink>
+                    <SidebarLink href="/training/battle" disabled>
+                        Битва знатоков
+                    </SidebarLink>
+                </InnerPageSidebar>
+            </div>
+        </ContentWrapper>
+    );
+}

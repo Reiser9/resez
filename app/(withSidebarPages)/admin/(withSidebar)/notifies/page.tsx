@@ -1,36 +1,38 @@
 'use client';
 
 import React from 'react';
-import { Checkbox, TimePicker, Select as SelectAnt, Space } from 'antd';
-import { Dayjs } from 'dayjs';
 import dynamic from 'next/dynamic';
+import { Checkbox, TimePicker, Select as SelectAnt } from 'antd';
+import { Dayjs } from 'dayjs';
+import { useSearchParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import type { EditorCore } from '@/shared/ui/Editor/Editor';
 import useAlert from '@/shared/hooks/useAlert';
-import { Input } from '@/shared/ui/Input';
-import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
 import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { ArrowBottom, Clock, Cross } from '@/shared/icons';
 import useNotify from '@/features/notify/useNotify';
-import { EditorCore } from '@/shared/ui/Editor/Editor';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
-import { Select } from '@/shared/ui/Select';
-import { DynamicSkeleton } from '@/shared/ui/Skeleton';
-import { useQuery } from '@tanstack/react-query';
 import { useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { Preloader } from '@/shared/ui/Preloader';
-import { NotContent } from '@/shared/ui/NotContent';
-import { useSearchParams } from 'next/navigation';
-import { Badge } from '@/shared/ui/Badge';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { Text } from '@/shared/ui/Text';
+import { Select } from '@/shared/ui/Select';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Badge } from '@/shared/ui/Badge';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
     ssr: false,
@@ -126,127 +128,135 @@ const AdminNotifies = () => {
     }, [usersIds]);
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <Text variant="h3">Отправка уведомления</Text>
-            </div>
+        <PrivateWrapper permissions={[PERMISSIONS.NOTIFIES]}>
+            <div className={base.baseWrapperGap16}>
+                <div className={base.titleInner}>
+                    <Text variant="h3">Отправка уведомления</Text>
+                </div>
 
-            <div className={base.formMedium}>
-                <Input value={title} setValue={setTitle} title="Заголовок" lengthLimit={100} trackLength />
+                <div className={base.formMedium}>
+                    <Input value={title} setValue={setTitle} title="Заголовок" lengthLimit={100} trackLength />
 
-                <Checkbox checked={sendAnonim} onChange={(e) => setSendAnonim(e.target.checked)}>
-                    Отправить от имени
-                </Checkbox>
+                    <Checkbox checked={sendAnonim} onChange={(e) => setSendAnonim(e.target.checked)}>
+                        Отправить от имени
+                    </Checkbox>
 
-                {sendAnonim && (
-                    <Input value={author} setValue={setAuthor} title="Имя отправителя" lengthLimit={30} trackLength />
-                )}
+                    {sendAnonim && (
+                        <Input
+                            value={author}
+                            setValue={setAuthor}
+                            title="Имя отправителя"
+                            lengthLimit={30}
+                            trackLength
+                        />
+                    )}
 
-                {checkPermission(permissions, [PERMISSIONS.USERS]) && (
-                    <>
-                        <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
-                            Отправить пользователю
-                        </Checkbox>
+                    {checkPermission(permissions, [PERMISSIONS.USERS]) && (
+                        <>
+                            <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
+                                Отправить пользователю
+                            </Checkbox>
 
-                        {sendForOne && (
-                            <div className={base.baseWrapperGap4}>
-                                <Text variant="text3">Пользователь</Text>
+                            {sendForOne && (
+                                <div className={base.baseWrapperGap4}>
+                                    <Text variant="text3">Пользователь</Text>
 
-                                <SelectAnt
-                                    value={userIDs}
-                                    onChange={(value) => setUserIDs(value)}
-                                    allowClear={false}
-                                    suffixIcon={<ArrowBottom width="16" />}
-                                    notFoundContent={
-                                        usersIsLoading ? (
-                                            <Preloader small wrapperClassName={styles.loader} />
-                                        ) : (
-                                            <NotContent text="Пользователей не найдено" />
-                                        )
-                                    }
-                                    loading={usersIsLoading}
-                                    removeIcon={<Cross width="14" />}
-                                    options={users?.users.map((data) => {
-                                        return {
-                                            label: data.nickname,
-                                            value: String(data.id),
-                                            id: `ID: ${data.id}`,
-                                            avatar: data.avatar,
-                                        };
-                                    })}
-                                    optionRender={({ data }) => (
-                                        <div className={styles.userSelectOption}>
-                                            <div className={base.titleWrapper}>
-                                                <Badge image={data.avatar} text={data.label} size="small" />
+                                    <SelectAnt
+                                        value={userIDs}
+                                        onChange={(value) => setUserIDs(value)}
+                                        allowClear={false}
+                                        suffixIcon={<ArrowBottom width="16" />}
+                                        notFoundContent={
+                                            usersIsLoading ? (
+                                                <Preloader small wrapperClassName={styles.loader} />
+                                            ) : (
+                                                <NotContent text="Пользователей не найдено" />
+                                            )
+                                        }
+                                        loading={usersIsLoading}
+                                        removeIcon={<Cross width="14" />}
+                                        options={users?.users.map((data) => {
+                                            return {
+                                                label: data.nickname,
+                                                value: String(data.id),
+                                                id: `ID: ${data.id}`,
+                                                avatar: data.avatar,
+                                            };
+                                        })}
+                                        optionRender={({ data }) => (
+                                            <div className={styles.userSelectOption}>
+                                                <div className={base.titleWrapper}>
+                                                    <Badge image={data.avatar} text={data.label} size="small" />
 
-                                                <Text variant="text2">{data.label}</Text>
+                                                    <Text variant="text2">{data.label}</Text>
+                                                </div>
+
+                                                <Text variant="text2" fontWeight={600}>
+                                                    {data.id}
+                                                </Text>
                                             </div>
+                                        )}
+                                        showSearch
+                                        mode="multiple"
+                                        maxTagCount="responsive"
+                                        filterOption={false}
+                                        onSearch={(value) => setSearchValue(value.trim())}
+                                        className={styles.notifyUserSelect}
+                                    />
+                                </div>
+                            )}
+                        </>
+                    )}
 
-                                            <Text variant="text2" fontWeight={600}>
-                                                {data.id}
-                                            </Text>
-                                        </div>
-                                    )}
-                                    showSearch
-                                    mode="multiple"
-                                    maxTagCount="responsive"
-                                    filterOption={false}
-                                    onSearch={(value) => setSearchValue(value.trim())}
-                                    className={styles.notifyUserSelect}
-                                />
-                            </div>
-                        )}
-                    </>
-                )}
+                    <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
+                        Отложенная отправка
+                    </Checkbox>
 
-                <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
-                    Отложенная отправка
-                </Checkbox>
+                    {delayedSend && (
+                        <div className={styles.notifiesDelayInner}>
+                            <DatePicker
+                                disablePrevDate
+                                placeholder="Выберите дату"
+                                wrapperClass={styles.notifiesDelayItem}
+                                value={date}
+                                setValue={setDate}
+                            />
 
-                {delayedSend && (
-                    <div className={styles.notifiesDelayInner}>
-                        <DatePicker
-                            disablePrevDate
-                            placeholder="Выберите дату"
-                            wrapperClass={styles.notifiesDelayItem}
-                            value={date}
-                            setValue={setDate}
+                            <TimePicker
+                                placeholder="Выберите время"
+                                format="HH:mm"
+                                className={styles.notifiesDelayItem}
+                                value={time}
+                                onChange={(e) => setTime(e ?? undefined)}
+                                suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
+                            />
+                        </div>
+                    )}
+
+                    {!!notifyTypes?.length && (
+                        <Select
+                            title="Тип уведомления"
+                            notContentText="Типов уведомления не найдено"
+                            loading={isPending}
+                            onChange={(value) => setType(value)}
+                            value={type}
+                            options={notifyTypes?.map((data) => {
+                                return {
+                                    label: data.type,
+                                    value: String(data.id),
+                                };
+                            })}
                         />
+                    )}
 
-                        <TimePicker
-                            placeholder="Выберите время"
-                            format="HH:mm"
-                            className={styles.notifiesDelayItem}
-                            value={time}
-                            onChange={(e) => setTime(e ?? undefined)}
-                            suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
-                        />
-                    </div>
-                )}
+                    <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
+                </div>
 
-                {!!notifyTypes?.length && (
-                    <Select
-                        title="Тип уведомления"
-                        notContentText="Типов уведомления не найдено"
-                        loading={isPending}
-                        onChange={(value) => setType(value)}
-                        value={type}
-                        options={notifyTypes?.map((data) => {
-                            return {
-                                label: data.type,
-                                value: String(data.id),
-                            };
-                        })}
-                    />
-                )}
-
-                <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
+                <Button auto onClick={createNotify} loading={isLoading} levitation>
+                    Отправить
+                </Button>
             </div>
-
-            <Button auto onClick={createNotify} loading={isLoading} levitation>
-                Отправить
-            </Button>
-        </div>
+        </PrivateWrapper>
     );
 };
 

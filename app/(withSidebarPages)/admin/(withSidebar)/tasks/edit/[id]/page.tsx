@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import styles from '../../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { Select } from '@/shared/ui/Select';
 import { Checkbox } from 'antd';
@@ -30,6 +30,7 @@ import { Modal } from '@/shared/ui/Modal';
 import { SubjectTask } from '@/entities/task';
 import TaskItem from '@/entities/task/ui/TaskItem';
 import { NotContent } from '@/shared/ui/NotContent';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -278,8 +279,8 @@ const AdminTaskEdit = () => {
     }
 
     return (
-        <>
-            <CreatePageDefault
+        <PrivateWrapper permissions={[PERMISSIONS.UPDATE_TASKS]}>
+            <CreatePageWrapper
                 title="Редактирование задания"
                 button={
                     subTheme && (
@@ -391,7 +392,7 @@ const AdminTaskEdit = () => {
 
                     <Input title="Источник" value={source} setValue={setSource} />
                 </div>
-            </CreatePageDefault>
+            </CreatePageWrapper>
 
             <Modal value={modalCheckMatch} setValue={setModalCheckMatch} title="Схожие задания">
                 <div className={styles.matchItems}>
@@ -410,7 +411,7 @@ const AdminTaskEdit = () => {
                     )}
                 </div>
             </Modal>
-        </>
+        </PrivateWrapper>
     );
 };
 

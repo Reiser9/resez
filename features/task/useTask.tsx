@@ -103,7 +103,7 @@ const useTask = () => {
                 subThemeId,
                 task,
                 isVerified,
-                solution,
+                solution: solution || '',
                 answers,
                 source,
             },

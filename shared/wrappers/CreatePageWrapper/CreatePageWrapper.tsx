@@ -14,7 +14,7 @@ type Props = {
     children: React.ReactNode;
 };
 
-const CreatePageDefault: React.FC<Props> = ({ title, button, rightButton, children }) => {
+const CreatePageWrapper: React.FC<Props> = ({ title, button, rightButton, children }) => {
     React.useEffect(() => {
         const handleWindowClose = (event: BeforeUnloadEvent) => {
             event.preventDefault();
@@ -49,4 +49,4 @@ const CreatePageDefault: React.FC<Props> = ({ title, button, rightButton, childr
         </div>
     );
 };
-export default CreatePageDefault;
+export default CreatePageWrapper;

@@ -34,7 +34,7 @@ const useSocket = () => {
             return;
         }
 
-        socket.emit('join', user?.id, sessionId);
+        socket.emit('join', user.id, sessionId);
     }, [isAuth, user, sessionId]);
 
     React.useEffect(() => {
@@ -43,7 +43,7 @@ const useSocket = () => {
 
     React.useEffect(() => {
         if (user && user.id) {
-            currentUserIdRef.current = user?.id;
+            currentUserIdRef.current = user.id;
         }
     }, [user]);
 

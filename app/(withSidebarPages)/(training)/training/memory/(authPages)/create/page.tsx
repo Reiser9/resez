@@ -3,26 +3,26 @@
 import React from 'react';
 import cn from 'classnames';
 import { Checkbox, Tooltip } from 'antd';
-import { useParams, useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from '../../../index.module.scss';
+import styles from '../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection/model';
 import { Button, IconButton } from '@/shared/ui/Button';
-import CreatePageDefault from '@/shared/wrappers/CreatePageWrapper/CreatePageWrapper';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { Input } from '@/shared/ui/Input';
 import { Excel } from '@/shared/icons';
 import useAlert from '@/shared/hooks/useAlert';
+import ImportExcel from './ui/ImportExcel';
+import PairItem from './ui/PairItem';
+import PairItemForm from './ui/PairItemForm';
 import { useCollections, useHandlers } from '@/features/collection';
-import ImportExcel from '../../create/ui/ImportExcel';
-import PairItem from '../../create/ui/PairItem';
-import PairItemForm from '../../create/ui/PairItemForm';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Preloader } from '@/shared/ui/Preloader';
+import { Text } from '@/shared/ui/Text';
 
-const MemoryEdit = () => {
+const maxPairCount = 500;
+
+const MemoryCreate = () => {
     const [importExcelModal, setImportExcelModal] = React.useState(false);
 
     const [name, setName] = React.useState('');
@@ -39,17 +39,9 @@ const MemoryEdit = () => {
     const [pairsEmptyIds, setPairsEmptyIds] = React.useState<number[]>([]);
 
     const { alertNotify } = useAlert();
-    const { updateCollection, getCollectionById } = useCollections();
-    const { validateHandler, scrollBottom } = useHandlers();
+    const { createCollection } = useCollections();
+    const { validateHandler, scrollBottom, removePair } = useHandlers();
     const router = useRouter();
-    const { id } = useParams();
-    const userId = useAppSelector((state) => state.user.user?.id);
-
-    const { data, error, isLoading } = useQuery({
-        queryKey: ['collection_by_id', id],
-        queryFn: () => getCollectionById(String(id)),
-        enabled: !!id,
-    });
 
     const addNewPair = () => {
         setPairs((prev) => [
@@ -68,17 +60,10 @@ const MemoryEdit = () => {
         scrollBottom();
     };
 
-    const removePair = (id: number) => {
-        const updatedObjects = [...pairs];
-        updatedObjects.splice(id, 1);
-        setPairs(updatedObjects);
-        setPairsEmptyIds((prev) => prev.filter((item) => item !== id));
-    };
-
-    const editCollectionHandler = () => {
+    const createCollectionHandler = async () => {
         const newPairs = validateHandler(pairs, questionText, questionImage, answerText, answerImage, setPairsEmptyIds);
 
-        if (!newPairs || !data?.id) {
+        if (!newPairs) {
             return;
         }
 
@@ -86,55 +71,26 @@ const MemoryEdit = () => {
             return alertNotify('Предупреждение', 'Название не должно быть пустым', 'warn');
         }
 
-        updateCollection(data.id, name, withDescription ? description : '', privateCollection, newPairs, () =>
-            router.replace(`/training/memory/${data.id}`),
+        const newCollection = await createCollection(
+            name,
+            withDescription ? description : '',
+            privateCollection,
+            newPairs,
         );
+
+        if (!newCollection) {
+            return;
+        }
+
+        router.replace(`/training/memory/${newCollection.id}`);
     };
 
-    React.useEffect(() => {
-        if (data) {
-            if(data.user.id !== userId){
-                return router.replace("/training/memory");
-            }
-
-            const { collection, description, isPrivate, pairs } = data;
-
-            setName(collection);
-
-            if (description) {
-                setWithDescription(true);
-                setDescription(description);
-            }
-
-            setPrivateCollection(isPrivate);
-
-            const lastPair = pairs.splice(-1)[0];
-            const { questionText, questionPicture, answerText, answerPicture } = lastPair;
-
-            setPairs(pairs);
-            setQuestionText(questionText);
-            setQuestionImage(questionPicture);
-            setAnswerText(answerText);
-            setAnswerImage(answerPicture);
-        }
-    }, [data]);
-
-    React.useEffect(() => {
-        if(error){
-            return router.replace("/training/memo");
-        }
-    }, [error]);
-
-    if(isLoading){
-        return <Preloader page />
-    }
-
     return (
-        <CreatePageDefault
-            title="Редактирование коллекции"
+        <CreatePageWrapper
+            title="Создание коллекции"
             button={
-                <Button auto onClick={editCollectionHandler} levitation>
-                    Сохранить
+                <Button auto onClick={createCollectionHandler} levitation>
+                    Создать
                 </Button>
             }
             rightButton={
@@ -146,7 +102,7 @@ const MemoryEdit = () => {
             }
         >
             <div className={cn(base.baseWrapperGap16, styles.addCardCollectionForm, base.aic)}>
-                <Input value={name} setValue={setName} placeholder="Название" lengthLimit={75} trackLength />
+                <Input value={name} setValue={setName} title="Название" lengthLimit={75} trackLength />
 
                 <Checkbox checked={withDescription} onChange={(e) => setWithDescription(e.target.checked)}>
                     Добавить описание
@@ -157,7 +113,7 @@ const MemoryEdit = () => {
                         variant="textarea"
                         value={description}
                         setValue={setDescription}
-                        placeholder="Описание"
+                        title="Описание"
                         lengthLimit={500}
                         trackLength
                     />
@@ -166,6 +122,16 @@ const MemoryEdit = () => {
                 <Checkbox checked={privateCollection} onChange={(e) => setPrivateCollection(e.target.checked)}>
                     Скрыть от других пользователей
                 </Checkbox>
+
+                <div className={styles.cardCollectionInfo}>
+                    <Text fontWeight={600} variant="text2">
+                        Пары: {pairs.length + 1}
+                    </Text>
+
+                    <Text fontWeight={600} variant="text2">
+                        Максимум пар: {maxPairCount}
+                    </Text>
+                </div>
 
                 <div className={styles.cardCollectionWrapper}>
                     {pairs.map((data, id) => (
@@ -179,7 +145,7 @@ const MemoryEdit = () => {
                             pairs={pairs}
                             setPairs={setPairs}
                             addNewPair={addNewPair}
-                            removePair={() => removePair(id)}
+                            removePair={() => removePair(id, pairs, setPairs, setPairsEmptyIds)}
                         />
                     ))}
 
@@ -212,8 +178,8 @@ const MemoryEdit = () => {
                 pairs={pairs}
                 setPairs={setPairs}
             />
-        </CreatePageDefault>
+        </CreatePageWrapper>
     );
 };
 
-export default MemoryEdit;
+export default MemoryCreate;

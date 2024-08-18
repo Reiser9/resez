@@ -3,7 +3,7 @@
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import { WarnsPaggination } from '@/entities/admin';
+import type { WarnsPaggination } from '@/entities/admin';
 
 const useWarn = () => {
     const { request, catchRequestError, errorController } = useRequest();

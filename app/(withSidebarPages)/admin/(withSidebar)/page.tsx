@@ -2,17 +2,17 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { Text } from '@/shared/ui/Text';
 import { Cross, Stats } from '@/shared/icons';
 import { useStats } from '@/features/admin';
+
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
+import { Text } from '@/shared/ui/Text';
 
 const AdminPage = () => {
     const { getAdminStats } = useStats();
@@ -20,7 +20,7 @@ const AdminPage = () => {
     const { data, isPending, error } = useQuery({
         queryKey: ['admin_stat'],
         queryFn: getAdminStats,
-        refetchInterval: 5000
+        refetchInterval: 5000,
     });
 
     const { adminsCount, blockedUsersCount, online, usersCount } = data || {};
@@ -50,64 +50,6 @@ const AdminPage = () => {
                                     Общий онлайн
                                 </Text>
                             </div>
-
-                            {/* <div className={styles.adminStatsItem}>
-                                <div className={cn(styles.adminStatsNumberInner, styles.success)}>
-                                    <div className={styles.adminStatsCircle}></div>
-
-                                    <p className={styles.adminStatsNumber}>{authUsersOnline || 0}</p>
-                                </div>
-
-                                <Text variant="text2" className={styles.adminStatsItemText}>
-                                    Онлайн авторизованных
-                                </Text>
-                            </div> */}
-
-                            {/* <Tooltip title={maxOnlinePerDayDate ? formatDate(maxOnlinePerDayDate) : 'Неизвестно'}>
-                                <div className={styles.adminStatsItem}>
-                                    <div className={cn(styles.adminStatsNumberInner, styles.success)}>
-                                        <div className={styles.adminStatsCircle}></div>
-
-                                        <p className={styles.adminStatsNumber}>{maxOnlinePerDay || 0}</p>
-                                    </div>
-
-                                    <Text variant="text2" className={styles.adminStatsItemText}>
-                                        Максимальный онлайн за день
-                                    </Text>
-                                </div>
-                            </Tooltip> */}
-
-                            {/* <div className={styles.adminStatsItem}>
-                                <div className={cn(styles.adminStatsNumberInner, styles.success)}>
-                                    <div className={styles.adminStatsCircle}></div>
-
-                                    <p className={styles.adminStatsNumber}>{uniqueUsersCountPerDay || 0}</p>
-                                </div>
-
-                                <Text variant="text2" className={styles.adminStatsItemText}>
-                                    Количество уникальных пользователей за день
-                                </Text>
-                            </div> */}
-
-                            {/* <Tooltip
-                                title={
-                                    maxTotalOnlineDate
-                                        ? formatDate(maxTotalOnlineDate, 'D MMMM YYYY в HH:mm')
-                                        : 'Неизвестно'
-                                }
-                            >
-                                <div className={styles.adminStatsItem}>
-                                    <div className={cn(styles.adminStatsNumberInner, styles.success)}>
-                                        <div className={styles.adminStatsCircle}></div>
-
-                                        <p className={styles.adminStatsNumber}>{maxTotalOnline || 0}</p>
-                                    </div>
-
-                                    <Text variant="text2" className={styles.adminStatsItemText}>
-                                        Максимальный онлайн
-                                    </Text>
-                                </div>
-                            </Tooltip> */}
 
                             <div className={styles.adminStatsItem}>
                                 <div className={cn(styles.adminStatsNumberInner, styles.info)}>

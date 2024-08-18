@@ -139,6 +139,12 @@
     gap: 12px;
 }
 
+@media (max-width: 998px) {
+    .cardCollectionItemHalf{
+        flex-direction: column;
+    }
+}
+
 .cardCollectionItemHalfImage{
     width: 100%;
     max-width: 200px;

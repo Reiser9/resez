@@ -23,6 +23,9 @@ import { Modal } from '@/shared/ui/Modal';
 import { useSubjects } from '@/features/subjects';
 import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
+import { useDebounce } from '@/shared/hooks/useDebounce';
+import { useUsers } from '@/features/user';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const AdminTests = () => {
     const [tasksFilter, setTasksFilter] = React.useState(false);
@@ -32,9 +35,7 @@ const AdminTests = () => {
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [user, setUser] = React.useState<string | null>(null);
     const [verify, setVerify] = React.useState<string | null>(null);
-    const [userSelectOpen, setUserSelectOpen] = React.useState(false);
-    const [userOptions, setUserOptions] = React.useState([]);
-    const [userSearchValue, setUserSearchValue] = React.useState('');
+    const [searchValue, setSearchValue] = React.useState('');
 
     const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
     const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
@@ -42,6 +43,7 @@ const AdminTests = () => {
     const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
     const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
+    const userSearchDebounce = useDebounce(searchValue, 500);
 
     const permissions = useAppSelector((state) => state.user.user?.permissions);
 
@@ -51,28 +53,32 @@ const AdminTests = () => {
     const subjectTaskId = searchParams.get('subject_task_id');
     const subThemeId = searchParams.get('subTheme_id');
     const isVerified = searchParams.get('is_verified');
+    const userId = searchParams.get('user_id');
 
     const queryClient = useQueryClient();
     const { getPagginationTasks, archiveTask, toggleVerify } = useTask();
     const { getPagginationSubjects, getSubjectThemes, getSubjectSubThemes } = useSubjects();
+    const { getPaginationUsersShort } = useUsers();
 
     const revalidateRequest = () => {
-        queryClient.invalidateQueries({ queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, isVerified] });
+        queryClient.invalidateQueries({
+            queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified],
+        });
     };
 
     const resetRequest = () => {
-        queryClient.resetQueries({ queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, isVerified] });
+        queryClient.resetQueries({ queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified] });
     };
 
     const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, isVerified],
+        queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified],
         queryFn: (pageParam) =>
             getPagginationTasks(
                 pageParam.pageParam,
                 subjectId || '',
                 subjectTaskId || '',
                 subThemeId || '',
-                '',
+                userId || '',
                 isVerified || '',
             ),
         initialPageParam: 0,
@@ -113,19 +119,18 @@ const AdminTests = () => {
         enabled: !!theme && checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
     });
 
+    const {
+        data: users,
+        isPending: usersIsLoading,
+        error: usersError,
+    } = useQuery({
+        queryKey: ['users_short_search', userSearchDebounce],
+        queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
+        enabled: checkPermission(permissions, [PERMISSIONS.USERS]),
+    });
+
     const toggleVerifyHandler = (id: number) => {
         toggleVerify(id, revalidateRequest);
-    };
-
-    const searchUsersHandler = () => {
-        setUserOptions([]);
-        // searchUsers(userSearchValue, true).then(users => {
-        //     if(!users){
-        //         return;
-        //     }
-
-        //     setUserOptions(users.users);
-        // });
     };
 
     const handleSearchSubject = (value: string) => {
@@ -169,7 +174,7 @@ const AdminTests = () => {
             subject_task_id: theme,
             subTheme_id: subTheme,
             is_verified: verify,
-            // user_id: userId,
+            user_id: user,
         });
         router.replace(`?${newUrl}`);
         setTasksFilter(false);
@@ -220,8 +225,14 @@ const AdminTests = () => {
         }
     }, [isVerified]);
 
+    React.useEffect(() => {
+        if (userId) {
+            setUser(userId);
+        }
+    }, [userId]);
+
     return (
-        <>
+        <PrivateWrapper permissions={[PERMISSIONS.TASKS]}>
             <div className={base.baseWrapperGap16}>
                 <div className={base.titleInner}>
                     <div className={base.titleWrapper}>
@@ -265,9 +276,8 @@ const AdminTests = () => {
                                         key={data.id}
                                         data={data}
                                         href={`/admin/task/${data.id}`}
-                                        // loading={subjectIsLoading.includes(data.id)}
-                                        edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                        edit={checkPermission(permissions, [PERMISSIONS.UPDATE_TASKS])}
+                                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_TASKS])}
                                         archiveCallback={() => archiveTask(data.id, revalidateRequest)}
                                         toggleVerify={() => toggleVerifyHandler(data.id)}
                                         verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
@@ -368,6 +378,24 @@ const AdminTests = () => {
                 )}
 
                 <Select
+                    title="Пользователь"
+                    loading={usersIsLoading}
+                    showSearch
+                    notContentText="Пользователей не найдено"
+                    onSearch={(value) => setSearchValue(value.trim())}
+                    onChange={(value) => setUser(value)}
+                    filterOption={false}
+                    value={user}
+                    clear
+                    options={users?.users.map((data) => {
+                        return {
+                            label: data.nickname,
+                            value: String(data.id),
+                        };
+                    })}
+                />
+
+                <Select
                     title="Проверенные"
                     onChange={(value) => setVerify(value)}
                     value={verify}
@@ -384,32 +412,13 @@ const AdminTests = () => {
                     ]}
                 />
 
-                {/* <Select
-                    title="Пользователь"
-                    // loading={searchUsersLoading}
-                    showSearch
-                    notContentText="Пользователей не найдено"
-                    onSearch={(value) => setUserSearchValue(value.trim())}
-                    // onDropdownVisibleChange={dropdownUsers}
-                    onChange={(value) => setUser(value)}
-                    filterOption={false}
-                    value={user}
-                    clear
-                    options={userOptions.map((data) => {
-                        return {
-                            label: data.nickname,
-                            value: data.id,
-                        };
-                    })}
-                /> */}
-
                 <Button variant="light" color="danger" onClick={resetFilter}>
                     Сбросить
                 </Button>
 
                 <Button onClick={applyFilters}>Применить</Button>
             </Modal>
-        </>
+        </PrivateWrapper>
     );
 };
 

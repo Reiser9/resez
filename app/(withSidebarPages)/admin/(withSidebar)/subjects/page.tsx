@@ -17,6 +17,7 @@ import { Cross, Plus } from '@/shared/icons';
 import { useSubjects } from '@/features/subjects';
 import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const AdminSubjects = () => {
     const permissions = useAppSelector((state) => state.user.user?.permissions);
@@ -34,49 +35,50 @@ const AdminSubjects = () => {
     });
 
     return (
-        <div className={base.baseWrapperGap16}>
-            <div className={base.titleInner}>
-                <div className={base.titleWrapper}>
-                    <Text variant="h3">
-                        Предметы {!error && !isPending && !!data?.totalCount && `(${data?.totalCount})`}
-                    </Text>
+        <PrivateWrapper permissions={[PERMISSIONS.SUBJECTS]}>
+            <div className={base.baseWrapperGap16}>
+                <div className={base.titleInner}>
+                    <div className={base.titleWrapper}>
+                        <Text variant="h3">
+                            Предметы {!error && !isPending && !!data?.totalCount && `(${data?.totalCount})`}
+                        </Text>
 
-                    <ReloadButton onClick={resetRequest} disabled={isPending} />
-                </div>
-
-                {checkPermission(permissions, [PERMISSIONS.CREATE_SUBJECTS]) && (
-                    <Tooltip title="Создать">
-                        <IconButton small variant="light" href="subjects/create" circle>
-                            <Plus />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </div>
-
-            {isPending ? (
-                <div className={base.contentItems}>
-                    {[...Array(3)].map((_, id) => (
-                        <SubjectItemSkeleton key={id} />
-                    ))}
-                </div>
-            ) : error ? (
-                <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
-            ) : !!data?.subjects.length ? (
-                <div className={cn(base.baseWrapperGap16, base.aic)}>
-                    <div className={base.contentItems}>
-                        {data?.subjects?.map((data) => (
-                            <SubjectItem
-                                key={data.id}
-                                data={data}
-                                // loading={subjectIsLoading.includes(data.id)}
-                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                                publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                            />
-                        ))}
+                        <ReloadButton onClick={resetRequest} disabled={isPending} />
                     </div>
 
-                    {/* {hasNextPage && (
+                    {checkPermission(permissions, [PERMISSIONS.CREATE_SUBJECTS]) && (
+                        <Tooltip title="Создать">
+                            <IconButton small variant="light" href="subjects/create" circle>
+                                <Plus />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </div>
+
+                {isPending ? (
+                    <div className={base.contentItems}>
+                        {[...Array(3)].map((_, id) => (
+                            <SubjectItemSkeleton key={id} />
+                        ))}
+                    </div>
+                ) : error ? (
+                    <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
+                ) : !!data?.subjects.length ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={base.contentItems}>
+                            {data?.subjects?.map((data) => (
+                                <SubjectItem
+                                    key={data.id}
+                                    data={data}
+                                    // loading={subjectIsLoading.includes(data.id)}
+                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                    publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                />
+                            ))}
+                        </div>
+
+                        {/* {hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}
@@ -86,11 +88,12 @@ const AdminSubjects = () => {
                             Показать еще
                         </Button>
                     )} */}
-                </div>
-            ) : (
-                <NotContent text="Предметов не найдено" />
-            )}
-        </div>
+                    </div>
+                ) : (
+                    <NotContent text="Предметов не найдено" />
+                )}
+            </div>
+        </PrivateWrapper>
     );
 };
 
