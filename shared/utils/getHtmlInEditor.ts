@@ -10,36 +10,51 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
     blocks.forEach((block) => {
         switch (block.type) {
             case 'header':
-                html += `<h${block.data.level}>${block.data.text}</h${block.data.level}>`;
+                const { level, text } = block.data || {};
+                html += `<h${level}>${text}</h${level}>`;
                 break;
             case 'paragraph':
                 html += `<p>${block.data.text}</p>`;
                 break;
             case 'list':
-                html += `${block.data.style === 'ordered' ? '<ol>' : '<ul>'}`;
+                const { style, items } = block.data || {};
+                html += `${style === 'ordered' ? '<ol>' : '<ul>'}`;
 
-                block.data.items.forEach((item: string) => {
+                items.forEach((item: string) => {
                     html += `<li>${item}</li>`;
                 });
 
-                html += `${block.data.style === 'ordered' ? '</ol>' : '</ul>'}`;
+                html += `${style === 'ordered' ? '</ol>' : '</ul>'}`;
                 break;
             case 'table':
-                html += `<div class="tableContent"><table><thead><tr>`;
+                const { content, withHeadings } = block.data || {};
+                html += `<div class="tableContent"><table>`;
 
-                block.data.content[0].forEach((header: string) => {
-                    html += `<th>${header}</th>`;
-                });
-
-                html += `</tr></thead><tbody>`;
-
-                block.data.content.slice(1).forEach((row: string[]) => {
-                    html += `<tr>`;
-                    row.forEach((cell) => {
-                        html += `<td>${cell}</td>`;
+                if (withHeadings) {
+                    html += `<thead><tr>`;
+                    content[0].forEach((header: string) => {
+                        html += `<th>${header}</th>`;
                     });
-                    html += `</tr>`;
-                });
+                    html += `</tr></thead>`;
+
+                    html += `<tbody>`;
+                    content.slice(1).forEach((row: string[]) => {
+                        html += `<tr>`;
+                        row.forEach((cell) => {
+                            html += `<td>${cell}</td>`;
+                        });
+                        html += `</tr>`;
+                    });
+                } else {
+                    html += `<tbody>`;
+                    content.forEach((row: string[]) => {
+                        html += `<tr>`;
+                        row.forEach((cell) => {
+                            html += `<td>${cell}</td>`;
+                        });
+                        html += `</tr>`;
+                    });
+                }
 
                 html += `</tbody></table></div>`;
                 break;
@@ -60,23 +75,27 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
                 html += `</ol>`;
                 break;
             case 'image':
-                html += `<div class="blockImage"><img src="${block.data.file.url}" alt="${block.data.caption}"></div>`;
+                const { file, caption } = block.data || {};
+                html += `<div class="blockImage"><img src="${file.url}" alt="${caption}"></div>`;
                 break;
             case 'files':
                 if (block.data?.fileUrl) {
-                    html += `<a href="${block.data?.fileUrl}" target="_blanc" download>${
-                        block.data?.fileName || 'Файл без названия'
-                    }</a>`;
+                    const { fileUrl, fileName, fileDownloaded, uniqueId } = block.data || {};
+
+                    const downloadAttribute = fileDownloaded == 'true' ? `download` : ``;
+                    html += `<a href="${fileUrl}" target="_blanc" data-unique=${uniqueId} data-downloaded=${fileDownloaded} ${downloadAttribute}>${fileName}</a>`;
                 }
                 break;
             case 'audio':
                 if (block.data?.audioUrl) {
+                    const { audioName, audioUrl, uniqueId } = block.data || {};
+
                     html += `<div class="blockAudio">
-                        <audio data-name="${block.data.audioName}" controls>
-                            <source src="${block.data.audioUrl}" type="audio/mpeg" />
+                        <audio data-unique=${uniqueId} data-name="${audioName}" controls>
+                            <source src="${audioUrl}" type="audio/mpeg" />
                             <p>
                                 Ваш браузер не поддерживает HTML5 аудио. Ссылка на аудио
-                                <a href="${block.data.audioUrl}">ссылка на аудио</a>
+                                <a href="${audioUrl}">ссылка на аудио</a>
                             </p>
                         </audio>
                     </div>`;
@@ -84,10 +103,12 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
                 break;
             case 'math':
                 if (block.data?.latex) {
-                    if (block.data?.type === 'block') {
-                        html += `<p class="mathquill">${block.data?.latex}</p>`;
+                    const { type, latex } = block.data || {};
+
+                    if (type === 'block') {
+                        html += `<p class="mathquill">${latex}</p>`;
                     } else {
-                        html += `<span class="mathquill">${block.data?.latex}</span>`;
+                        html += `<span class="mathquill">${latex}</span>`;
                     }
                 }
                 break;
@@ -162,29 +183,44 @@ export const convertHtmlToEditorBlocks = (html: string) => {
         } else if (node.nodeName === 'DIV' && node.className === 'blockAudio') {
             block.type = 'audio';
             block.data = {
-                audio: {
+                file: {
                     url: node.getElementsByTagName('audio')[0].getElementsByTagName('source')[0].getAttribute('src'),
                 },
                 audioName: node.getElementsByTagName('audio')[0].getAttribute('data-name'),
+                uniqueId: node.getElementsByTagName('audio')[0].getAttribute('data-unique'),
             };
         } else if (node.nodeName === 'DIV') {
             block.type = 'table';
             block.data = {
                 content: [],
+                withHeadings: false,
             };
 
-            node.querySelectorAll('tr').forEach((rowNode, rowIndex) => {
-                const row: string[] = [];
+            const thead = node.querySelector('thead');
+            const rows = node.querySelectorAll('tr');
 
-                rowNode.querySelectorAll('th, td').forEach((cellNode) => {
+            if (thead) {
+                block.data.withHeadings = true;
+
+                thead.querySelectorAll('tr').forEach((rowNode) => {
+                    const row: string[] = [];
+                    rowNode.querySelectorAll('th').forEach((cellNode) => {
+                        row.push(cellNode.innerHTML);
+                    });
+                    block.data.content.push(row);
+                });
+            }
+
+            rows.forEach((rowNode) => {
+                if (thead && thead.contains(rowNode)) {
+                    return;
+                }
+
+                const row: string[] = [];
+                rowNode.querySelectorAll('td').forEach((cellNode) => {
                     row.push(cellNode.innerHTML);
                 });
-
-                if (rowIndex === 0) {
-                    block.data.content.push(row);
-                } else {
-                    block.data.content.push(row);
-                }
+                block.data.content.push(row);
             });
         } else if (node.nodeName === 'PRE') {
             block.type = 'code';
@@ -198,6 +234,8 @@ export const convertHtmlToEditorBlocks = (html: string) => {
                     url: node.getAttribute('href'),
                 },
                 fileName: node.textContent,
+                fileDownloaded: node.getAttribute('data-downloaded'),
+                uniqueId: node.getAttribute('data-unique'),
             };
         } else {
             block.type = 'raw';

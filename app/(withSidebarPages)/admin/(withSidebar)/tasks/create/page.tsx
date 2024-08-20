@@ -15,7 +15,6 @@ import { Select } from '@/shared/ui/Select';
 import { Input } from '@/shared/ui/Input';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { EditorCore } from '@/shared/ui/Editor/Editor';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { useSubjects } from '@/features/subjects';
@@ -30,6 +29,7 @@ import { Modal } from '@/shared/ui/Modal';
 import TaskItem from '@/entities/task/ui/TaskItem';
 import { NotContent } from '@/shared/ui/NotContent';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { useUserPermissions } from '@/features/user';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -37,7 +37,16 @@ const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
 });
 
 const AdminTaskCreate = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const [subject, setSubject] = React.useState<string | null>(null);
     const [isVerified, setIsVerified] = React.useState(false);
@@ -318,7 +327,7 @@ const AdminTaskCreate = () => {
 
                     {subTheme && (
                         <>
-                            {checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS]) && (
+                            {checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS]) && (
                                 <Checkbox checked={isVerified} onChange={(e) => setIsVerified(e.target.checked)}>
                                     Задание проверено
                                 </Checkbox>
@@ -386,8 +395,8 @@ const AdminTaskCreate = () => {
                             <TaskItem
                                 key={data.task.id}
                                 data={data.task}
-                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
+                                remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                 matchPercent={data.percent}
                             />
                         ))

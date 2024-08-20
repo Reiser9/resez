@@ -16,6 +16,7 @@ import TaskTestItem from '@/entities/task/ui/TaskTestItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import { useUserPermissions } from '@/features/user';
 
 const TaskPage = () => {
     const { id } = useParams();
@@ -23,7 +24,7 @@ const TaskPage = () => {
     const [infoMenu, setInfoMenu] = React.useState(false);
 
     const { getTaskById } = useTask();
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['task_by_id', id],
@@ -31,9 +32,18 @@ const TaskPage = () => {
         enabled: !!id,
     });
 
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
+
     const { subject, subjectTask, subTheme } = data || {};
 
-    if (isLoading) {
+    if (isLoading || permissionsIsLoading) {
         return <Preloader page />;
     }
 
@@ -43,9 +53,9 @@ const TaskPage = () => {
                 {!!data && (
                     <TaskTestItem
                         data={data}
-                        edit={checkPermission(permissions, [PERMISSIONS.UPDATE_TASKS])}
-                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_TASKS])}
-                        verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
+                        edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
+                        verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
                     />
                 )}
             </div>

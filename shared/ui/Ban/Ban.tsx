@@ -1,11 +1,14 @@
+'use client';
+
 import React from 'react';
 
-import { Button } from '@/shared/ui/Button';
 import { FullPageWrapper } from '@/shared/wrappers/FullPageWrapper';
 import { Blocked } from '@/shared/icons';
 import { useLogout } from '@/features/user';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
 import { Text } from '../Text';
+import { Button } from '@/shared/ui/Button';
 
 const Ban = () => {
     const { isLoading, logout } = useLogout();
@@ -15,7 +18,7 @@ const Ban = () => {
         <FullPageWrapper icon={<Blocked />} code="4<span>0</span>3" text="Ваша учетная запись заблокирована.">
             {blockReason && (
                 <Text variant="h4" style={{ margin: '-1.6rem 0 2rem 0', textAlign: 'center' }}>
-                    Причина: {blockReason}
+                    Причина: {blockReason || 'Не указана'}
                 </Text>
             )}
 

@@ -4,19 +4,20 @@ import React, { HTMLAttributes } from 'react';
 import cn from 'classnames';
 import { Checkbox, Tooltip } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
+import type { ChatItem } from '@/entities/messenger';
 import { Block, Delete, DotsHorizontal, Enter, Mute, Pin } from '@/shared/icons';
-import { IconButton } from '../Button';
-import { ChatItem } from '@/entities/messenger';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
-import { Badge } from '../Badge';
 import { useChat, useMessenger } from '@/features/messenger';
+
+import { Badge } from '../Badge';
+import { IconButton } from '../Button';
 import { ConfirmModal } from '../Modal';
-import { useRouter } from 'next/navigation';
 
 type Props = {
     data: ChatItem;

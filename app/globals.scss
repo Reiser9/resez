@@ -705,6 +705,7 @@ ol .cdx-list__item {
 .tableContent {
     width: 100%;
     overflow-x: auto;
+    flex-shrink: 0;
 }
 
 @media (any-hover: hover) {
@@ -792,13 +793,25 @@ p.mathquill {
 }
 
 /* Custom file tool */
-.chooseFileInner {
+.chooseInner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chooseInnerWrapper{
     width: 100%;
     display: flex;
     gap: 4px;
 }
 
-.chooseFileButton {
+.chooseInner.disabled{
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.chooseButton {
     padding: 0.6rem 1.2rem;
     border-radius: 4px;
     background: var(--lighten);
@@ -806,18 +819,40 @@ p.mathquill {
     font-size: 1.4rem;
     cursor: pointer;
     flex-shrink: 0;
+    text-align: center;
 }
 
-.chooseFileNameInput {
+.chooseNameInput {
     width: 100%;
     padding: 0.6rem 1.2rem;
     font-size: 1.4rem;
     background: var(--white);
+    border-radius: 4px;
+}
+
+.chooseNameStatus{
+    width: 100%;
+    padding: 0.6rem 1.2rem;
+    text-align: center;
+    font-weight: 600;
+    background: var(--white);
+    border-radius: 4px;
+    font-size: 1.4rem;
+}
+
+.chooseNameStatus.success{
+    color: var(--success);
+    background: var(--successB);
+}
+
+.chooseNameStatus.error{
+    color: var(--error);
+    background: var(--errorB);
 }
 
 /* Custom math tool */
 .custom-math-block,
-.chooseFileInner {
+.chooseInner {
     padding: 0.4em 0;
 }
 

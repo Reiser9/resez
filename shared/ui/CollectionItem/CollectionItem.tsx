@@ -4,21 +4,21 @@ import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { Collection } from '@/entities/collection';
+import type { Collection } from '@/entities/collection';
 import { ArrowRightLong, Delete, DotsHorizontal, Edit, Heart, Lock, Photo } from '@/shared/icons';
-import { Text } from '../Text';
-import { HoverMenu, MenuLink } from '../HoverMenu';
-import { IconButton } from '../Button';
-import { LoaderForItem } from '../Preloader';
-import { Badge } from '../Badge';
-import { useRouter } from 'next/navigation';
-import { ConfirmModal } from '../Modal';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
+import { Text } from '../Text';
+import { ConfirmModal } from '../Modal';
+import { Badge } from '../Badge';
+import { LoaderForItem } from '../Preloader';
+import { IconButton } from '../Button';
+import { HoverMenu, MenuLink } from '../HoverMenu';
 
 type Props = {
     data: Collection;

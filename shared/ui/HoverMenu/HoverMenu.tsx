@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import cn from 'classnames';
 
@@ -12,7 +14,15 @@ type Props = {
     children?: React.ReactNode;
 };
 
-const HoverMenu: React.FC<Props> = ({ value, setValue, button, big = false, placement = 'left', children, ...props }) => {
+const HoverMenu: React.FC<Props> = ({
+    value,
+    setValue,
+    button,
+    big = false,
+    placement = 'left',
+    children,
+    ...props
+}) => {
     const menuRef = React.useRef<HTMLDivElement>(null);
 
     const closeMenu = () => {

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import cn from 'classnames';
 import { Tooltip } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -27,9 +26,19 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import TestQuestionItem from '@/entities/test/ui/TestQuestionItem';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import useCopyText from '@/features/utils/useCopyText';
+import { useUserPermissions } from '@/features/user';
 
 const TestPage = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
     const userId = useAppSelector((state) => state.user.user?.id);
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
@@ -113,7 +122,7 @@ const TestPage = () => {
                                                 Настройки
                                             </MenuLink>
 
-                                            {(checkPermission(permissions, [PERMISSIONS.DELETE_TESTS]) ||
+                                            {(checkPermission(permissions || [], [PERMISSIONS.DELETE_TESTS]) ||
                                                 userId === authorId) && (
                                                 <MenuLink
                                                     danger
@@ -206,7 +215,7 @@ const TestPage = () => {
                 </div>
             </ContentWrapper>
 
-            {(checkPermission(permissions, [PERMISSIONS.DELETE_TESTS]) || userId === authorId) && (
+            {(checkPermission(permissions || [], [PERMISSIONS.DELETE_TESTS]) || userId === authorId) && (
                 <ConfirmModal
                     value={confirmDelete}
                     setValue={setConfirmDelete}

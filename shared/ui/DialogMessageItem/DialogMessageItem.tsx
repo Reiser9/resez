@@ -1,20 +1,21 @@
 'use client';
 
 import React, { HTMLAttributes } from 'react';
-import { Tooltip } from 'antd';
 import Link from 'next/link';
 import cn from 'classnames';
+import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { Audio } from '../Audio';
-import { Text } from '../Text';
-import { Message } from '@/entities/messenger';
+import type { Message } from '@/entities/messenger';
 import { formatDate } from '@/shared/utils/formatDate';
-import { Badge } from '../Badge';
 import { Pencil } from '@/shared/icons';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+
+import { Audio } from '../Audio';
+import { Text } from '../Text';
+import { Badge } from '../Badge';
 
 type Props = {
     data: Message;
@@ -39,7 +40,7 @@ const DialogMessageItem: React.FC<Props> = ({
     const { id, createdAt, updatedAt, isEdited, message, sender, type } = data || {};
     const { avatar, nickname, id: userId } = sender || {};
 
-    const myId = useAppSelector(state => state.user.user?.id);
+    const myId = useAppSelector((state) => state.user.user?.id);
 
     return (
         <div
@@ -73,16 +74,18 @@ const DialogMessageItem: React.FC<Props> = ({
 
                             <div className={styles.messangerDialogItemActionsWrapper}>
                                 <div className={styles.messangerDialogItemActions}>
-                                    {userId === myId && <button
-                                        className={styles.messangerDialogItemActionButton}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditMessage(data);
-                                            setIsEditedMessage(true);
-                                        }}
-                                    >
-                                        <Pencil />
-                                    </button>}
+                                    {userId === myId && (
+                                        <button
+                                            className={styles.messangerDialogItemActionButton}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditMessage(data);
+                                                setIsEditedMessage(true);
+                                            }}
+                                        >
+                                            <Pencil />
+                                        </button>
+                                    )}
                                 </div>
 
                                 <p className={styles.messangerDialogItemTime}>{formatDate(createdAt, 'HH:mm')}</p>

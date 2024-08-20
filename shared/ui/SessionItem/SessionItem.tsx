@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import cn from 'classnames';
@@ -9,25 +9,32 @@ import styles from './index.module.scss';
 
 import { getDeviceByName } from '../../utils/getDeviceByName';
 
-import { Button } from '../Button';
-import { ConfirmModal } from '../Modal';
-import { Text } from '../Text';
-import { TextPoint } from '../TextPoint';
-import { Session } from '@/entities/user/session';
+import type { Session } from '@/entities/user/session';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
+
+import { Text } from '../Text';
+import { ConfirmModal } from '../Modal';
+import { TextPoint } from '../TextPoint';
+import { Button } from '../Button';
 
 type Props = {
     current?: boolean;
-    data?: Session,
+    data?: Session;
     active?: boolean;
     callback?: () => void;
     loading?: boolean;
 };
 
-const SessionItem: React.FC<Props> = ({ current = false, data, active = false, callback = () => {}, loading = false }) => {
+const SessionItem: React.FC<Props> = ({
+    current = false,
+    data,
+    active = false,
+    callback = () => {},
+    loading = false,
+}) => {
     const { isActive, browser, deviceType, date, ip, country, city, browserVersion, os, platform, id } = data || {};
 
-    const [confirmEndSession, setConfirmEndSession] = React.useState<boolean>(false);
+    const [confirmEndSession, setConfirmEndSession] = React.useState(false);
 
     return (
         <>
@@ -35,7 +42,7 @@ const SessionItem: React.FC<Props> = ({ current = false, data, active = false, c
                 data-session={id}
                 className={cn(base.item3, styles.sessionItem, {
                     [styles.disabled]: !isActive,
-                    [styles.active]: active
+                    [styles.active]: active,
                 })}
             >
                 <Tooltip title={getDeviceByName(deviceType)?.name}>
@@ -44,7 +51,9 @@ const SessionItem: React.FC<Props> = ({ current = false, data, active = false, c
 
                 <div className={`${styles.sessionItemPoints} ${base.baseWrapperGap12}`}>
                     <div className={base.baseWrapperGap0}>
-                        <Text variant='text3' className={styles.sessionItemPointTitle}>Статус</Text>
+                        <Text variant="text3" className={styles.sessionItemPointTitle}>
+                            Статус
+                        </Text>
 
                         {current ? (
                             <Text className={styles.currentSession}>Текущий сеанс</Text>

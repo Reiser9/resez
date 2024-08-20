@@ -1,3 +1,5 @@
+'use client';
+
 import React, { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
 import Link from 'next/link';
 import cn from 'classnames';

@@ -1,14 +1,17 @@
+'use client';
+
 import React from 'react';
-import { Dayjs } from 'dayjs';
-import { DatePicker as DatePickerAnt } from 'antd';
 import moment from 'moment-timezone';
 import cn from 'classnames';
+import { Dayjs } from 'dayjs';
+import { DatePicker as DatePickerAnt } from 'antd';
+import { DatePickerProps } from 'antd/lib';
 
 import styles from './index.module.scss';
 
 import { Date } from '@/shared/icons';
+
 import { Text } from '../Text';
-import { DatePickerProps } from 'antd/lib';
 
 type Props = {
     format?: string;

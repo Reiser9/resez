@@ -12,6 +12,8 @@ import { Block } from './ui/Block';
 import { IconButton } from '@/shared/ui/Button';
 import { File } from '@/shared/ui/File';
 
+// import { StaticMathField } from 'react-mathquill';
+
 const MainPage = () => {
     // const [image, setImage] = React.useState<File>();
     // const [transcript, setTranscript] = React.useState('');
@@ -81,6 +83,15 @@ const MainPage = () => {
                     tag="h2"
                 />
             </div>
+
+            {/* <StaticMathField>{`
+                \\[ f(n) =
+                    \\begin{cases}
+                        n/2       & \\quad \text{if } n \text{ is even}\\
+                        -(n+1)/2  & \\quad \text{if } n \text{ is odd}
+                    \\end{cases}
+                \\]
+            `}</StaticMathField> */}
 
             <div className={styles.benefits}>
                 <Text variant="h1" className={styles.benefitsTitle}>

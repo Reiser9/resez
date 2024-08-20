@@ -42,13 +42,21 @@ const SettingsItem: React.FC<Props> = ({
     };
 
     return (
-        <div className={cn(styles.settingsBlock, {
-            [styles.fullWidth]: fullWidth
-        })} {...props}>
+        <div
+            className={cn(styles.settingsBlock, {
+                [styles.fullWidth]: fullWidth,
+            })}
+            {...props}
+        >
             <div className={styles.settingsBlockWrapper} onClick={callbackHandler}>
                 <p className={styles.settingsBlockName}>{title}</p>
 
-                <Switch size="small" checked={checked} loading={loading} onChange={setValue ? (value) => setValue(value) : undefined} />
+                <Switch
+                    size="small"
+                    checked={checked}
+                    loading={loading}
+                    onChange={setValue ? (value) => setValue(value) : undefined}
+                />
             </div>
 
             <p className={styles.settingsBlockDescription}>{text}</p>

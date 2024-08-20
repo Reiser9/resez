@@ -16,12 +16,21 @@ import TestItem from '@/entities/test/ui/TestItem';
 import { CatalogItemSkeleton, TestItemSkeleton } from '@/shared/ui/Skeleton';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useSubjects } from '@/features/subjects';
+import { useUserPermissions } from '@/features/user';
 
 const TestsSubject = () => {
     const { subject } = useParams();
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const { getPagginationOfficialTests, deleteTest } = useTest();
     const { getTasksCatalogBySubject } = useSubjects();
@@ -85,7 +94,7 @@ const TestsSubject = () => {
                                         <TestItem
                                             key={data.id}
                                             data={data}
-                                            remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                            remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                             removeCallback={() => deleteTest(data.id, revalidateTests)}
                                         />
                                     )),

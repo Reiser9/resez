@@ -5,7 +5,7 @@ import { read, utils } from 'xlsx';
 
 import styles from './index.module.scss';
 
-import { Excel } from '@/entities/collection';
+import type { Excel } from '@/entities/collection';
 
 type Props = {
     id: string;

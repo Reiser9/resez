@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import styles from './index.module.scss';
 
@@ -33,7 +36,7 @@ const ConfirmModal: React.FC<Props> = ({
         setValue(false);
     };
 
-    return (
+    return ReactDOM.createPortal(
         <Modal title="Подтвердите действие" value={value} setValue={setValue} text={text} size="small">
             {children && children}
 
@@ -58,7 +61,8 @@ const ConfirmModal: React.FC<Props> = ({
                     </Button>
                 )}
             </div>
-        </Modal>
+        </Modal>,
+        document.body,
     );
 };
 

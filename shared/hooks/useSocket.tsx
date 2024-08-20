@@ -91,10 +91,10 @@ const useSocket = () => {
             }
         });
 
-        // socket.on("new-permissions", (data) => {
-        //     dispatch(updatePermissions(data.permissions));
-        //     alertNotify("Ваша роль обновлена", "Кто-то изменил вашу роль", "info", "", 4000);
-        // });
+        socket.on('role-updated', () => {
+            queryRef.current.invalidateQueries({ queryKey: ['user_permissions'] });
+            alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
+        });
 
         return () => {
             socket.off('notify');
@@ -102,7 +102,7 @@ const useSocket = () => {
             socket.off('blocked');
             socket.off('unblocked');
             socket.off('message');
-            // socket.off("new-permissions");
+            socket.off('new-permissions');
         };
     }, []);
 };

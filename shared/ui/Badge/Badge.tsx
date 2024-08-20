@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { HTMLAttributes } from 'react';
 import Image from 'next/image';
 import cn from 'classnames';
+import { HTMLAttributes } from 'react';
 
 import styles from './index.module.scss';
 
@@ -14,11 +14,21 @@ type Props = {
     dot?: boolean;
     icon?: React.ReactNode;
     size?: 'small' | 'normal' | 'big';
-    isUserAvatar?: boolean,
+    isUserAvatar?: boolean;
     indicator?: string | number;
 } & HTMLAttributes<HTMLDivElement>;
 
-const Badge: React.FC<Props> = ({ text, image, icon, dot = false, isUserAvatar = false, size = 'normal', indicator, className, ...props }) => {
+const Badge: React.FC<Props> = ({
+    text,
+    image,
+    icon,
+    dot = false,
+    isUserAvatar = false,
+    size = 'normal',
+    indicator,
+    className,
+    ...props
+}) => {
     const isHideAvatars = useAppSelector((state) => state.user.user?.settings.isHideAvatars);
 
     return (
@@ -28,7 +38,7 @@ const Badge: React.FC<Props> = ({ text, image, icon, dot = false, isUserAvatar =
             })}
             {...props}
         >
-            {image && !isHideAvatars || image && !isUserAvatar ? (
+            {(image && !isHideAvatars) || (image && !isUserAvatar) ? (
                 <Image src={image} alt="Аватар" className={styles.badgeImg} fill />
             ) : (
                 text && <p className={styles.badgeText}>{text ? text[0] : 'No'}</p>

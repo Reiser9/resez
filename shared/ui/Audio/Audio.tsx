@@ -5,6 +5,7 @@ import React from 'react';
 import styles from './index.module.scss';
 
 import { Pause, Play } from '@/shared/icons';
+
 import { Text } from '../Text';
 
 type Props = {

@@ -11,16 +11,25 @@ import { Text } from '@/shared/ui/Text';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross, Plus } from '@/shared/icons';
 import { useSubjects } from '@/features/subjects';
 import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { useUserPermissions } from '@/features/user';
 
 const AdminSubjects = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const queryClient = useQueryClient();
     const { getPagginationSubjects } = useSubjects();
@@ -46,7 +55,7 @@ const AdminSubjects = () => {
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
                     </div>
 
-                    {checkPermission(permissions, [PERMISSIONS.CREATE_SUBJECTS]) && (
+                    {checkPermission(permissions || [], [PERMISSIONS.CREATE_SUBJECTS]) && (
                         <Tooltip title="Создать">
                             <IconButton small variant="light" href="subjects/create" circle>
                                 <Plus />
@@ -70,10 +79,9 @@ const AdminSubjects = () => {
                                 <SubjectItem
                                     key={data.id}
                                     data={data}
-                                    // loading={subjectIsLoading.includes(data.id)}
-                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
-                                    publish={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
+                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
+                                    publish={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
                                 />
                             ))}
                         </div>

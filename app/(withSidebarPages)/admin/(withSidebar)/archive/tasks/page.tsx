@@ -2,23 +2,31 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { useArchive } from '@/features/user';
+import { useArchive, useUserPermissions } from '@/features/user';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import TaskItem from '@/entities/task/ui/TaskItem';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
 
 const AdminArchiveTasks = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const queryClient = useQueryClient();
     const { getArhiveTasks, restoreArchiveTask } = useArchive();
@@ -69,9 +77,8 @@ const AdminArchiveTasks = () => {
                                     key={data.id}
                                     data={data}
                                     href={`/admin/task/${data.id}`}
-                                    // loading={subjectIsLoading.includes(data.id)}
-                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                     restoreCallback={() => restoreArchiveTask(data.id, revalidateRequest)}
                                 />
                             )),

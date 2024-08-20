@@ -1,3 +1,5 @@
+'use client';
+
 import React, { AnchorHTMLAttributes } from 'react';
 import Link, { LinkProps } from 'next/link';
 import cn from 'classnames';
@@ -6,6 +8,7 @@ import styles from './index.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 
 import { ArrowRightLong } from '@/shared/icons';
+
 import { Text } from '../Text';
 
 type Props = {
@@ -15,7 +18,8 @@ type Props = {
     href: string;
     disabled?: boolean;
     children?: React.ReactNode;
-} & AnchorHTMLAttributes<HTMLAnchorElement> & LinkProps;
+} & AnchorHTMLAttributes<HTMLAnchorElement> &
+    LinkProps;
 
 const LinkBlock: React.FC<Props> = ({
     title,
@@ -43,7 +47,7 @@ const LinkBlock: React.FC<Props> = ({
                 </span>
             </span>
 
-            {text && <Text variant='text2'>{text}</Text>}
+            {text && <Text variant="text2">{text}</Text>}
 
             {children && <span className={styles.cardLinkImgInner}>{children}</span>}
         </Link>

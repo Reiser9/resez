@@ -1,12 +1,15 @@
+'use client';
+
 import React, { HTMLAttributes } from 'react';
 import cn from 'classnames';
 
 import styles from './index.module.scss';
 
-import { Text } from '../Text';
 import { getDeviceByName } from '@/shared/utils/getDeviceByName';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 import type { Session } from '@/entities/user/session';
+
+import { Text } from '../Text';
 
 type Props = {
     current?: boolean;

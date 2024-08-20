@@ -1,5 +1,7 @@
-import { HTMLAttributes } from 'react';
+'use client';
+
 import cn from 'classnames';
+import { HTMLAttributes } from 'react';
 
 import styles from './index.module.scss';
 

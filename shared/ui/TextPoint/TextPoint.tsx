@@ -17,9 +17,7 @@ type Props = {
 
 const TextPoint: React.FC<Props> = ({ title, text, blur = false, className, children }) => {
     return (
-        <div
-            className={cn(styles.userPoint, className)}
-        >
+        <div className={cn(styles.userPoint, className)}>
             <Text variant="text2" className={styles.userPointTitle}>
                 {title}
             </Text>
@@ -31,7 +29,7 @@ const TextPoint: React.FC<Props> = ({ title, text, blur = false, className, chil
             >
                 {text && <Text>{blur ? '#######' : text}</Text>}
 
-                {children}
+                {blur ? <Text>#######</Text> : children}
             </div>
         </div>
     );

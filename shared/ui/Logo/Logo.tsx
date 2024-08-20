@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import cn from 'classnames';
 import Image from 'next/image';
@@ -18,9 +20,7 @@ const Logo = () => {
                 )}
             </span>
 
-            {event?.icon && (
-                <Image width={24} height={24} src={event?.icon} alt="event" className={styles.logoImg} />
-            )}
+            {event?.icon && <Image width={24} height={24} src={event?.icon} alt="event" className={styles.logoImg} />}
 
             <span className={styles.logoVersion}>beta</span>
         </Link>

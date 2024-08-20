@@ -11,18 +11,36 @@ export class CustomFiles {
     }
 
     constructor({ data, config, api }) {
+        this.uniqueId = Date.now();
         this.data = data;
         this.config = config;
         this.api = api;
+        this.fileDownloaded = false;
 
         this.fileInputRef = React.createRef();
         this.fileInputRef.current = this.createFileInput();
+        this.fileInner = null;
         this.fileNameInput = null;
+        this.fileNameStatus = null;
+    }
+
+    renderSettings() {
+        return [
+            {
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>',
+                label: 'Скачиваемый файл',
+                onActivate: () => {
+                    this.fileDownloaded = this.fileDownloaded == 'true' ? 'false' : 'true';
+                },
+                closeOnActivate: true,
+                isActive: this.fileDownloaded == 'true',
+            },
+        ];
     }
 
     createFileInput = () => {
         const input = document.createElement('input');
-        input.id = 'chooseFile';
+        input.id = `chooseFile_${this.uniqueId}`;
         input.type = 'file';
         input.style.display = 'none';
 
@@ -45,33 +63,49 @@ export class CustomFiles {
     };
 
     render() {
-        const container = document.createElement('div');
+        if (this.data?.uniqueId) {
+            this.uniqueId = this.data.uniqueId;
+            this.fileInputRef.current.id = `chooseFile_${this.data.uniqueId}`;
+        }
 
-        container.classList.add('chooseFileInner');
-        container.appendChild(this.fileInputRef.current);
+        this.fileInner = document.createElement('div');
+        this.fileInner.classList.add('chooseInner');
+
+        const inputContainer = document.createElement('div');
+        inputContainer.classList.add('chooseInnerWrapper');
+        this.fileInner.appendChild(inputContainer);
+
+        inputContainer.appendChild(this.fileInputRef.current);
 
         this.fileNameInput = document.createElement('input');
-        this.fileNameInput.classList.add('chooseFileNameInput');
+        this.fileNameInput.classList.add('chooseNameInput');
         this.fileNameInput.type = 'text';
-        this.fileNameInput.placeholder = 'Введите название файла';
-
-        container.appendChild(this.fileNameInput);
-        this.fileNameInput.focus();
+        this.fileNameInput.disabled = true;
+        this.fileNameInput.placeholder = 'Сначала требуется загрузить файл';
+        inputContainer.appendChild(this.fileNameInput);
 
         const label = document.createElement('label');
-        label.classList.add('chooseFileButton');
-        label.htmlFor = 'chooseFile';
-        label.textContent = 'Загрузить файл';
+        label.classList.add('chooseButton');
+        label.htmlFor = `chooseFile_${this.uniqueId}`;
+        label.textContent = 'Выбрать файл';
+        inputContainer.appendChild(label);
 
-        container.appendChild(label);
+        this.fileNameStatus = document.createElement('div');
+        this.fileNameStatus.classList.add('chooseNameStatus');
+        this.fileNameStatus.textContent = 'Файл не выбран';
+        this.fileInner.appendChild(this.fileNameStatus);
 
         if (this.data?.file?.url) {
             this.fileNameInput.value = this.data?.fileName;
+            this.fileNameStatus.textContent = 'Файл выбран';
+            this.fileNameInput.disabled = false;
+            this.fileNameInput.placeholder = 'Введите название файла';
+            this.fileDownloaded = this.data.fileDownloaded;
         } else {
             this.fileInputRef.current.click();
         }
 
-        return container;
+        return this.fileInner;
     }
 
     handleFileChange = (event) => {
@@ -86,24 +120,43 @@ export class CustomFiles {
         }
 
         const { uploadRequest } = this.config;
+        this.fileNameInput.blur();
+        this.fileNameStatus.classList.remove('success', 'error');
+        this.fileInner.classList.add('disabled');
+        this.fileNameStatus.textContent = 'Загрузка файла на сервер...';
 
         uploadRequest(file)
             .then((data) => {
                 this.data = data;
                 this.fileNameInput.value = file.name;
+                this.fileNameInput.disabled = false;
+                this.fileNameInput.placeholder = 'Введите название файла';
+                this.fileNameStatus.classList.add('success');
+                this.fileNameStatus.textContent = 'Файл успешно загружен';
             })
             .catch((error) => {
                 console.error('Error saving file:', error);
+                this.fileNameStatus.classList.add('error');
+                this.fileNameStatus.textContent = 'Ошибка загрузки файла';
+                this.fileInputRef.current.value = '';
+                this.fileNameInput.value = '';
+                this.fileNameInput.disabled = true;
+                this.fileNameInput.placeholder = 'Сначала требуется загрузить файл';
+            })
+            .finally(() => {
+                this.fileInner.classList.remove('disabled');
             });
     };
 
     save = () => {
-        if (this.data?.file) {
+        if (this.data.file) {
             const fileName = this.fileNameInput.value;
 
             return {
-                fileUrl: this.data?.file?.url,
-                fileName: fileName,
+                fileUrl: this.data.file.url,
+                fileName: fileName || 'Пустое название файла',
+                fileDownloaded: this.fileDownloaded,
+                uniqueId: this.uniqueId,
             };
         }
     };

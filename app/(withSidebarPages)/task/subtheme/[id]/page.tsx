@@ -21,6 +21,7 @@ import { Button } from '@/shared/ui/Button';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { useUserPermissions } from '@/features/user';
 
 const TaskSubThemePage = () => {
     const { id } = useParams();
@@ -28,7 +29,16 @@ const TaskSubThemePage = () => {
     const [infoMenu, setInfoMenu] = React.useState(false);
 
     const { getTasksBySubThemeId, getSubThemeInfo } = useTask();
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const { data, isLoading, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['task_by_subtheme_id', id],
@@ -75,9 +85,9 @@ const TaskSubThemePage = () => {
                                     key={data.id}
                                     data={data}
                                     taskWithLink
-                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_TASKS])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_TASKS])}
-                                    verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
+                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
+                                    verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
                                 />
                             )),
                         )}

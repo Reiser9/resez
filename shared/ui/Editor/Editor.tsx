@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { createReactEditorJS } from 'react-editor-js';
 import Embed from '@editorjs/embed';
 import Table from '@editorjs/table';
 import List from '@editorjs/list';
@@ -16,14 +15,15 @@ import SimpleImage from '@editorjs/simple-image';
 import { OutputData } from '@editorjs/editorjs';
 import { ToolConstructable } from '@editorjs/editorjs/types/tools/index';
 import { ToolSettings } from '@editorjs/editorjs/types/tools/tool-settings';
+import { createReactEditorJS } from 'react-editor-js';
+
+import styles from './index.module.scss';
 
 import { CustomMath } from './CustomMathTool';
 import { CustomFiles } from './CustomFiles';
 import { CustomVoice } from './CustomVoice';
-
-import styles from './index.module.scss';
-
 import { useFile } from '@/features/file';
+
 import { Text } from '../Text';
 
 const ReactEditorJS = createReactEditorJS();
@@ -34,6 +34,7 @@ type Props = {
     minHeight?: number;
     title?: string;
     editorRef: React.MutableRefObject<EditorCore | null>;
+    onReady?: () => void;
 };
 
 export interface EditorCore {
@@ -45,7 +46,7 @@ export interface EditorCore {
 }
 
 const Editor: React.FC<Props> = (props) => {
-    const { placeholder = '', id = '', minHeight = 60, title, editorRef, ...editorProps } = props;
+    const { placeholder = '', id = '', minHeight = 60, title, editorRef, onReady, ...editorProps } = props;
 
     const { uploadImageOnServerByFile, uploadImageOnServerByUrl, uploadFile } = useFile();
 
@@ -109,7 +110,7 @@ const Editor: React.FC<Props> = (props) => {
             config: {
                 uploadRequest: uploadFileHandler,
             },
-        }
+        },
     };
 
     const localLang = {
@@ -217,6 +218,7 @@ const Editor: React.FC<Props> = (props) => {
                 holder={id}
                 placeholder={placeholder}
                 i18n={localLang}
+                onReady={onReady}
                 {...editorProps}
             >
                 <div id={id} className={styles.editor}></div>

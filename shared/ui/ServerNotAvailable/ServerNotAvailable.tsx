@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Button } from '@/shared/ui/Button';
 import { FullPageWrapper } from '@/shared/wrappers/FullPageWrapper';
 import { Server } from '@/shared/icons/picture/Server';
 import useReload from '@/shared/hooks/useReload';
+
+import { Button } from '../Button';
 
 const ServerNotAvailable = () => {
     const { isLoadingReload, reload } = useReload();

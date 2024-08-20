@@ -1,36 +1,37 @@
 'use client';
 
 import React, { ChangeEvent } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { Checkbox } from 'antd';
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from '../../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import type { SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
+import type { SubjectTask } from '@/entities/task';
+import type { EditorCore } from '@/shared/ui/Editor/Editor';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { Select } from '@/shared/ui/Select';
-import { Checkbox } from 'antd';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { Input } from '@/shared/ui/Input';
-import { Preloader } from '@/shared/ui/Preloader';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import { EditorCore } from '@/shared/ui/Editor/Editor';
 import useAlert from '@/shared/hooks/useAlert';
 import { useTask } from '@/features/task';
-import { SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { useSubjects } from '@/features/subjects';
-import { useQuery } from '@tanstack/react-query';
-import { Text } from '@/shared/ui/Text';
 import { convertHtmlToEditorBlocks, getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
-import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Delete, Plus, ScanEye } from '@/shared/icons';
-import { Modal } from '@/shared/ui/Modal';
-import { SubjectTask } from '@/entities/task';
 import TaskItem from '@/entities/task/ui/TaskItem';
-import { NotContent } from '@/shared/ui/NotContent';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { useUserPermissions } from '@/features/user';
+
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { Text } from '@/shared/ui/Text';
+import { Button, IconButton } from '@/shared/ui/Button';
+import { Select } from '@/shared/ui/Select';
+import { Input } from '@/shared/ui/Input';
+import { Preloader } from '@/shared/ui/Preloader';
+import { Modal } from '@/shared/ui/Modal';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -39,7 +40,16 @@ const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
 
 const AdminTaskEdit = () => {
     const { id } = useParams();
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const [subject, setSubject] = React.useState<string | null>(null);
     const [subjectId, setSubjectId] = React.useState<number>();
@@ -51,6 +61,9 @@ const AdminTaskEdit = () => {
     const [source, setSource] = React.useState('');
     const [isDetailedAnswerTask, setIsDetailedAnswerTask] = React.useState(false);
     const [editingIsLoading, setEditingIsLoading] = React.useState(false);
+
+    const [taskEditorIsReady, setTaskEditorIsReady] = React.useState(false);
+    const [solutionEditorIsReady, setSolutionEditorIsReady] = React.useState(false);
 
     const [themes, setThemes] = React.useState<SubjectTaskDTO[]>([]);
     const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
@@ -237,17 +250,28 @@ const AdminTaskEdit = () => {
 
             setSource(source);
             setEditingIsLoading(true);
-
-            setTimeout(() => {
-                taskRef.current?.render({
-                    blocks: convertHtmlToEditorBlocks(task),
-                });
-                solutionRef.current?.render({
-                    blocks: convertHtmlToEditorBlocks(solution),
-                });
-            }, 1000);
         }
     }, [data]);
+
+    React.useEffect(() => {
+        if (data && taskEditorIsReady && taskRef.current) {
+            const { task } = data;
+
+            taskRef.current?.render({
+                blocks: convertHtmlToEditorBlocks(task),
+            });
+        }
+    }, [data, taskEditorIsReady]);
+
+    React.useEffect(() => {
+        if (data && solutionEditorIsReady && solutionRef.current) {
+            const { solution } = data;
+
+            solutionRef.current?.render({
+                blocks: convertHtmlToEditorBlocks(solution),
+            });
+        }
+    }, [data, solutionEditorIsReady]);
 
     React.useEffect(() => {
         if (themesData) {
@@ -335,38 +359,49 @@ const AdminTaskEdit = () => {
                         />
                     )}
 
-                    {checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS]) && (
+                    {checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS]) && (
                         <Checkbox checked={isVerified} onChange={(e) => setIsVerified(e.target.checked)}>
                             Задание проверено
                         </Checkbox>
                     )}
 
-                    <Editor title="Задание" editorRef={taskRef} id="taskEditor" />
+                    <Editor
+                        title="Задание"
+                        editorRef={taskRef}
+                        id="taskEditor"
+                        onReady={() => setTaskEditorIsReady(true)}
+                    />
 
                     <Button variant="light" auto onClick={getMatchTasks} loading={matchesIsLoading}>
                         <ScanEye />
                         Проверить схожесть
                     </Button>
 
-                    <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
+                    <Editor
+                        title="Решение"
+                        editorRef={solutionRef}
+                        id="answerEditor"
+                        onReady={() => setSolutionEditorIsReady(true)}
+                    />
 
                     <div className={styles.answerWrapper}>
                         <Text variant="text3">Ответ{!!answers.length && 'ы'}</Text>
-                        {answers.map((answer, id) => (
-                            <div key={id} className={styles.answerItem}>
-                                <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+                        {!!answers.length &&
+                            answers.map((answer, id) => (
+                                <div key={id} className={styles.answerItem}>
+                                    <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
 
-                                <IconButton
-                                    variant="danger"
-                                    small
-                                    circle
-                                    className={styles.answerItemDelete}
-                                    onClick={() => removeAnswer(id)}
-                                >
-                                    <Delete />
-                                </IconButton>
-                            </div>
-                        ))}
+                                    <IconButton
+                                        variant="danger"
+                                        small
+                                        circle
+                                        className={styles.answerItemDelete}
+                                        onClick={() => removeAnswer(id)}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                </div>
+                            ))}
 
                         <div className={styles.answerItem}>
                             <Input value={answer} setValue={setAnswer} />
@@ -390,7 +425,7 @@ const AdminTaskEdit = () => {
                         Добавить ответ
                     </Button>
 
-                    <Input title="Источник" value={source} setValue={setSource} />
+                    {/* <Input title="Источник" value={source} setValue={setSource} /> */}
                 </div>
             </CreatePageWrapper>
 
@@ -401,8 +436,8 @@ const AdminTaskEdit = () => {
                             <TaskItem
                                 key={data.task.id}
                                 data={data.task}
-                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
+                                remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                 matchPercent={data.percent}
                             />
                         ))

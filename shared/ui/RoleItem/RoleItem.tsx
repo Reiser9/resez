@@ -2,18 +2,20 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import cn from 'classnames';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
-import { TextPoint } from '../TextPoint';
+
+import type { RoleDTO } from '@/entities/role';
+import { Delete, DotsHorizontal, Edit } from '@/shared/icons';
+
 import { HoverMenu, MenuLink } from '../HoverMenu';
 import { IconButton } from '../Button';
-import { Delete, DotsHorizontal, Edit } from '@/shared/icons';
 import { LoaderForItem } from '../Preloader';
 import { ConfirmModal } from '../Modal';
-import { RoleDTO } from '@/entities/role';
+import { TextPoint } from '../TextPoint';
 
 type Props = {
     data: RoleDTO;

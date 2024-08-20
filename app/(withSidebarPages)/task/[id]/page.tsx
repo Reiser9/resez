@@ -9,7 +9,6 @@ import styles from './index.module.scss';
 
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useTask } from '@/features/task';
 import TaskTestItem from '@/entities/task/ui/TaskTestItem';
 
@@ -17,6 +16,7 @@ import { Preloader } from '@/shared/ui/Preloader';
 import { TextPoint } from '@/shared/ui/TextPoint';
 import { Text } from '@/shared/ui/Text';
 import { InfoSidebar } from '@/shared/ui/InfoSidebar';
+import { useUserPermissions } from '@/features/user';
 
 const TaskPage = () => {
     const { id } = useParams();
@@ -24,7 +24,16 @@ const TaskPage = () => {
     const [infoMenu, setInfoMenu] = React.useState(false);
 
     const { getTaskById } = useTask();
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['task_by_id', id],
@@ -44,9 +53,9 @@ const TaskPage = () => {
                 {!!data && (
                     <TaskTestItem
                         data={data}
-                        edit={checkPermission(permissions, [PERMISSIONS.UPDATE_TASKS])}
-                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_TASKS])}
-                        verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
+                        edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
+                        verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
                     />
                 )}
             </div>

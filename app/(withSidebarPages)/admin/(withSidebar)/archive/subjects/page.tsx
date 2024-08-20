@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -13,12 +13,20 @@ import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useArchive } from '@/features/user';
+import { useArchive, useUserPermissions } from '@/features/user';
 
 const AdminArchiveSubjects = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const queryClient = useQueryClient();
     const { getArhiveSubjects } = useArchive();
@@ -64,9 +72,8 @@ const AdminArchiveSubjects = () => {
                                 <SubjectItem
                                     key={data.id}
                                     data={data}
-                                    // loading={subjectIsLoading.includes(data.id)}
-                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                     restore
                                 />
                             )),

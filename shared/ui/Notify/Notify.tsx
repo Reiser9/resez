@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import cn from 'classnames';
+import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
 
+import type { LocalNotify } from '@/entities/notify/model';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { Text } from '../Text';
 import { removeLocalNotify } from '@/store/slices/notify';
-import { LocalNotify } from '@/entities/notify/model';
 import { getNotifyIcon } from '@/shared/utils/getNotifyIcon';
+
+import { Text } from '../Text';
 
 type Props = {
     data: LocalNotify;
@@ -53,8 +54,6 @@ const Notify: React.FC<Props> = ({ data }) => {
                 <Text variant="h4">{title}</Text>
                 <Text variant="text2">{text}</Text>
             </div>
-            
-            {/* <audio src="/img/notify.mp3" autoPlay /> */}
         </div>
     );
 };

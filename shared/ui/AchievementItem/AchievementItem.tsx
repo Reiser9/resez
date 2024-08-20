@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Tooltip } from 'antd';
 import cn from 'classnames';
+import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 
-import { Text } from '../Text';
 import { Info } from '@/shared/icons';
+
+import { Text } from '../Text';
 
 type Props = {
     done?: boolean;
@@ -33,7 +34,14 @@ const AchievementItem: React.FC<Props> = ({ done = false, title, description, pr
                     <Text variant="h4">{title}</Text>
                 </div>
 
-                <Tooltip title={<><p>Награды:</p>{reward}</>}>
+                <Tooltip
+                    title={
+                        <>
+                            <p>Награды:</p>
+                            {reward}
+                        </>
+                    }
+                >
                     <div className={styles.achievementItemInfo}>
                         <Info />
                     </div>
@@ -46,7 +54,10 @@ const AchievementItem: React.FC<Props> = ({ done = false, title, description, pr
 
             <div className={styles.achievementItemProgress}>
                 <div className={styles.achievementItemProgressLine}>
-                    <div className={styles.achievementItemProgressBar} style={{ width: `${progress / endValue * 100}%` }}></div>
+                    <div
+                        className={styles.achievementItemProgressBar}
+                        style={{ width: `${(progress / endValue) * 100}%` }}
+                    ></div>
                 </div>
 
                 <div className={styles.achievementItemProgressValues}>

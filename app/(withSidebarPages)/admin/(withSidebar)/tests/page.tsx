@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -13,14 +13,23 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useTest } from '@/features/test';
 import TestItem from '@/entities/test/ui/TestItem';
 import { TestItemSkeleton } from '@/shared/ui/Skeleton';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { useUserPermissions } from '@/features/user';
 
 const AdminTests = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const queryClient = useQueryClient();
     const { getPagginationTests, deleteTest } = useTest();
@@ -57,7 +66,7 @@ const AdminTests = () => {
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
                     </div>
 
-                    {checkPermission(permissions, [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && (
+                    {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && (
                         <Tooltip title="Создать">
                             <IconButton small variant="light" href="/admin/tests/create" circle>
                                 <Plus />
@@ -83,8 +92,8 @@ const AdminTests = () => {
                                         key={data.id}
                                         data={data}
                                         // loading={subjectIsLoading.includes(data.id)}
-                                        // edit={checkPermission(permissions, [PERMISSIONS.UPDATE_SUBJECTS])}
-                                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_SUBJECTS])}
+                                        // edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
+                                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                         removeCallback={() => deleteTest(data.id, revalidateRequest)}
                                     />
                                 )),

@@ -11,18 +11,21 @@ export class CustomVoice {
     }
 
     constructor({ data, config, api }) {
+        this.uniqueId = Date.now();
         this.data = data;
         this.config = config;
         this.api = api;
 
-        this.fileInputRef = React.createRef();
-        this.fileInputRef.current = this.createFileInput();
-        this.fileNameInput = null;
+        this.voiceInputRef = React.createRef();
+        this.voiceInputRef.current = this.createFileInput();
+        this.voiceInner = null;
+        this.voiceNameInput = null;
+        this.voiceNameStatus = null;
     }
 
     createFileInput = () => {
         const input = document.createElement('input');
-        input.id = 'chooseAudio';
+        input.id = `chooseAudio_${this.uniqueId}`;
         input.type = 'file';
         input.accept = '.mp3, .ogg';
         input.style.display = 'none';
@@ -46,65 +49,98 @@ export class CustomVoice {
     };
 
     render() {
-        const container = document.createElement('div');
-
-        container.classList.add('chooseFileInner');
-        container.appendChild(this.fileInputRef.current);
-
-        this.fileNameInput = document.createElement('input');
-        this.fileNameInput.classList.add('chooseFileNameInput');
-        this.fileNameInput.type = 'text';
-        this.fileNameInput.placeholder = 'Введите название';
-
-        container.appendChild(this.fileNameInput);
-        this.fileNameInput.focus();
-
-        const label = document.createElement('label');
-        label.classList.add('chooseFileButton');
-        label.htmlFor = 'chooseAudio';
-        label.textContent = 'Загрузить аудио';
-
-        container.appendChild(label);
-
-        if (this.data?.audio?.url) {
-            this.fileNameInput.value = this.data?.audioName;
-        } else {
-            this.fileInputRef.current.click();
+        if (this.data?.uniqueId) {
+            this.uniqueId = this.data.uniqueId;
+            this.voiceInputRef.current.id = `chooseAudio_${this.data.uniqueId}`;
         }
 
-        return container;
+        this.voiceInner = document.createElement('div');
+        this.voiceInner.classList.add('chooseInner');
+
+        const inputContainer = document.createElement('div');
+        inputContainer.classList.add('chooseInnerWrapper');
+        this.voiceInner.appendChild(inputContainer);
+
+        inputContainer.appendChild(this.voiceInputRef.current);
+
+        this.voiceNameInput = document.createElement('input');
+        this.voiceNameInput.classList.add('chooseNameInput');
+        this.voiceNameInput.type = 'text';
+        this.voiceNameInput.disabled = true;
+        this.voiceNameInput.placeholder = 'Сначала требуется загрузить аудио';
+        inputContainer.appendChild(this.voiceNameInput);
+
+        const label = document.createElement('label');
+        label.classList.add('chooseButton');
+        label.htmlFor = `chooseAudio_${this.uniqueId}`;
+        label.textContent = 'Выбрать аудио';
+        inputContainer.appendChild(label);
+
+        this.voiceNameStatus = document.createElement('div');
+        this.voiceNameStatus.classList.add('chooseNameStatus');
+        this.voiceNameStatus.textContent = 'Аудио не выбрано';
+        this.voiceInner.appendChild(this.voiceNameStatus);
+
+        if (this.data?.file?.url) {
+            this.voiceNameInput.value = this.data?.audioName;
+            this.voiceNameStatus.textContent = 'Аудио выбрано';
+            this.voiceNameInput.disabled = false;
+            this.voiceNameInput.placeholder = 'Введите название аудио';
+        } else {
+            this.voiceInputRef.current.click();
+        }
+
+        return this.voiceInner;
     }
 
     handleFileChange = (event) => {
         const file = event.target.files[0];
 
-        this.uploadFile(file);
+        this.uploadAudio(file);
     };
 
-    uploadFile = (file) => {
-        if (!file) {
+    uploadAudio = (audio) => {
+        if (!audio) {
             return;
         }
 
         const { uploadRequest } = this.config;
+        this.voiceNameInput.blur();
+        this.voiceNameStatus.classList.remove('success', 'error');
+        this.voiceInner.classList.add('disabled');
+        this.voiceNameStatus.textContent = 'Загрузка аудио на сервер...';
 
-        uploadRequest(file)
+        uploadRequest(audio)
             .then((data) => {
-                this.data.audio = data.file;
-                this.fileNameInput.value = file.name;
+                this.data = data;
+                this.voiceNameInput.value = audio.name;
+                this.voiceNameInput.disabled = false;
+                this.voiceNameInput.placeholder = 'Введите название аудио';
+                this.voiceNameStatus.classList.add('success');
+                this.voiceNameStatus.textContent = 'Аудио успешно загружено';
             })
             .catch((error) => {
-                console.error('Error saving file:', error);
+                console.error('Error saving audio:', error);
+                this.voiceNameStatus.classList.add('error');
+                this.voiceNameStatus.textContent = 'Ошибка загрузки аудио';
+                this.voiceInputRef.current.value = '';
+                this.voiceNameInput.value = '';
+                this.voiceNameInput.disabled = true;
+                this.voiceNameInput.placeholder = 'Сначала требуется загрузить аудио';
+            })
+            .finally(() => {
+                this.voiceInner.classList.remove('disabled');
             });
     };
 
     save = () => {
-        if (this.data?.audio) {
-            const audioName = this.fileNameInput.value;
+        if (this.data.file) {
+            const audioName = this.voiceNameInput.value;
 
             return {
-                audioUrl: this.data?.audio?.url,
-                audioName: audioName,
+                audioUrl: this.data.file.url,
+                audioName: audioName || 'Пустое название аудио',
+                uniqueId: this.uniqueId,
             };
         }
     };

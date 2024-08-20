@@ -4,8 +4,9 @@ import React from 'react';
 
 import styles from './index.module.scss';
 
-import { Input } from '../Input';
 import { Search } from '@/shared/icons';
+
+import { Input } from '../Input';
 
 type Props = {
     value: string;

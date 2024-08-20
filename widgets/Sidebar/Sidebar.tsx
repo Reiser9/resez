@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
@@ -10,7 +11,6 @@ import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { Code, Fire, Lifebuoy, Message, Store, Telegram, Tests, Training, Vk, Youtube } from '@/shared/icons';
 import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import useWarn from '@/features/admin/warns/useWarn';
 import useAlert from '@/shared/hooks/useAlert';
@@ -19,6 +19,7 @@ import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 import { Modal } from '@/shared/ui/Modal';
 import { Button } from '@/shared/ui/Button';
+import { useUserPermissions } from '@/features/user';
 
 const Sidebar = () => {
     const [modalSupport, setModalSupport] = React.useState(false);
@@ -26,7 +27,16 @@ const Sidebar = () => {
 
     const sidebarRef = React.useRef<HTMLDivElement>(null);
 
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
     const { showSidebar, setShowSidebar } = useSidebarContext();
 
     const { createWarn } = useWarn();
@@ -95,7 +105,7 @@ const Sidebar = () => {
                         Магазин
                     </SidebarLink>
 
-                    {checkPermission(permissions, [PERMISSIONS.ADMIN]) && (
+                    {checkPermission(permissions || [], [PERMISSIONS.ADMIN]) && (
                         <SidebarLink href="/admin" onClick={closeSidebar}>
                             <Code />
                             Админка

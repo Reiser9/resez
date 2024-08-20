@@ -3,9 +3,10 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 
-import { IconButton } from '..';
+import type { IconButtonProps } from '../IconButton/IconButton';
 import { Reload } from '@/shared/icons/Reload';
-import { IconButtonProps } from '../IconButton/IconButton';
+
+import { IconButton } from '..';
 
 const ReloadButton: React.FC<IconButtonProps> = (props) => {
     return (

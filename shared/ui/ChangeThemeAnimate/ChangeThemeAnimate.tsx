@@ -9,8 +9,8 @@ import { Moon, Sun } from '@/shared/icons';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 
 const ChangeThemeAnimate = () => {
-    const [isAnimate, setIsAnimate] = React.useState<boolean>(false);
-    const [isAnimateIcons, setIsAnimateIcons] = React.useState<boolean>(false);
+    const [isAnimate, setIsAnimate] = React.useState(false);
+    const [isAnimateIcons, setIsAnimateIcons] = React.useState(false);
 
     const { theme, readyAnimation } = useThemeContext();
 

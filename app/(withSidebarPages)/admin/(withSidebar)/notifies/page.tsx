@@ -18,11 +18,10 @@ import { DatePicker } from '@/shared/ui/DatePicker';
 import { ArrowBottom, Clock, Cross } from '@/shared/icons';
 import useNotify from '@/features/notify/useNotify';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
-import { useUsers } from '@/features/user';
+import { useUserPermissions, useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
@@ -61,7 +60,16 @@ const AdminNotifies = () => {
 
     const searchParams = useSearchParams();
     const usersIds = searchParams.get('users');
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const {
         data: notifyTypes,
@@ -79,7 +87,7 @@ const AdminNotifies = () => {
     } = useQuery({
         queryKey: ['users_short_search', userSearchDebounce],
         queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
-        enabled: checkPermission(permissions, [PERMISSIONS.USERS]),
+        enabled: checkPermission(permissions || [], [PERMISSIONS.USERS]),
     });
 
     const editorRef = React.useRef<EditorCore | null>(null);
@@ -151,7 +159,7 @@ const AdminNotifies = () => {
                         />
                     )}
 
-                    {checkPermission(permissions, [PERMISSIONS.USERS]) && (
+                    {checkPermission(permissions || [], [PERMISSIONS.USERS]) && (
                         <>
                             <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
                                 Отправить пользователю

@@ -1,15 +1,7 @@
 import { Permission } from '@/entities/user';
 
-export const checkPermission = (permissions?: Permission[], permission?: string[]) => {
-    if (!permissions || !permission) {
-        return false;
-    }
+export const checkPermission = (permissions: Permission[], requiredPermissions: string[]) => {
+    const permissionSet = new Set(permissions.map((p) => p.permission));
 
-    for (let i = 0; i < permissions.length; i++) {
-        if (permission.includes(permissions[i].permission)) {
-            return true;
-        }
-    }
-
-    return false;
+    return requiredPermissions.every((permission) => permissionSet.has(permission));
 };

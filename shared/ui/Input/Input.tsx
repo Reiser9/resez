@@ -10,6 +10,7 @@ import styles from './index.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 
 import { Blind, Eye, Info } from '@/shared/icons';
+
 import { Text } from '../Text';
 
 interface InputsProps {

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -11,15 +11,23 @@ import { Cross } from '@/shared/icons';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { RoleItem } from '@/shared/ui/RoleItem';
 import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
 import { useRoles } from '@/features/role';
-import { useArchive } from '@/features/user';
+import { useArchive, useUserPermissions } from '@/features/user';
 
 const AdminArchiveRoles = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const queryClient = useQueryClient();
     const { getArhiveRoles } = useArchive();
@@ -72,8 +80,8 @@ const AdminArchiveRoles = () => {
                                     data={data}
                                     deleteRole={() => deleteRole(String(data.id), revalidateRoles)}
                                     loading={rolesIsLoading.includes(String(data.id))}
-                                    edit={checkPermission(permissions, [PERMISSIONS.UPDATE_ROLES])}
-                                    remove={checkPermission(permissions, [PERMISSIONS.DELETE_ROLES])}
+                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_ROLES])}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_ROLES])}
                                 />
                             )),
                         )}

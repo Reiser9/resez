@@ -13,7 +13,6 @@ import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { Tooltip } from 'antd';
 import { Cross, Filter, Plus } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { NotContent } from '@/shared/ui/NotContent';
 import { useTask } from '@/features/task';
 import TaskItem from '@/entities/task/ui/TaskItem';
@@ -24,7 +23,7 @@ import { useSubjects } from '@/features/subjects';
 import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { useUsers } from '@/features/user';
+import { useUserPermissions, useUsers } from '@/features/user';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 const AdminTests = () => {
@@ -45,7 +44,16 @@ const AdminTests = () => {
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
     const userSearchDebounce = useDebounce(searchValue, 500);
 
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -96,7 +104,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
-        enabled: checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
+        enabled: checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]),
     });
 
     const {
@@ -106,7 +114,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['themes', subject],
         queryFn: () => getSubjectThemes(String(subject)),
-        enabled: !!subject && checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
+        enabled: !!subject && checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]),
     });
 
     const {
@@ -116,7 +124,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
-        enabled: !!theme && checkPermission(permissions, [PERMISSIONS.SUBJECTS]),
+        enabled: !!theme && checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]),
     });
 
     const {
@@ -126,7 +134,7 @@ const AdminTests = () => {
     } = useQuery({
         queryKey: ['users_short_search', userSearchDebounce],
         queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
-        enabled: checkPermission(permissions, [PERMISSIONS.USERS]),
+        enabled: checkPermission(permissions || [], [PERMISSIONS.USERS]),
     });
 
     const toggleVerifyHandler = (id: number) => {
@@ -249,7 +257,7 @@ const AdminTests = () => {
                             <Filter />
                         </IconButton>
 
-                        {checkPermission(permissions, [PERMISSIONS.CREATE_TASKS]) && (
+                        {checkPermission(permissions || [], [PERMISSIONS.CREATE_TASKS]) && (
                             <Tooltip title="Создать">
                                 <IconButton small variant="light" href="/admin/tasks/create" circle>
                                     <Plus />
@@ -276,11 +284,11 @@ const AdminTests = () => {
                                         key={data.id}
                                         data={data}
                                         href={`/admin/task/${data.id}`}
-                                        edit={checkPermission(permissions, [PERMISSIONS.UPDATE_TASKS])}
-                                        remove={checkPermission(permissions, [PERMISSIONS.DELETE_TASKS])}
+                                        edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
                                         archiveCallback={() => archiveTask(data.id, revalidateRequest)}
                                         toggleVerify={() => toggleVerifyHandler(data.id)}
-                                        verify={checkPermission(permissions, [PERMISSIONS.VERIFY_TASKS])}
+                                        verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
                                     />
                                 )),
                             )}
@@ -303,7 +311,7 @@ const AdminTests = () => {
             </div>
 
             <Modal value={tasksFilter} setValue={setTasksFilter} title="Фильтры" size="small">
-                {checkPermission(permissions, [PERMISSIONS.SUBJECTS]) && (
+                {checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]) && (
                     <>
                         <Select
                             title="Предмет"

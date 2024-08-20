@@ -8,17 +8,26 @@ import base from '@/shared/styles/base.module.scss';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { Cross, Plus } from '@/shared/icons';
 import { Text } from '@/shared/ui/Text';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAvatar } from '@/features/store';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { NotContent } from '@/shared/ui/NotContent';
 import AvatarItem from '@/entities/store/ui/AvatarItem';
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
+import { useUserPermissions } from '@/features/user';
 
 const AdminStoreAvatar = () => {
-    const permissions = useAppSelector((state) => state.user.user?.permissions);
+    const { getUserPermissions } = useUserPermissions();
+
+    const {
+        data: permissions,
+        isLoading: permissionsIsLoading,
+        error: permissionsError,
+    } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
 
     const queryClient = useQueryClient();
     const { getPaginationAvatars, togglePublishAvatar } = useAvatar();
@@ -57,7 +66,7 @@ const AdminStoreAvatar = () => {
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
                 </div>
 
-                {checkPermission(permissions, [PERMISSIONS.CREATE_PRODUCTS]) && (
+                {checkPermission(permissions || [], [PERMISSIONS.CREATE_PRODUCTS]) && (
                     <Tooltip title="Создать">
                         <IconButton href="/admin/store/create" variant="light" small circle>
                             <Plus />
@@ -81,9 +90,9 @@ const AdminStoreAvatar = () => {
                             <AvatarItem
                                 key={data.id}
                                 data={data}
-                                edit={checkPermission(permissions, [PERMISSIONS.UPDATE_PRODUCTS])}
-                                publish={checkPermission(permissions, [PERMISSIONS.PUBLISH_PRODUCTS])}
-                                remove={checkPermission(permissions, [PERMISSIONS.DELETE_PRODUCTS])}
+                                edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_PRODUCTS])}
+                                publish={checkPermission(permissions || [], [PERMISSIONS.PUBLISH_PRODUCTS])}
+                                remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_PRODUCTS])}
                                 togglePublish={() => togglePublishHandler(data.id)}
                             />
                         )),

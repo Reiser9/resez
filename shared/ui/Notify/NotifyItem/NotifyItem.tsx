@@ -10,12 +10,13 @@ import base from '@/shared/styles/base.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 import styles from './index.module.scss';
 
+import type { Notify } from '@/entities/notify';
 import { formatDate } from '../../../utils/formatDate';
+import { getNotifyType } from '@/shared/utils/getNotifyType';
+
 import { Button } from '../../Button';
 import { Modal } from '../../Modal';
 import { Text } from '../../Text';
-import { getNotifyType } from '@/shared/utils/getNotifyType';
-import { Notify } from '@/entities/notify';
 import { DynamicSkeleton } from '../../Skeleton';
 
 const CustomHtmlParser = dynamic(() => import('../../CustomHtmlParser/CustomHtmlParser'), {
