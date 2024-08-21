@@ -5,14 +5,11 @@ import React from 'react';
 import type { ProfileInfo, ProfileInfoDTO, UserProfile } from '@/entities/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { initProfileInfo } from '@/store/slices/user';
-import { useAppDispatch } from '@/shared/hooks/useRedux';
 
 const useProfileData = () => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [dataIsSaving, setDataIsSaving] = React.useState(false);
 
-    const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
     const { request, catchRequestError, errorController } = useRequest();
 
@@ -47,10 +44,6 @@ const useProfileData = () => {
 
         if (catchRequestError(response)) {
             return errorController(response);
-        }
-
-        if ('data' in response) {
-            dispatch(initProfileInfo(response.data.user));
         }
 
         successCallback();

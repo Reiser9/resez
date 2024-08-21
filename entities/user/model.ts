@@ -53,8 +53,6 @@ export type User = {
         xp: number;
         limit: number;
     };
-    unreadNotifiesCount: number;
-    settings: Settings;
     subscription: {
         name: string;
         canUploadImages: boolean;

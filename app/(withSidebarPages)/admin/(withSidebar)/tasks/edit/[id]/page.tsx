@@ -56,9 +56,8 @@ const AdminTaskEdit = () => {
     const [isVerified, setIsVerified] = React.useState(false);
     const [theme, setTheme] = React.useState<string | null>(null);
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
-    const [answers, setAnswers] = React.useState<string[]>([]);
+    const [answers, setAnswers] = React.useState<string[]>(['']);
     const [source, setSource] = React.useState('');
-    const [editingIsLoading, setEditingIsLoading] = React.useState(false);
 
     const [taskEditorIsReady, setTaskEditorIsReady] = React.useState(false);
     const [solutionEditorIsReady, setSolutionEditorIsReady] = React.useState(false);
@@ -234,10 +233,9 @@ const AdminTaskEdit = () => {
             setTheme(taskTheme);
             setSubTheme(taskSubTheme);
             setIsVerified(isVerified);
-            setAnswers(answers);
+            setAnswers(!!answers.length ? answers : ['']);
 
             setSource(source);
-            setEditingIsLoading(true);
         }
     }, [data]);
 
@@ -276,10 +274,6 @@ const AdminTaskEdit = () => {
     }, [subThemesData]);
 
     React.useEffect(() => {
-        if (editingIsLoading) {
-            return setEditingIsLoading(false);
-        }
-
         if (theme) {
             setSubTheme(null);
             setSubThemes([]);

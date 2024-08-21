@@ -7,8 +7,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
-import useShortInfo from '@/features/user/data/useShortInfo';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import { useSettings } from '@/features/user';
 
 type Props = {
     text?: string;
@@ -32,16 +32,15 @@ const Badge: React.FC<Props> = ({
     ...props
 }) => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
-    const { getShortInfo } = useShortInfo();
+    const { getSettings } = useSettings();
 
-    const { data: user, isLoading: userIsLoading } = useQuery({
-        queryKey: ['short_info'],
-        queryFn: () => getShortInfo(),
+    const { data, isLoading } = useQuery({
+        queryKey: ['user_settings'],
+        queryFn: () => getSettings(),
         enabled: isAuth,
     });
 
-    const { settings } = user?.user || {};
-    const { isHideAvatars } = settings || {};
+    const { isHideAvatars } = data || {};
 
     return (
         <div

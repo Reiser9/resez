@@ -10,6 +10,21 @@ const useSettings = () => {
 
     const { request, catchRequestError, errorController } = useRequest();
 
+    const getSettings = async () => {
+        const response = await request<{ settings: Settings }>({
+            url: '/user/settings',
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.settings;
+        }
+    };
+
     const updateSettings = async (data: Settings, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ settings: Settings }>({
@@ -33,6 +48,7 @@ const useSettings = () => {
 
     return {
         isLoading,
+        getSettings,
         updateSettings,
     };
 };

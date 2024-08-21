@@ -1,6 +1,8 @@
 'use client';
 
+import React from 'react';
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { Error } from '@/api/types';
 import axiosInstance from '@/api/axios';
@@ -26,6 +28,7 @@ const useRequest = () => {
     const { sessionId, user } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
+    const queryClient = useQueryClient();
 
     const clearLocalData = () => {
         if (user && sessionId) {
@@ -35,6 +38,7 @@ const useRequest = () => {
         localStorage.removeItem('accessToken');
 
         dispatch(setUserData());
+        queryClient.removeQueries({ queryKey: ['user_permissions'] });
     };
 
     const getHealthServer = async () => {

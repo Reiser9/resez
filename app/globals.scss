@@ -794,12 +794,12 @@ p.mathquill {
 
 .mq-text-mode {
     font-family: var(--font-nunito), sans-serif!important;
-    font-size: 1.6rem;
+    font-size: 1.6rem!important;
 }
 
 @media (max-width: 768px) {
     .mq-text-mode{
-        font-size: 1.4rem;
+        font-size: 1.4rem!important;
     }
 }
 

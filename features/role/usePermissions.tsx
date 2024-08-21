@@ -1,13 +1,10 @@
 'use client';
 
-import useRequest from '@/shared/hooks/useRequest';
 import type { Permissions } from '@/entities/role';
-import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initRoles } from '@/store/slices/role';
+import useRequest from '@/shared/hooks/useRequest';
 
 const usePermissions = () => {
     const { request, catchRequestError, errorController } = useRequest();
-    const dispatch = useAppDispatch();
 
     const getAllPermissions = async () => {
         const response = await request<{ permissions: Permissions[] }>({
@@ -20,7 +17,6 @@ const usePermissions = () => {
         }
 
         if ('data' in response) {
-            dispatch(initRoles(response.data.permissions));
             return response.data.permissions;
         }
     };
