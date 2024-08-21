@@ -1,20 +1,34 @@
 'use client';
 
 import React from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { Text } from '@/shared/ui/Text';
 import { SettingsItem } from '@/shared/ui/SettingsItem';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useSettings } from '@/features/user';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { Text } from '@/shared/ui/Text';
 
 const ProfileSettings = () => {
-    const settings = useAppSelector((state) => state.user.user?.settings);
-    const { isHideAvatars, isPrivateAccount } = settings || {};
-
+    // Мб иначе сделать настройки, как дойдешь до этого - разберись
+    const queryClient = useQueryClient();
     const { isLoading, updateSettings } = useSettings();
+    const { getShortInfo } = useShortInfo();
+
+    const invalidateQuery = () => {
+        queryClient.invalidateQueries({ queryKey: ['short_info'] });
+    };
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { settings } = user?.user || {};
+    const { isHideAvatars, isPrivateAccount } = settings || {};
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -25,18 +39,18 @@ const ProfileSettings = () => {
                     <SettingsItem
                         title="Приватный профиль"
                         text="Данные вашего профиля буду скрыты, они будут видны только друзьям"
-                        checked={isPrivateAccount || false}
+                        checked={!!isPrivateAccount}
                         name="isPrivateAccount"
-                        callback={updateSettings}
+                        callback={(data) => updateSettings(data, invalidateQuery)}
                         loading={isLoading}
                     />
 
                     <SettingsItem
                         title="Скрыть аватарки пользователей"
                         text="Скрывает отображение аватарок других пользователей. Полезно для слабого интернета"
-                        checked={isHideAvatars || false}
+                        checked={!!isHideAvatars}
                         name="isHideAvatars"
-                        callback={updateSettings}
+                        callback={(data) => updateSettings(data, invalidateQuery)}
                         loading={isLoading}
                     />
                 </div>

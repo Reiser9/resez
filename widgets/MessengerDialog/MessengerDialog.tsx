@@ -13,11 +13,11 @@ import { formatDate } from '@/shared/utils/formatDate';
 import { useMessenger } from '@/features/messenger';
 import { MessengerDialogTopBar } from './MessengerDialogTopBar';
 import { MessengerDialogSendForm } from './MessengerDialogSendForm';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { DialogMessageItem } from '@/shared/ui/DialogMessageItem';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Preloader } from '@/shared/ui/Preloader';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 type Props = {
     dialogId: string | undefined;
@@ -26,10 +26,10 @@ type Props = {
 export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
     const [selectedMessegesIDs, setSelectedMessegesIDs] = React.useState<MessageType[]>([]);
     const [replyMessage, setReplyMessage] = React.useState<MessageType | null>(null);
-    
+
     const [isEditedMessage, setIsEditedMessage] = React.useState(false);
     const [editMessage, setEditMessage] = React.useState<MessageType>();
-    
+
     const router = useRouter();
 
     const messagerDialogRef = React.useRef<null | HTMLDivElement>(null);
@@ -37,15 +37,21 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
     let currentDate: null | string;
 
     const { getChatById } = useMessenger();
-    const myId = useAppSelector(state => state.user.user?.id);
+    const { getShortInfo } = useShortInfo();
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['messenger_dialogs_by_id', dialogId],
-        queryFn: () => getChatById(String(dialogId), () => router.push("/messenger")),
+        queryFn: () => getChatById(String(dialogId), () => router.push('/messenger')),
         enabled: !!dialogId,
     });
 
-    
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { id: myId } = user?.user || {};
+
     const selectMessage = (message: MessageType) => {
         setSelectedMessegesIDs((prev) => {
             if (prev.includes(message)) {
@@ -65,14 +71,13 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
     };
 
     React.useEffect(() => {
-        if(!isEditedMessage){
-            const filteredArray = data?.messages.filter(item => item.sender?.id === myId);
+        if (!isEditedMessage) {
+            const filteredArray = data?.messages.filter((item) => item.sender?.id === myId);
             const lastItemWithDesired = filteredArray?.pop();
             currentMessagesRef.current = lastItemWithDesired;
             setEditMessage(lastItemWithDesired);
         }
     }, [data?.messages, isEditedMessage]);
-
 
     React.useEffect(() => {
         if (dialogId && messagerDialogRef.current) {
@@ -82,11 +87,11 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
 
     React.useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
-            if (event.key === "ArrowUp" && currentMessagesRef.current) {
+            if (event.key === 'ArrowUp' && currentMessagesRef.current) {
                 setIsEditedMessage(true);
             }
 
-            if (event.key === "Escape") {
+            if (event.key === 'Escape') {
                 setIsEditedMessage(false);
                 setReplyMessage(null);
             }
@@ -107,18 +112,20 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
         >
             {dialogId ? (
                 <>
-                    {!error && <MessengerDialogTopBar
-                        data={data?.chat}
-                        selectedMessegesIDs={selectedMessegesIDs}
-                        setSelectedMessegesIDs={setSelectedMessegesIDs}
-                        setReplyMessage={setReplyMessage}
-                        dataLoading={isLoading}
-                    />}
+                    {!isError && (
+                        <MessengerDialogTopBar
+                            data={data?.chat}
+                            selectedMessegesIDs={selectedMessegesIDs}
+                            setSelectedMessegesIDs={setSelectedMessegesIDs}
+                            setReplyMessage={setReplyMessage}
+                            dataLoading={isLoading}
+                        />
+                    )}
 
                     <div className={styles.messangerDialog} ref={messagerDialogRef}>
                         {isLoading ? (
                             <Preloader page small />
-                        ) : error ? (
+                        ) : isError ? (
                             <NotContent icon={<Cross />} danger text="При загрузке чата произошла ошибка." />
                         ) : data?.messages?.length ? (
                             <>
@@ -169,16 +176,18 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
                         )}
                     </div>
 
-                    {!error && <MessengerDialogSendForm
-                        dialogId={dialogId}
-                        scrollDialogToBottom={scrollBottom}
-                        replyMessage={replyMessage}
-                        setReplyMessage={setReplyMessage}
-                        isEditedMessage={isEditedMessage}
-                        setIsEditedMessage={setIsEditedMessage}
-                        editMessage={editMessage}
-                        isKicked={data?.chat.isKicked}
-                    />}
+                    {!isError && (
+                        <MessengerDialogSendForm
+                            dialogId={dialogId}
+                            scrollDialogToBottom={scrollBottom}
+                            replyMessage={replyMessage}
+                            setReplyMessage={setReplyMessage}
+                            isEditedMessage={isEditedMessage}
+                            setIsEditedMessage={setIsEditedMessage}
+                            editMessage={editMessage}
+                            isKicked={data?.chat.isKicked}
+                        />
+                    )}
                 </>
             ) : (
                 <NotContent icon={<Send />} text="Для начала общения выберите чат" />

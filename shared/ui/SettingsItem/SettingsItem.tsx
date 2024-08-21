@@ -1,12 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Switch } from 'antd';
 import cn from 'classnames';
+import { Switch } from 'antd';
 
 import styles from './index.module.scss';
 
-import { Settings } from '@/entities/user';
+import type { Settings } from '@/entities/user';
 
 type Props = {
     title?: string;
@@ -15,7 +15,7 @@ type Props = {
     name: string;
     fullWidth?: boolean;
     loading?: boolean;
-    callback?: (data: Settings) => Promise<void>;
+    callback?: (data: Settings) => void;
     setValue?: (value: boolean) => void;
 };
 
@@ -46,9 +46,10 @@ const SettingsItem: React.FC<Props> = ({
             className={cn(styles.settingsBlock, {
                 [styles.fullWidth]: fullWidth,
             })}
+            onClick={callbackHandler}
             {...props}
         >
-            <div className={styles.settingsBlockWrapper} onClick={callbackHandler}>
+            <div className={styles.settingsBlockWrapper}>
                 <p className={styles.settingsBlockName}>{title}</p>
 
                 <Switch

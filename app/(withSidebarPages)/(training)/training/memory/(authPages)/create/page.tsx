@@ -11,16 +11,25 @@ import styles from '../../index.module.scss';
 import type { PairDTO } from '@/entities/collection/model';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Input } from '@/shared/ui/Input';
 import { Excel } from '@/shared/icons';
 import useAlert from '@/shared/hooks/useAlert';
 import ImportExcel from './ui/ImportExcel';
-import PairItem from './ui/PairItem';
-import PairItemForm from './ui/PairItemForm';
 import { useCollections, useHandlers } from '@/features/collection';
+
+import PairItem from './ui/PairItem';
+// import PairItemForm from './ui/PairItemForm';
+
+import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 
 const maxPairCount = 500;
+
+const emptyPair = {
+    questionText: '',
+    questionPicture: '',
+    answerText: '',
+    answerPicture: '',
+};
 
 const MemoryCreate = () => {
     const [importExcelModal, setImportExcelModal] = React.useState(false);
@@ -35,7 +44,7 @@ const MemoryCreate = () => {
     const [questionImage, setQuestionImage] = React.useState('');
     const [answerImage, setAnswerImage] = React.useState('');
 
-    const [pairs, setPairs] = React.useState<PairDTO[]>([]);
+    const [pairs, setPairs] = React.useState<PairDTO[]>([emptyPair]);
     const [pairsEmptyIds, setPairsEmptyIds] = React.useState<number[]>([]);
 
     const { alertNotify } = useAlert();
@@ -44,19 +53,7 @@ const MemoryCreate = () => {
     const router = useRouter();
 
     const addNewPair = () => {
-        setPairs((prev) => [
-            ...prev,
-            {
-                questionText,
-                answerText,
-                questionPicture: questionImage,
-                answerPicture: answerImage,
-            },
-        ]);
-        setQuestionText('');
-        setAnswerText('');
-        setQuestionImage('');
-        setAnswerImage('');
+        setPairs((prev) => [...prev, emptyPair]);
         scrollBottom();
     };
 
@@ -149,7 +146,7 @@ const MemoryCreate = () => {
                         />
                     ))}
 
-                    <PairItemForm
+                    {/* <PairItemForm
                         pairs={pairs}
                         setPairs={setPairs}
                         addNewPair={addNewPair}
@@ -163,7 +160,7 @@ const MemoryCreate = () => {
                         setAnswerText={setAnswerText}
                         answerPicture={answerImage}
                         setAnswerPicture={setAnswerImage}
-                    />
+                    /> */}
 
                     <Button auto variant="light" onClick={addNewPair}>
                         Добавить

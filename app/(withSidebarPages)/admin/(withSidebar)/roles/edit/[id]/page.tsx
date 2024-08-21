@@ -59,7 +59,7 @@ const AdminEditRole = () => {
     const {
         data,
         isLoading: roleIsLoading,
-        error,
+        isError,
     } = useQuery({
         queryKey: ['role_by_id', id],
         queryFn: () => getCurrentRole(String(id)),
@@ -69,7 +69,7 @@ const AdminEditRole = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['permissions'],
         queryFn: getAllPermissions,
@@ -133,7 +133,7 @@ const AdminEditRole = () => {
         return <Preloader page />;
     }
 
-    if (error) {
+    if (isError) {
         return <NotContent text="Ошибка при загрузке данных" icon={<Cross />} danger />;
     }
 

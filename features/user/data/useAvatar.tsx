@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { User } from '@/entities/user';
+import type { User } from '@/entities/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 import { initUser } from '@/store/slices/user';
 import useAlert from '@/shared/hooks/useAlert';

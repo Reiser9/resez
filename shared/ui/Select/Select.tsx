@@ -25,9 +25,11 @@ type Props<T> = {
     setValue?: (value: T) => void;
     options?: Option<T>[];
     loading?: boolean;
+    error?: boolean;
     showSearch?: boolean;
     clear?: boolean;
     notContentText?: string;
+    errorText?: string;
     title?: string;
     wrapperClass?: string;
     className?: string;
@@ -39,8 +41,10 @@ const Select = <T,>({
     setValue,
     options,
     notContentText = 'Ничего не найдено',
+    errorText = 'Произошла ошибка при загрузке данных',
     title,
     loading = false,
+    error = false,
     clear = false,
     wrapperClass,
     className,
@@ -66,8 +70,10 @@ const Select = <T,>({
                 notFoundContent={
                     loading ? (
                         <Preloader small wrapperClassName={styles.loader} />
+                    ) : error ? (
+                        <NotContent text={errorText} danger icon={<Cross />} small />
                     ) : (
-                        <NotContent text={notContentText} />
+                        <NotContent text={notContentText} small />
                     )
                 }
                 removeIcon={<Cross width="14" />}

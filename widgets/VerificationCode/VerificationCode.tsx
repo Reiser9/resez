@@ -23,7 +23,7 @@ const ConfirmCode = () => {
 
     const router = useRouter();
 
-    const { verificationCodeData } = useAppSelector((state) => state.user);
+    const verificationCodeData = useAppSelector((state) => state.user.verificationCodeData);
     const dispatch = useAppDispatch();
 
     const { alertNotify } = useAlert();
@@ -91,9 +91,11 @@ const ConfirmCode = () => {
                 и следуйте инструкциям
             </Text>
 
-            {qrExpired && <Text className={auth.postText} color="error">
-                Ссылка недействительна, обновите QR-код
-            </Text>}
+            {qrExpired && (
+                <Text className={auth.postText} color="error">
+                    Ссылка недействительна, обновите QR-код
+                </Text>
+            )}
 
             <div className={auth.verifyItem}>
                 <QRCodeWithTimer

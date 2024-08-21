@@ -3,15 +3,14 @@
 import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
+import parse from 'html-react-parser';
 import { useParams, useRouter } from 'next/navigation';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import parse from 'html-react-parser';
 import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { Preloader } from '@/shared/ui/Preloader';
 import {
     Cross,
     Date,
@@ -28,21 +27,24 @@ import {
     TypesSelection,
     TypesTest,
 } from '@/shared/icons';
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { BackButton, Button, IconButton } from '@/shared/ui/Button';
-import { ConfirmModal } from '@/shared/ui/Modal';
-import { Text } from '@/shared/ui/Text';
 import { formatDate } from '@/shared/utils/formatDate';
-import { TextPoint } from '@/shared/ui/TextPoint';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Badge } from '@/shared/ui/Badge';
-import { LinkBlock } from '@/shared/ui/LinkBlock';
-import { NotContent } from '@/shared/ui/NotContent';
 import { useCollections } from '@/features/collection';
 import CollectionSettings from './CollectionSettings';
 import { Copy } from '@/shared/icons/Copy';
 import { useDebounce } from '@/shared/hooks/useDebounce';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { SearchInput } from '@/shared/ui/SearchInput';
+import { Preloader } from '@/shared/ui/Preloader';
+import { ConfirmModal } from '@/shared/ui/Modal';
+import { Text } from '@/shared/ui/Text';
+import { TextPoint } from '@/shared/ui/TextPoint';
+import { Badge } from '@/shared/ui/Badge';
+import { LinkBlock } from '@/shared/ui/LinkBlock';
+import { NotContent } from '@/shared/ui/NotContent';
 import { CatalogItemSkeleton } from '@/shared/ui/Skeleton';
 
 const MemoryCardInfo = () => {
@@ -59,14 +61,22 @@ const MemoryCardInfo = () => {
 
     const { id } = useParams();
     const { getCollectionById, deleteCollectionById, likeCollection, getPairsCollectionById } = useCollections();
-    const userId = useAppSelector((state) => state.user.user?.id);
+    const { getShortInfo } = useShortInfo();
     const router = useRouter();
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['collection_by_id', id],
         queryFn: () => getCollectionById(String(id), () => router.push('/training/memory')),
         enabled: !!id,
     });
+
+    const { data: userInfo, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { id: userId } = userInfo?.user || {};
 
     const {
         data: collectionPairs,
@@ -124,7 +134,7 @@ const MemoryCardInfo = () => {
 
     return (
         <div className={base.baseWrapperGap16}>
-            {error ? (
+            {isError ? (
                 <NotContent text="Ошибка при загрузке коллекции" icon={<Cross />} danger />
             ) : (
                 <>
@@ -285,7 +295,7 @@ const MemoryCardInfo = () => {
                                         <CatalogItemSkeleton key={id} />
                                     ))}
                                 </div>
-                            ) : error ? (
+                            ) : collectionPairsError ? (
                                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                             ) : collectionPairs?.pages[0]?.totalCount ? (
                                 <div className={base.contentItems}>

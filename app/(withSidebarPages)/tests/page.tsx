@@ -11,7 +11,7 @@ import { useSubjects } from '@/features/subjects';
 const TestsPage = () => {
     const { getSubjects } = useSubjects();
 
-    const { data, error } = useQuery({
+    const { data, isError } = useQuery({
         queryKey: ['subjects'],
         queryFn: getSubjects,
     });
@@ -32,7 +32,7 @@ const TestsPage = () => {
                 <NotContent
                     danger
                     icon={<Cross />}
-                    text={error ? 'Произошла ошибка при загрузке данных' : 'Предметы еще не созданы'}
+                    text={isError ? 'Произошла ошибка при загрузке данных' : 'Предметы еще не созданы'}
                 />
             )}
         </>

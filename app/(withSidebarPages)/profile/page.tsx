@@ -6,23 +6,26 @@ import Image from 'next/image';
 import Lottie from 'lottie-react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
+import { useQuery } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { CONFIG } from '@/shared/consts/CONFIG';
 import { useProfileData } from '@/features/user';
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { IconButton } from '@/shared/ui/Button';
 import { Block, Delete, DotsHorizontal, Edit, Lvl20, Lvl30, Lvl75, Message, Paintbruh, Qr, User } from '@/shared/icons';
 import useCopyText from '@/features/utils/useCopyText';
-import { Badge } from '@/shared/ui/Badge';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
-import { usePathname } from 'next/navigation';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { Badge } from '@/shared/ui/Badge';
+import { IconButton } from '@/shared/ui/Button';
+import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
+import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const tabs = [
     {
@@ -34,15 +37,26 @@ const tabs = [
 const ProfilePage = () => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
 
-    const { user, profileInfo } = useAppSelector((state) => state.user);
-    const { avatar, nickname, levelInfo } = user || {};
-    const { firstName, lastName, avatarDecoration } = profileInfo || {};
+    const { getProfileData } = useProfileData();
+    const { getShortInfo } = useShortInfo();
+    const { copyTextWithNotify } = useCopyText();
+
+    const { data: profileInfo, isLoading: profileInfoIsLoading } = useQuery({
+        queryKey: ['profile_data'],
+        queryFn: () => getProfileData(),
+    });
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { avatar, nickname, levelInfo } = user?.user || {};
     const { level, limit, xp } = levelInfo || {};
+
+    const { firstName, lastName, avatarDecoration } = profileInfo || {};
     const { contentUrl, title, options, contentType } = avatarDecoration || {};
     const { width, x, y } = options || {};
-
-    const { getProfileData } = useProfileData();
-    const { copyTextWithNotify } = useCopyText();
 
     const [animationData, setAnimationData] = React.useState<any | null>(null);
 
@@ -70,10 +84,9 @@ const ProfilePage = () => {
         }
     }, [contentUrl, contentType]);
 
-    // Сделать на реакт квери
-    React.useEffect(() => {
-        getProfileData();
-    }, []);
+    if(userIsLoading){
+        return <Preloader page />
+    }
 
     return (
         <div className={base.baseWrapperGap16}>

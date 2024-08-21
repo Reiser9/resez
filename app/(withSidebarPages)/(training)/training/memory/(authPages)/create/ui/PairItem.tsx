@@ -3,16 +3,18 @@
 import React from 'react';
 import Image from 'next/image';
 import cn from 'classnames';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from '../../../index.module.scss';
 
+import type { PairDTO } from '@/entities/collection';
 import { Delete, Photo, ResezPremium, Swap } from '@/shared/icons';
+import useCollections from '@/features/collection/useCollections';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
 import { IconButton } from '@/shared/ui/Button';
 import { File } from '@/shared/ui/File';
 import { Input } from '@/shared/ui/Input';
-import useCollections from '@/features/collection/useCollections';
-import type { PairDTO } from '@/entities/collection';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { Text } from '@/shared/ui/Text';
 
 type Props = {
@@ -38,8 +40,15 @@ const PairItem: React.FC<Props> = ({
     pairs,
     setPairs,
 }) => {
-    const subscription = useAppSelector((state) => state.user.user?.subscription);
+    const { getShortInfo } = useShortInfo();
     const { uploadImage } = useCollections();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { subscription } = user?.user || {};
 
     const enterNewPair = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {

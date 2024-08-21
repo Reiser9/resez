@@ -23,7 +23,7 @@ const AdminArchiveRoles = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -41,7 +41,7 @@ const AdminArchiveRoles = () => {
         queryClient.invalidateQueries({ queryKey: ['archive_roles'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['archive_roles'],
         queryFn: (param) => getArhiveRoles(param.pageParam),
         initialPageParam: 0,
@@ -56,7 +56,7 @@ const AdminArchiveRoles = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Роли {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                    Роли {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -68,7 +68,7 @@ const AdminArchiveRoles = () => {
                         <RoleItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>

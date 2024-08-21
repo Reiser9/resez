@@ -2,6 +2,7 @@
 
 import React, { Key } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -16,7 +17,6 @@ import { Permissions } from '@/entities/role';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Cross, Delete, DotsHorizontal, Edit } from '@/shared/icons';
 import { ConfirmModal } from '@/shared/ui/Modal';
-import { useQuery } from '@tanstack/react-query';
 import { NotContent } from '@/shared/ui/NotContent';
 
 const AdminRolePage = () => {
@@ -36,7 +36,7 @@ const AdminRolePage = () => {
     const {
         data,
         isLoading: roleIsLoading,
-        error,
+        isError,
     } = useQuery({
         queryKey: ['role_by_id', id],
         queryFn: () => getCurrentRole(String(id)),
@@ -46,7 +46,7 @@ const AdminRolePage = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['permissions'],
         queryFn: getAllPermissions,
@@ -83,7 +83,7 @@ const AdminRolePage = () => {
         return <Preloader page />;
     }
 
-    if (error) {
+    if (isError) {
         return <NotContent danger icon={<Cross />} text="Ошибка при загрузке данных" />;
     }
 

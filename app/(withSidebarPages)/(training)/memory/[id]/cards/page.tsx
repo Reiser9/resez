@@ -35,7 +35,7 @@ const MemoryCards = () => {
     const { id } = useParams();
     const { getPairsCollection } = useCollections();
 
-    const { data, isLoading, isFetching, error, refetch } = useQuery({
+    const { data, isLoading, isFetching, isError, refetch } = useQuery({
         queryKey: ['collection_cards', id],
         queryFn: () => getPairsCollection(String(id)),
         enabled: !!id,
@@ -122,12 +122,12 @@ const MemoryCards = () => {
             <div className={base.titleInner}>
                 <BackButton />
 
-                {!error && currentCardNumber !== data?.cards?.length && (
+                {!isError && currentCardNumber !== data?.cards?.length && (
                     <ProgressSteps current={currentCardNumber + 1} all={data?.cards?.length} />
                 )}
             </div>
 
-            {error ? (
+            {isError ? (
                 <NotContent text="Ошибка при загрузке карточек" icon={<Cross />} danger />
             ) : (
                 <>

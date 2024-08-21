@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { UserShortInfo } from '@/entities/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 import { initSessionId, initUser, setIsAuth } from '@/store/slices/user';
-import { UserShortInfo } from '@/entities/user';
 import { setAppIsLoading, setAuthIsLoading } from '@/store/slices/app';
 import useRequest from '@/shared/hooks/useRequest';
 
@@ -23,15 +23,6 @@ const useCheckAuth = () => {
 
         dispatch(setAppIsLoading(true));
         dispatch(setAuthIsLoading(true));
-        // const refresh = await request<{ accessToken: string }>({ url: '/auth/refresh' });
-
-        // if (catchRequestError(refresh)) {
-        //     return errorController(refresh, checkAuth, '', clearLocalData);
-        // }
-
-        // if ('data' in refresh) {
-        //     localStorage.setItem('accessToken', refresh.data.accessToken);
-        // }
 
         const data = await request<UserShortInfo>({ url: '/user/short-info', isAuth: true });
 

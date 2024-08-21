@@ -9,17 +9,18 @@ import { QRCode } from 'antd';
 import auth from '@/shared/styles/auth.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import type { LoginData } from '@/entities/user';
 import useReload from '@/shared/hooks/useReload';
 import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
-import { Text } from '@/shared/ui/Text';
-import { IconButton, Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { useLogin } from '@/features/user';
 import { socket } from '@/api/socket';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { Reload } from '@/shared/icons/Reload';
-import type { LoginData } from '@/entities/user';
+
+import { Text } from '@/shared/ui/Text';
+import { IconButton, Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
 
 const Login = () => {
     const [uniqId, setUniqId] = React.useState<string>('');
@@ -79,6 +80,10 @@ const Login = () => {
                             maxLength: {
                                 value: 20,
                                 message: 'Максимальная длина никнейма 20 символов',
+                            },
+                            pattern: {
+                                value: /^[a-zA-Z0-9._]+$/,
+                                message: 'Никнейм может содержать только латинские буквы, цифры и _',
                             },
                         })}
                         title="Никнейм"

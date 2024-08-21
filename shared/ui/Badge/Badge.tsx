@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import cn from 'classnames';
 import { HTMLAttributes } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
+import useShortInfo from '@/features/user/data/useShortInfo';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {
@@ -29,7 +31,17 @@ const Badge: React.FC<Props> = ({
     className,
     ...props
 }) => {
-    const isHideAvatars = useAppSelector((state) => state.user.user?.settings.isHideAvatars);
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { settings } = user?.user || {};
+    const { isHideAvatars } = settings || {};
 
     return (
         <div

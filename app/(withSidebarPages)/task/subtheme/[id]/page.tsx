@@ -28,19 +28,21 @@ const TaskSubThemePage = () => {
 
     const [infoMenu, setInfoMenu] = React.useState(false);
 
+    const isAuth = useAppSelector((state) => state.user.isAuth);
     const { getTasksBySubThemeId, getSubThemeInfo } = useTask();
     const { getUserPermissions } = useUserPermissions();
 
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
+        enabled: isAuth,
     });
 
-    const { data, isLoading, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isLoading, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['task_by_subtheme_id', id],
         queryFn: (param) => getTasksBySubThemeId(param.pageParam, String(id)),
         initialPageParam: 0,
@@ -55,7 +57,7 @@ const TaskSubThemePage = () => {
     const {
         data: subthemeInfo,
         isLoading: subthemeInfoIsLoading,
-        error: subthemeInfoError,
+        isError: subthemeInfoError,
     } = useQuery({
         queryKey: ['subtheme_info_by_id', id],
         queryFn: () => getSubThemeInfo(String(id)),
@@ -73,7 +75,7 @@ const TaskSubThemePage = () => {
                             <TaskItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                 ) : data?.pages[0]?.totalCount === 0 ? (
                     <NotContent text="Заданий не найдено" />

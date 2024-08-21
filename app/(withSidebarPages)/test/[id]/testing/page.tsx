@@ -50,7 +50,7 @@ const TestingTestById = () => {
     const {
         data: test,
         isLoading: testIsLoading,
-        error,
+        isError,
     } = useQuery({
         queryKey: ['test_by_id', id],
         queryFn: () => getTestById(String(id)),
@@ -60,7 +60,7 @@ const TestingTestById = () => {
     const {
         data: detailedAnswerTasks,
         isLoading: detailedAnswerTasksIsLoading,
-        error: detailedAnswerTasksError,
+        isError: detailedAnswerTasksError,
     } = useQuery({
         queryKey: ['detailed_tasks_by_test_id', id],
         queryFn: () => getDetailedTasksByTestId(String(id)),

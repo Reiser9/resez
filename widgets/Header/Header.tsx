@@ -16,6 +16,7 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useLogout } from '@/features/user';
 import { getHolidayEvent } from '@/shared/utils/getHolidayEvent';
 import useNotify from '@/features/notify/useNotify';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { ConfirmModal } from '@/shared/ui/Modal';
 import { Logo } from '@/shared/ui/Logo';
@@ -39,15 +40,23 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { showSidebar, setShowSidebar } = useSidebarContext();
     const { isLoading, logout } = useLogout();
     const { getUnreadNotifies } = useNotify();
-    const { isAuth, user } = useAppSelector((state) => state.user);
-    const { avatar, levelInfo, nickname, balance } = user || {};
-    const { level } = levelInfo || {};
+    const { getShortInfo } = useShortInfo();
+    const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const { data: unreadNotifiesCount } = useQuery({
         queryKey: ['notify_count'],
         queryFn: () => getUnreadNotifies(),
         enabled: isAuth,
     });
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth
+    });
+
+    const { avatar, levelInfo, nickname, balance } = user?.user || {};
+    const { level } = levelInfo || {};
 
     const closeProfileMenu = () => {
         setProfileMenu(false);

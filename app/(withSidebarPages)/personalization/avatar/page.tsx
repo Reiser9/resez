@@ -24,7 +24,7 @@ const PersonalizationAvatar = () => {
         queryClient.resetQueries({ queryKey: ['profile_avatars'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['profile_avatars'],
         queryFn: getPaginationProfileAvatars,
         initialPageParam: 0,
@@ -43,7 +43,7 @@ const PersonalizationAvatar = () => {
                         <AvatarItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={base.contentItems}>

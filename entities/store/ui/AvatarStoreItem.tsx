@@ -4,16 +4,18 @@ import React from 'react';
 import cn from 'classnames';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 import { Tooltip } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { ProductDTO } from '../model';
-import { Text } from '@/shared/ui/Text';
-
-import { Badge } from '@/shared/ui/Badge';
+import type { ProductDTO } from '../model';
+import useShortInfo from '@/features/user/data/useShortInfo';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { Added, Check, Clapperboard, DotsHorizontal, Photo, ResCoin } from '@/shared/icons';
+
+import { Text } from '@/shared/ui/Text';
+import { Badge } from '@/shared/ui/Badge';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 import { ConfirmModal } from '@/shared/ui/Modal';
@@ -29,9 +31,6 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
 
     const [actionMenu, setActionMenu] = React.useState(false);
 
-    const { user } = useAppSelector((state) => state.user);
-    const { avatar, nickname } = user || {};
-
     const playerRef = React.useRef<LottieRefCurrentProps>(null);
     const [animationData, setAnimationData] = React.useState<any | null>(null);
     const [isHovered, setIsHovered] = React.useState(false);
@@ -39,6 +38,18 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
 
     const [confirmBuyModal, setConfirmBuyModal] = React.useState(false);
 
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { avatar, nickname } = user?.user || {};
+
+    // ВЫНЕСТИ ОБРАБОТКУ АНИМАЦИИ В ОТДЕЛЬНУЮ ФУНКЦИЮ
     React.useEffect(() => {
         const fetchAnimationData = async () => {
             try {
@@ -107,7 +118,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                         </div>
                     )}
 
-                    <Badge image={avatar} text={nickname || "R"} style={{ width: 92, height: 92 }} />
+                    <Badge image={avatar} text={nickname || 'R'} style={{ width: 92, height: 92 }} />
 
                     <div
                         className={styles.avatarItemAvatarWrapper}

@@ -4,6 +4,7 @@ import React, { HTMLAttributes } from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -12,6 +13,7 @@ import type { Message } from '@/entities/messenger';
 import { formatDate } from '@/shared/utils/formatDate';
 import { Pencil } from '@/shared/icons';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Audio } from '../Audio';
 import { Text } from '../Text';
@@ -40,7 +42,14 @@ const DialogMessageItem: React.FC<Props> = ({
     const { id, createdAt, updatedAt, isEdited, message, sender, type } = data || {};
     const { avatar, nickname, id: userId } = sender || {};
 
-    const myId = useAppSelector((state) => state.user.user?.id);
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { id: myId } = user?.user || {};
 
     return (
         <div

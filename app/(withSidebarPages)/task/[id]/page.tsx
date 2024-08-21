@@ -17,25 +17,28 @@ import { TextPoint } from '@/shared/ui/TextPoint';
 import { Text } from '@/shared/ui/Text';
 import { InfoSidebar } from '@/shared/ui/InfoSidebar';
 import { useUserPermissions } from '@/features/user';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const TaskPage = () => {
     const { id } = useParams();
 
     const [infoMenu, setInfoMenu] = React.useState(false);
 
+    const isAuth = useAppSelector((state) => state.user.isAuth);
     const { getTaskById } = useTask();
     const { getUserPermissions } = useUserPermissions();
 
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
+        enabled: isAuth,
     });
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['task_by_id', id],
         queryFn: () => getTaskById(String(id)),
         enabled: !!id,

@@ -34,7 +34,7 @@ const MemoryLiked = () => {
         queryClient.invalidateQueries({ queryKey: ['collections_liked'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
         queryKey: ['collections_liked'],
         queryFn: (page) => getLikedPaginationCollections(page.pageParam, searchValue),
         initialPageParam: 0,
@@ -69,7 +69,10 @@ const MemoryLiked = () => {
                     <div className={base.titleInner}>
                         <Text variant="h3">
                             Коллекции{' '}
-                            {!isPending && !error && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                            {!isPending &&
+                                !isError &&
+                                !!data?.pages[0]?.totalCount &&
+                                `(${data?.pages[0]?.totalCount})`}
                         </Text>
 
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -81,7 +84,7 @@ const MemoryLiked = () => {
                                 <CollectionItemSkeleton key={id} />
                             ))}
                         </div>
-                    ) : error ? (
+                    ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data?.pages[0]?.totalCount === 0 ? (
                         searchValue ? (

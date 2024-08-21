@@ -10,17 +10,18 @@ import base from '@/shared/styles/base.module.scss';
 import styles from '../../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection/model';
-import { Button, IconButton } from '@/shared/ui/Button';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Input } from '@/shared/ui/Input';
 import { Excel } from '@/shared/icons';
 import useAlert from '@/shared/hooks/useAlert';
 import { useCollections, useHandlers } from '@/features/collection';
 import ImportExcel from '../../create/ui/ImportExcel';
 import PairItem from '../../create/ui/PairItem';
 import PairItemForm from '../../create/ui/PairItemForm';
-import { useAppSelector } from '@/shared/hooks/useRedux';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { Button, IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
+import { Input } from '@/shared/ui/Input';
 
 const MemoryEdit = () => {
     const [importExcelModal, setImportExcelModal] = React.useState(false);
@@ -40,16 +41,23 @@ const MemoryEdit = () => {
 
     const { alertNotify } = useAlert();
     const { updateCollection, getCollectionById } = useCollections();
+    const { getShortInfo } = useShortInfo();
     const { validateHandler, scrollBottom } = useHandlers();
     const router = useRouter();
     const { id } = useParams();
-    const userId = useAppSelector((state) => state.user.user?.id);
 
-    const { data, error, isLoading } = useQuery({
+    const { data, isError, isLoading } = useQuery({
         queryKey: ['collection_by_id', id],
         queryFn: () => getCollectionById(String(id)),
         enabled: !!id,
     });
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { id: userId } = user?.user || {};
 
     const addNewPair = () => {
         setPairs((prev) => [
@@ -120,10 +128,10 @@ const MemoryEdit = () => {
     }, [data]);
 
     React.useEffect(() => {
-        if (error) {
+        if (isError) {
             return router.replace('/training/memo');
         }
-    }, [error]);
+    }, [isError]);
 
     if (isLoading) {
         return <Preloader page />;

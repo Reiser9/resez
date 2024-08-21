@@ -5,12 +5,14 @@ import Link from 'next/link';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import type { Collection } from '@/entities/collection';
 import { ArrowRightLong, Delete, DotsHorizontal, Edit, Heart, Lock, Photo } from '@/shared/icons';
+import useShortInfo from '@/features/user/data/useShortInfo';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { Text } from '../Text';
@@ -34,9 +36,17 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
     const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
     const [deleteCollectionModal, setDeleteCollectionModal] = React.useState(false);
 
-    const currentUserId = useAppSelector((state) => state.user.user?.id);
-
     const router = useRouter();
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+    const { getShortInfo } = useShortInfo();
+
+    const { data: userInfo, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { id: currentUserId } = userInfo?.user || {};
 
     return (
         <div className={cn(base.item3, styles.collectionItem)} style={style}>

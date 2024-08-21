@@ -17,7 +17,7 @@ import { Text } from '@/shared/ui/Text';
 const AdminPage = () => {
     const { getAdminStats } = useStats();
 
-    const { data, isPending, error } = useQuery({
+    const { data, isPending, isError } = useQuery({
         queryKey: ['admin_stat'],
         queryFn: getAdminStats,
         refetchInterval: 5000,
@@ -33,7 +33,7 @@ const AdminPage = () => {
         <div className={base.baseWrapperGap16}>
             <Text variant="h3">Статистика</Text>
 
-            {error ? (
+            {isError ? (
                 <NotContent text="Ошибка при загрузке статистики" icon={<Cross />} danger />
             ) : (
                 <div className={styles.adminStats}>

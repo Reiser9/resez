@@ -27,7 +27,7 @@ const AdminWarns = () => {
         queryClient.resetQueries({ queryKey: ['warns'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['warns'],
         queryFn: (param) => getPagginationWarns(param.pageParam),
         initialPageParam: 0,
@@ -44,7 +44,7 @@ const AdminWarns = () => {
                 <div className={base.titleInner}>
                     <Text variant="h3">
                         Жалобы{' '}
-                        {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                        {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -56,7 +56,7 @@ const AdminWarns = () => {
                             <CollectionItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                 ) : data.pages[0]?.totalCount ? (
                     <div className={base.contentItems}>
@@ -74,7 +74,7 @@ const AdminWarns = () => {
                     <NotContent text="Жалоб не найдено" />
                 )}
 
-                {!error && hasNextPage && (
+                {!isError && hasNextPage && (
                     <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                         Показать еще
                     </Button>

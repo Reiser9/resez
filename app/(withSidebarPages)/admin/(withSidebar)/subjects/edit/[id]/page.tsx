@@ -276,7 +276,7 @@ const SubjectEdit = () => {
         setElements(currentData);
     };
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['subject_by_id', id],
         queryFn: () => getSubjectById(String(id)),
         enabled: !!id,
@@ -285,7 +285,7 @@ const SubjectEdit = () => {
     const {
         data: subjectPoints,
         isLoading: subjectPointsIsLoading,
-        error: subjectPointsError,
+        isError: subjectPointsError,
     } = useQuery({
         queryKey: ['subject_points_by_id', id],
         queryFn: () => getPointsSubjectById(String(id)),
@@ -391,7 +391,7 @@ const SubjectEdit = () => {
         return <Preloader page />;
     }
 
-    if (error) {
+    if (isError) {
         return <NotContent icon={<Cross />} text="Ошибка при загрузке данных" danger />;
     }
 

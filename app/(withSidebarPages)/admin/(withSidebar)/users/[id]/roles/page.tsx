@@ -15,20 +15,24 @@ const AdminUserByIdRoles = () => {
     const { id } = useParams();
     const { getPaginationRoles, assignRole } = useRoles();
 
-    const { data, isPending, error } = useQuery({
+    const { data, isPending, isError } = useQuery({
         queryKey: ['roles'],
         queryFn: () => getPaginationRoles(0),
     });
 
-    return <div className={base.baseWrapperGap16}>
-        <div className={styles.rolesContent}>
-            {data?.roles.map(data => <div key={data.id} className={styles.rolesItem}>
-                <Text center>{data.role}</Text>
+    return (
+        <div className={base.baseWrapperGap16}>
+            <div className={styles.rolesContent}>
+                {data?.roles.map((data) => (
+                    <div key={data.id} className={styles.rolesItem}>
+                        <Text center>{data.role}</Text>
 
-                <Button onClick={() => assignRole(String(id), data.id)}>Выдать роль</Button>
-            </div>)}
+                        <Button onClick={() => assignRole(String(id), data.id)}>Выдать роль</Button>
+                    </div>
+                ))}
+            </div>
         </div>
-    </div>;
+    );
 };
 
 export default AdminUserByIdRoles;

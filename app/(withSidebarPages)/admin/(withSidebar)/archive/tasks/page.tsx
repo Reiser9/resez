@@ -22,7 +22,7 @@ const AdminArchiveTasks = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -39,7 +39,7 @@ const AdminArchiveTasks = () => {
         queryClient.resetQueries({ queryKey: ['archive_tasks'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['archive_tasks'],
         queryFn: (param) => getArhiveTasks(param.pageParam),
         initialPageParam: 0,
@@ -54,7 +54,8 @@ const AdminArchiveTasks = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Задания {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                    Задания{' '}
+                    {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -66,7 +67,7 @@ const AdminArchiveTasks = () => {
                         <TaskItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Ошибка при загрузке заданий" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>

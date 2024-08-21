@@ -10,16 +10,9 @@ import base from '@/shared/styles/base.module.scss';
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
 import { useTest } from '@/features/test';
-import { Preloader } from '@/shared/ui/Preloader';
 import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { Date, Delete, DotsHorizontal, Lock, Settings, TypesVariantStart } from '@/shared/icons';
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { Text } from '@/shared/ui/Text';
 import { formatDate } from '@/shared/utils/formatDate';
-import { NotContent } from '@/shared/ui/NotContent';
-import { ConfirmModal } from '@/shared/ui/Modal';
-import { LinkBlock } from '@/shared/ui/LinkBlock';
-import { Badge } from '@/shared/ui/Badge';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
@@ -27,20 +20,38 @@ import TestQuestionItem from '@/entities/test/ui/TestQuestionItem';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import useCopyText from '@/features/utils/useCopyText';
 import { useUserPermissions } from '@/features/user';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
+import { Text } from '@/shared/ui/Text';
+import { NotContent } from '@/shared/ui/NotContent';
+import { ConfirmModal } from '@/shared/ui/Modal';
+import { LinkBlock } from '@/shared/ui/LinkBlock';
+import { Badge } from '@/shared/ui/Badge';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const TestPage = () => {
     const { getUserPermissions } = useUserPermissions();
+    const { getShortInfo } = useShortInfo();
+    const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
+        enabled: isAuth,
     });
-    const userId = useAppSelector((state) => state.user.user?.id);
-    const isAuth = useAppSelector((state) => state.user.isAuth);
+
+    const { data: userInfo, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { id: userId } = userInfo?.user || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmDelete, setConfirmDelete] = React.useState(false);
@@ -53,7 +64,7 @@ const TestPage = () => {
     const {
         data: test,
         isLoading: testIsLoading,
-        error,
+        isError,
     } = useQuery({
         queryKey: ['test_by_id', id],
         queryFn: () => getTestById(String(id)),

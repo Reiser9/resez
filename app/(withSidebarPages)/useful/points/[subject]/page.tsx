@@ -19,7 +19,7 @@ const PointsSubject = () => {
     const { subject } = useParams();
     const { getPointsSubjectBySlug } = useSubjects();
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['subject_points', subject],
         queryFn: () => getPointsSubjectBySlug(String(subject)),
         enabled: !!subject,
@@ -31,7 +31,7 @@ const PointsSubject = () => {
         return <Preloader />;
     }
 
-    if (error) {
+    if (isError) {
         return <NotContent icon={<Cross />} danger text="Произошла ошибка при загрузке данных" />;
     }
 

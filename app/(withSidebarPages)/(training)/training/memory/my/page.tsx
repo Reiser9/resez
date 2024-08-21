@@ -35,7 +35,7 @@ const MemoryMy = () => {
         queryClient.invalidateQueries({ queryKey: ['collections'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
         queryKey: ['collections'],
         queryFn: (param) => getPaginationCollections(param.pageParam, searchValue),
         initialPageParam: 0,
@@ -72,7 +72,7 @@ const MemoryMy = () => {
                             <Text variant="h3">
                                 Коллекции{' '}
                                 {!isPending &&
-                                    !error &&
+                                    !isError &&
                                     !!data?.pages[0]?.totalCount &&
                                     `(${data?.pages[0]?.totalCount})`}
                             </Text>
@@ -93,7 +93,7 @@ const MemoryMy = () => {
                                 <CollectionItemSkeleton key={id} />
                             ))}
                         </div>
-                    ) : error ? (
+                    ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data?.pages[0]?.totalCount === 0 ? (
                         searchValue ? (

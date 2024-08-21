@@ -22,7 +22,7 @@ const AdminUsers = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -30,7 +30,7 @@ const AdminUsers = () => {
     const { usersIsLoading, getPaginationUsers, blockUser, unblockUser } = useUsers();
     const queryClient = useQueryClient();
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['adminUsers'],
         queryFn: (param) => getPaginationUsers(param.pageParam),
         initialPageParam: 0,
@@ -56,7 +56,10 @@ const AdminUsers = () => {
                 <div className={base.titleInner}>
                     <Text variant="h3">
                         Пользователи{' '}
-                        {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
+                        {!isError &&
+                            !isPending &&
+                            data?.pages[0]?.totalCount !== 0 &&
+                            `(${data?.pages[0]?.totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -68,7 +71,7 @@ const AdminUsers = () => {
                             <UserAdminItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                 ) : data?.pages[0]?.totalCount === 0 ? (
                     <NotContent text="Пользователей не найдено" />

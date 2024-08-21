@@ -42,7 +42,7 @@ const AdminTaskCreate = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -52,10 +52,8 @@ const AdminTaskCreate = () => {
     const [isVerified, setIsVerified] = React.useState(false);
     const [theme, setTheme] = React.useState<string | null>(null);
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
-    const [answers, setAnswers] = React.useState<string[]>([]);
-    const [answer, setAnswer] = React.useState('');
+    const [answers, setAnswers] = React.useState<string[]>(['']);
     const [source, setSource] = React.useState('');
-    const [isDetailedAnswerTask, setIsDetailedAnswerTask] = React.useState(false);
 
     const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
     const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
@@ -84,7 +82,7 @@ const AdminTaskCreate = () => {
     const {
         data: subjectsData,
         isLoading: subjectsIsLoading,
-        error: subjectsError,
+        isError: subjectsError,
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
@@ -93,7 +91,7 @@ const AdminTaskCreate = () => {
     const {
         data: themesData,
         isLoading: themesIsLoading,
-        error: themesError,
+        isError: themesError,
     } = useQuery({
         queryKey: ['themes', subject],
         queryFn: () => getSubjectThemes(String(subject)),
@@ -103,7 +101,7 @@ const AdminTaskCreate = () => {
     const {
         data: subThemesData,
         isLoading: subThemesIsLoading,
-        error: subThemesError,
+        isError: subThemesError,
     } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
@@ -111,12 +109,11 @@ const AdminTaskCreate = () => {
     });
 
     const addAnswer = () => {
-        if (!answer) {
+        if (!(answers[answers.length - 1] || '').trim()) {
             return;
         }
 
-        setAnswers((prev) => [...prev, answer]);
-        setAnswer('');
+        setAnswers((prev) => [...prev, '']);
     };
 
     const removeAnswer = (id: number) => {
@@ -124,12 +121,6 @@ const AdminTaskCreate = () => {
 
         newAnswers.splice(id, 1);
         setAnswers(newAnswers);
-    };
-
-    const removeAnswerForm = () => {
-        const lastAnswer = answers.splice(-1)[0];
-        setAnswer(lastAnswer);
-        setAnswers(answers);
     };
 
     const changeAnswer = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>, id: number) => {
@@ -158,8 +149,8 @@ const AdminTaskCreate = () => {
             return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
         }
 
-        const trimAnswer = (answer || '').trim();
-        let allAnswers = trimAnswer ? [...answers, trimAnswer] : [...answers];
+        const lastAnswer = (answers[answers.length - 1] || '').trim();
+        let allAnswers = lastAnswer ? answers : answers.slice(0, -1);
 
         createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, allAnswers, source, () => {
             router.back();
@@ -274,6 +265,7 @@ const AdminTaskCreate = () => {
                         title="Предмет"
                         notContentText="Предметов не найдено"
                         loading={subjectsIsLoading}
+                        error={subjectsError}
                         value={subject}
                         onChange={(value) => setSubject(value)}
                         options={subjectsFilter?.map((data) => {
@@ -292,6 +284,7 @@ const AdminTaskCreate = () => {
                             title="Номер задания"
                             notContentText="Заданий не найдено"
                             loading={themesIsLoading}
+                            error={themesError}
                             value={theme}
                             onChange={(value) => setTheme(value)}
                             options={themesFilter?.map((data) => {
@@ -311,6 +304,7 @@ const AdminTaskCreate = () => {
                             title="Тема"
                             notContentText="Тем не найдено"
                             loading={subThemesIsLoading}
+                            error={subThemesError}
                             value={subTheme}
                             onChange={(value) => setSubTheme(value)}
                             options={subThemesFilter?.map((data) => {
@@ -343,38 +337,24 @@ const AdminTaskCreate = () => {
                             <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
 
                             <div className={styles.answerWrapper}>
-                                <Text variant="text3">Ответ{!!answers.length && 'ы'}</Text>
+                                <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
                                 {answers.map((answer, id) => (
                                     <div key={id} className={styles.answerItem}>
                                         <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
 
-                                        <IconButton
-                                            variant="danger"
-                                            small
-                                            circle
-                                            className={styles.answerItemDelete}
-                                            onClick={() => removeAnswer(id)}
-                                        >
-                                            <Delete />
-                                        </IconButton>
+                                        {answers.length > 1 && (
+                                            <IconButton
+                                                variant="danger"
+                                                small
+                                                circle
+                                                className={styles.answerItemDelete}
+                                                onClick={() => removeAnswer(id)}
+                                            >
+                                                <Delete />
+                                            </IconButton>
+                                        )}
                                     </div>
                                 ))}
-
-                                <div className={styles.answerItem}>
-                                    <Input value={answer} setValue={setAnswer} />
-
-                                    {!!answers.length && (
-                                        <IconButton
-                                            variant="danger"
-                                            small
-                                            circle
-                                            className={styles.answerItemDelete}
-                                            onClick={removeAnswerForm}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    )}
-                                </div>
                             </div>
 
                             <Button variant="light" auto onClick={addAnswer}>

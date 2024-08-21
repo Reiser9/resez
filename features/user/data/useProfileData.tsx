@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { ProfileInfo, ProfileInfoDTO, UserProfile } from '@/entities/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { ProfileInfo, ProfileInfoDTO, UserProfile } from '@/entities/user';
 import { initProfileInfo } from '@/store/slices/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 
@@ -31,7 +31,6 @@ const useProfileData = () => {
         successCallback();
 
         if ('data' in response) {
-            dispatch(initProfileInfo(response.data.user));
             return response.data.user;
         }
     };

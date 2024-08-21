@@ -18,10 +18,12 @@ import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useSubjects } from '@/features/subjects';
 import { useUserPermissions } from '@/features/user';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const TestsSubject = () => {
     const { subject } = useParams();
     const { getUserPermissions } = useUserPermissions();
+    const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const {
         data: permissions,
@@ -30,6 +32,7 @@ const TestsSubject = () => {
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
+        enabled: isAuth,
     });
 
     const { getPagginationOfficialTests, deleteTest } = useTest();
@@ -41,7 +44,7 @@ const TestsSubject = () => {
         queryClient.invalidateQueries({ queryKey: ['official_tests_by_subject'] });
     };
 
-    const { data, isPending, error } = useInfiniteQuery({
+    const { data, isPending, isError } = useInfiniteQuery({
         queryKey: ['official_tests_by_subject'],
         queryFn: (params) => getPagginationOfficialTests(params.pageParam, String(subject)),
         initialPageParam: 0,
@@ -56,7 +59,7 @@ const TestsSubject = () => {
     const {
         data: taskCatalog,
         isPending: taskCatalogIsLoading,
-        error: taskCatalogError,
+        isError: taskCatalogError,
     } = useQuery({
         queryKey: ['tasks_catalog_by_subject'],
         queryFn: () => getTasksCatalogBySubject(String(subject)),
@@ -83,7 +86,7 @@ const TestsSubject = () => {
                                 <TestItemSkeleton key={id} />
                             ))}
                         </div>
-                    ) : error ? (
+                    ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data.pages[0]?.totalCount ? (
                         <div className={base.contentItems}>
@@ -112,10 +115,10 @@ const TestsSubject = () => {
                 <div className={base.contentItems}>
                     {taskCatalogIsLoading ? (
                         [...Array(4)].map((_, id) => <CatalogItemSkeleton key={id} />)
-                    ) : error ? (
+                    ) : taskCatalogError ? (
                         <NotContent text="Ошибка при загрузке тестов" danger icon={<Cross />} />
                     ) : !!taskCatalog?.length ? (
-                        taskCatalog?.map((data) => <CatalogItem key={data.id} data={data} />)
+                        taskCatalog.map((data) => <CatalogItem key={data.id} data={data} />)
                     ) : (
                         <NotContent text="Заданий не найдено" />
                     )}

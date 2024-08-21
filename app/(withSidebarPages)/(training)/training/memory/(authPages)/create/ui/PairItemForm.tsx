@@ -3,17 +3,19 @@
 import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from '../../../index.module.scss';
 
-import { IconButton } from '@/shared/ui/Button';
+import type { PairDTO } from '@/entities/collection';
 import { Delete, Photo, ResezPremium, Swap } from '@/shared/icons';
+import { useCollections } from '@/features/collection';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { IconButton } from '@/shared/ui/Button';
 import { File } from '@/shared/ui/File';
 import { Input } from '@/shared/ui/Input';
-import { PairDTO } from '@/entities/collection';
-import { useCollections } from '@/features/collection';
 import { Text } from '@/shared/ui/Text';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 
 type Props = {
     pairs: PairDTO[];
@@ -46,8 +48,15 @@ const PairItemForm: React.FC<Props> = ({
     answerPicture,
     setAnswerPicture,
 }) => {
-    const subscription = useAppSelector((state) => state.user.user?.subscription);
+    const { getShortInfo } = useShortInfo();
     const { uploadImage } = useCollections();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { subscription } = user?.user || {};
 
     const enterNewPair = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {

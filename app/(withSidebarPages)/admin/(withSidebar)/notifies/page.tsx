@@ -65,7 +65,7 @@ const AdminNotifies = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -74,7 +74,7 @@ const AdminNotifies = () => {
     const {
         data: notifyTypes,
         isPending,
-        error,
+        isError,
     } = useQuery({
         queryKey: ['notify_types'],
         queryFn: getNotifyTypes,
@@ -83,7 +83,7 @@ const AdminNotifies = () => {
     const {
         data: users,
         isPending: usersIsLoading,
-        error: usersError,
+        isError: usersError,
     } = useQuery({
         queryKey: ['users_short_search', userSearchDebounce],
         queryFn: () => getPaginationUsersShort(0, userSearchDebounce),

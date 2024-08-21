@@ -37,7 +37,7 @@ const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) =>
 
     const { isLoading: settingsIsLoading, getCollectionSettings, updateSettings } = useCollections();
 
-    const { data, isLoading, error, refetch, isFetching } = useQuery({
+    const { data, isLoading, isError, refetch, isFetching } = useQuery({
         queryKey: ['memory_settings', id],
         queryFn: getCollectionSettings,
         enabled: openModal && isAuth,
@@ -114,7 +114,7 @@ const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) =>
     return (
         <Modal title="Настройки" value={openModal} setValue={setOpenModal} size="small">
             {isAuth ? (
-                error ? (
+                isError ? (
                     <NotContent text="Ошибка при загрузке настроек" danger icon={<Settings />}>
                         <Button variant="light" auto onClick={refetch} loading={isFetching} small>
                             Загрузить еще раз

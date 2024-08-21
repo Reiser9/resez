@@ -14,7 +14,6 @@ import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { Select } from '@/shared/ui/Select';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useProfileData, useAvatar } from '@/features/user';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Upload, Delete, Paintbruh } from '@/shared/icons';
@@ -43,7 +42,6 @@ const ProfileData = () => {
 
     const { dataIsSaving, getProfileData, saveProfileData } = useProfileData();
     const { isLoading: avatarLoading, deleteAvatar, updateAvatar } = useAvatar();
-    const profileInfo = useAppSelector((state) => state.user.profileInfo);
 
     const { data, isLoading } = useQuery({
         queryKey: ['profile_data'],
@@ -76,15 +74,15 @@ const ProfileData = () => {
     }, [avatarFile]);
 
     React.useEffect(() => {
-        if (profileInfo) {
-            const { firstName, lastName, birthDate, gender } = profileInfo;
+        if (data) {
+            const { firstName, lastName, birthDate, gender } = data;
 
             setName(firstName || '');
             setSurname(lastName || '');
             setBirthday(birthDate ? dayjs(birthDate) : undefined);
             setSex(gender || null);
         }
-    }, [profileInfo]);
+    }, [data]);
 
     if (isLoading) {
         return <Preloader page />;
@@ -100,14 +98,14 @@ const ProfileData = () => {
                 <div className={styles.dataAvatar}>
                     <div className={styles.dataAvatarOutline}>
                         <div className={styles.dataAvatarBackground}>
-                            <Badge image={avatar} text={nickname ?? "No"} style={{width: "100%", height: "100%"}} />
+                            <Badge image={avatar} text={nickname ?? 'No'} style={{ width: '100%', height: '100%' }} />
 
                             {avatarLoading && <Preloader small />}
                         </div>
                     </div>
 
                     <Text variant="text2" className={styles.dataAvatarText}>
-                        Максимальный размер файла - 2MB
+                        Максимальный размер файла - {process.env.NEXT_PUBLIC_MAX_SIZE} MB
                     </Text>
 
                     <div className={styles.dataAvatarActions}>

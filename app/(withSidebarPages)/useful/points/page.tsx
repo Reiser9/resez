@@ -11,7 +11,7 @@ import { Cross } from '@/shared/icons';
 const UsefulPoints = () => {
     const { getSubjects } = useSubjects();
 
-    const { data, error } = useQuery({
+    const { data, isError } = useQuery({
         queryKey: ['subjects'],
         queryFn: getSubjects,
     });
@@ -32,7 +32,7 @@ const UsefulPoints = () => {
                 <NotContent
                     danger
                     icon={<Cross />}
-                    text={error ? 'Произошла ошибка при загрузке данных' : 'Таблицы баллов еще не созданы'}
+                    text={isError ? 'Произошла ошибка при загрузке данных' : 'Таблицы баллов еще не созданы'}
                 />
             )}
         </>

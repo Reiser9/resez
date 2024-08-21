@@ -3,7 +3,7 @@
 import React, { HTMLAttributes } from 'react';
 import cn from 'classnames';
 import { Checkbox, Tooltip } from 'antd';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -11,9 +11,9 @@ import styles from './index.module.scss';
 
 import type { ChatItem } from '@/entities/messenger';
 import { Block, Delete, DotsHorizontal, Enter, Mute, Pin } from '@/shared/icons';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 import { useChat, useMessenger } from '@/features/messenger';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Badge } from '../Badge';
 import { IconButton } from '../Button';
@@ -43,10 +43,16 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
         queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
     };
 
-    const userId = useAppSelector((state) => state.user.user?.id);
-
     const { clearChatHistory } = useMessenger();
     const { leaveFromChat, returnInChat } = useChat();
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { id: userId } = user?.user || {};
 
     const leaveFromChatHandler = async () => {
         await leaveFromChat(id, deleteHistoryCheckbox, () => {

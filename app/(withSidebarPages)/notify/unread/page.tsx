@@ -17,7 +17,7 @@ const UnreadNotifyPage = () => {
     const { isLoading, notifyIsLoading, getPaginationNotifies, readNotifyById, readAllNotifies } = useNotify();
     const queryClient = useQueryClient();
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['notify'],
         queryFn: (param) => getPaginationNotifies(param.pageParam, true),
         initialPageParam: 0,
@@ -51,7 +51,7 @@ const UnreadNotifyPage = () => {
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
                         Уведомления{' '}
-                        {!error && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
+                        {!isError && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -74,7 +74,7 @@ const UnreadNotifyPage = () => {
                         <NotifyItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data?.pages[0]?.totalCount === 0 ? (
                 <NotContent text="Уведомлений не найдено" />

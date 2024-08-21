@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import useSocket from '@/shared/hooks/useSocket';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { VerificationCode } from '@/widgets/VerificationCode';
 import { useCheckAuth } from '@/features/user';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Preloader } from '@/shared/ui/Preloader';
 import { ServerNotAvailable } from '@/shared/ui/ServerNotAvailable';
@@ -15,10 +17,20 @@ const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
     useCheckAuth();
     useSocket();
 
-    const { user, isAuth } = useAppSelector((state) => state.user);
+    const isAuth = useAppSelector((state) => state.user.isAuth);
     const { appIsLoading, serverIsAvailable } = useAppSelector((state) => state.app);
 
-    if (appIsLoading) {
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth
+    });
+
+    const { isBlocked, isVerified } = user?.user || {};
+
+    if (appIsLoading || userIsLoading) {
         return <Preloader />;
     }
 
@@ -26,11 +38,11 @@ const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
         return <ServerNotAvailable />;
     }
 
-    if (user?.isBlocked) {
+    if (isBlocked) {
         return <Ban />;
     }
 
-    if (isAuth && !user?.isVerified) {
+    if (isAuth && !isVerified) {
         return <VerificationCode />;
     }
 

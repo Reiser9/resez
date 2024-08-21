@@ -25,7 +25,7 @@ const AdminRoles = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -42,7 +42,7 @@ const AdminRoles = () => {
         queryClient.resetQueries({ queryKey: ['roles'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['roles'],
         queryFn: (param) => getPaginationRoles(param.pageParam),
         initialPageParam: 0,
@@ -59,7 +59,8 @@ const AdminRoles = () => {
                 <div className={base.titleInner}>
                     <div className={base.titleWrapper}>
                         <Text variant="h3">
-                            Роли {!isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                            Роли{' '}
+                            {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                         </Text>
 
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -80,7 +81,7 @@ const AdminRoles = () => {
                             <RoleItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                 ) : data.pages[0]?.totalCount ? (
                     <div className={base.contentItems}>

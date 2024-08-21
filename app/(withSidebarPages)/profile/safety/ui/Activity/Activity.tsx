@@ -24,7 +24,7 @@ const Activity = () => {
     const { isLoading, getSessions, endAllSessions } = useSessions();
     const router = useRouter();
 
-    const { data, isFetching, error } = useQuery({ queryKey: ['sessions_short'], queryFn: getSessions });
+    const { data, isFetching, isError } = useQuery({ queryKey: ['sessions_short'], queryFn: getSessions });
 
     const revalidateSessions = () => {
         queryClient.invalidateQueries({ queryKey: ['sessions_short'] });
@@ -44,7 +44,7 @@ const Activity = () => {
                 </IconButton>
             </div>
 
-            {error ? (
+            {isError ? (
                 <NotContent text="Ошибка при загрузке сеансов" icon={<Cross />} danger />
             ) : (
                 <>

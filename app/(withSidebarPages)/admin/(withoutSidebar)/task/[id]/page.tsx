@@ -15,7 +15,6 @@ import { InfoSidebar } from '@/shared/ui/InfoSidebar';
 import TaskTestItem from '@/entities/task/ui/TaskTestItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useUserPermissions } from '@/features/user';
 
 const TaskPage = () => {
@@ -26,7 +25,7 @@ const TaskPage = () => {
     const { getTaskById } = useTask();
     const { getUserPermissions } = useUserPermissions();
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['task_by_id', id],
         queryFn: () => getTaskById(String(id), true),
         enabled: !!id,
@@ -35,7 +34,7 @@ const TaskPage = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,

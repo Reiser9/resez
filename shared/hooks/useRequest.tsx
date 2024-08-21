@@ -2,13 +2,13 @@
 
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+import type { Error } from '@/api/types';
 import axiosInstance from '@/api/axios';
 import { useAppDispatch, useAppSelector } from './useRedux';
 import { setServerIsAvailable } from '@/store/slices/app';
 import { setUserData } from '@/store/slices/user';
 import { socket } from '@/api/socket';
 import useAlert from './useAlert';
-import type { Error } from '@/api/types';
 
 type requestProps = {
     url?: string;
@@ -72,8 +72,11 @@ const useRequest = () => {
                 alertNotify('Чуть помедленнее', 'Слишком много запросов, пожалуйста, подождите', 'warn');
                 throw new Error('Слишком много запросов, пожалуйста, подождите');
             case 413:
-                alertNotify('Ошибка', 'Размер файла не должен превышать 1 МБ', 'error');
-                throw new Error('Размер файла не должен превышать 1 МБ');
+                alertNotify(
+                    `Ошибка', 'Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`,
+                    'error',
+                );
+                throw new Error(`Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`);
             default:
                 if (customLogic) {
                     customLogic();

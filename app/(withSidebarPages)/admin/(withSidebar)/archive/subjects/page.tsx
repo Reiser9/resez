@@ -22,7 +22,7 @@ const AdminArchiveSubjects = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -35,7 +35,7 @@ const AdminArchiveSubjects = () => {
         queryClient.resetQueries({ queryKey: ['archive_subjects'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['archive_subjects'],
         queryFn: (param) => getArhiveSubjects(param.pageParam),
         initialPageParam: 0,
@@ -50,7 +50,8 @@ const AdminArchiveSubjects = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Предметы {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                    Предметы{' '}
+                    {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -62,7 +63,7 @@ const AdminArchiveSubjects = () => {
                         <SubjectItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>

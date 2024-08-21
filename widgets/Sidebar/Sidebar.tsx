@@ -14,12 +14,13 @@ import { useSidebarContext } from '@/shared/context/SidebarProvider';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import useWarn from '@/features/admin/warns/useWarn';
 import useAlert from '@/shared/hooks/useAlert';
+import { useUserPermissions } from '@/features/user';
+import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 import { Modal } from '@/shared/ui/Modal';
 import { Button } from '@/shared/ui/Button';
-import { useUserPermissions } from '@/features/user';
 
 const Sidebar = () => {
     const [modalSupport, setModalSupport] = React.useState(false);
@@ -28,14 +29,16 @@ const Sidebar = () => {
     const sidebarRef = React.useRef<HTMLDivElement>(null);
 
     const { getUserPermissions } = useUserPermissions();
+    const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
+        enabled: isAuth,
     });
     const { showSidebar, setShowSidebar } = useSidebarContext();
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { socket } from '@/api/socket';
 
@@ -11,15 +11,26 @@ import useRequest from './useRequest';
 import { setUserBlockReason, setUserBlocked } from '@/store/slices/user';
 import { Message } from '@/entities/messenger';
 import { Notify } from '@/entities/notify';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 const useSocket = () => {
-    const { isAuth, user, sessionId } = useAppSelector((state) => state.user);
+    const isAuth = useAppSelector((state) => state.user.isAuth);
     const currentDialogId = useAppSelector((state) => state.messenger.currentDialogId);
     const dispatch = useAppDispatch();
     const { alertNotify } = useNotify();
     const { clearLocalData } = useRequest();
 
     const queryClient = useQueryClient();
+
+    const { getShortInfo } = useShortInfo();
+
+    const { data: userProfile, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth
+    });
+
+    const { user, sessionId } = userProfile || {};
 
     const currentDialogIdRef = React.useRef(currentDialogId);
     const currentUserIdRef = React.useRef(user?.id);

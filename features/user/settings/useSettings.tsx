@@ -2,18 +2,15 @@
 
 import React from 'react';
 
-import { useAppDispatch } from '@/shared/hooks/useRedux';
+import type { Settings } from '@/entities/user';
 import useRequest from '@/shared/hooks/useRequest';
-import { Settings } from '@/entities/user';
-import { setUserSettings } from '@/store/slices/user';
 
 const useSettings = () => {
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const dispatch = useAppDispatch();
     const { request, catchRequestError, errorController } = useRequest();
 
-    const updateSettings = async (data: Settings) => {
+    const updateSettings = async (data: Settings, successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<{ settings: Settings }>({
             url: '/user/settings',
@@ -27,8 +24,10 @@ const useSettings = () => {
             return errorController(response);
         }
 
+        successCallback();
+
         if ('data' in response) {
-            dispatch(setUserSettings(response.data.settings));
+            return response.data.settings;
         }
     };
 

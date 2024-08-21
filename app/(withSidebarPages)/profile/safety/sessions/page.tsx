@@ -29,7 +29,7 @@ const ProfileSessions = () => {
         queryClient.resetQueries({ queryKey: ['sessions'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['sessions'],
         queryFn: (param) => getPaginationSessions(param.pageParam),
         initialPageParam: 0,
@@ -51,7 +51,8 @@ const ProfileSessions = () => {
                     <BackButton />
 
                     <Text variant="h3">
-                        Сеансы {!isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount + 1})`}
+                        Сеансы{' '}
+                        {!isError && !isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount + 1})`}
                     </Text>
                 </div>
 
@@ -66,7 +67,7 @@ const ProfileSessions = () => {
                         <SessionItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : (
                 <div className={base.contentItems}>

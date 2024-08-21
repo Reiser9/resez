@@ -78,7 +78,7 @@ const AdminTests = () => {
         queryClient.resetQueries({ queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified],
         queryFn: (pageParam) =>
             getPagginationTasks(
@@ -100,7 +100,7 @@ const AdminTests = () => {
     const {
         data: subjectsData,
         isLoading: subjectsIsLoading,
-        error: subjectsError,
+        isError: subjectsError,
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
@@ -110,7 +110,7 @@ const AdminTests = () => {
     const {
         data: themesData,
         isLoading: themesIsLoading,
-        error: themesError,
+        isError: themesError,
     } = useQuery({
         queryKey: ['themes', subject],
         queryFn: () => getSubjectThemes(String(subject)),
@@ -120,7 +120,7 @@ const AdminTests = () => {
     const {
         data: subThemesData,
         isLoading: subThemesIsLoading,
-        error: subThemesError,
+        isError: subThemesError,
     } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
@@ -130,7 +130,7 @@ const AdminTests = () => {
     const {
         data: users,
         isPending: usersIsLoading,
-        error: usersError,
+        isError: usersError,
     } = useQuery({
         queryKey: ['users_short_search', userSearchDebounce],
         queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
@@ -246,7 +246,10 @@ const AdminTests = () => {
                     <div className={base.titleWrapper}>
                         <Text variant="h3">
                             Задания{' '}
-                            {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                            {!isError &&
+                                !isPending &&
+                                !!data?.pages[0]?.totalCount &&
+                                `(${data?.pages[0]?.totalCount})`}
                         </Text>
 
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -273,7 +276,7 @@ const AdminTests = () => {
                             <TaskItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Ошибка при загрузке заданий" icon={<Cross />} danger />
                 ) : data.pages[0]?.totalCount ? (
                     <div className={cn(base.baseWrapperGap16, base.aic)}>

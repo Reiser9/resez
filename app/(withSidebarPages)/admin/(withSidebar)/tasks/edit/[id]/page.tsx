@@ -45,7 +45,7 @@ const AdminTaskEdit = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -57,9 +57,7 @@ const AdminTaskEdit = () => {
     const [theme, setTheme] = React.useState<string | null>(null);
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [answers, setAnswers] = React.useState<string[]>([]);
-    const [answer, setAnswer] = React.useState('');
     const [source, setSource] = React.useState('');
-    const [isDetailedAnswerTask, setIsDetailedAnswerTask] = React.useState(false);
     const [editingIsLoading, setEditingIsLoading] = React.useState(false);
 
     const [taskEditorIsReady, setTaskEditorIsReady] = React.useState(false);
@@ -90,7 +88,7 @@ const AdminTaskEdit = () => {
     const {
         data,
         isLoading: taskIsLoading,
-        error,
+        isError,
     } = useQuery({
         queryKey: ['task_by_id', id],
         queryFn: () => getTaskById(String(id), true),
@@ -100,7 +98,7 @@ const AdminTaskEdit = () => {
     const {
         data: themesData,
         isLoading: themesIsLoading,
-        error: themesError,
+        isError: themesError,
     } = useQuery({
         queryKey: ['themes', subjectId],
         queryFn: () => getSubjectThemes(String(subjectId)),
@@ -110,7 +108,7 @@ const AdminTaskEdit = () => {
     const {
         data: subThemesData,
         isLoading: subThemesIsLoading,
-        error: subThemesError,
+        isError: subThemesError,
     } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
@@ -147,12 +145,11 @@ const AdminTaskEdit = () => {
     };
 
     const addAnswer = () => {
-        if (!answer) {
+        if (!(answers[answers.length - 1] || '').trim()) {
             return;
         }
 
-        setAnswers((prev) => [...prev, answer]);
-        setAnswer('');
+        setAnswers((prev) => [...prev, '']);
     };
 
     const removeAnswer = (id: number) => {
@@ -160,12 +157,6 @@ const AdminTaskEdit = () => {
 
         newAnswers.splice(id, 1);
         setAnswers(newAnswers);
-    };
-
-    const removeAnswerForm = () => {
-        const lastAnswer = answers.splice(-1)[0];
-        setAnswer(lastAnswer);
-        setAnswers(answers);
     };
 
     const changeAnswer = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>, id: number) => {
@@ -194,8 +185,8 @@ const AdminTaskEdit = () => {
             return alertNotify('Предупреждение', 'Нужно заполнить задание', 'warn');
         }
 
-        const trimAnswer = (answer || '').trim();
-        let allAnswers = trimAnswer ? [...answers, trimAnswer] : [...answers];
+        const lastAnswer = (answers[answers.length - 1] || '').trim();
+        let allAnswers = lastAnswer ? answers : answers.slice(0, -1);
 
         editTask(
             String(id),
@@ -232,7 +223,7 @@ const AdminTaskEdit = () => {
 
     React.useEffect(() => {
         if (data) {
-            const { subject, isVerified, source, answers, solution, task, subjectTask, subTheme } = data;
+            const { subject, isVerified, source, answers, subjectTask, subTheme } = data;
 
             setSubjectId(subject?.id);
             setSubject(subject?.subject);
@@ -243,9 +234,6 @@ const AdminTaskEdit = () => {
             setTheme(taskTheme);
             setSubTheme(taskSubTheme);
             setIsVerified(isVerified);
-
-            const lastAnswer = answers.splice(-1)[0];
-            setAnswer(lastAnswer);
             setAnswers(answers);
 
             setSource(source);
@@ -385,25 +373,27 @@ const AdminTaskEdit = () => {
                     />
 
                     <div className={styles.answerWrapper}>
-                        <Text variant="text3">Ответ{!!answers.length && 'ы'}</Text>
+                        <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
                         {!!answers.length &&
                             answers.map((answer, id) => (
                                 <div key={id} className={styles.answerItem}>
                                     <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
 
-                                    <IconButton
-                                        variant="danger"
-                                        small
-                                        circle
-                                        className={styles.answerItemDelete}
-                                        onClick={() => removeAnswer(id)}
-                                    >
-                                        <Delete />
-                                    </IconButton>
+                                    {answers.length > 1 && (
+                                        <IconButton
+                                            variant="danger"
+                                            small
+                                            circle
+                                            className={styles.answerItemDelete}
+                                            onClick={() => removeAnswer(id)}
+                                        >
+                                            <Delete />
+                                        </IconButton>
+                                    )}
                                 </div>
                             ))}
 
-                        <div className={styles.answerItem}>
+                        {/* <div className={styles.answerItem}>
                             <Input value={answer} setValue={setAnswer} />
 
                             {!!answers.length && (
@@ -417,7 +407,7 @@ const AdminTaskEdit = () => {
                                     <Delete />
                                 </IconButton>
                             )}
-                        </div>
+                        </div> */}
                     </div>
 
                     <Button variant="light" auto onClick={addAnswer}>
@@ -425,7 +415,7 @@ const AdminTaskEdit = () => {
                         Добавить ответ
                     </Button>
 
-                    {/* <Input title="Источник" value={source} setValue={setSource} /> */}
+                    <Input title="Источник" value={source} setValue={setSource} />
                 </div>
             </CreatePageWrapper>
 

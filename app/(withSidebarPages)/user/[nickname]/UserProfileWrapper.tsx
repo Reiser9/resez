@@ -7,7 +7,7 @@ import Lottie from 'lottie-react';
 import cn from 'classnames';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { QRCode, Tooltip } from 'antd';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -26,21 +26,23 @@ import {
     Send,
     User,
 } from '@/shared/icons';
-import { Text } from '@/shared/ui/Text';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { Badge } from '@/shared/ui/Badge';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 import useCopyText from '@/features/utils/useCopyText';
 import { CONFIG } from '@/shared/consts/CONFIG';
 import { useProfileData } from '@/features/user';
-import { Modal } from '@/shared/ui/Modal';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
-import { Input } from '@/shared/ui/Input';
 import { useDialog } from '@/features/messenger';
 import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
-import { Preloader } from '@/shared/ui/Preloader';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { Modal } from '@/shared/ui/Modal';
+import { Input } from '@/shared/ui/Input';
+import { Preloader } from '@/shared/ui/Preloader';
+import { Text } from '@/shared/ui/Text';
+import { Button, IconButton } from '@/shared/ui/Button';
+import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
+import { Badge } from '@/shared/ui/Badge';
 
 const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
@@ -50,22 +52,29 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
     const [sendMessageIsLoading, setSendMessageIsLoading] = React.useState(false);
 
     const { nickname } = useParams();
-    const myNickname = useAppSelector((state) => state.user.user?.nickname);
     const isAuth = useAppSelector((state) => state.user.isAuth);
     const router = useRouter();
-    const queryClient = useQueryClient();
 
     const { copyTextWithNotify } = useCopyText();
     const { getUserProfile } = useProfileData();
+    const { getShortInfo } = useShortInfo();
     const { sendStartMessageUser } = useDialog();
     const { theme } = useThemeContext();
     const path = usePathname();
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['user_profile_by_id', nickname],
         queryFn: () => getUserProfile(String(nickname)),
         enabled: !!nickname,
     });
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { nickname: myNickname } = user?.user || {};
 
     const sendMessage = async () => {
         setSendMessageIsLoading(true);
@@ -188,10 +197,12 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
                         </div>
 
                         <div className={styles.profileInfoItem}>
-                            {isAuth && <Button small variant="light" onClick={() => setMessageModal(true)}>
-                                <Message />
-                                Сообщение
-                            </Button>}
+                            {isAuth && (
+                                <Button small variant="light" onClick={() => setMessageModal(true)}>
+                                    <Message />
+                                    Сообщение
+                                </Button>
+                            )}
 
                             <Tooltip title="QR-код профиля">
                                 <IconButton small variant="light" onClick={() => setQrModal(true)}>

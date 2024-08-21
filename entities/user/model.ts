@@ -53,7 +53,6 @@ export type User = {
         xp: number;
         limit: number;
     };
-    permissions: Permission[];
     unreadNotifiesCount: number;
     settings: Settings;
     subscription: {

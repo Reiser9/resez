@@ -35,7 +35,7 @@ const AdminTestCreate = () => {
     const {
         data: subjectsData,
         isLoading: subjectsIsLoading,
-        error: subjectsError,
+        isError: subjectsError,
     } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
@@ -45,7 +45,7 @@ const AdminTestCreate = () => {
     const {
         data: tasksData,
         isLoading: tasksIsLoading,
-        error: tasksError,
+        isError: tasksError,
         refetch,
     } = useQuery({
         queryKey: ['subject_tasks_by_id', subject],

@@ -2,19 +2,21 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { Tooltip } from 'antd';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
+import { Tooltip } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { ProductDTO } from '../model';
-import { Text } from '@/shared/ui/Text';
-import { Badge } from '@/shared/ui/Badge';
-import { useAppSelector } from '@/shared/hooks/useRedux';
+import type { ProductDTO } from '../model';
 import { Archive, Check, Clapperboard, DotsHorizontal, Edit, Notebook, Photo, ResCoin, Store } from '@/shared/icons';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
+import { Badge } from '@/shared/ui/Badge';
 
 type Props = {
     data: ProductDTO;
@@ -30,13 +32,19 @@ const AvatarItem: React.FC<Props> = ({ data, edit, publish, remove, togglePublis
 
     const [actionMenu, setActionMenu] = React.useState(false);
 
-    const { user } = useAppSelector((state) => state.user);
-    const { avatar, nickname } = user || {};
-
     const playerRef = React.useRef<LottieRefCurrentProps>(null);
     const [animationData, setAnimationData] = React.useState<any | null>(null);
     const [isHovered, setIsHovered] = React.useState(false);
     const [isPlaying, setIsPlaying] = React.useState(false);
+
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { avatar, nickname } = user?.user || {};
 
     React.useEffect(() => {
         const fetchAnimationData = async () => {

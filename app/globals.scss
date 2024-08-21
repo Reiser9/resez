@@ -792,6 +792,17 @@ p.mathquill {
     width: 100%;
 }
 
+.mq-text-mode {
+    font-family: var(--font-nunito), sans-serif!important;
+    font-size: 1.6rem;
+}
+
+@media (max-width: 768px) {
+    .mq-text-mode{
+        font-size: 1.4rem;
+    }
+}
+
 /* Custom file tool */
 .chooseInner {
     width: 100%;

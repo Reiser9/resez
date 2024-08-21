@@ -25,7 +25,7 @@ const AdminTests = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -42,7 +42,7 @@ const AdminTests = () => {
         queryClient.resetQueries({ queryKey: ['tests'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['tests'],
         queryFn: (params) => getPagginationTests(params.pageParam),
         initialPageParam: 0,
@@ -60,7 +60,10 @@ const AdminTests = () => {
                     <div className={base.titleWrapper}>
                         <Text variant="h3">
                             Тесты{' '}
-                            {!error && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                            {!isError &&
+                                !isPending &&
+                                !!data?.pages[0]?.totalCount &&
+                                `(${data?.pages[0]?.totalCount})`}
                         </Text>
 
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -81,7 +84,7 @@ const AdminTests = () => {
                             <TestItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Ошибка при загрузке тестов" icon={<Cross />} danger />
                 ) : data.pages[0]?.totalCount ? (
                     <div className={cn(base.baseWrapperGap16, base.aic)}>

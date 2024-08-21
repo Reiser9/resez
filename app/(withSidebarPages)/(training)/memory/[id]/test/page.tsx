@@ -35,7 +35,7 @@ const MemoryTest = () => {
     const { scrollTop } = useHandlers();
     const { id } = useParams();
 
-    const { data, isLoading, isFetching, error, refetch } = useQuery({
+    const { data, isLoading, isFetching, isError, refetch } = useQuery({
         queryKey: ['collection_cards', id],
         queryFn: () => getTestCollection(String(id)),
         enabled: !!id,
@@ -106,14 +106,14 @@ const MemoryTest = () => {
             <div className={base.titleInner}>
                 <BackButton />
 
-                {!error && !showResults && (
+                {!isError && !showResults && (
                     <Text variant="h4" fontWeight={600}>
                         Вопросов: {test?.length}
                     </Text>
                 )}
             </div>
 
-            {error ? (
+            {isError ? (
                 <NotContent text="Ошибка загрузка теста" icon={<Cross />} danger />
             ) : (
                 <>

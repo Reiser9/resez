@@ -1,18 +1,26 @@
 'use client';
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { FullPageWrapper } from '@/shared/wrappers/FullPageWrapper';
 import { Blocked } from '@/shared/icons';
 import { useLogout } from '@/features/user';
-import { useAppSelector } from '@/shared/hooks/useRedux';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Text } from '../Text';
 import { Button } from '@/shared/ui/Button';
 
 const Ban = () => {
     const { isLoading, logout } = useLogout();
-    const blockReason = useAppSelector((state) => state.user.user?.blockReason);
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { blockReason } = user?.user || {};
 
     return (
         <FullPageWrapper icon={<Blocked />} code="4<span>0</span>3" text="Ваша учетная запись заблокирована.">

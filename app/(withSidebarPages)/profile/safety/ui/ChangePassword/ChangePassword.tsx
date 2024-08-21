@@ -6,11 +6,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import styles from '../../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import type { ChangePassword as ChangePasswordType, VerifyChangePassword } from '@/entities/user';
 import useAlert from '@/shared/hooks/useAlert';
 import { Text } from '@/shared/ui/Text';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
-import { ChangePassword, VerifyChangePassword } from '@/entities/user';
 import { useChangePassword } from '@/features/user';
 
 const ChangePassword = () => {
@@ -22,16 +22,16 @@ const ChangePassword = () => {
         formState: { errors },
     } = useForm<VerifyChangePassword>();
 
-    const [passwordChangeStep, setPasswordChangeStep] = React.useState<number>(1);
+    const [passwordChangeStep, setPasswordChangeStep] = React.useState(1);
 
-    const [oldPassword, setOldPassword] = React.useState<string>('');
-    const [newPassword, setNewPassword] = React.useState<string>('');
-    const [newPasswordAgain, setNewPasswordAgain] = React.useState<string>('');
+    const [oldPassword, setOldPassword] = React.useState('');
+    const [newPassword, setNewPassword] = React.useState('');
+    const [newPasswordAgain, setNewPasswordAgain] = React.useState('');
 
     const { isLoading, changePassword, verifyChangePassword } = useChangePassword();
     const { alertNotify } = useAlert();
 
-    const onSubmitChangePassword: SubmitHandler<ChangePassword> = (data) => {
+    const onSubmitChangePassword: SubmitHandler<ChangePasswordType> = (data) => {
         const { newPassword } = data;
 
         if (newPassword !== newPasswordAgain) {
@@ -43,6 +43,7 @@ const ChangePassword = () => {
 
         changePassword(data, () => {
             setPasswordChangeStep(2);
+            setNewPasswordAgain('');
             reset();
         });
     };

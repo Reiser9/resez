@@ -63,7 +63,7 @@ const AdminCreateRole = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['permissions'],
         queryFn: getAllPermissions,

@@ -44,11 +44,11 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
     const { getDialogs } = useMessenger();
     const { createChat } = useChat();
     const { getPaginationUsers } = useSearchUser();
-    const { data, isLoading, error } = useQuery({ queryKey: ['messenger_dialogs'], queryFn: getDialogs });
+    const { data, isLoading, isError } = useQuery({ queryKey: ['messenger_dialogs'], queryFn: getDialogs });
     const {
         data: usersData,
         isLoading: usersIsLoading,
-        error: usersError,
+        isError: usersError,
     } = useQuery({ queryKey: ['new_chat_users'], queryFn: getPaginationUsers, enabled: newChatModal });
 
     const router = useRouter();
@@ -134,7 +134,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                 <div className={styles.messangerSidebarDialogsContent} ref={chatListRef}>
                     {isLoading ? (
                         <Preloader page small />
-                    ) : error ? (
+                    ) : isError ? (
                         <NotContent danger icon={<Cross />} text="Произошла ошибка при загрузке диалогов" />
                     ) : data?.chats.length ? (
                         data?.chats.map((data, key) => (

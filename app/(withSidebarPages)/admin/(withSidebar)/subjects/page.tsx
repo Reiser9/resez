@@ -25,7 +25,7 @@ const AdminSubjects = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -38,7 +38,7 @@ const AdminSubjects = () => {
         queryClient.resetQueries({ queryKey: ['subjects'] });
     };
 
-    const { data, isPending, error } = useQuery({
+    const { data, isPending, isError } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
     });
@@ -49,7 +49,7 @@ const AdminSubjects = () => {
                 <div className={base.titleInner}>
                     <div className={base.titleWrapper}>
                         <Text variant="h3">
-                            Предметы {!error && !isPending && !!data?.totalCount && `(${data?.totalCount})`}
+                            Предметы {!isError && !isPending && !!data?.totalCount && `(${data?.totalCount})`}
                         </Text>
 
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -70,7 +70,7 @@ const AdminSubjects = () => {
                             <SubjectItemSkeleton key={id} />
                         ))}
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
                 ) : !!data?.subjects.length ? (
                     <div className={cn(base.baseWrapperGap16, base.aic)}>

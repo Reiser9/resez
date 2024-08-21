@@ -23,7 +23,7 @@ const AdminStoreAvatar = () => {
     const {
         data: permissions,
         isLoading: permissionsIsLoading,
-        error: permissionsError,
+        isError: permissionsError,
     } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
@@ -40,7 +40,7 @@ const AdminStoreAvatar = () => {
         queryClient.resetQueries({ queryKey: ['admin_avatars'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['admin_avatars'],
         queryFn: (param) => getPaginationAvatars(param.pageParam),
         initialPageParam: 0,
@@ -60,7 +60,8 @@ const AdminStoreAvatar = () => {
             <div className={base.titleInner}>
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
-                        Аватарки {!isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                        Аватарки{' '}
+                        {!isError && !isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -81,7 +82,7 @@ const AdminStoreAvatar = () => {
                         <AvatarItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={base.contentItems}>

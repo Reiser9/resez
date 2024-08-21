@@ -31,14 +31,14 @@ const StorePersonalizationAvatar = () => {
     };
 
     const addProductToProfileHandler = (id: number) => {
-        if(!isAuth){
-            return router.push("/login");
+        if (!isAuth) {
+            return router.push('/login');
         }
 
-        addProductToProfile(id, revalidateAvatars)
-    }
+        addProductToProfile(id, revalidateAvatars);
+    };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['store_avatars'],
         queryFn: getPaginationStoreAvatars,
         initialPageParam: 0,
@@ -53,7 +53,7 @@ const StorePersonalizationAvatar = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Украшения {!isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                    Украшения {!isError && !isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -65,7 +65,7 @@ const StorePersonalizationAvatar = () => {
                         <AvatarItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={base.contentItems}>

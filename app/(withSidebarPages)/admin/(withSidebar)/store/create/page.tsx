@@ -6,24 +6,27 @@ import Image from 'next/image';
 import Lottie from 'lottie-react';
 import { DraggableData, Rnd } from 'react-rnd';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
-import { Select } from '@/shared/ui/Select';
-import { Text } from '@/shared/ui/Text';
-import { File } from '@/shared/ui/File';
 import { Delete, FileEmpty, Photo } from '@/shared/icons';
-import { Badge } from '@/shared/ui/Badge';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useAvatar } from '@/features/store';
 import PositionController from '../PositionController';
 import useAlert from '@/shared/hooks/useAlert';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import useShortInfo from '@/features/user/data/useShortInfo';
+
+import { Button, IconButton } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { Select } from '@/shared/ui/Select';
+import { Text } from '@/shared/ui/Text';
+import { File } from '@/shared/ui/File';
+import { Badge } from '@/shared/ui/Badge';
 
 type ProductTypes = 'Украшение аватарки' | 'Баннер' | 'Тема' | 'Эффект чата' | 'Статус' | 'Наклейка';
 type ProductConditions = 'free' | 'event' | 'achievement' | 'buy' | 'subscription';
@@ -103,9 +106,6 @@ const AdminStoreCreate = () => {
     const [draggable, setDraggable] = React.useState(false);
     const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
-    const { user } = useAppSelector((state) => state.user);
-    const { avatar, nickname } = user || {};
-
     const [width, setWidth] = React.useState(minWidth);
     const [height, setHeight] = React.useState(minHeight);
     const [aspectRatio, setAspectRatio] = React.useState(1);
@@ -114,6 +114,15 @@ const AdminStoreCreate = () => {
     const { createAvatar } = useAvatar();
     const { alertNotify } = useAlert();
     const router = useRouter();
+
+    const { getShortInfo } = useShortInfo();
+
+    const { data: user, isLoading: userIsLoading } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+    });
+
+    const { avatar, nickname } = user?.user || {};
 
     const handleResize = (e: MouseEvent | TouchEvent, direction: any, ref: HTMLElement, delta: any, position: any) => {
         const newWidth = ref.offsetWidth;
