@@ -23,6 +23,13 @@ import { Button, IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Input } from '@/shared/ui/Input';
 
+const emptyPair = {
+    questionText: '',
+    questionPicture: '',
+    answerText: '',
+    answerPicture: '',
+};
+
 const MemoryEdit = () => {
     const [importExcelModal, setImportExcelModal] = React.useState(false);
 
@@ -31,10 +38,10 @@ const MemoryEdit = () => {
     const [description, setDescription] = React.useState('');
     const [privateCollection, setPrivateCollection] = React.useState(false);
 
-    const [questionText, setQuestionText] = React.useState('');
-    const [answerText, setAnswerText] = React.useState('');
-    const [questionImage, setQuestionImage] = React.useState('');
-    const [answerImage, setAnswerImage] = React.useState('');
+    // const [questionText, setQuestionText] = React.useState('');
+    // const [answerText, setAnswerText] = React.useState('');
+    // const [questionImage, setQuestionImage] = React.useState('');
+    // const [answerImage, setAnswerImage] = React.useState('');
 
     const [pairs, setPairs] = React.useState<PairDTO[]>([]);
     const [pairsEmptyIds, setPairsEmptyIds] = React.useState<number[]>([]);
@@ -60,19 +67,7 @@ const MemoryEdit = () => {
     const { id: userId } = user?.user || {};
 
     const addNewPair = () => {
-        setPairs((prev) => [
-            ...prev,
-            {
-                questionText,
-                answerText,
-                questionPicture: questionImage,
-                answerPicture: answerImage,
-            },
-        ]);
-        setQuestionText('');
-        setAnswerText('');
-        setQuestionImage('');
-        setAnswerImage('');
+        setPairs((prev) => [...prev, emptyPair]);
         scrollBottom();
     };
 
@@ -84,7 +79,7 @@ const MemoryEdit = () => {
     };
 
     const editCollectionHandler = () => {
-        const newPairs = validateHandler(pairs, questionText, questionImage, answerText, answerImage, setPairsEmptyIds);
+        const newPairs = validateHandler(pairs, setPairsEmptyIds);
 
         if (!newPairs || !data?.id) {
             return;
@@ -115,15 +110,7 @@ const MemoryEdit = () => {
             }
 
             setPrivateCollection(isPrivate);
-
-            const lastPair = pairs.splice(-1)[0];
-            const { questionText, questionPicture, answerText, answerPicture } = lastPair;
-
             setPairs(pairs);
-            setQuestionText(questionText);
-            setQuestionImage(questionPicture);
-            setAnswerText(answerText);
-            setAnswerImage(answerPicture);
         }
     }, [data]);
 
@@ -191,7 +178,7 @@ const MemoryEdit = () => {
                         />
                     ))}
 
-                    <PairItemForm
+                    {/* <PairItemForm
                         pairs={pairs}
                         setPairs={setPairs}
                         addNewPair={addNewPair}
@@ -205,7 +192,7 @@ const MemoryEdit = () => {
                         setAnswerText={setAnswerText}
                         answerPicture={answerImage}
                         setAnswerPicture={setAnswerImage}
-                    />
+                    /> */}
 
                     <Button auto variant="light" onClick={addNewPair}>
                         Добавить

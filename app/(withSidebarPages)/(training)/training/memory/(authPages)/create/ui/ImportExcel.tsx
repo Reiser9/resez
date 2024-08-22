@@ -5,11 +5,12 @@ import Image from 'next/image';
 
 import styles from '../../../index.module.scss';
 
+import type { Excel as ExcelType, PairDTO } from '@/entities/collection';
 import { ExcelFile } from '@/shared/ui/File';
+import { Excel } from '@/shared/icons';
+
 import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 import { Text } from '@/shared/ui/Text';
-import { Excel } from '@/shared/icons';
-import type { Excel as ExcelType, PairDTO } from '@/entities/collection';
 
 type Props = {
     valueModal: boolean;

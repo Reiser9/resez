@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Tooltip } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -150,36 +151,38 @@ const TestPage = () => {
                                     </div>
                                 </div>
 
-                                <Text
-                                    variant="h4"
-                                    className={styles.testId}
-                                    onClick={() => copyTextWithNotify(String(id), 'ID теста скопировано')}
-                                >
-                                    Номер варианта: {id}
-                                </Text>
+                                <Tooltip title="Скопировать">
+                                    <Text
+                                        variant="h4"
+                                        className={styles.testId}
+                                        onClick={() => copyTextWithNotify(String(id), 'ID теста скопировано')}
+                                    >
+                                        Номер варианта: {id}
+                                    </Text>
+                                </Tooltip>
 
                                 <div className={base.titleInner}>
-                                    <div className={base.titleWrapper}>
-                                        {isOfficial ? (
-                                            <>
-                                                <Badge text="R" />
+                                    {isOfficial ? (
+                                        <div className={base.titleWrapper}>
+                                            <Badge text="R" />
 
-                                                <Text>{'ResEz Team'}</Text>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Badge text={nickname} image={avatar} />
+                                            <Text>{'ResEz Team'}</Text>
+                                        </div>
+                                    ) : (
+                                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                                            <Badge text={nickname} image={avatar} />
 
-                                                <Text>{nickname}</Text>
-                                            </>
-                                        )}
-                                    </div>
+                                            <Text>{nickname}</Text>
+                                        </Link>
+                                    )}
 
-                                    <div className={styles.testDateInner}>
-                                        <Date />
+                                    <Tooltip title="Дата создания теста">
+                                        <div className={styles.testDateInner}>
+                                            <Date />
 
-                                        {formatDate(createdAt, 'D MMMM YYYY')}
-                                    </div>
+                                            {formatDate(createdAt, 'D MMMM YYYY')}
+                                        </div>
+                                    </Tooltip>
                                 </div>
                             </div>
 

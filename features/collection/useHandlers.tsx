@@ -46,33 +46,33 @@ const useHandlers = () => {
 
     const validateHandler = (
         pairs: PairDTO[],
-        questionText: string,
-        questionImage: string,
-        answerText: string,
-        answerImage: string,
+        // questionText: string,
+        // questionImage: string,
+        // answerText: string,
+        // answerImage: string,
         setErrors: (value: React.SetStateAction<number[]>) => void,
     ) => {
         setErrors([]);
         let newPairs = [...pairs];
 
-        if ((questionText || questionImage) && (answerText || answerImage)) {
-            newPairs = [
-                ...newPairs,
-                {
-                    questionText,
-                    questionPicture: questionImage,
-                    answerText,
-                    answerPicture: answerImage,
-                },
-            ];
-        }
+        // if ((questionText || questionImage) && (answerText || answerImage)) {
+        //     newPairs = [
+        //         ...newPairs,
+        //         {
+        //             questionText,
+        //             questionPicture: questionImage,
+        //             answerText,
+        //             answerPicture: answerImage,
+        //         },
+        //     ];
+        // }
 
         let hasEmptyField = false;
 
-        if ((!questionText && !questionImage) || (!answerText && !answerImage)) {
-            setErrors((prev) => [...prev, -1]);
-            hasEmptyField = true;
-        }
+        // if ((!questionText && !questionImage) || (!answerText && !answerImage)) {
+        //     setErrors((prev) => [...prev, -1]);
+        //     hasEmptyField = true;
+        // }
 
         for (let i = 0; i < pairs.length; i++) {
             if (

@@ -4,6 +4,7 @@ import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
 import parse from 'html-react-parser';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Tooltip } from 'antd';
@@ -239,11 +240,11 @@ const MemoryCardInfo = () => {
                     </div>
 
                     <div className={base.titleInner}>
-                        <div className={base.titleWrapper}>
+                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
                             <Badge image={avatar} text={nickname} isUserAvatar />
 
                             <Text>{nickname}</Text>
-                        </div>
+                        </Link>
 
                         {createdAt && (
                             <Tooltip title="Дата создания">

@@ -33,11 +33,6 @@ export const userSlice = createSlice({
         initSessionId: (state, action: PayloadAction<number | null>) => {
             state.sessionId = action.payload;
         },
-        setUserSettings: (state, action: PayloadAction<Settings>) => {
-            if (state.user) {
-                state.user.settings = { ...state.user.settings, ...action.payload };
-            }
-        },
         setUserBlocked: (state, action: PayloadAction<boolean>) => {
             if (state.user) {
                 state.user.isBlocked = action.payload;
@@ -62,7 +57,6 @@ export const {
     initUser,
     initVerificationCodeData,
     initSessionId,
-    setUserSettings,
     setUserBlocked,
     setUserBlockReason,
     setUserData,

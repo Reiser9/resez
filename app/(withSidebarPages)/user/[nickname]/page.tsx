@@ -1,7 +1,8 @@
 'use client';
 
-import { NotContent } from '@/shared/ui/NotContent';
 import React from 'react';
+
+import { NotContent } from '@/shared/ui/NotContent';
 
 const UserProfilePage = () => {
     return <NotContent text="Профиль пользователя" />;

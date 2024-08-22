@@ -39,10 +39,10 @@ const MemoryCreate = () => {
     const [description, setDescription] = React.useState('');
     const [privateCollection, setPrivateCollection] = React.useState(false);
 
-    const [questionText, setQuestionText] = React.useState('');
-    const [answerText, setAnswerText] = React.useState('');
-    const [questionImage, setQuestionImage] = React.useState('');
-    const [answerImage, setAnswerImage] = React.useState('');
+    // const [questionText, setQuestionText] = React.useState('');
+    // const [answerText, setAnswerText] = React.useState('');
+    // const [questionImage, setQuestionImage] = React.useState('');
+    // const [answerImage, setAnswerImage] = React.useState('');
 
     const [pairs, setPairs] = React.useState<PairDTO[]>([emptyPair]);
     const [pairsEmptyIds, setPairsEmptyIds] = React.useState<number[]>([]);
@@ -58,7 +58,7 @@ const MemoryCreate = () => {
     };
 
     const createCollectionHandler = async () => {
-        const newPairs = validateHandler(pairs, questionText, questionImage, answerText, answerImage, setPairsEmptyIds);
+        const newPairs = validateHandler(pairs, setPairsEmptyIds);
 
         if (!newPairs) {
             return;
@@ -122,7 +122,7 @@ const MemoryCreate = () => {
 
                 <div className={styles.cardCollectionInfo}>
                     <Text fontWeight={600} variant="text2">
-                        Пары: {pairs.length + 1}
+                        Пары: {pairs.length}
                     </Text>
 
                     <Text fontWeight={600} variant="text2">

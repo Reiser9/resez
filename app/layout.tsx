@@ -37,37 +37,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="ru">
             <body className={nunito.variable}>
                 {/* <ErrorBoundary> */}
-                    <ReduxProvider>
-                        <ReactQueryProvider>
-                            <ThemeProvider>
-                                <EventProvider>
-                                    <SidebarProvider>
-                                        <ScrollProvider>
-                                            <NotifiesWrapper>
-                                                <SkeletonTheme
-                                                    baseColor="var(--input)"
-                                                    highlightColor="var(--inputDarken)"
+                <ReduxProvider>
+                    <ReactQueryProvider>
+                        <ThemeProvider>
+                            <EventProvider>
+                                <SidebarProvider>
+                                    <ScrollProvider>
+                                        <NotifiesWrapper>
+                                            <SkeletonTheme baseColor="var(--input)" highlightColor="var(--inputDarken)">
+                                                <ConfigProvider
+                                                    locale={ruRU}
+                                                    theme={{
+                                                        token: {
+                                                            // Поменять #007cee на динамический цвет
+                                                            colorPrimary: CONFIG.BASE_COLOR,
+                                                            fontFamily: 'var(--font-nunito)',
+                                                        },
+                                                    }}
                                                 >
-                                                    <ConfigProvider
-                                                        locale={ruRU}
-                                                        theme={{
-                                                            token: {
-                                                                // Поменять #007cee на динамический цвет
-                                                                colorPrimary: CONFIG.BASE_COLOR,
-                                                                fontFamily: 'var(--font-nunito)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        <InitialWrapper>{children}</InitialWrapper>
-                                                    </ConfigProvider>
-                                                </SkeletonTheme>
-                                            </NotifiesWrapper>
-                                        </ScrollProvider>
-                                    </SidebarProvider>
-                                </EventProvider>
-                            </ThemeProvider>
-                        </ReactQueryProvider>
-                    </ReduxProvider>
+                                                    <InitialWrapper>{children}</InitialWrapper>
+                                                </ConfigProvider>
+                                            </SkeletonTheme>
+                                        </NotifiesWrapper>
+                                    </ScrollProvider>
+                                </SidebarProvider>
+                            </EventProvider>
+                        </ThemeProvider>
+                    </ReactQueryProvider>
+                </ReduxProvider>
                 {/* </ErrorBoundary> */}
             </body>
         </html>

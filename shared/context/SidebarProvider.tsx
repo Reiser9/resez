@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 type SidebarContextProps = {
     showSidebar: boolean;
@@ -22,7 +24,11 @@ export const useSidebarContext = () => {
 const SidebarProvider = ({ children }: { children: React.ReactNode }) => {
     const [showSidebar, setShowSidebar] = React.useState(false);
 
-    return <SidebarContext.Provider value={{ showSidebar, setShowSidebar }}>{children}</SidebarContext.Provider>;
+    return (
+        <DndProvider backend={HTML5Backend}>
+            <SidebarContext.Provider value={{ showSidebar, setShowSidebar }}>{children}</SidebarContext.Provider>
+        </DndProvider>
+    );
 };
 
 export default SidebarProvider;

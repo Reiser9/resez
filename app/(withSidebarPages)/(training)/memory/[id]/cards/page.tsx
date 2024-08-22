@@ -8,16 +8,17 @@ import { useParams } from 'next/navigation';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import type { Pair } from '@/entities/collection';
 import Card from './Card';
-import { BackButton, Button, IconButton } from '@/shared/ui/Button';
-import { Text } from '@/shared/ui/Text';
 import { Check, Cross, Return } from '@/shared/icons';
+import { useCollections } from '@/features/collection';
+
+import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
-import { useCollections } from '@/features/collection';
 import { ProgressSteps } from '@/shared/ui/ProgressSteps';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
-import { Pair } from '@/entities/collection';
+import { Text } from '@/shared/ui/Text';
 
 const cardsPerPage = 10;
 const buffer = 2;
