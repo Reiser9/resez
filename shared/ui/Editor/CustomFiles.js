@@ -127,6 +127,10 @@ export class CustomFiles {
 
         uploadRequest(file)
             .then((data) => {
+                if (!data) {
+                    throw new Error();
+                }
+
                 this.data = data;
                 this.fileNameInput.value = file.name;
                 this.fileNameInput.disabled = false;

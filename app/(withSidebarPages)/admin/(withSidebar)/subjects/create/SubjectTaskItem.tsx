@@ -5,10 +5,11 @@ import { Checkbox } from 'antd';
 
 import styles from './index.module.scss';
 
-import { Button, IconButton } from '@/shared/ui/Button';
+import type { SubTheme, Task } from '@/entities/subject';
 import { Delete, Plus } from '@/shared/icons';
+
+import { Button, IconButton } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
-import { SubTheme, Task } from '@/entities/subject';
 
 type TaskKey = 'theme' | 'primaryScore' | 'isDetailedAnswer' | 'subThemes';
 
@@ -28,10 +29,6 @@ const SubjectTaskItem: React.FC<Props> = ({ number, task, tasks, setTasks }) => 
 
     const updateCreatedTask = (id: number, key: TaskKey, value: string | boolean | SubTheme[]) => {
         let updatedTasks = [...tasks];
-
-        if (id < 0 || id >= updatedTasks.length) {
-            return updatedTasks;
-        }
 
         updatedTasks[id] = {
             ...updatedTasks[id],
@@ -71,7 +68,7 @@ const SubjectTaskItem: React.FC<Props> = ({ number, task, tasks, setTasks }) => 
             <div className={styles.subjectTaskItemDelete}>
                 <p className={styles.subjectTaskNum}>{number + 1}</p>
 
-                <IconButton variant="danger" small onClick={() => removeTask(number)}>
+                <IconButton variant="danger" small onClick={() => removeTask(number)} disabled={tasks.length <= 1}>
                     <Delete />
                 </IconButton>
             </div>
@@ -89,7 +86,7 @@ const SubjectTaskItem: React.FC<Props> = ({ number, task, tasks, setTasks }) => 
                 onChange={(e) => updateCreatedTask(number, 'primaryScore', e.target.value)}
                 title="Первичный балл"
                 lengthLimit={2}
-                type='number'
+                type="number"
             />
 
             <Checkbox
@@ -100,7 +97,7 @@ const SubjectTaskItem: React.FC<Props> = ({ number, task, tasks, setTasks }) => 
             </Checkbox>
 
             {task.subThemes.map((theme, subThemeId) => (
-                <div className={styles.subjectItemDeleteInner} key={subThemeId}>
+                <div className={styles.subjectItemDeleteInner} key={`subthemeId_${subThemeId}`}>
                     <Input
                         value={theme.subTheme}
                         onChange={(e) => updateCreatedSubTheme(number, subThemeId, e.target.value)}
@@ -109,15 +106,13 @@ const SubjectTaskItem: React.FC<Props> = ({ number, task, tasks, setTasks }) => 
                         lengthLimit={150}
                     />
 
-                    {task.subThemes.length <= 1 ? (
-                        <IconButton variant="danger" disabled>
-                            <Delete />
-                        </IconButton>
-                    ) : (
-                        <IconButton variant="danger" onClick={() => deleteCreatedSubTheme(number, subThemeId)}>
-                            <Delete />
-                        </IconButton>
-                    )}
+                    <IconButton
+                        variant="danger"
+                        onClick={() => deleteCreatedSubTheme(number, subThemeId)}
+                        disabled={task.subThemes.length <= 1}
+                    >
+                        <Delete />
+                    </IconButton>
                 </div>
             ))}
 

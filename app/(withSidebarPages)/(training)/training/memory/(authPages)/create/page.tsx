@@ -4,31 +4,33 @@ import React from 'react';
 import cn from 'classnames';
 import { Checkbox, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
+import { createPortal } from 'react-dom';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from '../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection/model';
-import { Button, IconButton } from '@/shared/ui/Button';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { Excel } from '@/shared/icons';
 import useAlert from '@/shared/hooks/useAlert';
 import ImportExcel from './ui/ImportExcel';
 import { useCollections, useHandlers } from '@/features/collection';
-
 import PairItem from './ui/PairItem';
-// import PairItemForm from './ui/PairItemForm';
+import { CONFIG } from '@/shared/consts/CONFIG';
 
+import { Button, IconButton } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
-
-const maxPairCount = 500;
 
 const emptyPair = {
     questionText: '',
     questionPicture: '',
     answerText: '',
     answerPicture: '',
+    id: Date.now(),
 };
 
 const MemoryCreate = () => {
@@ -39,23 +41,16 @@ const MemoryCreate = () => {
     const [description, setDescription] = React.useState('');
     const [privateCollection, setPrivateCollection] = React.useState(false);
 
-    // const [questionText, setQuestionText] = React.useState('');
-    // const [answerText, setAnswerText] = React.useState('');
-    // const [questionImage, setQuestionImage] = React.useState('');
-    // const [answerImage, setAnswerImage] = React.useState('');
-
     const [pairs, setPairs] = React.useState<PairDTO[]>([emptyPair]);
     const [pairsEmptyIds, setPairsEmptyIds] = React.useState<number[]>([]);
 
+    const [activePair, setActivePair] = React.useState<PairDTO>();
+
     const { alertNotify } = useAlert();
     const { createCollection } = useCollections();
-    const { validateHandler, scrollBottom, removePair } = useHandlers();
+    const { validateHandler, scrollBottom, addNewPair, removePair, sensors, handleDragStart, handleDragEnd } =
+        useHandlers();
     const router = useRouter();
-
-    const addNewPair = () => {
-        setPairs((prev) => [...prev, emptyPair]);
-        scrollBottom();
-    };
 
     const createCollectionHandler = async () => {
         const newPairs = validateHandler(pairs, setPairsEmptyIds);
@@ -126,45 +121,57 @@ const MemoryCreate = () => {
                     </Text>
 
                     <Text fontWeight={600} variant="text2">
-                        Максимум пар: {maxPairCount}
+                        Максимум пар: {CONFIG.MAX_PAIRS_COUNT}
                     </Text>
                 </div>
 
                 <div className={styles.cardCollectionWrapper}>
-                    {pairs.map((data, id) => (
-                        <PairItem
-                            key={id}
-                            data={data}
-                            id={id}
-                            error={pairsEmptyIds.includes(id)}
-                            answerImageId={`answerImage${id}`}
-                            questionImageId={`questionImage${id}`}
-                            pairs={pairs}
-                            setPairs={setPairs}
-                            addNewPair={addNewPair}
-                            removePair={() => removePair(id, pairs, setPairs, setPairsEmptyIds)}
-                        />
-                    ))}
+                    <DndContext
+                        sensors={sensors}
+                        modifiers={[restrictToVerticalAxis]}
+                        onDragEnd={(event) => handleDragEnd(event, pairs, setPairs)}
+                        onDragStart={(event) => handleDragStart(event, setActivePair)}
+                    >
+                        <SortableContext items={pairs}>
+                            {pairs.map((data, id) => (
+                                <PairItem
+                                    key={data.id}
+                                    data={data}
+                                    number={id}
+                                    error={pairsEmptyIds.includes(data.id)}
+                                    answerImageId={`answerImage${data.id}`}
+                                    questionImageId={`questionImage${data.id}`}
+                                    pairs={pairs}
+                                    setPairs={setPairs}
+                                    removePair={() => removePair(data.id, pairs, setPairs, setPairsEmptyIds)}
+                                />
+                            ))}
+                        </SortableContext>
 
-                    {/* <PairItemForm
-                        pairs={pairs}
-                        setPairs={setPairs}
-                        addNewPair={addNewPair}
-                        error={pairsEmptyIds.includes(-1)}
-                        setError={setPairsEmptyIds}
-                        questionText={questionText}
-                        setQuestionText={setQuestionText}
-                        questionPicture={questionImage}
-                        setQuestionPicture={setQuestionImage}
-                        answerText={answerText}
-                        setAnswerText={setAnswerText}
-                        answerPicture={answerImage}
-                        setAnswerPicture={setAnswerImage}
-                    /> */}
+                        {createPortal(
+                            <DragOverlay>
+                                {activePair && (
+                                    <PairItem
+                                        data={activePair}
+                                        number={pairs.findIndex((item) => item.id === activePair.id)}
+                                        error={pairsEmptyIds.includes(activePair.id)}
+                                        answerImageId={`answerImage${activePair.id}`}
+                                        questionImageId={`questionImage${activePair.id}`}
+                                        pairs={pairs}
+                                        setPairs={setPairs}
+                                        removePair={() => removePair(activePair.id, pairs, setPairs, setPairsEmptyIds)}
+                                    />
+                                )}
+                            </DragOverlay>,
+                            document.body,
+                        )}
+                    </DndContext>
 
-                    <Button auto variant="light" onClick={addNewPair}>
-                        Добавить
-                    </Button>
+                    {pairs.length < CONFIG.MAX_PAIRS_COUNT && (
+                        <Button auto variant="light" onClick={() => addNewPair(pairs, setPairs)}>
+                            Добавить
+                        </Button>
+                    )}
                 </div>
             </div>
 

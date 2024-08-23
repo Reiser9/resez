@@ -22,7 +22,7 @@ export const getDeviceByName = (name: string | undefined) => {
                 icon: <Tv />,
                 name: 'Телевизор',
             };
-        case 'tv':
+        case 'bot':
             return {
                 icon: <Bot />,
                 name: 'Бот',

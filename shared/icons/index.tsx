@@ -128,3 +128,5 @@ export { ResezPremiumPlus } from './images/ResezPremiumPlus';
 export { ScanEye } from './ScanEye';
 export { Bot } from './Bot';
 export { Ghost } from './Ghost';
+export { NineDots } from './NineDots';
+export { ArowsTopBottom } from './ArowsTopBottom';

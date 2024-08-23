@@ -6,15 +6,16 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 
 import base from '@/shared/styles/base.module.scss';
 
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
-import { Button, ReloadButton } from '@/shared/ui/Button';
-import { Text } from '@/shared/ui/Text';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useArchive, useUserPermissions } from '@/features/user';
+
+import { NotContent } from '@/shared/ui/NotContent';
+import { SubjectItemSkeleton } from '@/shared/ui/Skeleton';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
 
 const AdminArchiveSubjects = () => {
     const { getUserPermissions } = useUserPermissions();

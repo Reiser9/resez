@@ -7,17 +7,18 @@ import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross, Plus } from '@/shared/icons';
 import { useSubjects } from '@/features/subjects';
-import SubjectItemSkeleton from '@/shared/ui/Skeleton/SubjectItemSceleton';
 import SubjectItem from '@/entities/subject/ui/SubjectItem';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
+
+import { Text } from '@/shared/ui/Text';
+import { NotContent } from '@/shared/ui/NotContent';
+import { IconButton, ReloadButton } from '@/shared/ui/Button';
+import { SubjectItemSkeleton } from '@/shared/ui/Skeleton';
 
 const AdminSubjects = () => {
     const { getUserPermissions } = useUserPermissions();
@@ -85,17 +86,6 @@ const AdminSubjects = () => {
                                 />
                             ))}
                         </div>
-
-                        {/* {hasNextPage && (
-                        <Button
-                            auto
-                            onClick={fetchNextPage}
-                            loading={isFetchingNextPage}
-                            className={base.buttonShowMore}
-                        >
-                            Показать еще
-                        </Button>
-                    )} */}
                     </div>
                 ) : (
                     <NotContent text="Предметов не найдено" />

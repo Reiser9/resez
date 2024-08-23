@@ -68,19 +68,19 @@ const useRequest = () => {
 
         switch (response.response?.status) {
             case 500:
-                throw new Error('Сервер не работает');
+                throw new Error('Сервер временно не работает');
             case 403:
                 alertNotify('Ошибка', 'Доступ ограничен', 'error');
                 throw new Error('Доступ ограничен');
             case 429:
                 alertNotify('Чуть помедленнее', 'Слишком много запросов, пожалуйста, подождите', 'warn');
-                throw new Error('Слишком много запросов, пожалуйста, подождите');
+                throw new Error('Слишком много запросов');
             case 413:
                 alertNotify(
                     `Ошибка', 'Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`,
                     'error',
                 );
-                throw new Error(`Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`);
+                throw new Error('Размер файла слишком большой');
             default:
                 if (customLogic) {
                     customLogic();
@@ -93,7 +93,7 @@ const useRequest = () => {
                         'error',
                     );
                 }
-                throw new Error();
+                throw new Error('Что-то поломалось, скоро починим');
         }
     };
 

@@ -33,6 +33,7 @@ export type Pair = {
 };
 
 export type PairDTO = {
+    id: number;
     questionText?: string;
     questionPicture?: string;
     answerText?: string;

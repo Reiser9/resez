@@ -32,6 +32,7 @@ import { Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Modal } from '@/shared/ui/Modal';
 import { NotContent } from '@/shared/ui/NotContent';
+import { useHandlers } from '@/features/collection';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -41,6 +42,7 @@ const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
 const AdminTaskEdit = () => {
     const { id } = useParams();
     const { getUserPermissions } = useUserPermissions();
+    const { scrollTop } = useHandlers();
 
     const {
         data: permissions,
@@ -58,6 +60,7 @@ const AdminTaskEdit = () => {
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [answers, setAnswers] = React.useState<string[]>(['']);
     const [source, setSource] = React.useState('');
+    const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
 
     const [taskEditorIsReady, setTaskEditorIsReady] = React.useState(false);
     const [solutionEditorIsReady, setSolutionEditorIsReady] = React.useState(false);
@@ -195,10 +198,11 @@ const AdminTaskEdit = () => {
             taskContent,
             isVerified,
             solutionContent,
-            allAnswers,
+            isDetailedAnswer ? [] : allAnswers,
             source,
             () => {
                 router.back();
+                scrollTop();
             },
         );
     };
@@ -231,6 +235,7 @@ const AdminTaskEdit = () => {
             const taskSubTheme = subTheme?.id ? String(subTheme?.id) : null;
 
             setTheme(taskTheme);
+            setIsDetailedAnswer(subjectTask.isDetailedAnswer);
             setSubTheme(taskSubTheme);
             setIsVerified(isVerified);
             setAnswers(!!answers.length ? answers : ['']);
@@ -260,6 +265,16 @@ const AdminTaskEdit = () => {
     }, [data, solutionEditorIsReady]);
 
     React.useEffect(() => {
+        if (theme) {
+            const foundTheme = themes.find((item) => String(item.id) === theme);
+
+            if (!foundTheme) return;
+
+            setIsDetailedAnswer(foundTheme.isDetailedAnswer);
+        }
+    }, [theme]);
+
+    React.useEffect(() => {
         if (themesData) {
             setThemes(themesData);
             setThemesFilter(themesData);
@@ -272,13 +287,6 @@ const AdminTaskEdit = () => {
             setSubThemesFilter(subThemesData);
         }
     }, [subThemesData]);
-
-    React.useEffect(() => {
-        if (theme) {
-            setSubTheme(null);
-            setSubThemes([]);
-        }
-    }, [theme]);
 
     if (taskIsLoading) {
         return <Preloader page />;
@@ -308,7 +316,11 @@ const AdminTaskEdit = () => {
                             title="Номер задания"
                             notContentText="Заданий не найдено"
                             value={theme}
-                            onChange={(value) => setTheme(value)}
+                            onChange={(value) => {
+                                setSubTheme(null);
+                                setSubThemes([]);
+                                setTheme(value);
+                            }}
                             loading={themesIsLoading}
                             options={themesFilter?.map((data) => {
                                 return {
@@ -366,48 +378,36 @@ const AdminTaskEdit = () => {
                         onReady={() => setSolutionEditorIsReady(true)}
                     />
 
-                    <div className={styles.answerWrapper}>
-                        <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
-                        {!!answers.length &&
-                            answers.map((answer, id) => (
-                                <div key={id} className={styles.answerItem}>
-                                    <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+                    {!isDetailedAnswer && (
+                        <>
+                            <div className={styles.answerWrapper}>
+                                <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
+                                {!!answers.length &&
+                                    answers.map((answer, id) => (
+                                        <div key={id} className={styles.answerItem}>
+                                            <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
 
-                                    {answers.length > 1 && (
-                                        <IconButton
-                                            variant="danger"
-                                            small
-                                            circle
-                                            className={styles.answerItemDelete}
-                                            onClick={() => removeAnswer(id)}
-                                        >
-                                            <Delete />
-                                        </IconButton>
-                                    )}
-                                </div>
-                            ))}
+                                            {answers.length > 1 && (
+                                                <IconButton
+                                                    variant="danger"
+                                                    small
+                                                    circle
+                                                    className={styles.answerItemDelete}
+                                                    onClick={() => removeAnswer(id)}
+                                                >
+                                                    <Delete />
+                                                </IconButton>
+                                            )}
+                                        </div>
+                                    ))}
+                            </div>
 
-                        {/* <div className={styles.answerItem}>
-                            <Input value={answer} setValue={setAnswer} />
-
-                            {!!answers.length && (
-                                <IconButton
-                                    variant="danger"
-                                    small
-                                    circle
-                                    className={styles.answerItemDelete}
-                                    onClick={removeAnswerForm}
-                                >
-                                    <Delete />
-                                </IconButton>
-                            )}
-                        </div> */}
-                    </div>
-
-                    <Button variant="light" auto onClick={addAnswer}>
-                        <Plus />
-                        Добавить ответ
-                    </Button>
+                            <Button variant="light" auto onClick={addAnswer}>
+                                <Plus />
+                                Добавить ответ
+                            </Button>
+                        </>
+                    )}
 
                     <Input title="Источник" value={source} setValue={setSource} />
                 </div>
@@ -423,6 +423,7 @@ const AdminTaskEdit = () => {
                                 edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
                                 remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                 matchPercent={data.percent}
+                                href={`/admin/task/${data.task.id}`}
                             />
                         ))
                     ) : (

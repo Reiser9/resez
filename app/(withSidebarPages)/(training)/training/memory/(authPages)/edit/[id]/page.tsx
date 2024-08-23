@@ -5,6 +5,10 @@ import cn from 'classnames';
 import { Checkbox, Tooltip } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { createPortal } from 'react-dom';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from '../../../index.module.scss';
@@ -16,19 +20,13 @@ import useAlert from '@/shared/hooks/useAlert';
 import { useCollections, useHandlers } from '@/features/collection';
 import ImportExcel from '../../create/ui/ImportExcel';
 import PairItem from '../../create/ui/PairItem';
-import PairItemForm from '../../create/ui/PairItemForm';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import { CONFIG } from '@/shared/consts/CONFIG';
 
 import { Button, IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Input } from '@/shared/ui/Input';
-
-const emptyPair = {
-    questionText: '',
-    questionPicture: '',
-    answerText: '',
-    answerPicture: '',
-};
+import { Text } from '@/shared/ui/Text';
 
 const MemoryEdit = () => {
     const [importExcelModal, setImportExcelModal] = React.useState(false);
@@ -38,18 +36,16 @@ const MemoryEdit = () => {
     const [description, setDescription] = React.useState('');
     const [privateCollection, setPrivateCollection] = React.useState(false);
 
-    // const [questionText, setQuestionText] = React.useState('');
-    // const [answerText, setAnswerText] = React.useState('');
-    // const [questionImage, setQuestionImage] = React.useState('');
-    // const [answerImage, setAnswerImage] = React.useState('');
-
     const [pairs, setPairs] = React.useState<PairDTO[]>([]);
     const [pairsEmptyIds, setPairsEmptyIds] = React.useState<number[]>([]);
+
+    const [activePair, setActivePair] = React.useState<PairDTO>();
 
     const { alertNotify } = useAlert();
     const { updateCollection, getCollectionById } = useCollections();
     const { getShortInfo } = useShortInfo();
-    const { validateHandler, scrollBottom } = useHandlers();
+    const { validateHandler, scrollBottom, addNewPair, removePair, handleDragStart, handleDragEnd, sensors } =
+        useHandlers();
     const router = useRouter();
     const { id } = useParams();
 
@@ -65,18 +61,6 @@ const MemoryEdit = () => {
     });
 
     const { id: userId } = user?.user || {};
-
-    const addNewPair = () => {
-        setPairs((prev) => [...prev, emptyPair]);
-        scrollBottom();
-    };
-
-    const removePair = (id: number) => {
-        const updatedObjects = [...pairs];
-        updatedObjects.splice(id, 1);
-        setPairs(updatedObjects);
-        setPairsEmptyIds((prev) => prev.filter((item) => item !== id));
-    };
 
     const editCollectionHandler = () => {
         const newPairs = validateHandler(pairs, setPairsEmptyIds);
@@ -162,41 +146,63 @@ const MemoryEdit = () => {
                     Скрыть от других пользователей
                 </Checkbox>
 
+                <div className={styles.cardCollectionInfo}>
+                    <Text fontWeight={600} variant="text2">
+                        Пары: {pairs.length}
+                    </Text>
+
+                    <Text fontWeight={600} variant="text2">
+                        Максимум пар: {CONFIG.MAX_PAIRS_COUNT}
+                    </Text>
+                </div>
+
                 <div className={styles.cardCollectionWrapper}>
-                    {pairs.map((data, id) => (
-                        <PairItem
-                            key={id}
-                            data={data}
-                            id={id}
-                            error={pairsEmptyIds.includes(id)}
-                            answerImageId={`answerImage${id}`}
-                            questionImageId={`questionImage${id}`}
-                            pairs={pairs}
-                            setPairs={setPairs}
-                            addNewPair={addNewPair}
-                            removePair={() => removePair(id)}
-                        />
-                    ))}
+                    <DndContext
+                        sensors={sensors}
+                        modifiers={[restrictToVerticalAxis]}
+                        onDragEnd={(event) => handleDragEnd(event, pairs, setPairs)}
+                        onDragStart={(event) => handleDragStart(event, setActivePair)}
+                    >
+                        <SortableContext items={pairs}>
+                            {pairs.map((data, id) => (
+                                <PairItem
+                                    key={data.id}
+                                    data={data}
+                                    number={id}
+                                    error={pairsEmptyIds.includes(data.id)}
+                                    answerImageId={`answerImage${data.id}`}
+                                    questionImageId={`questionImage${data.id}`}
+                                    pairs={pairs}
+                                    setPairs={setPairs}
+                                    removePair={() => removePair(data.id, pairs, setPairs, setPairsEmptyIds)}
+                                />
+                            ))}
+                        </SortableContext>
 
-                    {/* <PairItemForm
-                        pairs={pairs}
-                        setPairs={setPairs}
-                        addNewPair={addNewPair}
-                        error={pairsEmptyIds.includes(-1)}
-                        setError={setPairsEmptyIds}
-                        questionText={questionText}
-                        setQuestionText={setQuestionText}
-                        questionPicture={questionImage}
-                        setQuestionPicture={setQuestionImage}
-                        answerText={answerText}
-                        setAnswerText={setAnswerText}
-                        answerPicture={answerImage}
-                        setAnswerPicture={setAnswerImage}
-                    /> */}
+                        {createPortal(
+                            <DragOverlay>
+                                {activePair && (
+                                    <PairItem
+                                        data={activePair}
+                                        number={pairs.findIndex((item) => item.id === activePair.id)}
+                                        error={pairsEmptyIds.includes(activePair.id)}
+                                        answerImageId={`answerImage${activePair.id}`}
+                                        questionImageId={`questionImage${activePair.id}`}
+                                        pairs={pairs}
+                                        setPairs={setPairs}
+                                        removePair={() => removePair(activePair.id, pairs, setPairs, setPairsEmptyIds)}
+                                    />
+                                )}
+                            </DragOverlay>,
+                            document.body,
+                        )}
+                    </DndContext>
 
-                    <Button auto variant="light" onClick={addNewPair}>
-                        Добавить
-                    </Button>
+                    {pairs.length < CONFIG.MAX_PAIRS_COUNT && (
+                        <Button auto variant="light" onClick={() => addNewPair(pairs, setPairs)}>
+                            Добавить
+                        </Button>
+                    )}
                 </div>
             </div>
 

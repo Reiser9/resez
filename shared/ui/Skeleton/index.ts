@@ -5,7 +5,7 @@ export { default as UserAdminItemSkeleton } from './UserAdminItemSkeleton';
 export { default as RoleItemSkeleton } from './RoleItemSkeleton';
 export { default as CollectionItemSkeleton } from './CollectionItemSkeleton';
 export { default as ScrollSkeleton } from './ScrollSkeleton';
-export { default as SubjectItemSceleton } from './SubjectItemSceleton';
+export { default as SubjectItemSkeleton } from './SubjectItemSkeleton';
 export { default as AvatarItemSkeleton } from './AvatarItemSkeleton';
 export { default as TaskItemSkeleton } from './TaskItemSkeleton';
 export { default as TestItemSkeleton } from './TestItemSkeleton';

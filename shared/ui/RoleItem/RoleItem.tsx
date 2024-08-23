@@ -23,9 +23,17 @@ type Props = {
     deleteRole?: () => void;
     edit?: boolean;
     remove?: boolean;
+    children?: React.ReactNode;
 };
 
-const RoleItem: React.FC<Props> = ({ data, loading = false, deleteRole = () => {}, edit = false, remove = false }) => {
+const RoleItem: React.FC<Props> = ({
+    data,
+    loading = false,
+    deleteRole = () => {},
+    edit = false,
+    remove = false,
+    children,
+}) => {
     const { id, role, permissionsCount, usersCount, textColor, backgroundColor } = data || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -83,6 +91,8 @@ const RoleItem: React.FC<Props> = ({ data, loading = false, deleteRole = () => {
                         </HoverMenu>
                     )}
                 </div>
+
+                {children && children}
 
                 {loading && <LoaderForItem />}
             </div>

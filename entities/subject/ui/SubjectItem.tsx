@@ -160,6 +160,7 @@ const SubjectItem: React.FC<Props> = ({
                             })
                         }
                         disabled={confirmText.toLowerCase() !== 'подтвердить'}
+                        color="danger"
                     >
                         Удалить
                     </Button>

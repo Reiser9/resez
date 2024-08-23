@@ -4,7 +4,7 @@ import axios, { AxiosInstance, isAxiosError } from 'axios';
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/`,
-    timeout: 5000,
+    timeout: 15000,
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

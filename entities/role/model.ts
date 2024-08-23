@@ -14,6 +14,12 @@ export type RoleDTO = {
     usersCount: number;
 };
 
+export type RolesByUserId = Paggination & {
+    roles: (RoleDTO & {
+        isAssigned: boolean;
+    })[];
+};
+
 export type Role = {
     id: number;
     role: string;

@@ -7,21 +7,21 @@ import { useRouter } from 'next/navigation';
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
+import type { ScoreConversionItem, Task } from '@/entities/subject';
 import { Plus } from '@/shared/icons';
-
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
 import { cyrToLat } from '@/shared/utils/cytToLat';
 import PointsTable from './PointsTable';
 import { useSubjects } from '@/features/subjects';
-import { ScoreConversionItem, SubTheme, Task } from '@/entities/subject';
 import SubjectTaskItem from './SubjectTaskItem';
-import SubjectTaskItemForm from './SubjectTaskItemForm';
 import useAlert from '@/shared/hooks/useAlert';
-import { Text } from '@/shared/ui/Text';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { Text } from '@/shared/ui/Text';
+import { useHandlers } from '@/features/collection';
 
 const SubjectsCreate = () => {
     const [step, setStep] = React.useState(0);
@@ -33,14 +33,20 @@ const SubjectsCreate = () => {
     const [isPublished, setIsPublished] = React.useState(false);
     const [isPoint, setIsPoint] = React.useState(false);
 
-    const [tasks, setTasks] = React.useState<Task[]>([]);
-
-    const [theme, setTheme] = React.useState('');
-    const [primaryScore, setPrimaryScore] = React.useState('');
-    const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
-    const [subTheme, setSubTheme] = React.useState('');
-    const [subThemes, setSubThemes] = React.useState<SubTheme[]>([]);
-    const [tasksCount, setTasksCount] = React.useState(0);
+    const [tasks, setTasks] = React.useState<Task[]>([
+        {
+            theme: '',
+            subThemes: [
+                {
+                    subTheme: '',
+                    tasksCount: 0,
+                },
+            ],
+            tasksCount: 0,
+            isDetailedAnswer: false,
+            primaryScore: '',
+        },
+    ]);
 
     const [createdSubjectId, setCreatedSubjectId] = React.useState(0);
     const [red, setRed] = React.useState(-9999);
@@ -50,6 +56,7 @@ const SubjectsCreate = () => {
 
     const { createSubject, createTableForSubject } = useSubjects();
     const { alertNotify } = useAlert();
+    const { scrollBottom } = useHandlers();
     const router = useRouter();
 
     const cyrToLatName = () => {
@@ -61,23 +68,20 @@ const SubjectsCreate = () => {
     const createSubjectHandler = async () => {
         let updatedTasks = [...tasks];
 
-        if (theme && primaryScore && (subThemes.length > 0 || subTheme)) {
-            const trimSubTheme = subTheme.trim();
-            updatedTasks = [
-                ...updatedTasks,
-                {
-                    theme,
-                    primaryScore,
-                    isDetailedAnswer,
-                    subThemes: trimSubTheme ? [...subThemes, { subTheme: trimSubTheme, tasksCount }] : subThemes,
-                    tasksCount: 0,
-                },
-            ];
+        if (!name.trim()) {
+            return alertNotify('Предупреждение', 'Название предмета не может быть пустым', 'warn');
         }
-
+        if (!slug) {
+            return alertNotify('Предупреждение', 'Ярылк предмета не может быть пустым', 'warn');
+        }
+        if (!examMinutes) {
+            return alertNotify('Предупреждение', 'Длительность экзамена не может быть пустым', 'warn');
+        }
         if (!updatedTasks.length) {
             return alertNotify('Предупреждение', 'Хотя бы одно задание должно быть создано', 'warn');
         }
+
+        // Проверка на пустые задания
 
         const id = await createSubject(name, slug, isPublished, order, updatedTasks, isPoint, examMinutes, () => {
             setStep(1);
@@ -93,6 +97,32 @@ const SubjectsCreate = () => {
 
         setPrimaryCount(primaryCount);
         fillEmptyTableCell(primaryCount);
+    };
+
+    const addTask = () => {
+        setTasks((prev) => [
+            ...prev,
+            {
+                theme: '',
+                subThemes: [
+                    {
+                        subTheme: '',
+                        tasksCount: 0,
+                    },
+                ],
+                tasksCount: 0,
+                isDetailedAnswer: false,
+                primaryScore: '',
+            },
+        ]);
+        scrollBottom();
+    };
+
+    const handleChangeInput = (e: ChangeEvent<HTMLInputElement>, id: number) => {
+        let currentData = [...elements];
+        currentData[id].secondaryScore = e.target.value;
+
+        setElements(currentData);
     };
 
     const createTablePoints = () => {
@@ -148,26 +178,6 @@ const SubjectsCreate = () => {
         createTableForSubject(createdSubjectId, updatedScores, () => router.push('/admin/subjects'));
     };
 
-    const addTask = () => {
-        const trimSubTheme = subTheme.trim();
-
-        const newTask = {
-            theme,
-            primaryScore,
-            isDetailedAnswer,
-            subThemes: trimSubTheme ? [...subThemes, { subTheme: trimSubTheme, tasksCount: 0 }] : subThemes,
-            tasksCount: 0,
-        };
-
-        setTasks((prev) => [...prev, newTask]);
-
-        setTheme('');
-        setPrimaryScore('');
-        setIsDetailedAnswer(false);
-        setSubThemes([]);
-        setSubTheme('');
-    };
-
     const fillEmptyTableCell = (count: number) => {
         let newElements: ScoreConversionItem[] = [];
 
@@ -212,13 +222,6 @@ const SubjectsCreate = () => {
         });
 
         setGreen((prev) => (prev === id ? 9999 : id));
-    };
-
-    const handleChangeInput = (e: ChangeEvent<HTMLInputElement>, id: number) => {
-        let currentData = [...elements];
-        currentData[id].secondaryScore = e.target.value;
-
-        setElements(currentData);
     };
 
     return (
@@ -273,7 +276,14 @@ const SubjectsCreate = () => {
                                 type="number"
                             />
 
-                            <Input value={order} setValue={setOrder} title="Позиция" lengthLimit={3} type="number" />
+                            <Input
+                                value={order}
+                                setValue={setOrder}
+                                title="Позиция"
+                                lengthLimit={3}
+                                type="number"
+                                infoText="Позиция отображения в списке"
+                            />
 
                             <Checkbox checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)}>
                                 Опубликовать
@@ -284,34 +294,18 @@ const SubjectsCreate = () => {
                             </Checkbox>
 
                             <div className={styles.subjectTasksInner}>
-                                <Text variant="text2">Задания: {tasks.length + 1}</Text>
+                                <Text variant="text2">Задания: {tasks.length}</Text>
 
                                 <div className={styles.subjectTasksContent}>
                                     {tasks.map((task, taskId) => (
                                         <SubjectTaskItem
-                                            key={taskId}
+                                            key={`taskId_${taskId}`}
                                             number={taskId}
                                             task={task}
                                             tasks={tasks}
                                             setTasks={setTasks}
                                         />
                                     ))}
-
-                                    <SubjectTaskItemForm
-                                        subThemes={subThemes}
-                                        setSubThemes={setSubThemes}
-                                        subTheme={subTheme}
-                                        setSubTheme={setSubTheme}
-                                        number={tasks.length + 1}
-                                        theme={theme}
-                                        setTheme={setTheme}
-                                        primaryScore={primaryScore}
-                                        setPrimaryScore={setPrimaryScore}
-                                        isDetailedAnswer={isDetailedAnswer}
-                                        setIsDetailedAnswer={setIsDetailedAnswer}
-                                        tasksCount={0}
-                                        setTasksCount={setTasksCount}
-                                    />
 
                                     <Button auto variant="empty" className={styles.subjectTaskAdd} onClick={addTask}>
                                         <Plus />

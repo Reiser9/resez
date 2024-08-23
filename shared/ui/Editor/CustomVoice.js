@@ -112,6 +112,10 @@ export class CustomVoice {
 
         uploadRequest(audio)
             .then((data) => {
+                if (!data) {
+                    throw new Error();
+                }
+
                 this.data = data;
                 this.voiceNameInput.value = audio.name;
                 this.voiceNameInput.disabled = false;

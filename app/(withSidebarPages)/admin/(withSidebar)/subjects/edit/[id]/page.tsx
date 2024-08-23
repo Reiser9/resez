@@ -8,22 +8,23 @@ import { useQuery } from '@tanstack/react-query';
 import styles from '../../create/index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
+import type { ScoreConversionItem, Task } from '@/entities/subject';
 import { useSubjects } from '@/features/subjects';
-import type { ScoreConversionItem, SubTheme, Task } from '@/entities/subject';
 import useAlert from '@/shared/hooks/useAlert';
 import { cyrToLat } from '@/shared/utils/cytToLat';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Button } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
 import SubjectTaskItem from '../../create/SubjectTaskItem';
-import SubjectTaskItemForm from '../../create/SubjectTaskItemForm';
 import { Cross, Plus } from '@/shared/icons';
 import PointsTable from '../../create/PointsTable';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { useHandlers } from '@/features/collection';
+
+import { Button } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
-import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
-import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { Input } from '@/shared/ui/Input';
 
 const SubjectEdit = () => {
     const [step, setStep] = React.useState(0);
@@ -37,21 +38,13 @@ const SubjectEdit = () => {
 
     const [tasks, setTasks] = React.useState<Task[]>([]);
 
-    const [theme, setTheme] = React.useState('');
-    const [primaryScore, setPrimaryScore] = React.useState('');
-    const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
-    const [subTheme, setSubTheme] = React.useState('');
-    const [subThemes, setSubThemes] = React.useState<SubTheme[]>([]);
-    const [tasksCount, setTasksCount] = React.useState(0);
-    const [taskId, setTaskId] = React.useState<number>();
-    const [subThemeId, setSubThemeId] = React.useState<number>();
-
     const [red, setRed] = React.useState(-9999);
     const [green, setGreen] = React.useState(9999);
     const [elements, setElements] = React.useState<ScoreConversionItem[]>([]);
     const [primaryCount, setPrimaryCount] = React.useState(0);
 
     const { alertNotify } = useAlert();
+    const { scrollBottom } = useHandlers();
     const router = useRouter();
 
     const { getSubjectById, getPointsSubjectById, editSubject, createTableForSubject } = useSubjects();
@@ -65,28 +58,6 @@ const SubjectEdit = () => {
 
     const updateSubjectHandler = () => {
         let updatedTasks = [...tasks];
-
-        if (theme && primaryScore && (subThemes.length > 0 || subTheme)) {
-            const trimSubTheme = subTheme.trim();
-
-            let newSubTheme: SubTheme = { subTheme: trimSubTheme, tasksCount };
-
-            if (subThemeId) {
-                newSubTheme.id = subThemeId;
-            }
-
-            updatedTasks = [
-                ...updatedTasks,
-                {
-                    id: taskId,
-                    theme,
-                    primaryScore,
-                    isDetailedAnswer,
-                    subThemes: trimSubTheme ? [...subThemes, newSubTheme] : subThemes,
-                    tasksCount: 0,
-                },
-            ];
-        }
 
         if (!updatedTasks.length) {
             return alertNotify('Предупреждение', 'Хотя бы одно задание должно быть создано', 'warn');
@@ -102,6 +73,32 @@ const SubjectEdit = () => {
             setPrimaryCount(primaryCountReduce);
             fillEmptyTableCell(primaryCountReduce, primaryCount);
         });
+    };
+
+    const addTask = () => {
+        setTasks((prev) => [
+            ...prev,
+            {
+                theme: '',
+                subThemes: [
+                    {
+                        subTheme: '',
+                        tasksCount: 0,
+                    },
+                ],
+                tasksCount: 0,
+                isDetailedAnswer: false,
+                primaryScore: '',
+            },
+        ]);
+        scrollBottom();
+    };
+
+    const handleChangeInput = (e: ChangeEvent<HTMLInputElement>, id: number) => {
+        let currentData = [...elements];
+        currentData[id].secondaryScore = e.target.value;
+
+        setElements(currentData);
     };
 
     const fillEmptyTableCell = (count: number, primaryCount: number) => {
@@ -215,32 +212,6 @@ const SubjectEdit = () => {
         });
     };
 
-    const addTask = () => {
-        const trimSubTheme = subTheme.trim();
-
-        const newTask = {
-            id: taskId,
-            theme,
-            primaryScore,
-            isDetailedAnswer,
-            subThemes: trimSubTheme
-                ? [...subThemes, { subTheme: trimSubTheme, tasksCount, id: subThemeId }]
-                : subThemes,
-            tasksCount: 0,
-        };
-
-        setTasks((prev) => [...prev, newTask]);
-
-        setTheme('');
-        setPrimaryScore('');
-        setIsDetailedAnswer(false);
-        setSubThemes([]);
-        setSubTheme('');
-        setTasksCount(0);
-        setTaskId(undefined);
-        setSubThemeId(undefined);
-    };
-
     const setRedHandler = (id: number) => {
         setGreen((prev) => {
             if (prev === 9999 || id + 1 === primaryCount) {
@@ -269,13 +240,6 @@ const SubjectEdit = () => {
         setGreen((prev) => (prev === id ? 9999 : id));
     };
 
-    const handleChangeInput = (e: ChangeEvent<HTMLInputElement>, id: number) => {
-        let currentData = [...elements];
-        currentData[id].secondaryScore = e.target.value;
-
-        setElements(currentData);
-    };
-
     const { data, isLoading, isError } = useQuery({
         queryKey: ['subject_by_id', id],
         queryFn: () => getSubjectById(String(id)),
@@ -295,30 +259,23 @@ const SubjectEdit = () => {
     React.useEffect(() => {
         if (data) {
             const { subject } = data || {};
-            const { subject: subjectName, slug, durationMinutes, isPublished, isMark, subjectTasks } = subject || {};
+            const {
+                subject: subjectName,
+                slug,
+                durationMinutes,
+                isPublished,
+                isMark,
+                subjectTasks,
+                order,
+            } = subject || {};
 
             setName(subjectName);
             setSlug(slug);
             setExamMinutes(durationMinutes);
             setIsPublished(isPublished);
             setIsPoint(isMark);
-
-            const lastTask = subjectTasks.splice(-1)[0];
-
-            const { theme, subThemes, primaryScore, isDetailedAnswer, id } = lastTask;
-
+            setOrder(String(order));
             setTasks(subjectTasks);
-            setTheme(theme);
-            setPrimaryScore(primaryScore);
-            setIsDetailedAnswer(isDetailedAnswer);
-            setTaskId(id);
-
-            const lastSubTheme = subThemes.splice(-1)[0];
-
-            setSubThemes(subThemes);
-            setSubTheme(lastSubTheme?.subTheme || '');
-            setTasksCount(lastSubTheme?.tasksCount || 0);
-            setSubThemeId(lastSubTheme?.id);
         }
     }, [data]);
 
@@ -349,7 +306,7 @@ const SubjectEdit = () => {
 
             if (isMark) {
                 currentElements = scoreConversion.map((data, id) => {
-                    const { isGreen, isRed, minScore, maxScore, primaryScore } = data;
+                    const { isGreen, isRed, minScore, maxScore } = data;
 
                     return {
                         primaryScore: id + 1,
@@ -383,7 +340,7 @@ const SubjectEdit = () => {
             }, 0);
 
             setPrimaryCount(primaryCountReduce);
-            fillEmptyTableCell(primaryCountReduce ? primaryCountReduce : Number(primaryScore), primaryCount);
+            fillEmptyTableCell(primaryCountReduce, primaryCount);
         }
     }, [step]);
 
@@ -458,7 +415,7 @@ const SubjectEdit = () => {
                             </Checkbox>
 
                             <div className={styles.subjectTasksInner}>
-                                <Text variant="text2">Задания: {tasks.length + 1}</Text>
+                                <Text variant="text2">Задания: {tasks.length}</Text>
 
                                 <div className={styles.subjectTasksContent}>
                                     {tasks.map((task, taskId) => (
@@ -470,24 +427,6 @@ const SubjectEdit = () => {
                                             setTasks={setTasks}
                                         />
                                     ))}
-
-                                    <SubjectTaskItemForm
-                                        subThemes={subThemes}
-                                        setSubThemes={setSubThemes}
-                                        subTheme={subTheme}
-                                        setSubTheme={setSubTheme}
-                                        number={tasks.length + 1}
-                                        theme={theme}
-                                        setTheme={setTheme}
-                                        primaryScore={primaryScore}
-                                        setPrimaryScore={setPrimaryScore}
-                                        isDetailedAnswer={isDetailedAnswer}
-                                        setIsDetailedAnswer={setIsDetailedAnswer}
-                                        tasksCount={tasksCount}
-                                        setTasksCount={setTasksCount}
-                                        subThemeId={subThemeId}
-                                        setSubThemeId={setSubThemeId}
-                                    />
 
                                     <Button auto variant="empty" className={styles.subjectTaskAdd} onClick={addTask}>
                                         <Plus />

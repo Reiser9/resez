@@ -38,10 +38,6 @@ const ExcelFile: React.FC<Props> = ({ id, accept, setData }) => {
 
             const excelData: Excel[] = utils.sheet_to_json(worksheet, { header: 'A' });
 
-            if (excelData.length > 100) {
-                return setData(excelData.slice(0, 100));
-            }
-
             setData(excelData);
         };
 

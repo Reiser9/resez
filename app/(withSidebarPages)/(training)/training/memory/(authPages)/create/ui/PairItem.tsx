@@ -4,11 +4,13 @@ import React from 'react';
 import Image from 'next/image';
 import cn from 'classnames';
 import { useQuery } from '@tanstack/react-query';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 import styles from '../../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection';
-import { Delete, Photo, ResezPremium, Swap } from '@/shared/icons';
+import { Delete, NineDots, Photo, ResezPremium, Swap } from '@/shared/icons';
 import useCollections from '@/features/collection/useCollections';
 import useShortInfo from '@/features/user/data/useShortInfo';
 
@@ -19,27 +21,39 @@ import { Text } from '@/shared/ui/Text';
 
 type Props = {
     data: PairDTO;
-    id: number;
+    number: number;
     error: boolean;
     questionImageId: string;
     answerImageId: string;
     pairs: PairDTO[];
     setPairs: React.Dispatch<React.SetStateAction<PairDTO[]>>;
-    addNewPair: () => void;
     removePair: () => void;
 };
 
 const PairItem: React.FC<Props> = ({
     data,
-    id,
+    number,
     error,
     questionImageId,
     answerImageId,
-    addNewPair,
     removePair,
     pairs,
     setPairs,
 }) => {
+    const { questionText, questionPicture, answerText, answerPicture, id: pairId } = data || {};
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+        id: pairId,
+        data: {
+            type: 'pair',
+            data,
+        },
+    });
+
+    const style = {
+        transform: CSS.Translate.toString(transform),
+        transition,
+    };
+
     const { getShortInfo } = useShortInfo();
     const { uploadImage } = useCollections();
 
@@ -49,13 +63,6 @@ const PairItem: React.FC<Props> = ({
     });
 
     const { subscription } = user?.user || {};
-
-    const enterNewPair = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addNewPair();
-        }
-    };
 
     const handleChange = (index: number, value: string, name: string) => {
         const newValues = [...pairs];
@@ -90,6 +97,7 @@ const PairItem: React.FC<Props> = ({
             questionPicture: pairs[id].answerPicture,
             answerText: pairs[id].questionText,
             answerPicture: pairs[id].questionPicture,
+            id: pairs[id].id,
         };
 
         const updatedObjects = [...pairs];
@@ -121,23 +129,32 @@ const PairItem: React.FC<Props> = ({
         setPairs(newValues);
     };
 
-    const { questionText, questionPicture, answerText, answerPicture } = data || {};
-
     return (
         <div
+            ref={setNodeRef}
+            style={style}
             className={cn(styles.cardCollectionItem, {
                 [styles.error]: error,
+                [styles.dragging]: isDragging,
             })}
         >
             <div className={styles.cardCollectionItemNumberInner}>
-                <p className={styles.cardCollectionItemNumber}>{id + 1}</p>
+                <p className={styles.cardCollectionItemNumber}>{number + 1}</p>
 
                 <div className={styles.cardCollectionItemActions}>
-                    <IconButton small onClick={() => swapElementsInArray(id)} className={styles.cardCollectionItemSwap}>
+                    <IconButton {...attributes} {...listeners} small className={styles.cardCollectionItemMove}>
+                        <NineDots />
+                    </IconButton>
+
+                    <IconButton
+                        small
+                        onClick={() => swapElementsInArray(number)}
+                        className={styles.cardCollectionItemSwap}
+                    >
                         <Swap />
                     </IconButton>
 
-                    <IconButton variant="danger" small onClick={removePair}>
+                    <IconButton variant="danger" small onClick={removePair} disabled={pairs.length === 1}>
                         <Delete />
                     </IconButton>
                 </div>
@@ -146,7 +163,7 @@ const PairItem: React.FC<Props> = ({
             <div className={styles.cardCollectionItemContent}>
                 <div className={styles.cardCollectionItemHalf}>
                     <Input
-                        resizeChange={(e) => handleChange(id, e.target.value, 'questionText')}
+                        resizeChange={(e) => handleChange(number, e.target.value, 'questionText')}
                         title="Термин"
                         resizable
                         lengthLimit={750}
@@ -158,7 +175,7 @@ const PairItem: React.FC<Props> = ({
                         <>
                             <File
                                 id={questionImageId}
-                                onChange={(file: File) => uploadImageInArray(id, 'questionPicture', file)}
+                                onChange={(file: File) => uploadImageInArray(number, 'questionPicture', file)}
                             />
 
                             <label
@@ -175,7 +192,7 @@ const PairItem: React.FC<Props> = ({
                                         circle
                                         variant="danger"
                                         className={styles.cardCollectionItemImageDelete}
-                                        onClick={(e) => removeImageInArray(e, id, 'questionPicture')}
+                                        onClick={(e) => removeImageInArray(e, number, 'questionPicture')}
                                     >
                                         <Delete />
                                     </IconButton>
@@ -195,7 +212,7 @@ const PairItem: React.FC<Props> = ({
 
                 <div className={styles.cardCollectionItemHalf}>
                     <Input
-                        resizeChange={(e) => handleChange(id, e.target.value, 'answerText')}
+                        resizeChange={(e) => handleChange(number, e.target.value, 'answerText')}
                         title="Определение"
                         resizable
                         lengthLimit={750}
@@ -207,7 +224,7 @@ const PairItem: React.FC<Props> = ({
                         <>
                             <File
                                 id={answerImageId}
-                                onChange={(file: File) => uploadImageInArray(id, 'answerPicture', file)}
+                                onChange={(file: File) => uploadImageInArray(number, 'answerPicture', file)}
                             />
 
                             <label
@@ -224,7 +241,7 @@ const PairItem: React.FC<Props> = ({
                                         circle
                                         variant="danger"
                                         className={styles.cardCollectionItemImageDelete}
-                                        onClick={(e) => removeImageInArray(e, id, 'answerPicture')}
+                                        onClick={(e) => removeImageInArray(e, number, 'answerPicture')}
                                     >
                                         <Delete />
                                     </IconButton>

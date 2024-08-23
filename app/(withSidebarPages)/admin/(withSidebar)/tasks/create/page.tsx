@@ -1,35 +1,37 @@
 'use client';
 
 import React, { ChangeEvent } from 'react';
+import dynamic from 'next/dynamic';
 import { Checkbox } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from '../index.module.scss';
 
+import type { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
+import type { SubjectTask } from '@/entities/task';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { Select } from '@/shared/ui/Select';
-import { Input } from '@/shared/ui/Input';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { EditorCore } from '@/shared/ui/Editor/Editor';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { useSubjects } from '@/features/subjects';
-import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { useTask } from '@/features/task';
 import useAlert from '@/shared/hooks/useAlert';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Delete, Plus, ScanEye } from '@/shared/icons';
 import { Text } from '@/shared/ui/Text';
-import { SubjectTask } from '@/entities/task';
-import { Modal } from '@/shared/ui/Modal';
 import TaskItem from '@/entities/task/ui/TaskItem';
-import { NotContent } from '@/shared/ui/NotContent';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
+import { useHandlers } from '@/features/collection';
+
+import { Button, IconButton } from '@/shared/ui/Button';
+import { Select } from '@/shared/ui/Select';
+import { Input } from '@/shared/ui/Input';
+import { EditorCore } from '@/shared/ui/Editor/Editor';
+import { Modal } from '@/shared/ui/Modal';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -38,6 +40,7 @@ const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
 
 const AdminTaskCreate = () => {
     const { getUserPermissions } = useUserPermissions();
+    const { scrollTop } = useHandlers();
 
     const {
         data: permissions,
@@ -54,6 +57,7 @@ const AdminTaskCreate = () => {
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [answers, setAnswers] = React.useState<string[]>(['']);
     const [source, setSource] = React.useState('');
+    const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
 
     const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
     const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
@@ -131,9 +135,7 @@ const AdminTaskCreate = () => {
     };
 
     const createTaskHandler = async () => {
-        if (!taskRef.current || !solutionRef.current) {
-            return;
-        }
+        if (!taskRef.current || !solutionRef.current) return;
 
         if (!subject || !theme || !subTheme) {
             return alertNotify('Предупреждение', 'Предмет, задание и тема не может быть пустой', 'warn');
@@ -152,9 +154,20 @@ const AdminTaskCreate = () => {
         const lastAnswer = (answers[answers.length - 1] || '').trim();
         let allAnswers = lastAnswer ? answers : answers.slice(0, -1);
 
-        createTask(subject, theme, subTheme, taskContent, isVerified, solutionContent, allAnswers, source, () => {
-            router.back();
-        });
+        createTask(
+            subject,
+            theme,
+            subTheme,
+            taskContent,
+            isVerified,
+            solutionContent,
+            isDetailedAnswer ? [] : allAnswers,
+            source,
+            () => {
+                router.back();
+                scrollTop();
+            },
+        );
     };
 
     const handleSearchSubjects = (value: string) => {
@@ -183,9 +196,7 @@ const AdminTaskCreate = () => {
     };
 
     const getMatchTasks = async () => {
-        if (!taskRef.current) {
-            return;
-        }
+        if (!taskRef.current) return;
 
         if (!subject) {
             return alertNotify('Предупреждение', 'Для проверки схожести заданий нужно указать предмет задания', 'warn');
@@ -203,27 +214,19 @@ const AdminTaskCreate = () => {
         const matches = await checkMatchTasks(subject, taskContent);
         setMatchesIsLoading(false);
 
-        if (!matches) {
-            return;
-        }
+        if (!matches) return;
 
         setMatches(matches);
         setModalCheckMatch(true);
     };
 
     React.useEffect(() => {
-        if (subject) {
-            setTheme(null);
-            setThemes([]);
-            setSubTheme(null);
-            setSubThemes([]);
-        }
-    }, [subject]);
-
-    React.useEffect(() => {
         if (theme) {
-            setSubTheme(null);
-            setSubThemes([]);
+            const foundTheme = themes.find((item) => String(item.id) === theme);
+
+            if (!foundTheme) return;
+
+            setIsDetailedAnswer(foundTheme.isDetailedAnswer);
         }
     }, [theme]);
 
@@ -267,7 +270,13 @@ const AdminTaskCreate = () => {
                         loading={subjectsIsLoading}
                         error={subjectsError}
                         value={subject}
-                        onChange={(value) => setSubject(value)}
+                        onChange={(value) => {
+                            setTheme(null);
+                            setThemes([]);
+                            setSubTheme(null);
+                            setSubThemes([]);
+                            setSubject(value);
+                        }}
                         options={subjectsFilter?.map((data) => {
                             return {
                                 label: data.subject,
@@ -286,7 +295,11 @@ const AdminTaskCreate = () => {
                             loading={themesIsLoading}
                             error={themesError}
                             value={theme}
-                            onChange={(value) => setTheme(value)}
+                            onChange={(value) => {
+                                setSubTheme(null);
+                                setSubThemes([]);
+                                setTheme(value);
+                            }}
                             options={themesFilter?.map((data) => {
                                 return {
                                     label: `${data.number}. ${data.theme}`,
@@ -336,31 +349,35 @@ const AdminTaskCreate = () => {
 
                             <Editor title="Решение" editorRef={solutionRef} id="answerEditor" />
 
-                            <div className={styles.answerWrapper}>
-                                <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
-                                {answers.map((answer, id) => (
-                                    <div key={id} className={styles.answerItem}>
-                                        <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+                            {!isDetailedAnswer && (
+                                <>
+                                    <div className={styles.answerWrapper}>
+                                        <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
+                                        {answers.map((answer, id) => (
+                                            <div key={id} className={styles.answerItem}>
+                                                <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
 
-                                        {answers.length > 1 && (
-                                            <IconButton
-                                                variant="danger"
-                                                small
-                                                circle
-                                                className={styles.answerItemDelete}
-                                                onClick={() => removeAnswer(id)}
-                                            >
-                                                <Delete />
-                                            </IconButton>
-                                        )}
+                                                {answers.length > 1 && (
+                                                    <IconButton
+                                                        variant="danger"
+                                                        small
+                                                        circle
+                                                        className={styles.answerItemDelete}
+                                                        onClick={() => removeAnswer(id)}
+                                                    >
+                                                        <Delete />
+                                                    </IconButton>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
 
-                            <Button variant="light" auto onClick={addAnswer}>
-                                <Plus />
-                                Добавить ответ
-                            </Button>
+                                    <Button variant="light" auto onClick={addAnswer}>
+                                        <Plus />
+                                        Добавить ответ
+                                    </Button>
+                                </>
+                            )}
 
                             <Input title="Источник" value={source} setValue={setSource} />
                         </>
@@ -378,6 +395,7 @@ const AdminTaskCreate = () => {
                                 edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_SUBJECTS])}
                                 remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
                                 matchPercent={data.percent}
+                                href={`/admin/task/${data.task.id}`}
                             />
                         ))
                     ) : (

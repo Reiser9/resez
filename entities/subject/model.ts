@@ -22,6 +22,7 @@ export type Subject = {
     durationMinutes: string;
     isPublished: boolean;
     isMark: boolean;
+    order: number;
     subjectTasks: Task[];
 };
 

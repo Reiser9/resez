@@ -6,9 +6,11 @@ import Image from 'next/image';
 import styles from '../../../index.module.scss';
 
 import type { Excel as ExcelType, PairDTO } from '@/entities/collection';
-import { ExcelFile } from '@/shared/ui/File';
 import { Excel } from '@/shared/icons';
+import { CONFIG } from '@/shared/consts/CONFIG';
+import useAlert from '@/shared/hooks/useAlert';
 
+import { ExcelFile } from '@/shared/ui/File';
 import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 import { Text } from '@/shared/ui/Text';
 
@@ -24,23 +26,27 @@ const ImportExcel: React.FC<Props> = ({ valueModal, setValueModal, scrollBottom,
     const [excelData, setExcelData] = React.useState<ExcelType[]>();
     const [replacePairs, setReplacePairs] = React.useState(false);
 
+    const { alertNotify } = useAlert();
+
     const importExcel = () => {
         if (!excelData || !excelData.length) {
             return;
         }
 
-        const importedPairs = excelData.map((data) => {
+        const importedPairs = excelData.map((data, id) => {
             return {
                 questionText: data.A,
                 questionPicture: '',
                 answerText: data.B,
                 answerPicture: '',
+                id: Date.now() + id,
             };
         });
 
         setValueModal(false);
 
-        if (pairs.length >= 1) {
+        const { questionText, questionPicture, answerText, answerPicture } = pairs[0] || {};
+        if (pairs.length > 1 || questionText || questionPicture || answerText || answerPicture) {
             return setReplacePairs(true);
         }
 
@@ -53,10 +59,19 @@ const ImportExcel: React.FC<Props> = ({ valueModal, setValueModal, scrollBottom,
             return;
         }
 
-        const importedPairs = excelData.map((data) => {
+        var excelDataTemp = excelData;
+
+        if (pairs.length + excelData.length > CONFIG.MAX_PAIRS_COUNT) {
+            const acceptCount = replace ? CONFIG.MAX_PAIRS_COUNT : CONFIG.MAX_PAIRS_COUNT - pairs.length;
+            excelDataTemp = excelData.slice(0, acceptCount);
+            alertNotify('Внимание', `Превышен лимит пар, импортировано пар: ${acceptCount}`, 'info', '', 5000);
+        }
+
+        const importedPairs = excelDataTemp.map((data, id) => {
             return {
                 questionText: data.A,
                 answerText: data.B,
+                id: Date.now() + id,
             };
         });
 

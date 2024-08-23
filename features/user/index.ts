@@ -12,4 +12,5 @@ export { default as useAvatar } from './data/useAvatar';
 export { default as useUserPermissions } from './data/useUserPermissions';
 export { default as useUsers } from './admin/useUsers';
 export { default as useArchive } from './admin/useArchive';
+export { default as useRoles } from './admin/useRoles';
 export { default as useSearchUser } from './search/useSearchUser';

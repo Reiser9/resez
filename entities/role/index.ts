@@ -1,1 +1,1 @@
-export type { Role, Roles, RoleDTO, RoleCreateDTO, Permissions, EditRoleDTO } from './model';
+export type { Role, Roles, RoleDTO, RoleCreateDTO, Permissions, EditRoleDTO, RolesByUserId } from './model';

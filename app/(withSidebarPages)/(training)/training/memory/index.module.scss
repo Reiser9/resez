@@ -89,10 +89,24 @@
     align-items: flex-start;
     gap: 12px;
     border: 1px solid transparent;
+    touch-action: none;
+    transition: border .2s linear;
+}
+
+.cardCollectionItem.dragging .cardCollectionItemNumberInner,
+.cardCollectionItem.dragging .cardCollectionItemContent{
+    opacity: 0;
 }
 
 .cardCollectionItem.error{
     border: 1px solid var(--error);
+}
+
+.cardCollectionItem.dragging{
+    border: 1px dashed var(--main);
+    background: var(--input);
+    position: relative;
+    z-index: 2;
 }
 
 .cardCollectionItemNumberInner{
@@ -285,6 +299,12 @@
 
 .cardCollectionItemSwap svg{
     transform: rotate(90deg);
+}
+
+@media (any-hover: hover) {
+    .cardCollectionItemMove{
+        cursor: move;
+    }
 }
 
 .subscribeBanner{

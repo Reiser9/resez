@@ -27,7 +27,7 @@ const useSocket = () => {
     const { data: userProfile, isLoading: userIsLoading } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
-        enabled: isAuth
+        enabled: isAuth,
     });
 
     const { user, sessionId } = userProfile || {};
@@ -98,7 +98,7 @@ const useSocket = () => {
                 Number(currentDialogIdRef.current) != message.chatId &&
                 message.type !== 'Системное'
             ) {
-                alertNotify(message.sender.nickname, message.message, 'success', `/messenger/${message.chatId}`, 10000);
+                alertNotify(message.sender.nickname, message.message, 'info', `/messenger/${message.chatId}`, 10000);
             }
         });
 
