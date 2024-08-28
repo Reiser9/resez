@@ -13,11 +13,24 @@ const useNotify = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationUsers = async (page: number, search = '') => {
+    const getPaginationUsers = async (
+        page: number,
+        online?: string,
+        blocked?: string,
+        verified?: string,
+        hasRole?: string,
+        role?: string,
+        search = '',
+    ) => {
         const limit = 9;
         const queryString = buildQueryString({
             offset: page * limit,
             limit,
+            online,
+            blocked,
+            verified,
+            has_role: hasRole,
+            role,
             search,
         });
 

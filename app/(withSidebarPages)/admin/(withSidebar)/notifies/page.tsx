@@ -183,16 +183,14 @@ const AdminNotifies = () => {
                                         }
                                         loading={usersIsLoading}
                                         removeIcon={<Cross width="14" />}
-                                        options={users?.users.map((data) => {
-                                            return {
-                                                label: data.nickname,
-                                                value: String(data.id),
-                                                id: `ID: ${data.id}`,
-                                                avatar: data.avatar,
-                                            };
-                                        })}
+                                        options={users?.users.map((data) => ({
+                                            label: data.nickname,
+                                            value: String(data.id),
+                                            id: `ID: ${data.id}`,
+                                            avatar: data.avatar,
+                                        }))}
                                         optionRender={({ data }) => (
-                                            <div className={styles.userSelectOption}>
+                                            <div className={base.userSelectOption}>
                                                 <div className={base.titleWrapper}>
                                                     <Badge image={data.avatar} text={data.label} size="small" />
 
@@ -209,6 +207,7 @@ const AdminNotifies = () => {
                                         maxTagCount="responsive"
                                         filterOption={false}
                                         onSearch={(value) => setSearchValue(value.trim())}
+                                        onClear={() => setSearchValue('')}
                                         className={styles.notifyUserSelect}
                                     />
                                 </div>
@@ -248,12 +247,10 @@ const AdminNotifies = () => {
                             loading={isPending}
                             onChange={(value) => setType(value)}
                             value={type}
-                            options={notifyTypes?.map((data) => {
-                                return {
-                                    label: data.type,
-                                    value: String(data.id),
-                                };
-                            })}
+                            options={notifyTypes?.map((data) => ({
+                                label: data.type,
+                                value: String(data.id),
+                            }))}
                         />
                     )}
 

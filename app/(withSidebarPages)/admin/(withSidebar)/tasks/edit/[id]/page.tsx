@@ -2,6 +2,7 @@
 
 import React, { ChangeEvent } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { Checkbox } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -19,20 +20,22 @@ import useAlert from '@/shared/hooks/useAlert';
 import { useTask } from '@/features/task';
 import { useSubjects } from '@/features/subjects';
 import { convertHtmlToEditorBlocks, getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
-import { Delete, Plus, ScanEye } from '@/shared/icons';
+import { Delete, Plus, ScanEye, Shufle } from '@/shared/icons';
 import TaskItem from '@/entities/task/ui/TaskItem';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
+import { generatePairs } from '@/shared/utils/generatePairs';
+import { useHandlers } from '@/features/collection';
 
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { Select } from '@/shared/ui/Select';
+import { Badge } from '@/shared/ui/Badge';
 import { Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Modal } from '@/shared/ui/Modal';
 import { NotContent } from '@/shared/ui/NotContent';
-import { useHandlers } from '@/features/collection';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -96,6 +99,9 @@ const AdminTaskEdit = () => {
         queryFn: () => getTaskById(String(id), true),
         enabled: !!id,
     });
+
+    const { user } = data || {};
+    const { nickname, avatar } = user || {};
 
     const {
         data: themesData,
@@ -201,7 +207,11 @@ const AdminTaskEdit = () => {
             isDetailedAnswer ? [] : allAnswers,
             source,
             () => {
-                router.back();
+                if (window.history.length > 1) {
+                    router.back();
+                } else {
+                    router.push('/admin/tasks');
+                }
                 scrollTop();
             },
         );
@@ -222,6 +232,24 @@ const AdminTaskEdit = () => {
         );
 
         setSubThemesFilter(filteredOptions);
+    };
+
+    const generateAnswers = () => {
+        if (!answers.length || !answers[0]) return;
+
+        const variants = answers[0].split(' ');
+
+        if (variants.length > 4) {
+            return alertNotify(
+                'Предупреждение',
+                'Максимальное количество вариантов ответа - 4, убедитесь, что все данные введены корректно',
+                'warn',
+                '',
+                4000,
+            );
+        }
+
+        setAnswers(generatePairs(variants));
     };
 
     React.useEffect(() => {
@@ -305,6 +333,18 @@ const AdminTaskEdit = () => {
                 }
             >
                 <div className={base.formMedium}>
+                    {nickname && (
+                        <div className={base.baseWrapperGap4}>
+                            <Text variant="text3">Задание создал</Text>
+
+                            <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                                <Badge text={nickname} image={avatar} />
+
+                                <Text>{nickname}</Text>
+                            </Link>
+                        </div>
+                    )}
+
                     <div className={base.baseWrapperGap4}>
                         <Text variant="text3">Предмет</Text>
 
@@ -322,12 +362,10 @@ const AdminTaskEdit = () => {
                                 setTheme(value);
                             }}
                             loading={themesIsLoading}
-                            options={themesFilter?.map((data) => {
-                                return {
-                                    label: `${data.number}. ${data.theme}`,
-                                    value: String(data.id),
-                                };
-                            })}
+                            options={themesFilter?.map((data) => ({
+                                label: `${data.number}. ${data.theme}`,
+                                value: String(data.id),
+                            }))}
                             showSearch
                             onSearch={handleSearchThemes}
                             filterOption={false}
@@ -341,12 +379,10 @@ const AdminTaskEdit = () => {
                             value={subTheme}
                             onChange={(value) => setSubTheme(value)}
                             loading={subThemesIsLoading}
-                            options={subThemesFilter?.map((data) => {
-                                return {
-                                    label: data.subTheme,
-                                    value: String(data.id),
-                                };
-                            })}
+                            options={subThemesFilter?.map((data) => ({
+                                label: data.subTheme,
+                                value: String(data.id),
+                            }))}
                             showSearch
                             onSearch={handleSearchSubThemes}
                             filterOption={false}
@@ -381,7 +417,9 @@ const AdminTaskEdit = () => {
                     {!isDetailedAnswer && (
                         <>
                             <div className={styles.answerWrapper}>
-                                <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
+                                <Text variant="text3">
+                                    Ответ{answers.length > 1 && 'ы'} {answers.length > 1 && `(${answers.length})`}
+                                </Text>
                                 {!!answers.length &&
                                     answers.map((answer, id) => (
                                         <div key={id} className={styles.answerItem}>
@@ -400,7 +438,22 @@ const AdminTaskEdit = () => {
                                             )}
                                         </div>
                                     ))}
+
+                                <Text variant="text3" color="error" fontWeight={600}>
+                                    Регистр ответа учитывает система, в ответ нужно указать слово или последовательность
+                                    в обычном регистре
+                                </Text>
+
+                                <Text variant="text3" fontWeight={600}>
+                                    Если в ответе порядок записи не важен, то можете ввести в ответ варианты через
+                                    пробел и нажать кнопку «Порядок неважен»
+                                </Text>
                             </div>
+
+                            <Button variant="light" auto onClick={generateAnswers} disabled={!answers[0]}>
+                                <Shufle />
+                                Порядок неважен
+                            </Button>
 
                             <Button variant="light" auto onClick={addAnswer}>
                                 <Plus />

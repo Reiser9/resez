@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className={pws.wrapper}>
                 <div className={pws.content}>
                     <div className={base.baseWrapperGap16}>
-                        <SubjectsTabs baseUrl="/tests/subject/" />
+                        <SubjectsTabs baseUrl="/tests/subject/" exact={false} />
 
                         <InfoBlock
                             icon={<Stack />}

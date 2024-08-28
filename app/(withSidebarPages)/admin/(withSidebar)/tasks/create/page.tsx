@@ -277,12 +277,10 @@ const AdminTaskCreate = () => {
                             setSubThemes([]);
                             setSubject(value);
                         }}
-                        options={subjectsFilter?.map((data) => {
-                            return {
-                                label: data.subject,
-                                value: String(data.id),
-                            };
-                        })}
+                        options={subjectsFilter?.map((data) => ({
+                            label: data.subject,
+                            value: String(data.id),
+                        }))}
                         showSearch
                         onSearch={handleSearchSubjects}
                         filterOption={false}
@@ -300,12 +298,10 @@ const AdminTaskCreate = () => {
                                 setSubThemes([]);
                                 setTheme(value);
                             }}
-                            options={themesFilter?.map((data) => {
-                                return {
-                                    label: `${data.number}. ${data.theme}`,
-                                    value: String(data.id),
-                                };
-                            })}
+                            options={themesFilter?.map((data) => ({
+                                label: `${data.number}. ${data.theme}`,
+                                value: String(data.id),
+                            }))}
                             showSearch
                             onSearch={handleSearchThemes}
                             filterOption={false}
@@ -320,12 +316,10 @@ const AdminTaskCreate = () => {
                             error={subThemesError}
                             value={subTheme}
                             onChange={(value) => setSubTheme(value)}
-                            options={subThemesFilter?.map((data) => {
-                                return {
-                                    label: data.subTheme,
-                                    value: String(data.id),
-                                };
-                            })}
+                            options={subThemesFilter?.map((data) => ({
+                                label: data.subTheme,
+                                value: String(data.id),
+                            }))}
                             showSearch
                             onSearch={handleSearchSubThemes}
                             filterOption={false}

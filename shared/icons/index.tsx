@@ -130,3 +130,4 @@ export { Bot } from './Bot';
 export { Ghost } from './Ghost';
 export { NineDots } from './NineDots';
 export { ArowsTopBottom } from './ArowsTopBottom';
+export { Shufle } from './Shufle';

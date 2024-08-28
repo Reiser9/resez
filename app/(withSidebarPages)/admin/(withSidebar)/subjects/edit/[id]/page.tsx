@@ -401,7 +401,8 @@ const SubjectEdit = () => {
                                 value={examMinutes}
                                 setValue={setExamMinutes}
                                 title="Длительность экзамена в минутах"
-                                lengthLimit={2}
+                                lengthLimit={3}
+                                type="number"
                             />
 
                             <Input value={order} setValue={setOrder} title="Позиция" lengthLimit={3} type="number" />

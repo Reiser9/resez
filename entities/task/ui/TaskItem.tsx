@@ -48,7 +48,8 @@ const TaskItem: React.FC<Props> = ({
     toggleVerify,
     matchPercent,
 }) => {
-    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source } = data || {};
+    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source, updatedAt } =
+        data || {};
     const { avatar, nickname } = user;
 
     const router = useRouter();
@@ -146,9 +147,21 @@ const TaskItem: React.FC<Props> = ({
                                 </Text>
                             </Tooltip>
 
+                            {updatedAt && (
+                                <Tooltip title={`Последнее изменение: ${getFormattedDate(updatedAt)}`}>
+                                    <Edit className={styles.taskVerified} />
+                                </Tooltip>
+                            )}
+
                             {isVerified && (
                                 <Tooltip title="Проверено">
                                     <Verified className={styles.taskVerified} />
+                                </Tooltip>
+                            )}
+
+                            {isArchived && (
+                                <Tooltip title="В архиве">
+                                    <Archive className={styles.taskVerified} />
                                 </Tooltip>
                             )}
                         </div>

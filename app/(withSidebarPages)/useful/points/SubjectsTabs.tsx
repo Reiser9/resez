@@ -12,7 +12,7 @@ import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
 import { useSubjects } from '@/features/subjects';
 import { ScrollSkeleton } from '@/shared/ui/Skeleton';
 
-const SubjectsTabs = ({ baseUrl = '/useful/points/' }) => {
+const SubjectsTabs = ({ baseUrl = '/useful/points/', exact = true }) => {
     const { getSubjects } = useSubjects();
     const pathname = usePathname();
 
@@ -37,7 +37,9 @@ const SubjectsTabs = ({ baseUrl = '/useful/points/' }) => {
                             href={`${baseUrl}${data.slug}`}
                             replace
                             className={cn(base.tag, {
-                                [base.active]: pathname === `${baseUrl}${data.slug}`,
+                                [base.active]: exact
+                                    ? pathname === `${baseUrl}${data.slug}`
+                                    : pathname.includes(`${baseUrl}${data.slug}`),
                             })}
                         >
                             {data.subject}

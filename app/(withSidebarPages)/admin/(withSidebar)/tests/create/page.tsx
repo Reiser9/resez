@@ -115,12 +115,10 @@ const AdminTestCreate = () => {
                             setSubject(value);
                             setSubjectsFilter(subjects);
                         }}
-                        options={subjectsFilter?.map((data) => {
-                            return {
-                                label: data.subject,
-                                value: String(data.id),
-                            };
-                        })}
+                        options={subjectsFilter?.map((data) => ({
+                            label: data.subject,
+                            value: String(data.id),
+                        }))}
                         showSearch
                         onSearch={handleSearchSubjects}
                         filterOption={false}

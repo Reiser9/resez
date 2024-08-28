@@ -77,7 +77,8 @@ const useRequest = () => {
                 throw new Error('Слишком много запросов');
             case 413:
                 alertNotify(
-                    `Ошибка', 'Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`,
+                    'Ошибка',
+                    `Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`,
                     'error',
                 );
                 throw new Error('Размер файла слишком большой');

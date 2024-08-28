@@ -4,29 +4,31 @@ import React from 'react';
 import cn from 'classnames';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import type { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { Tooltip } from 'antd';
 import { Cross, Filter, Plus } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { NotContent } from '@/shared/ui/NotContent';
 import { useTask } from '@/features/task';
 import TaskItem from '@/entities/task/ui/TaskItem';
-import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
-import { Select } from '@/shared/ui/Select';
-import { Modal } from '@/shared/ui/Modal';
 import { useSubjects } from '@/features/subjects';
-import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useUserPermissions, useUsers } from '@/features/user';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
-const AdminTests = () => {
+import { Text } from '@/shared/ui/Text';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Select } from '@/shared/ui/Select';
+import { Modal } from '@/shared/ui/Modal';
+import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
+import { Badge } from '@/shared/ui/Badge';
+
+const AdminTasks = () => {
     const [tasksFilter, setTasksFilter] = React.useState(false);
 
     const [subject, setSubject] = React.useState<string | null>(null);
@@ -314,97 +316,103 @@ const AdminTests = () => {
             </div>
 
             <Modal value={tasksFilter} setValue={setTasksFilter} title="Фильтры" size="small">
-                {checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]) && (
-                    <>
-                        <Select
-                            title="Предмет"
-                            notContentText="Предметов не найдено"
-                            loading={subjectsIsLoading}
-                            value={subject}
-                            onChange={(value) => {
-                                setSubject(value);
-                                setSubjectsFilter(subjects);
-                                setTheme(null);
-                                setSubTheme(null);
-                            }}
-                            clear
-                            options={subjectsFilter?.map((data) => {
-                                return {
-                                    label: data.subject,
-                                    value: String(data.id),
-                                };
-                            })}
-                            showSearch
-                            onSearch={handleSearchSubject}
-                            filterOption={false}
-                        />
+                <Select
+                    title="Предмет"
+                    notContentText="Предметов не найдено"
+                    loading={subjectsIsLoading}
+                    value={subject}
+                    onChange={(value) => {
+                        setSubject(value);
+                        setSubjectsFilter(subjects);
+                        setTheme(null);
+                        setSubTheme(null);
+                    }}
+                    clear
+                    options={subjectsFilter?.map((data) => ({
+                        label: data.subject,
+                        value: String(data.id),
+                    }))}
+                    showSearch
+                    onSearch={handleSearchSubject}
+                    filterOption={false}
+                />
 
-                        {subject && (
-                            <Select
-                                title="Задание"
-                                notContentText="Заданий не найдено"
-                                loading={themesIsLoading}
-                                value={theme}
-                                onChange={(value) => {
-                                    setTheme(value);
-                                    setThemesFilter(themes);
-                                    setSubTheme(null);
-                                }}
-                                clear
-                                options={themesFilter?.map((data) => {
-                                    return {
-                                        label: `${data.number}. ${data.theme}`,
-                                        value: String(data.id),
-                                    };
-                                })}
-                                showSearch
-                                onSearch={handleSearchThemes}
-                                filterOption={false}
-                            />
-                        )}
-
-                        {theme && (
-                            <Select
-                                title="Тема"
-                                notContentText="Тем не найдено"
-                                loading={subThemesIsLoading}
-                                value={subTheme}
-                                onChange={(value) => {
-                                    setSubTheme(value);
-                                    setSubThemesFilter(subThemes);
-                                }}
-                                clear
-                                options={subThemesFilter?.map((data) => {
-                                    return {
-                                        label: data.subTheme,
-                                        value: String(data.id),
-                                    };
-                                })}
-                                showSearch
-                                onSearch={handleSearchSubThemes}
-                                filterOption={false}
-                            />
-                        )}
-                    </>
+                {subject && (
+                    <Select
+                        title="Задание"
+                        notContentText="Заданий не найдено"
+                        loading={themesIsLoading}
+                        value={theme}
+                        onChange={(value) => {
+                            setTheme(value);
+                            setThemesFilter(themes);
+                            setSubTheme(null);
+                        }}
+                        clear
+                        options={themesFilter?.map((data) => ({
+                            label: `${data.number}. ${data.theme}`,
+                            value: String(data.id),
+                        }))}
+                        showSearch
+                        onSearch={handleSearchThemes}
+                        filterOption={false}
+                    />
                 )}
 
-                <Select
-                    title="Пользователь"
-                    loading={usersIsLoading}
-                    showSearch
-                    notContentText="Пользователей не найдено"
-                    onSearch={(value) => setSearchValue(value.trim())}
-                    onChange={(value) => setUser(value)}
-                    filterOption={false}
-                    value={user}
-                    clear
-                    options={users?.users.map((data) => {
-                        return {
+                {theme && (
+                    <Select
+                        title="Тема"
+                        notContentText="Тем не найдено"
+                        loading={subThemesIsLoading}
+                        value={subTheme}
+                        onChange={(value) => {
+                            setSubTheme(value);
+                            setSubThemesFilter(subThemes);
+                        }}
+                        clear
+                        options={subThemesFilter?.map((data) => ({
+                            label: data.subTheme,
+                            value: String(data.id),
+                        }))}
+                        showSearch
+                        onSearch={handleSearchSubThemes}
+                        filterOption={false}
+                    />
+                )}
+
+                {checkPermission(permissions || [], [PERMISSIONS.USERS]) && (
+                    <Select
+                        title="Пользователь"
+                        loading={usersIsLoading}
+                        showSearch
+                        notContentText="Пользователей не найдено"
+                        onSearch={(value) => setSearchValue(value.trim())}
+                        onChange={(value) => setUser(value)}
+                        onClear={() => setSearchValue('')}
+                        filterOption={false}
+                        value={user}
+                        clear
+                        options={users?.users.map((data) => ({
                             label: data.nickname,
                             value: String(data.id),
-                        };
-                    })}
-                />
+                            id: `ID: ${data.id}`,
+                            avatar: data.avatar,
+                        }))}
+                        optionRender={({ data }) => (
+                            <div className={base.userSelectOption}>
+                                <div className={base.titleWrapper}>
+                                    <Badge image={data.avatar} text={data.label} size="small" />
+
+                                    <Text variant="text2">{data.label}</Text>
+                                </div>
+
+                                <Text variant="text2" fontWeight={600}>
+                                    {data.id}
+                                </Text>
+                            </div>
+                        )}
+                    />
+                )}
 
                 <Select
                     title="Проверенные"
@@ -433,4 +441,4 @@ const AdminTests = () => {
     );
 };
 
-export default AdminTests;
+export default AdminTasks;

@@ -70,10 +70,13 @@ const TestsSubject = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.baseWrapperGap12}>
                 <div className={base.titleInner}>
-                    <Text variant="h4">Варианты от ResEz</Text>
+                    <Text variant="h4">
+                        Варианты от ResEz{' '}
+                        {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                    </Text>
 
                     {Number(data?.pages[0]?.totalCount) > 3 && (
-                        <Button auto small variant="light" href={`/tests/recommended/${subject}`}>
+                        <Button auto small variant="light" href={`/tests/subject/${subject}/recommended`}>
                             Смотреть все
                         </Button>
                     )}
@@ -90,18 +93,14 @@ const TestsSubject = () => {
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data.pages[0]?.totalCount ? (
                         <div className={base.contentItems}>
-                            {data?.pages.map((avatar) =>
-                                avatar?.tests
-                                    ?.slice(0, 3)
-                                    .map((data) => (
-                                        <TestItem
-                                            key={data.id}
-                                            data={data}
-                                            remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
-                                            removeCallback={() => deleteTest(data.id, revalidateTests)}
-                                        />
-                                    )),
-                            )}
+                            {data?.pages[0].tests.slice(0, 3).map((data) => (
+                                <TestItem
+                                    key={data.id}
+                                    data={data}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
+                                    removeCallback={() => deleteTest(data.id, revalidateTests)}
+                                />
+                            ))}
                         </div>
                     ) : (
                         <NotContent text="Вариантов не найдено" icon={<Tests />} />

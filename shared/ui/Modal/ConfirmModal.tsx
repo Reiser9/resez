@@ -17,6 +17,7 @@ type Props = {
     loading?: boolean;
     callback?: () => void;
     rejectCallback?: () => void;
+    onClose?: () => void;
     children?: React.ReactNode;
 };
 
@@ -29,6 +30,7 @@ const ConfirmModal: React.FC<Props> = ({
     loading = false,
     callback = () => {},
     rejectCallback = () => {},
+    onClose = () => {},
     children,
 }) => {
     const callbackWithClose = () => {
@@ -37,7 +39,14 @@ const ConfirmModal: React.FC<Props> = ({
     };
 
     return ReactDOM.createPortal(
-        <Modal title="Подтвердите действие" value={value} setValue={setValue} text={text} size="small">
+        <Modal
+            title="Подтвердите действие"
+            value={value}
+            setValue={setValue}
+            onClose={onClose}
+            text={text}
+            size="small"
+        >
             {children && children}
 
             <div className={styles.confirmModalButtons}>

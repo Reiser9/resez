@@ -28,6 +28,7 @@ import { TestResult } from '@/entities/test';
 import { useCountdown } from '@/shared/hooks/useCoundown';
 import { formatTime } from '@/shared/utils/formatSeconds';
 import { useHandlers } from '@/features/collection';
+import useAlert from '@/shared/hooks/useAlert';
 
 type TaskAnswer = { id: string | number; answer: string };
 type TaskDetailed = { id: string | number; primaryScore: number | string };
@@ -46,6 +47,7 @@ const TestingTestById = () => {
     const [tasksDetailed, setTasksDetailed] = React.useState<TaskDetailed[]>([]);
 
     const { getTestById, getDetailedTasksByTestId, checkResultTestById } = useTest();
+    const { alertNotify } = useAlert();
 
     const {
         data: test,
@@ -96,7 +98,7 @@ const TestingTestById = () => {
             return;
         }
 
-        const result = await checkResultTestById(String(id), tasksAnswer, tasksDetailed, () => setStep(3));
+        const result = await checkResultTestById(String(id), tasksAnswer, tasksDetailed, elapsedTime, () => setStep(3));
 
         if (result) {
             setResult(result);
@@ -148,6 +150,15 @@ const TestingTestById = () => {
         resume();
         fillEmptyAnswers();
         scrollTop();
+    };
+
+    const backHandler = () => {
+        if (remainingTime === 0) {
+            return alertNotify('Предупреждение', 'Время на решение теста закончилось', 'warn');
+        }
+
+        setStep((prev) => prev - 1);
+        resume();
     };
 
     React.useEffect(fillEmptyAnswers, [test]);
@@ -208,7 +219,11 @@ const TestingTestById = () => {
                                 {step === 3 && (
                                     <div className={cn(base.baseWrapperGap20, base.aic)}>
                                         <div className={cn(base.baseWrapperGap4, base.aic)}>
-                                            {isExam && (
+                                            {isExam && isMark ? (
+                                                <p className={styles.testResultTitle}>
+                                                    Ваша оценка: <span>{grade || 0}</span>
+                                                </p>
+                                            ) : (
                                                 <p className={styles.testResultTitle}>
                                                     Вы набрали <span>{secondaryScore || 0}</span> из <span>100</span>{' '}
                                                     баллов
@@ -287,14 +302,7 @@ const TestingTestById = () => {
                                 {step < 3 && !detailedAnswerTasksIsLoading && !testIsLoading && (
                                     <div className={styles.taskTestButtons}>
                                         {step > 1 && (
-                                            <Button
-                                                auto
-                                                variant="light"
-                                                onClick={() => {
-                                                    setStep((prev) => prev - 1);
-                                                    resume();
-                                                }}
-                                            >
+                                            <Button auto variant="light" onClick={backHandler}>
                                                 Назад
                                             </Button>
                                         )}
@@ -331,7 +339,7 @@ const TestingTestById = () => {
                                     <Text variant="h4">{subject}</Text>
                                 </TextPoint>
 
-                                <TextPoint title="Экзамен длится:">
+                                <TextPoint title="Длительность экзамена:">
                                     <Text variant="h4">{formatMinutesToDuration(durationMinutes)}</Text>
                                 </TextPoint>
 
@@ -367,6 +375,7 @@ const TestingTestById = () => {
                 setValue={setConfirmRestart}
                 callback={restartTest}
                 rejectCallback={resume}
+                onClose={resume}
                 text="Вы действительно хотите начать тест заново? Прогресс теста не будет сохранен"
                 rejectText="Продолжить решать"
                 confirmText="Начать заново"

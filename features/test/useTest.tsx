@@ -133,6 +133,7 @@ const useTest = () => {
         id: number | string,
         simpleTasks: { id: number | string; answer: string }[],
         detailedTasks: { id: number | string; primaryScore: string | number }[],
+        secondsSpent: number,
         successCallback = () => {},
     ) => {
         const response = await request<TestResult>({
@@ -142,6 +143,7 @@ const useTest = () => {
             data: {
                 simpleTasks,
                 detailedTasks,
+                secondsSpent
             },
         });
 
