@@ -6,15 +6,16 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { Button, ReloadButton } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import { CollectionItem } from '@/shared/ui/CollectionItem';
-import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { useCollections } from '@/features/collection';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { SearchInput } from '@/shared/ui/SearchInput';
+import { CollectionItem } from '@/entities/collection/ui';
+
+import { NotContent } from '@/shared/ui/NotContent';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
+import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
+import { SearchInput } from '@/shared/ui/Input';
 
 const UserCollections = () => {
     const { nickname } = useParams();

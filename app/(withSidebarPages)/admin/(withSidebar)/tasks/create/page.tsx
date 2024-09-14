@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import base from '@/shared/styles/base.module.scss';
 import styles from '../index.module.scss';
 
-import type { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
+import type { SubjectFilter, SubjectSubTheme, SubjectTheme } from '@/entities/subject';
 import type { SubjectTask } from '@/entities/task';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { checkPermission } from '@/shared/utils/checkPermissions';
@@ -59,12 +59,12 @@ const AdminTaskCreate = () => {
     const [source, setSource] = React.useState('');
     const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
 
-    const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
-    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
-    const [themes, setThemes] = React.useState<SubjectTaskDTO[]>([]);
-    const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
-    const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
-    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
+    const [subjects, setSubjects] = React.useState<SubjectFilter[]>([]);
+    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectFilter[]>([]);
+    const [themes, setThemes] = React.useState<SubjectTheme[]>([]);
+    const [themesFilter, setThemesFilter] = React.useState<SubjectTheme[]>([]);
+    const [subThemes, setSubThemes] = React.useState<SubjectSubTheme[]>([]);
+    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubTheme[]>([]);
 
     const [modalCheckMatch, setModalCheckMatch] = React.useState(false);
     const [matchesIsLoading, setMatchesIsLoading] = React.useState(false);

@@ -2,8 +2,8 @@
 
 import React from 'react';
 
+import type { Notifies, Notify, NotifyType } from '@/entities/notify';
 import useRequest from '@/shared/hooks/useRequest';
-import { Notifies, Notify, NotifyType } from '@/entities/notify';
 import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 

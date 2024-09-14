@@ -1,14 +1,11 @@
-import { Paggination } from '../pagination';
+import type { Paggination } from '../pagination';
 
 export type ProductDTO = {
     id: number;
     title: string;
-    contentType: string;
     price: number;
     seasonStartDate: Date;
     seasonEndDate: Date;
-    options: { width: number; height: number; x: string; y: string };
-    contentUrl: string;
     updatedAt: Date;
     createdAt: Date;
     type: string;
@@ -20,6 +17,21 @@ export type ProductDTO = {
     isCollected: boolean;
 };
 
-export type Avatars = Paggination & {
-    products: ProductDTO[];
+export type AvatarDecoration = ProductDTO & {
+    options: { width: number; height: number; x: string; y: string };
+    contentUrl: string;
+    contentType: string;
 };
+
+export type Theme = ProductDTO & {
+    primary: string;
+    light: string;
+};
+
+export type Avatars = Paggination & {
+    products: AvatarDecoration[];
+};
+
+export type ThemePaggination = Paggination & {
+    products: Theme[];
+}

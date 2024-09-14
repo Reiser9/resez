@@ -3,11 +3,11 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
+import type { RegisterData, RegisterResponse } from '@/entities/user/model';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, initVerificationCodeData, setIsAuth } from '@/store/slices/user';
+import { initVerificationCodeData, setIsAuth } from '@/store/slices/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import type { RegisterData, RegisterResponse } from '@/entities/user/model';
 
 const useRegister = () => {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -28,8 +28,6 @@ const useRegister = () => {
 
         if ('data' in response) {
             dispatch(setIsAuth(true));
-            dispatch(initUser(response.data.user));
-            dispatch(initSessionId(response.data.sessionId));
             dispatch(initVerificationCodeData(response.data.verificationCodeData));
             localStorage.setItem('accessToken', response.data.accessToken);
         }

@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { VerificationCodeData } from '@/entities/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
 import { initVerificationCodeData } from '@/store/slices/user';
-import { VerificationCodeData } from '@/entities/user';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useVerificationCode = () => {

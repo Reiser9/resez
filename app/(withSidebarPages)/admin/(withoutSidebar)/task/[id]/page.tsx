@@ -8,14 +8,15 @@ import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import { useTask } from '@/features/task';
+import { checkPermission } from '@/shared/utils/checkPermissions';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { useUserPermissions } from '@/features/user';
+import { TaskTestItem } from '@/entities/task/ui';
+
 import { Preloader } from '@/shared/ui/Preloader';
 import { TextPoint } from '@/shared/ui/TextPoint';
 import { Text } from '@/shared/ui/Text';
 import { InfoSidebar } from '@/shared/ui/InfoSidebar';
-import TaskTestItem from '@/entities/task/ui/TaskTestItem';
-import { checkPermission } from '@/shared/utils/checkPermissions';
-import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useUserPermissions } from '@/features/user';
 
 const TaskPage = () => {
     const { id } = useParams();

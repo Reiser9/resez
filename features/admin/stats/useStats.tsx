@@ -1,7 +1,7 @@
 'use client';
 
+import type { AdminStats } from '@/entities/admin';
 import useRequest from '@/shared/hooks/useRequest';
-import { AdminStats } from '@/entities/admin';
 
 const useStats = () => {
     const { request, catchRequestError, errorController } = useRequest();

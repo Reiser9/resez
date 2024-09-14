@@ -1,6 +1,6 @@
 'use client';
 
-import React, { TextareaHTMLAttributes, InputHTMLAttributes, ClipboardEvent } from 'react';
+import React, { TextareaHTMLAttributes, InputHTMLAttributes, ClipboardEvent, WheelEvent } from 'react';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 import sanitizeHtml from 'sanitize-html';
 import cn from 'classnames';
@@ -92,6 +92,11 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             setValue(e.target.value);
         };
 
+        const handleWheel = (event: WheelEvent<HTMLInputElement>) => {
+            event.currentTarget.blur();
+            event.preventDefault();
+        };
+
         const content = () => {
             if (variant === 'textarea') {
                 return (
@@ -142,19 +147,19 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     placeholder={placeholder}
                     type={show ? 'text' : type}
                     value={value}
-                    onChange={
-                        onChange
-                            ? onChange
-                            : (e) => {
-                                  const value = e.target.value;
+                    onWheel={handleWheel}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.length > lengthLimit) {
+                            return;
+                        }
 
-                                  if (value.length > lengthLimit) {
-                                      return;
-                                  }
+                        if (onChange) {
+                            onChange(e);
+                        }
 
-                                  setValue(e.target.value);
-                              }
-                    }
+                        setValue(value);
+                    }}
                     {...(props as InputHTMLAttributes<HTMLInputElement>)}
                 />
             );

@@ -1,34 +1,33 @@
 'use client';
 
-import React, { LegacyRef } from 'react';
+import React from 'react';
 import cn from 'classnames';
 import { Slider } from 'antd';
 import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import { ConfirmModal } from '@/shared/ui/Modal';
-import { Preloader } from '@/shared/ui/Preloader';
-import { Reload } from '@/shared/icons/Reload';
-import { TextPoint } from '@/shared/ui/TextPoint';
-import { Button } from '@/shared/ui/Button';
-import { Table, TableItem } from '@/shared/ui/Table';
+import type { TestResult } from '@/entities/test';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
-import { Text } from '@/shared/ui/Text';
-import { Pause, Play } from '@/shared/icons';
-import { InfoSidebar } from '@/shared/ui/InfoSidebar';
-import { useQuery } from '@tanstack/react-query';
+import { Pause, Play, Reload } from '@/shared/icons';
 import { useTest } from '@/features/test';
-import TaskTestItem from '@/entities/task/ui/TaskTestItem';
-import { formatMinutesToDuration } from '@/shared/utils/formatMinutes';
-import TaskTestItemWithAnswer from '@/entities/task/ui/TaskTestItemWithAnswer';
-import { TestResult } from '@/entities/test';
+import { TaskTestItem, TaskTestItemWithAnswer } from '@/entities/task/ui';
+import { formatMinutes } from '@/shared/utils/formatMinutes';
 import { useCountdown } from '@/shared/hooks/useCoundown';
 import { formatTime } from '@/shared/utils/formatSeconds';
 import { useHandlers } from '@/features/collection';
 import useAlert from '@/shared/hooks/useAlert';
+
+import { Table, TableItem } from '@/shared/ui/Table';
+import { InfoSidebar } from '@/shared/ui/InfoSidebar';
+import { Text } from '@/shared/ui/Text';
+import { TextPoint } from '@/shared/ui/TextPoint';
+import { Button } from '@/shared/ui/Button';
+import { ConfirmModal } from '@/shared/ui/Modal';
+import { Preloader } from '@/shared/ui/Preloader';
 
 type TaskAnswer = { id: string | number; answer: string };
 type TaskDetailed = { id: string | number; primaryScore: number | string };
@@ -41,7 +40,8 @@ const TestingTestById = () => {
     const [step, setStep] = React.useState(1);
     const [result, setResult] = React.useState<TestResult>();
 
-    const { grade, primaryScore, secondaryScore, maxPrimaryScore, simpleTasks, detailedTasks, isMark } = result || {};
+    const { grade, primaryScore, secondaryScore, maxPrimaryScore, simpleTasks, detailedTasks, isMark, secondsSpent } =
+        result || {};
 
     const [tasksAnswer, setTasksAnswer] = React.useState<TaskAnswer[]>([]);
     const [tasksDetailed, setTasksDetailed] = React.useState<TaskDetailed[]>([]);
@@ -207,7 +207,7 @@ const TestingTestById = () => {
                                                         <Slider
                                                             className={styles.taskSlider}
                                                             min={0}
-                                                            max={data.subjectTask.primaryScore}
+                                                            max={parseInt(`${data.subjectTask.primaryScore}`)}
                                                             onChange={(value) => handleScoreChange(data.id, value)}
                                                         />
                                                     </div>
@@ -234,7 +234,11 @@ const TestingTestById = () => {
                                                 Набрано первичных баллов: {primaryScore} из {maxPrimaryScore}
                                             </p>
 
-                                            {/* <p className={styles.testResultSubtitle}>Затрачено времени: 0</p> */}
+                                            {secondsSpent && (
+                                                <p className={styles.testResultSubtitle}>
+                                                    Затрачено времени: {formatTime(secondsSpent)}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <Button href="/tests" variant="light" auto>
@@ -340,7 +344,7 @@ const TestingTestById = () => {
                                 </TextPoint>
 
                                 <TextPoint title="Длительность экзамена:">
-                                    <Text variant="h4">{formatMinutesToDuration(durationMinutes)}</Text>
+                                    <Text variant="h4">{formatMinutes(durationMinutes)}</Text>
                                 </TextPoint>
 
                                 {step === 1 && (

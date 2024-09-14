@@ -8,7 +8,14 @@
     width: 20px;
 }
 
+.textInner a{
+    font-size: inherit;
+    color: var(--main);
+}
+
 .center{
+    width: 100%;
+    justify-content: center;
     text-align: center;
 }
 
@@ -26,4 +33,8 @@
 
 .warn{
     color: var(--warn);
+}
+
+.main{
+    color: var(--main);
 }

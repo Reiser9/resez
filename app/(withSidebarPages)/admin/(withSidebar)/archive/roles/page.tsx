@@ -6,16 +6,17 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 
 import base from '@/shared/styles/base.module.scss';
 
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import { Button, ReloadButton } from '@/shared/ui/Button';
-import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { RoleItem } from '@/shared/ui/RoleItem';
-import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
 import { useRoles } from '@/features/role';
 import { useArchive, useUserPermissions } from '@/features/user';
+import { RoleItem } from '@/entities/role/ui';
+
+import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const AdminArchiveRoles = () => {
     const { getUserPermissions } = useUserPermissions();

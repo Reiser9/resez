@@ -58,6 +58,12 @@ const AdminSidebar = () => {
                     {checkPermission(permissions || [], [PERMISSIONS.STORE]) && (
                         <SidebarLink href="/admin/store/products">Магазин</SidebarLink>
                     )}
+                    {checkPermission(permissions || [], [PERMISSIONS.LOGS]) && (
+                        <SidebarLink href="/admin/logs">Логирование</SidebarLink>
+                    )}
+                    {checkPermission(permissions || [], [PERMISSIONS.PROMOCODES]) && (
+                        <SidebarLink href="/admin/promo">Промокоды</SidebarLink>
+                    )}
                 </>
             )}
         </InnerPageSidebar>

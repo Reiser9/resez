@@ -1,8 +1,8 @@
 'use client';
 
+import type { Avatars, ProductDTO } from '@/entities/store';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { Avatars, ProductDTO } from '@/entities/store';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useAvatar = () => {
@@ -103,7 +103,7 @@ const useAvatar = () => {
         }
     };
 
-    const addProductToProfile = async (id: number, successCallback = () => {}) => {
+    const addAvatarDecorationToProfile = async (id: number, successCallback = () => {}) => {
         const response = await request<{ product: ProductDTO }>({
             url: `/store/avatar-decoration/${id}/add`,
             isAuth: true,
@@ -120,7 +120,7 @@ const useAvatar = () => {
         }
     };
 
-    const applyProduct = async (id: number, successCallback = () => {}) => {
+    const applyAvatarDecoration = async (id: number, successCallback = () => {}) => {
         const response = await request<{ user: ProductDTO }>({
             url: `/user/avatar-decoration/${id}`,
             isAuth: true,
@@ -144,8 +144,8 @@ const useAvatar = () => {
         getPaginationProfileAvatars,
         createAvatar,
         togglePublishAvatar,
-        addProductToProfile,
-        applyProduct,
+        addAvatarDecorationToProfile,
+        applyAvatarDecoration,
     };
 };
 

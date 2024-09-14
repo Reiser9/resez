@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { RecoveryChangePassword, RecoverySendCode, RecoveryVerifyCode } from '@/entities/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { RecoveryChangePassword, RecoverySendCode, RecoveryVerifyCode } from '@/entities/user';
 
 const useRecovery = () => {
     const [isLoading, setIsLoading] = React.useState(false);

@@ -5,17 +5,18 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { Button, ReloadButton } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross, Heart } from '@/shared/icons';
-import { CollectionItem } from '@/shared/ui/CollectionItem';
-import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { useCollections } from '@/features/collection';
 import Tabs from '../ui/Tabs';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { SearchInput } from '@/shared/ui/SearchInput';
+import { CollectionItem } from '@/entities/collection/ui';
+
+import { SearchInput } from '@/shared/ui/Input';
+import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
+import { Text } from '@/shared/ui/Text';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const MemoryLiked = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);

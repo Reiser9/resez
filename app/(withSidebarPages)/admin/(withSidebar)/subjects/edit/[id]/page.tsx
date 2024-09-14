@@ -8,12 +8,12 @@ import { useQuery } from '@tanstack/react-query';
 import styles from '../../create/index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import type { ScoreConversionItem, Task } from '@/entities/subject';
+import type { CreatedTask, ScoreConversionItem, Task } from '@/entities/subject';
 import { useSubjects } from '@/features/subjects';
 import useAlert from '@/shared/hooks/useAlert';
 import { cyrToLat } from '@/shared/utils/cytToLat';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import SubjectTaskItem from '../../create/SubjectTaskItem';
+import { SubjectTaskItem } from '@/entities/subject/ui';
 import { Cross, Plus } from '@/shared/icons';
 import PointsTable from '../../create/PointsTable';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
@@ -36,7 +36,7 @@ const SubjectEdit = () => {
     const [isPublished, setIsPublished] = React.useState(false);
     const [isPoint, setIsPoint] = React.useState(false);
 
-    const [tasks, setTasks] = React.useState<Task[]>([]);
+    const [tasks, setTasks] = React.useState<CreatedTask[]>([]);
 
     const [red, setRed] = React.useState(-9999);
     const [green, setGreen] = React.useState(9999);
@@ -67,7 +67,7 @@ const SubjectEdit = () => {
             setStep(1);
             alertNotify('Успешно', 'Информация о предмета сохранена', 'success');
             const primaryCountReduce = updatedTasks.reduce((accumulator, currentValue) => {
-                return accumulator + parseInt(currentValue.primaryScore);
+                return accumulator + parseInt(`${currentValue.primaryScore}`);
             }, 0);
 
             setPrimaryCount(primaryCountReduce);
@@ -79,16 +79,19 @@ const SubjectEdit = () => {
         setTasks((prev) => [
             ...prev,
             {
+                id: Date.now(),
                 theme: '',
                 subThemes: [
                     {
+                        id: Date.now(),
                         subTheme: '',
                         tasksCount: 0,
                     },
                 ],
                 tasksCount: 0,
                 isDetailedAnswer: false,
-                primaryScore: '',
+                primaryScore: 0,
+                number: 0,
             },
         ]);
         scrollBottom();
@@ -271,7 +274,7 @@ const SubjectEdit = () => {
 
             setName(subjectName);
             setSlug(slug);
-            setExamMinutes(durationMinutes);
+            setExamMinutes(`${durationMinutes}`);
             setIsPublished(isPublished);
             setIsPoint(isMark);
             setOrder(String(order));
@@ -336,7 +339,7 @@ const SubjectEdit = () => {
     React.useEffect(() => {
         if (step === 1 && subjectPoints && !subjectPoints.scoreConversion.length) {
             const primaryCountReduce = tasks.reduce((accumulator, currentValue) => {
-                return accumulator + parseInt(currentValue.primaryScore);
+                return accumulator + parseInt(`${currentValue.primaryScore}`);
             }, 0);
 
             setPrimaryCount(primaryCountReduce);
@@ -419,13 +422,14 @@ const SubjectEdit = () => {
                                 <Text variant="text2">Задания: {tasks.length}</Text>
 
                                 <div className={styles.subjectTasksContent}>
-                                    {tasks.map((task, taskId) => (
+                                    {tasks.map((task) => (
                                         <SubjectTaskItem
-                                            key={taskId}
-                                            number={taskId}
+                                            key={task.id}
+                                            index={task.number - 1}
                                             task={task}
                                             tasks={tasks}
-                                            setTasks={setTasks}
+                                            // Исправить ???
+                                            setTasks={setTasks as (value: Task[]) => void}
                                         />
                                     ))}
 

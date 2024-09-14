@@ -10,6 +10,8 @@ type Props = {
     small?: boolean;
     fill?: boolean;
     page?: boolean;
+    offIndent?: boolean;
+    animationDuration?: number;
     wrapperClassName?: string;
 } & HTMLAttributes<HTMLDivElement>;
 
@@ -18,6 +20,8 @@ const Preloader: React.FC<Props> = ({
     small = false,
     fill = false,
     page = false,
+    offIndent = false,
+    animationDuration = 1,
     className,
     wrapperClassName,
     ...props
@@ -27,6 +31,7 @@ const Preloader: React.FC<Props> = ({
             className={cn(styles.preloaderInner, wrapperClassName, {
                 [styles.fill]: fill,
                 [styles.page]: page,
+                [styles.indent]: offIndent,
             })}
             {...props}
         >
@@ -34,6 +39,7 @@ const Preloader: React.FC<Props> = ({
                 className={cn(styles.preloader, className, styles[theme], {
                     [styles.small]: small,
                 })}
+                style={{ animationDuration: `${animationDuration}s` }}
             ></div>
         </div>
     );

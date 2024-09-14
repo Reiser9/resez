@@ -12,7 +12,7 @@ import { Button } from '@/shared/ui/Button';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { Select } from '@/shared/ui/Select';
 import { useSubjects } from '@/features/subjects';
-import { SubjectDTO } from '@/entities/subject';
+import { SubjectFilter } from '@/entities/subject';
 import { useTest } from '@/features/test';
 import GenerateTestItem from './GenerateTestItem';
 import { Preloader } from '@/shared/ui/Preloader';
@@ -24,8 +24,8 @@ const AdminTestCreate = () => {
     const [generateVariant, setGenerateVariant] = React.useState(false);
     const [isOfficial, setIsOfficial] = React.useState(false);
 
-    const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
-    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
+    const [subjects, setSubjects] = React.useState<SubjectFilter[]>([]);
+    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectFilter[]>([]);
     const [subjectsDroped, setSubjectsDroped] = React.useState(false);
 
     const { getPagginationSubjects, getTasksBySubjectId } = useSubjects();

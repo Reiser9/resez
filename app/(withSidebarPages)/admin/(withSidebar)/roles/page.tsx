@@ -7,17 +7,18 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { RoleItem } from '@/shared/ui/RoleItem';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross, Plus } from '@/shared/icons';
 import { useRoles } from '@/features/role';
-import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
-import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
+import { RoleItem } from '@/entities/role/ui';
+
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
 
 const AdminRoles = () => {
     const { getUserPermissions } = useUserPermissions();

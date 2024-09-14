@@ -1,8 +1,14 @@
 'use client';
 
+import type {
+    PagginationTasks,
+    PagginationTasksById,
+    SubjectTask,
+    SubjectTaskById,
+    SubThemeInfo,
+} from '@/entities/task';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTasks, PagginationTasksById, SubjectTask, SubjectTaskById, SubThemeInfo } from '@/entities/task';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useTask = () => {

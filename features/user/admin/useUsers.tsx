@@ -2,12 +2,12 @@
 
 import React from 'react';
 
+import type { AdminUserSessions, UserAdmin, UserAdminProfile, UsersAdmin, UsersShortAdmin } from '@/entities/user';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { UserAdmin, UsersAdmin, UsersShortAdmin } from '@/entities/user';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
-const useNotify = () => {
+const useUsers = () => {
     const [usersIsLoading, setUsersIsLoading] = React.useState<number[]>([]);
 
     const { request, catchRequestError, errorController } = useRequest();
@@ -48,13 +48,14 @@ const useNotify = () => {
         }
     };
 
-    const getPaginationUsersShort = async (page: number, search = '') => {
+    const getPaginationUsersShort = async (page: number, search = '', ids?: string[]) => {
         const limit = 5;
         const queryString = buildQueryString({
             short: true,
             offset: page * limit,
             limit,
             search,
+            ids,
         });
 
         const response = await request<UsersShortAdmin>({
@@ -126,6 +127,43 @@ const useNotify = () => {
         successCallback();
     };
 
+    const getUserInfoById = async (userId: number | string) => {
+        const response = await request<{ user: UserAdminProfile }>({
+            url: `/admin/user/${userId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.user;
+        }
+    };
+
+    const getUserSessions = async (page: number, userId: number | string) => {
+        const limit = 9;
+        const offset = page * limit;
+        const queryString = buildQueryString({
+            offset: offset,
+            limit,
+        });
+
+        const response = await request<AdminUserSessions>({
+            url: `/admin/user/${userId}/session?${queryString}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         usersIsLoading,
         getPaginationUsers,
@@ -133,7 +171,9 @@ const useNotify = () => {
         blockUser,
         unblockUser,
         changeUserBalance,
+        getUserInfoById,
+        getUserSessions,
     };
 };
 
-export default useNotify;
+export default useUsers;

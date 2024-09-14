@@ -1,18 +1,21 @@
 'use client';
 
-import useRequest from '@/shared/hooks/useRequest';
-import { Subject, SubjectDTO, Task } from '@/entities/subject';
-import useAlert from '@/shared/hooks/useAlert';
+import type { Subject, Task } from '@/entities/subject';
 import type {
+    CreatedSubject,
+    CreatedTask,
     MarkConversionItem,
     PagginationSubjects,
     ScoreConversion,
     ScoreConversionItem,
-    SubjectSubThemeDTO,
+    SubjectFilter,
+    SubjectSubTheme,
     SubjectTask,
     SubjectTaskCreate,
-    SubjectTaskDTO,
+    SubjectTheme,
 } from '@/entities/subject/model';
+import useRequest from '@/shared/hooks/useRequest';
+import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useSubjects = () => {
@@ -40,7 +43,7 @@ const useSubjects = () => {
     };
 
     const getSubjectThemes = async (subjectId: number | string) => {
-        const response = await request<{ subjectTasks: SubjectTaskDTO[] }>({
+        const response = await request<{ subjectTasks: SubjectTheme[] }>({
             url: `/education-ms/admin/subject/${subjectId}/subject-task`,
             isAuth: true,
         });
@@ -55,7 +58,7 @@ const useSubjects = () => {
     };
 
     const getSubjectSubThemes = async (themeId: number | string) => {
-        const response = await request<{ subThemes: SubjectSubThemeDTO[] }>({
+        const response = await request<{ subThemes: SubjectSubTheme[] }>({
             url: `/education-ms/admin/subject-task/${themeId}/sub-theme`,
             isAuth: true,
         });
@@ -94,7 +97,7 @@ const useSubjects = () => {
         durationMinutes: string,
         successCallback = () => {},
     ) => {
-        const response = await request<{ subject: SubjectDTO }>({
+        const response = await request<{ subject: CreatedSubject }>({
             url: '/education-ms/admin/subject',
             isAuth: true,
             method: 'POST',
@@ -151,12 +154,12 @@ const useSubjects = () => {
         slug: string,
         isPublished: boolean,
         order: string | number,
-        subjectTasks: Task[],
+        subjectTasks: CreatedTask[],
         isMark: boolean,
         durationMinutes: string,
         successCallback = () => {},
     ) => {
-        const response = await request<{ subject: SubjectDTO }>({
+        const response = await request<{ subject: CreatedSubject }>({
             url: `/education-ms/admin/subject/${subjectId}`,
             isAuth: true,
             method: 'PATCH',
@@ -202,7 +205,7 @@ const useSubjects = () => {
     };
 
     const getSubjectById = async (id: string) => {
-        const response = await request<{ subject: Subject }>({
+        const response = await request<{ subject: CreatedSubject }>({
             url: `/education-ms/admin/subject/${id}`,
             isAuth: true,
         });
@@ -256,7 +259,7 @@ const useSubjects = () => {
     };
 
     const publishSubject = async (id: number, successCallback = () => {}) => {
-        const response = await request<SubjectDTO>({
+        const response = await request<SubjectFilter>({
             url: `/education-ms/admin/subject/${id}/toggle-publish`,
             isAuth: true,
             method: 'PATCH',

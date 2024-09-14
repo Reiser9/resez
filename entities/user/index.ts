@@ -23,4 +23,7 @@ export type {
     ProfileInfoDTO,
     UserShort,
     UsersShortAdmin,
+    UserAdminProfile,
 } from './model';
+
+export type { Session, Sessions, AdminUserSessions } from './session';

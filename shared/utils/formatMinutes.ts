@@ -1,4 +1,4 @@
-export const formatMinutesToDuration = (minutes = 0) => {
+export const formatMinutes = (minutes = 0) => {
     if (!minutes) {
         return 0;
     }

@@ -5,16 +5,17 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
+import { AvatarProfileItem } from '@/entities/store/ui';
 import { useAvatar } from '@/features/store';
-import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
+import { Cross } from '@/shared/icons';
+
 import { NotContent } from '@/shared/ui/NotContent';
 import { Button } from '@/shared/ui/Button';
-import { Cross } from '@/shared/icons';
-import AvatarProfileItem from '@/entities/store/ui/AvatarProfileItem';
+import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 
 const PersonalizationAvatar = () => {
     const queryClient = useQueryClient();
-    const { getPaginationProfileAvatars, applyProduct } = useAvatar();
+    const { getPaginationProfileAvatars, applyAvatarDecoration } = useAvatar();
 
     const revalidateAvatars = () => {
         queryClient.invalidateQueries({ queryKey: ['profile_avatars'] });
@@ -52,7 +53,7 @@ const PersonalizationAvatar = () => {
                             <AvatarProfileItem
                                 key={data.id}
                                 data={data}
-                                useProduct={() => applyProduct(data.id, revalidateAvatars)}
+                                useProduct={() => applyAvatarDecoration(data.id, revalidateAvatars)}
                             />
                         )),
                     )}

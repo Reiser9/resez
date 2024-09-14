@@ -10,6 +10,10 @@
     justify-content: center;
 }
 
+.preloaderInner.indent{
+    padding: 0;
+}
+
 .page {
     position: relative;
     flex: 1;
@@ -54,6 +58,10 @@
     border-radius: 50%;
     width: 8em;
     height: 8em;
+}
+
+.preloaderInner.indent .preloader{
+    margin: 0px auto;
 }
 
 @keyframes load {

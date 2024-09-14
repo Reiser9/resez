@@ -9,12 +9,12 @@ import styles from './index.module.scss';
 
 import { useRoles } from '@/features/user';
 import { Cross } from '@/shared/icons';
-import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
-import { RoleItem } from '@/shared/ui/RoleItem';
+import { RoleItem } from '@/entities/role/ui';
 
 import { Text } from '@/shared/ui/Text';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
+import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
 
 const AdminUserByIdRoles = () => {
     const { id } = useParams();
@@ -69,7 +69,6 @@ const AdminUserByIdRoles = () => {
                                         onClick={() => toggleRole(String(id), data.id, revalidateRequest)}
                                         variant="light"
                                         color={data.isAssigned ? 'danger' : 'primary'}
-                                        auto
                                     >
                                         {data.isAssigned ? 'Забрать' : 'Выдать'} роль
                                     </Button>

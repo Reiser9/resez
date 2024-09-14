@@ -3,7 +3,7 @@
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 
-import type { PagginationSubjects, SubjectDTO } from '@/entities/subject/model';
+import type { PagginationSubjects, SubjectFilter } from '@/entities/subject/model';
 import type { RoleDTO, Roles } from '@/entities/role';
 import { PagginationTasks } from '@/entities/task';
 import { SubjectTask } from '@/entities/task/model';
@@ -35,7 +35,7 @@ const useArchive = () => {
     };
 
     const restoreArchiveSubject = async (subjectId: number, successCallback = () => {}) => {
-        const response = await request<{ subject: SubjectDTO }>({
+        const response = await request<{ subject: SubjectFilter }>({
             url: `/education-ms/admin/subject/${subjectId}/restore`,
             isAuth: true,
             method: 'PATCH',
@@ -50,7 +50,7 @@ const useArchive = () => {
     };
 
     const removeArhiveSubject = async (subjectId: number, successCallback = () => {}) => {
-        const response = await request<{ subject: SubjectDTO }>({
+        const response = await request<{ subject: SubjectFilter }>({
             url: `/education-ms/admin/subject/${subjectId}`,
             isAuth: true,
             method: 'DELETE',
@@ -63,8 +63,6 @@ const useArchive = () => {
         successCallback();
         alertNotify('Успешно', 'Предмет удален', 'success');
     };
-
-    const restoreAllArchiveSubjects = async () => {};
 
     const getArhiveRoles = async (page: number) => {
         const limit = 12;
@@ -116,8 +114,6 @@ const useArchive = () => {
         successCallback();
         alertNotify('Успешно', 'Роль удалена', 'success');
     };
-
-    const restoreAllArchiveRoles = async () => {};
 
     const getArhiveTasks = async (page: number) => {
         const limit = 9;

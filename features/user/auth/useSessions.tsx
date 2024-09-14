@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { Sessions } from '@/entities/user';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { Session, Sessions } from '@/entities/user/session';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useSessions = () => {

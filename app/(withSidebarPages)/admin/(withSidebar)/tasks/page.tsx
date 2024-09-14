@@ -8,7 +8,7 @@ import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
-import type { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
+import type { SubjectTheme, SubjectFilter, SubjectSubTheme } from '@/entities/subject';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { Cross, Filter, Plus } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
@@ -38,12 +38,12 @@ const AdminTasks = () => {
     const [verify, setVerify] = React.useState<string | null>(null);
     const [searchValue, setSearchValue] = React.useState('');
 
-    const [subjects, setSubjects] = React.useState<SubjectDTO[]>([]);
-    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectDTO[]>([]);
-    const [themes, setThemes] = React.useState<SubjectTaskDTO[]>([]);
-    const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
-    const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
-    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
+    const [subjects, setSubjects] = React.useState<SubjectFilter[]>([]);
+    const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectFilter[]>([]);
+    const [themes, setThemes] = React.useState<SubjectTheme[]>([]);
+    const [themesFilter, setThemesFilter] = React.useState<SubjectTheme[]>([]);
+    const [subThemes, setSubThemes] = React.useState<SubjectSubTheme[]>([]);
+    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubTheme[]>([]);
     const userSearchDebounce = useDebounce(searchValue, 500);
 
     const { getUserPermissions } = useUserPermissions();

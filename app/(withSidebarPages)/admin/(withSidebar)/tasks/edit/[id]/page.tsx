@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import styles from '../../index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import type { SubjectSubThemeDTO, SubjectTaskDTO } from '@/entities/subject';
+import type { SubjectTheme, SubjectSubTheme } from '@/entities/subject';
 import type { SubjectTask } from '@/entities/task';
 import type { EditorCore } from '@/shared/ui/Editor/Editor';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
@@ -68,10 +68,10 @@ const AdminTaskEdit = () => {
     const [taskEditorIsReady, setTaskEditorIsReady] = React.useState(false);
     const [solutionEditorIsReady, setSolutionEditorIsReady] = React.useState(false);
 
-    const [themes, setThemes] = React.useState<SubjectTaskDTO[]>([]);
-    const [themesFilter, setThemesFilter] = React.useState<SubjectTaskDTO[]>([]);
-    const [subThemes, setSubThemes] = React.useState<SubjectSubThemeDTO[]>([]);
-    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubThemeDTO[]>([]);
+    const [themes, setThemes] = React.useState<SubjectTheme[]>([]);
+    const [themesFilter, setThemesFilter] = React.useState<SubjectTheme[]>([]);
+    const [subThemes, setSubThemes] = React.useState<SubjectSubTheme[]>([]);
+    const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubTheme[]>([]);
 
     const [modalCheckMatch, setModalCheckMatch] = React.useState(false);
     const [matchesIsLoading, setMatchesIsLoading] = React.useState(false);
@@ -237,7 +237,7 @@ const AdminTaskEdit = () => {
     const generateAnswers = () => {
         if (!answers.length || !answers[0]) return;
 
-        const variants = answers[0].split(' ');
+        const variants = answers[0].trim().split(' ');
 
         if (variants.length > 4) {
             return alertNotify(

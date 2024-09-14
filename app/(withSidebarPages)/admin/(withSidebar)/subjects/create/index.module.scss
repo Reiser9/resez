@@ -17,58 +17,6 @@
     gap: 12px;
 }
 
-.subjectTaskItem{
-    width: 100%;
-    border-radius: 4px;
-    background: var(--white);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 1.2rem;
-}
-
-.subjectTaskAdd{
-    margin: 0 auto;
-}
-
-.subjectTaskAdd button{
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.subjectTaskAdd svg{
-    width: 20px;
-    color: var(--main);
-}
-
-.subjectTaskNum{
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--main);
-    background: var(--lighten);
-    font-weight: 600;
-    font-size: 1.8rem;
-}
-
-.subjectItemDeleteInner, .subjectTaskItemDelete{
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-}
-
-.subjectTaskItemDelete{
-    align-items: center;
-    justify-content: space-between;
-}
-
 .subjectSteps{
     width: 100%;
     max-width: 350px;

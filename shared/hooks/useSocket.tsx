@@ -5,26 +5,24 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { socket } from '@/api/socket';
 
-import { useAppDispatch, useAppSelector } from './useRedux';
-import useNotify from './useAlert';
-import useRequest from './useRequest';
-import { setUserBlockReason, setUserBlocked } from '@/store/slices/user';
-import { Message } from '@/entities/messenger';
-import { Notify } from '@/entities/notify';
+import type { Message } from '@/entities/messenger';
+import type { Notify } from '@/entities/notify';
+import { useAppSelector } from './useRedux';
+import useAlert from './useAlert';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import useClearLocalData from './useClearLocalData';
 
 const useSocket = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
     const currentDialogId = useAppSelector((state) => state.messenger.currentDialogId);
-    const dispatch = useAppDispatch();
-    const { alertNotify } = useNotify();
-    const { clearLocalData } = useRequest();
+    const { alertNotify } = useAlert();
+    const { clearLocalData } = useClearLocalData();
 
     const queryClient = useQueryClient();
 
     const { getShortInfo } = useShortInfo();
 
-    const { data: userProfile, isLoading: userIsLoading } = useQuery({
+    const { data: userProfile } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
         enabled: isAuth,
@@ -46,7 +44,7 @@ const useSocket = () => {
         }
 
         socket.emit('join', user.id, sessionId);
-    }, [isAuth, user, sessionId]);
+    }, [isAuth, user?.id, sessionId]);
 
     React.useEffect(() => {
         currentDialogIdRef.current = currentDialogId;
@@ -72,7 +70,7 @@ const useSocket = () => {
             alertNotify('Сессия завершена', 'Кто-то завершил вашу сессию', 'error');
         });
 
-        socket.on('blocked', (data: { reason: string }) => {
+        socket.on('blocked', async (data: { reason: string }) => {
             alertNotify(
                 'Ваш аккаунт заблокирован',
                 'По всем вопросам можете обращаться в группу в вк',
@@ -80,12 +78,11 @@ const useSocket = () => {
                 '',
                 5000,
             );
-            dispatch(setUserBlocked(true));
-            dispatch(setUserBlockReason(data.reason));
+            queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 
-        socket.on('unblocked', () => {
-            dispatch(setUserBlocked(false));
+        socket.on('unblocked', async () => {
+            queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 
         socket.on('message', (message: Message) => {
@@ -113,7 +110,7 @@ const useSocket = () => {
             socket.off('blocked');
             socket.off('unblocked');
             socket.off('message');
-            socket.off('new-permissions');
+            socket.off('role-updated');
         };
     }, []);
 };

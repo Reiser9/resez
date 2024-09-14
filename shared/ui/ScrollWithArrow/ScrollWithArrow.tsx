@@ -15,7 +15,7 @@ type Props = {
 const ScrollWithArrows: React.FC<Props> = ({ scrollValue = 200, children }) => {
     const [scroll, setScroll] = React.useState(0);
     const [scrollBlock, setScrollBlock] = React.useState(0);
-    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+    const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const scrollLeft = e.currentTarget.scrollLeft;

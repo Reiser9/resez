@@ -9,14 +9,15 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
+import { Upload, Delete, Paintbruh } from '@/shared/icons';
+import { useProfileData, useAvatar } from '@/features/user';
+
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { Select } from '@/shared/ui/Select';
-import { useProfileData, useAvatar } from '@/features/user';
 import { Preloader } from '@/shared/ui/Preloader';
-import { Upload, Delete, Paintbruh } from '@/shared/icons';
 import { File } from '@/shared/ui/File';
 import { Badge } from '@/shared/ui/Badge';
 

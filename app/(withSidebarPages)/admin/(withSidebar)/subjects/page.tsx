@@ -11,7 +11,7 @@ import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { Cross, Plus } from '@/shared/icons';
 import { useSubjects } from '@/features/subjects';
-import SubjectItem from '@/entities/subject/ui/SubjectItem';
+import { SubjectItem } from '@/entities/subject/ui';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
 

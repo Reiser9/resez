@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Lottie from 'lottie-react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
@@ -17,8 +16,8 @@ import { useProfileData } from '@/features/user';
 import { Block, Delete, DotsHorizontal, Edit, Lvl20, Lvl30, Lvl75, Message, Paintbruh, Qr, User } from '@/shared/icons';
 import useCopyText from '@/features/utils/useCopyText';
 import { Handshake } from '@/shared/icons/awards/Handshake';
-import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
-import useShortInfo from '@/features/user/data/useShortInfo';
+import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';
+import { useShortInfo } from '@/features/user';
 
 import { Badge } from '@/shared/ui/Badge';
 import { IconButton } from '@/shared/ui/Button';
@@ -26,6 +25,7 @@ import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Preloader } from '@/shared/ui/Preloader';
+import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 const tabs = [
     {
@@ -56,36 +56,11 @@ const ProfilePage = () => {
 
     const { firstName, lastName, avatarDecoration } = profileInfo || {};
     const { contentUrl, title, options, contentType } = avatarDecoration || {};
-    const { width, x, y } = options || {};
-
-    const [animationData, setAnimationData] = React.useState<any | null>(null);
 
     const path = usePathname();
 
-    React.useEffect(() => {
-        const fetchAnimationData = async () => {
-            try {
-                if (!contentUrl) {
-                    return;
-                }
-                const response = await fetch(contentUrl);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setAnimationData(data);
-            } catch (error) {
-                console.error('Error fetching animation data:', error);
-            }
-        };
-
-        if (contentType === 'animation') {
-            fetchAnimationData();
-        }
-    }, [contentUrl, contentType]);
-
-    if(userIsLoading){
-        return <Preloader page />
+    if (userIsLoading) {
+        return <Preloader page />;
     }
 
     return (
@@ -114,25 +89,12 @@ const ProfilePage = () => {
                         </Tooltip> */}
 
                         {avatarDecoration && (
-                            <div className={styles.avatarDecorationWrapper}>
-                                {contentType === 'animation' ? (
-                                    <Lottie
-                                        animationData={animationData}
-                                        className={base.avatarDecoration}
-                                        style={{ width: width, top: y, left: x }}
-                                    />
-                                ) : (
-                                    <>
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={contentUrl}
-                                            alt={title}
-                                            className={base.avatarDecoration}
-                                            style={{ width: width, top: y, left: x }}
-                                        />
-                                    </>
-                                )}
-                            </div>
+                            <AvatarDecoration
+                                contentType={contentType}
+                                title={title}
+                                contentUrl={contentUrl}
+                                options={options}
+                            />
                         )}
                     </div>
                 </div>
@@ -201,7 +163,7 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* <ScrollWithArrows>
+            {/* <ScrollWithArrow>
                 {tabs.map((data, id) => (
                     <Link
                         key={id}
@@ -214,7 +176,7 @@ const ProfilePage = () => {
                         {data.name}
                     </Link>
                 ))}
-            </ScrollWithArrows> */}
+            </ScrollWithArrow> */}
 
             <NotContent text="Страница в доработке" />
 

@@ -1,6 +1,5 @@
 export type {
     SubTheme,
-    SubjectDTO,
     Task,
     Subject,
     PagginationSubjects,
@@ -8,7 +7,11 @@ export type {
     MarkConversionItem,
     ScoreConversion,
     SubjectTask,
-    SubjectTaskDTO,
-    SubjectSubThemeDTO,
-    SubjectTaskCreate
+    SubjectSubTheme,
+    SubjectTaskCreate,
+    CreatedSubTheme,
+    CreatedSubject,
+    CreatedTask,
+    SubjectFilter,
+    SubjectTheme,
 } from './model';

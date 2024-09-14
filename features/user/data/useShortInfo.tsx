@@ -1,7 +1,7 @@
 'use client';
 
-import useRequest from '@/shared/hooks/useRequest';
 import type { UserShortInfo } from '@/entities/user';
+import useRequest from '@/shared/hooks/useRequest';
 
 const useShortInfo = () => {
     const { request, catchRequestError, errorController } = useRequest();

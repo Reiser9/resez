@@ -8,22 +8,22 @@ import { Checkbox } from 'antd';
 import base from '@/shared/styles/base.module.scss';
 
 import { useUserPermissions, useUsers } from '@/features/user';
-import { UserItem } from '@/shared/ui/UserItem';
 import { Cross, Filter } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
-
-import { Text } from '@/shared/ui/Text';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { useRoles } from '@/features/role';
+import { UserItem } from '@/entities/admin/ui';
+
+import { SearchInput } from '@/shared/ui/Input';
 import { NotContent } from '@/shared/ui/NotContent';
 import { UserAdminItemSkeleton } from '@/shared/ui/Skeleton';
+import { Text } from '@/shared/ui/Text';
 import { Modal } from '@/shared/ui/Modal';
 import { Select } from '@/shared/ui/Select';
-import { SearchInput } from '@/shared/ui/SearchInput';
-import { useRoles } from '@/features/role';
 
 const AdminUsers = () => {
     const [usersFilter, setUsersFilter] = React.useState(false);
@@ -34,7 +34,9 @@ const AdminUsers = () => {
     const [hasRole, setHasRole] = React.useState(false);
     const [roleId, setRoleId] = React.useState<string | null>(null);
     const [searchValue, setSearchValue] = React.useState('');
+    const [roleSearchValue, setRoleSearchValue] = React.useState('');
     const userSearchDebounce = useDebounce(searchValue, 500);
+    const roleSearchDebounce = useDebounce(roleSearchValue, 500);
 
     const { getUserPermissions } = useUserPermissions();
 
@@ -74,9 +76,15 @@ const AdminUsers = () => {
         data: roles,
         isPending: rolesIsLoading,
         isError: rolesIsErrror,
-    } = useQuery({
-        queryKey: ['roles'],
-        queryFn: () => getPaginationRoles(0),
+    } = useInfiniteQuery({
+        queryKey: ['roles', roleSearchDebounce],
+        queryFn: (param) => getPaginationRoles(param.pageParam, roleSearchDebounce),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
+
+            return nextPage;
+        },
     });
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
@@ -257,11 +265,15 @@ const AdminUsers = () => {
                     <Select
                         title="Роль"
                         onChange={(value) => setRoleId(value)}
+                        onSearch={(value) => setRoleSearchValue(value.trim())}
                         value={roleId}
+                        filterOption={false}
+                        onClear={() => setRoleSearchValue('')}
+                        showSearch
                         clear
                         loading={rolesIsLoading}
                         error={rolesIsErrror}
-                        options={roles?.roles.map((data) => ({
+                        options={roles?.pages[0]?.roles.map((data) => ({
                             label: data.role,
                             value: String(data.id),
                             textColor: data.textColor,

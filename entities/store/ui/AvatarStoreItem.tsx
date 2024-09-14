@@ -2,14 +2,13 @@
 
 import React from 'react';
 import cn from 'classnames';
-import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
-import type { ProductDTO } from '../model';
+import type { AvatarDecoration as AvatarDecorationType } from '../model';
 import useShortInfo from '@/features/user/data/useShortInfo';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { Added, Check, Clapperboard, DotsHorizontal, Photo, ResCoin } from '@/shared/icons';
@@ -19,23 +18,17 @@ import { Badge } from '@/shared/ui/Badge';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 import { ConfirmModal } from '@/shared/ui/Modal';
+import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 type Props = {
-    data: ProductDTO;
+    data: AvatarDecorationType;
     addProductToProfile: () => void;
 };
 
 const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
     const { title, contentType, options, contentUrl, isCollected, price } = data || {};
-    const { width, x, y } = options || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
-
-    const playerRef = React.useRef<LottieRefCurrentProps>(null);
-    const [animationData, setAnimationData] = React.useState<any | null>(null);
-    const [isHovered, setIsHovered] = React.useState(false);
-    const [isPlaying, setIsPlaying] = React.useState(false);
-
     const [confirmBuyModal, setConfirmBuyModal] = React.useState(false);
 
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -48,49 +41,6 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
     });
 
     const { avatar, nickname } = user?.user || {};
-
-    // ВЫНЕСТИ ОБРАБОТКУ АНИМАЦИИ В ОТДЕЛЬНУЮ ФУНКЦИЮ
-    React.useEffect(() => {
-        const fetchAnimationData = async () => {
-            try {
-                const response = await fetch(contentUrl);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setAnimationData(data);
-            } catch (error) {
-                console.error('Error fetching animation data:', error);
-            }
-        };
-
-        if (contentType === 'animation') {
-            fetchAnimationData();
-        }
-    }, [contentUrl, contentType]);
-
-    React.useEffect(() => {
-        if (isHovered && playerRef.current && !isPlaying) {
-            setIsPlaying(true);
-            playerRef.current.goToAndStop(0, true);
-            playerRef.current.play();
-        }
-    }, [isHovered, animationData, isPlaying]);
-
-    const handleMouseEnter = () => {
-        setIsHovered(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-
-    const handleComplete = () => {
-        if (playerRef.current) {
-            playerRef.current.goToAndStop(0, true);
-        }
-        setIsPlaying(false);
-    };
 
     return (
         <>
@@ -120,33 +70,13 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
 
                     <Badge image={avatar} text={nickname || 'R'} style={{ width: 92, height: 92 }} />
 
-                    <div
-                        className={styles.avatarItemAvatarWrapper}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        {contentType === 'animation' ? (
-                            <Lottie
-                                animationData={animationData}
-                                autoplay={false}
-                                loop={false}
-                                className={base.avatarDecoration}
-                                style={{ width: width, top: y, left: x }}
-                                lottieRef={playerRef}
-                                onComplete={handleComplete}
-                            />
-                        ) : (
-                            <>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={contentUrl}
-                                    alt={title}
-                                    className={base.avatarDecoration}
-                                    style={{ width: width, top: y, left: x }}
-                                />
-                            </>
-                        )}
-                    </div>
+                    <AvatarDecoration
+                        title={title}
+                        contentUrl={contentUrl}
+                        contentType={contentType}
+                        options={options}
+                        hoverAnimation
+                    />
                 </div>
 
                 <Text variant="h4" fontWeight={600}>

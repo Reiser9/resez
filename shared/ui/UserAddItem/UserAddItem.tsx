@@ -5,10 +5,11 @@ import cn from 'classnames';
 
 import styles from './index.module.scss';
 
+import type { UserSearch } from '@/entities/user';
+import { Check } from '@/shared/icons';
+
 import { Badge } from '../Badge';
 import { Text } from '../Text';
-import { Check } from '@/shared/icons';
-import { UserSearch } from '@/entities/user';
 
 type Props = {
     data: UserSearch;

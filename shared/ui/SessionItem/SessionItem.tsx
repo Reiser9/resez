@@ -8,7 +8,6 @@ import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import { getDeviceByName } from '../../utils/getDeviceByName';
-
 import type { Session } from '@/entities/user/session';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
@@ -25,13 +24,7 @@ type Props = {
     loading?: boolean;
 };
 
-const SessionItem: React.FC<Props> = ({
-    current = false,
-    data,
-    active = false,
-    callback = () => {},
-    loading = false,
-}) => {
+const SessionItem: React.FC<Props> = ({ current = false, data, active = false, callback, loading = false }) => {
     const { isActive, browser, deviceType, date, ip, country, city, browserVersion, os, platform, id } = data || {};
 
     const [confirmEndSession, setConfirmEndSession] = React.useState(false);
@@ -70,30 +63,33 @@ const SessionItem: React.FC<Props> = ({
                     {date && <TextPoint title="Дата" text={getFormattedDate(date)} />}
                 </div>
 
-                {isActive ? (
-                    <Button
-                        loading={loading}
-                        variant="empty"
-                        color="danger"
-                        className={styles.sessionItemButton}
-                        onClick={() => setConfirmEndSession(true)}
-                    >
-                        Завершить сеанс
-                    </Button>
-                ) : (
-                    <div className={styles.sessionItemEnded}>Сеанс завершен</div>
-                )}
+                {callback &&
+                    (isActive ? (
+                        <Button
+                            loading={loading}
+                            variant="empty"
+                            color="danger"
+                            className={styles.sessionItemButton}
+                            onClick={() => setConfirmEndSession(true)}
+                        >
+                            Завершить сеанс
+                        </Button>
+                    ) : (
+                        <div className={styles.sessionItemEnded}>Сеанс завершен</div>
+                    ))}
             </div>
 
-            <ConfirmModal
-                value={confirmEndSession}
-                setValue={setConfirmEndSession}
-                callback={callback}
-                loading={loading}
-                text="Вы действительно хотите завершить данный сеанс?"
-                confirmText="Завершить"
-                rejectText="Отмена"
-            />
+            {callback && (
+                <ConfirmModal
+                    value={confirmEndSession}
+                    setValue={setConfirmEndSession}
+                    callback={callback}
+                    loading={loading}
+                    text="Вы действительно хотите завершить данный сеанс?"
+                    confirmText="Завершить"
+                    rejectText="Отмена"
+                />
+            )}
         </>
     );
 };

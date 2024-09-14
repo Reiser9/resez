@@ -1,8 +1,8 @@
 'use client';
 
+import type { Subscription } from '@/entities/subscription/model';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { Subscription } from '@/entities/subscription/model';
 
 const useSubscription = () => {
     const { request, catchRequestError, errorController } = useRequest();

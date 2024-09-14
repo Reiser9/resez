@@ -13,7 +13,7 @@ import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { cyrToLat } from '@/shared/utils/cytToLat';
 import PointsTable from './PointsTable';
 import { useSubjects } from '@/features/subjects';
-import SubjectTaskItem from './SubjectTaskItem';
+import { SubjectTaskItem } from '@/entities/subject/ui';
 import useAlert from '@/shared/hooks/useAlert';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
@@ -44,7 +44,7 @@ const SubjectsCreate = () => {
             ],
             tasksCount: 0,
             isDetailedAnswer: false,
-            primaryScore: '',
+            primaryScore: 0,
         },
     ]);
 
@@ -92,7 +92,7 @@ const SubjectsCreate = () => {
         }
 
         const primaryCount = updatedTasks.reduce((accumulator, currentValue) => {
-            return accumulator + parseInt(currentValue.primaryScore);
+            return accumulator + parseInt(`${currentValue.primaryScore}`);
         }, 0);
 
         setPrimaryCount(primaryCount);
@@ -300,7 +300,7 @@ const SubjectsCreate = () => {
                                     {tasks.map((task, taskId) => (
                                         <SubjectTaskItem
                                             key={`taskId_${taskId}`}
-                                            number={taskId}
+                                            index={taskId}
                                             task={task}
                                             tasks={tasks}
                                             setTasks={setTasks}

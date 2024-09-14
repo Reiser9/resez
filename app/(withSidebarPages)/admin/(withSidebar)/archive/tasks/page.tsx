@@ -7,13 +7,14 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import base from '@/shared/styles/base.module.scss';
 
 import { useArchive, useUserPermissions } from '@/features/user';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import { Button, ReloadButton } from '@/shared/ui/Button';
-import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import TaskItem from '@/entities/task/ui/TaskItem';
+import { TaskItem } from '@/entities/task/ui';
+
+import { NotContent } from '@/shared/ui/NotContent';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
 
 const AdminArchiveTasks = () => {

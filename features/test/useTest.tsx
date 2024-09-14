@@ -1,9 +1,10 @@
 'use client';
 
+import type { SubjectTaskById } from '@/entities/task';
+import type { PagginationTests, PagginationTestsHistory, Test, TestById, TestResult } from '@/entities/test';
+import { TestHistoryById } from '@/entities/test/model';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { PagginationTests, Test, TestById, TestResult } from '@/entities/test';
-import { SubjectTaskById } from '@/entities/task';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useTest = () => {
@@ -143,7 +144,7 @@ const useTest = () => {
             data: {
                 simpleTasks,
                 detailedTasks,
-                secondsSpent
+                secondsSpent,
             },
         });
 
@@ -158,6 +159,41 @@ const useTest = () => {
         }
     };
 
+    const getPagginationTestsHistory = async (page: number, limit = 9) => {
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
+        const response = await request<PagginationTestsHistory>({
+            url: `/education-ms/test-history?${queryString}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getTestHistoryById = async (id: number | string) => {
+        const response = await request<{ history: TestHistoryById }>({
+            url: `/education-ms/test-history/${id}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.history;
+        }
+    };
+
     return {
         getPagginationTests,
         getPagginationOfficialTests,
@@ -166,6 +202,8 @@ const useTest = () => {
         deleteTest,
         getDetailedTasksByTestId,
         checkResultTestById,
+        getPagginationTestsHistory,
+        getTestHistoryById,
     };
 };
 

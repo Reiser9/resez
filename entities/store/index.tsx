@@ -1,1 +1,1 @@
-export type { ProductDTO, Avatars } from './model.ts';
+export type { ProductDTO, Avatars, AvatarDecoration, Theme, ThemePaggination } from './model.ts';

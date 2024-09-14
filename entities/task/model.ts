@@ -1,5 +1,5 @@
-import { Paggination } from '../pagination';
-import { SubjectDTO, SubjectSubThemeDTO, SubjectTaskDTO } from '../subject';
+import type { Paggination } from '../pagination';
+import type { SubjectFilter, SubjectSubTheme, CreatedTask } from '../subject';
 
 export type SubjectTask = {
     id: number;
@@ -23,14 +23,17 @@ export type SubjectTask = {
 
 export type SubjectTaskById = SubjectTask & {
     solution: string;
-    subject: SubjectDTO & {
+    subject: SubjectFilter & {
         durationMinutes: number;
         isArchived: boolean;
         createdAt: Date;
         updatedAt: Date;
     };
-    subjectTask: SubjectTaskDTO;
-    subTheme: SubjectSubThemeDTO;
+    subjectTask: CreatedTask;
+    subTheme: SubjectSubTheme;
+    userAnswer: string;
+    isCorrect: boolean;
+    primaryScore: number;
 };
 
 export type PagginationTasks = Paggination & {

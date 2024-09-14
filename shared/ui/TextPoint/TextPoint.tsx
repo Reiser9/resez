@@ -27,9 +27,9 @@ const TextPoint: React.FC<Props> = ({ title, text, blur = false, className, chil
                     [styles.blur]: blur,
                 })}
             >
-                {text && <Text>{blur ? '#######' : text}</Text>}
+                {text && <Text>{text}</Text>}
 
-                {blur ? <Text>#######</Text> : children}
+                {children}
             </div>
         </div>
     );

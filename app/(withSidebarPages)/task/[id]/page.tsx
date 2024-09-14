@@ -10,7 +10,7 @@ import styles from './index.module.scss';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useTask } from '@/features/task';
-import TaskTestItem from '@/entities/task/ui/TaskTestItem';
+import { TaskTestItem } from '@/entities/task/ui';
 
 import { Preloader } from '@/shared/ui/Preloader';
 import { TextPoint } from '@/shared/ui/TextPoint';

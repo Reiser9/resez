@@ -1,7 +1,7 @@
 'use client';
 
-import useRequest from '@/shared/hooks/useRequest';
 import type { UsersSearch } from '@/entities/user';
+import useRequest from '@/shared/hooks/useRequest';
 
 const useSearchUser = () => {
     const { request, catchRequestError, errorController } = useRequest();

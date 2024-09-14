@@ -11,7 +11,7 @@ import styles from './index.module.scss';
 
 import { Cross, Photo, Plus, Search, User } from '@/shared/icons';
 import { useChat, useMessenger } from '@/features/messenger';
-import useSearchUser from '@/features/user/search/useSearchUser';
+import { useSearchUser } from '@/features/user';
 import { setDialogsScrollPosition } from '@/store/slices/messenger';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useRedux';
 

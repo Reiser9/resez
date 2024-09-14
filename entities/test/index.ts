@@ -6,4 +6,6 @@ export type {
     DetailedTaskResult,
     SimpleTaskResult,
     TestResult,
+    PagginationTestsHistory,
+    TestHistory,
 } from './model';

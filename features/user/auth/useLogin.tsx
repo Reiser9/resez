@@ -2,11 +2,11 @@
 
 import React from 'react';
 
+import type { LoginData, LoginResponse, LoginWithQRData } from '@/entities/user';
 import useAlert from '@/shared/hooks/useAlert';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, initVerificationCodeData, setIsAuth } from '@/store/slices/user';
+import { initVerificationCodeData, setIsAuth } from '@/store/slices/user';
 import useRequest from '@/shared/hooks/useRequest';
-import type { LoginData, LoginResponse, LoginWithQRData } from '@/entities/user';
 
 const useLogin = () => {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -39,8 +39,6 @@ const useLogin = () => {
 
         if ('data' in response) {
             dispatch(setIsAuth(true));
-            dispatch(initUser(response.data.user));
-            dispatch(initSessionId(response.data.sessionId));
 
             if (response.data.verificationCodeData) {
                 dispatch(initVerificationCodeData(response.data.verificationCodeData));

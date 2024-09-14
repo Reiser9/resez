@@ -1,4 +1,4 @@
-import { Paggination } from "../pagination";
+import type { Paggination } from '../pagination';
 
 export type Session = {
     browser: string;
@@ -12,9 +12,13 @@ export type Session = {
     isActive: boolean;
     os: string;
     platform: string;
-}
+};
 
 export type Sessions = Paggination & {
     current: Session;
     other: Session[];
+};
+
+export type AdminUserSessions = Paggination & {
+    sessions: Session[];
 };

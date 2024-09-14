@@ -5,9 +5,9 @@ import cn from 'classnames';
 
 import styles from './index.module.scss';
 
+import type { Session } from '@/entities/user/session';
 import { getDeviceByName } from '@/shared/utils/getDeviceByName';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
-import type { Session } from '@/entities/user/session';
 
 import { Text } from '../Text';
 

@@ -12,7 +12,7 @@ import { Code, Fire, Lifebuoy, Message, Store, Telegram, Tests, Training, Vk, Yo
 import { SidebarLink } from '@/shared/ui/SidebarLink';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import useWarn from '@/features/admin/warns/useWarn';
+import { useWarn } from '@/features/admin';
 import useAlert from '@/shared/hooks/useAlert';
 import { useUserPermissions } from '@/features/user';
 import { useAppSelector } from '@/shared/hooks/useRedux';

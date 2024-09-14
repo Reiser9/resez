@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Nunito } from 'next/font/google';
-import { ConfigProvider } from 'antd';
 import { SkeletonTheme } from 'react-loading-skeleton';
-import ruRU from 'antd/locale/ru_RU';
 
 import './globals.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -11,7 +9,6 @@ import { ReactQueryProvider, ReduxProvider } from '@/shared/providers';
 import { EventProvider, ThemeProvider, SidebarProvider, ScrollProvider } from '@/shared/context';
 import { NotifiesWrapper } from '@/shared/wrappers/NotifiesWrapper';
 import { InitialWrapper } from '@/shared/wrappers/InitialWrapper';
-import { CONFIG } from '@/shared/consts/CONFIG';
 import ErrorBoundary from '@/shared/wrappers/ErrorBoundary';
 
 const nunito = Nunito({
@@ -45,18 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                     <ScrollProvider>
                                         <NotifiesWrapper>
                                             <SkeletonTheme baseColor="var(--input)" highlightColor="var(--inputDarken)">
-                                                <ConfigProvider
-                                                    locale={ruRU}
-                                                    theme={{
-                                                        token: {
-                                                            // Поменять #007cee на динамический цвет
-                                                            colorPrimary: CONFIG.BASE_COLOR,
-                                                            fontFamily: 'var(--font-nunito)',
-                                                        },
-                                                    }}
-                                                >
-                                                    <InitialWrapper>{children}</InitialWrapper>
-                                                </ConfigProvider>
+                                                <InitialWrapper>{children}</InitialWrapper>
                                             </SkeletonTheme>
                                         </NotifiesWrapper>
                                     </ScrollProvider>

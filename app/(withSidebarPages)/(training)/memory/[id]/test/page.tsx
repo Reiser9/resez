@@ -8,15 +8,16 @@ import { useParams } from 'next/navigation';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { useCollections, useHandlers } from '@/features/collection';
-import { BackButton, Button } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
-import { Cross } from '@/shared/icons';
-import { Preloader } from '@/shared/ui/Preloader';
-import { Text } from '@/shared/ui/Text';
 import TestValidationItem from './ui/TestValidationItem';
 import TestChoiceItem from './ui/TestChoiceItem';
 import TestWriteItem from './ui/TestWriteItem';
+import { useCollections, useHandlers } from '@/features/collection';
+import { Cross } from '@/shared/icons';
+
+import { BackButton, Button } from '@/shared/ui/Button';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
+import { Text } from '@/shared/ui/Text';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
 
 type TestResult = {

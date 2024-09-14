@@ -4,12 +4,14 @@ import React from 'react';
 
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
+import useClearLocalData from '@/shared/hooks/useClearLocalData';
 
 const useLogout = () => {
     const [isLoading, setIsLoading] = React.useState(false);
 
     const { alertNotify } = useAlert();
-    const { request, catchRequestError, errorController, clearLocalData } = useRequest();
+    const { request, catchRequestError, errorController } = useRequest();
+    const { clearLocalData } = useClearLocalData();
 
     const logout = async (successCallback = () => {}) => {
         setIsLoading(true);

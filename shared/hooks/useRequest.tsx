@@ -1,15 +1,11 @@
 'use client';
 
-import React from 'react';
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { useQueryClient } from '@tanstack/react-query';
 
 import type { Error } from '@/api/types';
 import axiosInstance from '@/api/axios';
-import { useAppDispatch, useAppSelector } from './useRedux';
+import { useAppDispatch } from './useRedux';
 import { setServerIsAvailable } from '@/store/slices/app';
-import { setUserData } from '@/store/slices/user';
-import { socket } from '@/api/socket';
 import useAlert from './useAlert';
 
 type requestProps = {
@@ -25,21 +21,8 @@ type requestProps = {
 type RequestResult<T> = AxiosResponse<T> | AxiosError<Error>;
 
 const useRequest = () => {
-    const { sessionId, user } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const { alertNotify } = useAlert();
-    const queryClient = useQueryClient();
-
-    const clearLocalData = () => {
-        if (user && sessionId) {
-            socket.emit('leave', user.id, sessionId);
-        }
-
-        localStorage.removeItem('accessToken');
-
-        dispatch(setUserData());
-        queryClient.removeQueries({ queryKey: ['user_permissions'] });
-    };
 
     const getHealthServer = async () => {
         try {
@@ -141,7 +124,6 @@ const useRequest = () => {
 
     return {
         request,
-        clearLocalData,
         getHealthServer,
         errorController,
         catchRequestError,

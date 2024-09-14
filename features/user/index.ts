@@ -14,3 +14,4 @@ export { default as useUsers } from './admin/useUsers';
 export { default as useArchive } from './admin/useArchive';
 export { default as useRoles } from './admin/useRoles';
 export { default as useSearchUser } from './search/useSearchUser';
+export { default as useShortInfo } from './data/useShortInfo';

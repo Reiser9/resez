@@ -5,15 +5,16 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { Button, ReloadButton } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
-import useWarn from '@/features/admin/warns/useWarn';
-import WarnItem from '@/entities/admin/ui/WarnItem';
+import { useWarn } from '@/features/admin';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { WarnItem } from '@/entities/admin/ui';
+
+import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Text } from '@/shared/ui/Text';
+import { Button, ReloadButton } from '@/shared/ui/Button';
 
 const AdminWarns = () => {
     const queryClient = useQueryClient();

@@ -5,7 +5,7 @@ import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
-const useNotify = () => {
+const useRoles = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
@@ -55,4 +55,4 @@ const useNotify = () => {
     };
 };
 
-export default useNotify;
+export default useRoles;

@@ -10,7 +10,7 @@ type Props = {
     icon?: React.ReactNode;
     variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'text' | 'text2' | 'text3';
     textClassName?: string;
-    color?: '' | 'success' | 'error' | 'grey' | 'warn';
+    color?: '' | 'success' | 'error' | 'grey' | 'warn' | 'main';
     center?: boolean;
     fontWeight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
     children: React.ReactNode;
@@ -28,15 +28,15 @@ const Text: React.FC<Props> = ({
     ...props
 }) => {
     return (
-        <div className={cn(styles.textInner, className)} {...props}>
+        <div
+            className={cn(styles.textInner, className, {
+                [styles.center]: center,
+            })}
+            {...props}
+        >
             {icon && icon}
 
-            <p
-                className={cn(typography[variant], textClassName, styles[color], {
-                    [styles.center]: center,
-                })}
-                style={{ fontWeight: fontWeight }}
-            >
+            <p className={cn(typography[variant], textClassName, styles[color])} style={{ fontWeight: fontWeight }}>
                 {children}
             </p>
         </div>

@@ -11,3 +11,5 @@ export { default as TaskItemSkeleton } from './TaskItemSkeleton';
 export { default as TestItemSkeleton } from './TestItemSkeleton';
 export { default as DynamicSkeleton } from './DynamicSkeleton';
 export { default as CatalogItemSkeleton } from './CatalogItemSkeleton';
+export { default as LogItemSkeleton } from './LogItemSkeleton';
+export { default as TestHistoryItemSkeleton } from './TestHistoryItemSkeleton';

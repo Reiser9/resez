@@ -23,6 +23,10 @@ const personalizationTabs: PersonalizationTab[] = [
     //     name: 'Баннеры',
     //     link: '/store/personalization/banner',
     // },
+    {
+        name: 'Темы',
+        link: '/store/personalization/theme',
+    },
 ];
 
 const PersonalizationTabs = () => {

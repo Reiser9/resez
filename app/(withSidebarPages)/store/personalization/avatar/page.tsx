@@ -7,23 +7,25 @@ import { useRouter } from 'next/navigation';
 import base from '@/shared/styles/base.module.scss';
 
 import { useAvatar } from '@/features/store';
+import { Cross } from '@/shared/icons';
+import { AvatarStoreItem } from '@/entities/store/ui';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Cross } from '@/shared/icons';
-import AvatarStoreItem from '@/entities/store/ui/AvatarStoreItem';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const StorePersonalizationAvatar = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const queryClient = useQueryClient();
     const router = useRouter();
-    const { getPaginationStoreAvatars, addProductToProfile } = useAvatar();
+    const { getPaginationStoreAvatars, addAvatarDecorationToProfile } = useAvatar();
 
     const revalidateAvatars = () => {
         queryClient.invalidateQueries({ queryKey: ['store_avatars'] });
+        queryClient.invalidateQueries({ queryKey: ['short_info'] });
     };
 
     const resetRequest = () => {
@@ -35,7 +37,7 @@ const StorePersonalizationAvatar = () => {
             return router.push('/login');
         }
 
-        addProductToProfile(id, revalidateAvatars);
+        addAvatarDecorationToProfile(id, revalidateAvatars);
     };
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
@@ -53,7 +55,7 @@ const StorePersonalizationAvatar = () => {
         <div className={base.baseWrapperGap16}>
             <div className={base.titleInner}>
                 <Text variant="h3">
-                    Украшения {!isError && !isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                    Украшения {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />

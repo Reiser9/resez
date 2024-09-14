@@ -4,7 +4,6 @@ import React from 'react';
 
 import type { User } from '@/entities/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initUser } from '@/store/slices/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 
@@ -32,10 +31,6 @@ const useAvatar = () => {
             return errorController(response);
         }
 
-        if ('data' in response) {
-            dispatch(initUser(response.data.user));
-        }
-
         successCallback();
         alertNotify('Успешно', 'Изображение загружено', 'success');
     };
@@ -51,10 +46,6 @@ const useAvatar = () => {
 
         if (catchRequestError(response)) {
             return errorController(response);
-        }
-
-        if ('data' in response) {
-            dispatch(initUser(response.data.user));
         }
 
         successCallback();

@@ -19,7 +19,7 @@ const Audio: React.FC<Props> = ({ audio }) => {
     const [currentTime, setCurrentTime] = React.useState('00:00');
     const [duration, setDuration] = React.useState('');
 
-    const audioRef = React.useRef<HTMLAudioElement>(null);
+    const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
     const togglePlay = () => {
         document.querySelectorAll('audio').forEach((audio) => {

@@ -7,7 +7,7 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import base from '@/shared/styles/base.module.scss';
 
 import { Cross } from '@/shared/icons';
-import SubjectItem from '@/entities/subject/ui/SubjectItem';
+import { SubjectItem } from '@/entities/subject/ui';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useArchive, useUserPermissions } from '@/features/user';

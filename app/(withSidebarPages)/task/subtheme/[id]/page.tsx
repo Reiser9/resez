@@ -9,7 +9,7 @@ import styles from '../../[id]/index.module.scss';
 
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useTask } from '@/features/task';
-import TaskTestItem from '@/entities/task/ui/TaskTestItem';
+import { TaskTestItem } from '@/entities/task/ui';
 import { Cross } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 

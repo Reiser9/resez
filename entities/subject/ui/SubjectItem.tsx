@@ -15,14 +15,14 @@ import { LoaderForItem } from '@/shared/ui/Preloader';
 import { Modal } from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
 
-import { SubjectDTO } from '@/entities/subject';
+import { SubjectFilter } from '@/entities/subject';
 import { Text } from '@/shared/ui/Text';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSubjects } from '@/features/subjects';
 import { useArchive } from '@/features/user';
 
 type Props = {
-    data: SubjectDTO;
+    data: SubjectFilter;
     deleteSubject?: () => void;
     loading?: boolean;
     edit?: boolean;

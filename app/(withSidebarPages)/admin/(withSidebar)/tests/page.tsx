@@ -8,16 +8,17 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import base from '@/shared/styles/base.module.scss';
 
 import { Cross, Plus } from '@/shared/icons';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
-import { Text } from '@/shared/ui/Text';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useTest } from '@/features/test';
-import TestItem from '@/entities/test/ui/TestItem';
-import { TestItemSkeleton } from '@/shared/ui/Skeleton';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
+import { TestItem } from '@/entities/test/ui';
+
+import { Text } from '@/shared/ui/Text';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { NotContent } from '@/shared/ui/NotContent';
+import { TestItemSkeleton } from '@/shared/ui/Skeleton';
 
 const AdminTests = () => {
     const { getUserPermissions } = useUserPermissions();

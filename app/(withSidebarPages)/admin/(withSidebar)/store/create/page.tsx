@@ -7,14 +7,14 @@ import Lottie from 'lottie-react';
 import { DraggableData, Rnd } from 'react-rnd';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { Color } from 'antd/es/color-picker';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Delete, FileEmpty, Photo } from '@/shared/icons';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import { useAvatar } from '@/features/store';
+import { Delete, Eye, FileEmpty, Photo } from '@/shared/icons';
+import { useAvatar, useTheme } from '@/features/store';
 import PositionController from '../PositionController';
 import useAlert from '@/shared/hooks/useAlert';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
@@ -22,25 +22,26 @@ import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Button, IconButton } from '@/shared/ui/Button';
-import { Input } from '@/shared/ui/Input';
+import { ColorPickerInput, Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
 import { Text } from '@/shared/ui/Text';
 import { File } from '@/shared/ui/File';
 import { Badge } from '@/shared/ui/Badge';
+import { CONFIG } from '@/shared/consts/CONFIG';
 
-type ProductTypes = 'Украшение аватарки' | 'Баннер' | 'Тема' | 'Эффект чата' | 'Статус' | 'Наклейка';
+type ProductTypes = 'avatar_decoration' | 'banner' | 'theme' | 'chat_effect' | 'status' | 'sticker';
 type ProductConditions = 'free' | 'event' | 'achievement' | 'buy' | 'subscription';
 type ProductViews = 'static' | 'animation';
 
 const productTypes: { label: string; value: ProductTypes }[] = [
     {
         label: 'Украшение аватарки',
-        value: 'Украшение аватарки',
+        value: 'avatar_decoration',
     },
-    // {
-    //     label: 'Баннер',
-    //     value: 'Баннер',
-    // },
+    {
+        label: 'Тема',
+        value: 'theme',
+    },
     // {
     //     label: 'Тема',
     //     value: 'Тема',
@@ -111,7 +112,27 @@ const AdminStoreCreate = () => {
     const [aspectRatio, setAspectRatio] = React.useState(1);
     const imageRef = React.useRef<HTMLImageElement>(null);
 
+    // Темы
+    const [textColor, setTextColor] = React.useState<string | Color>(CONFIG.BASE_COLOR);
+    const [textColorFormatHex, setTextColorFormatHex] = React.useState<'hex' | 'rgb' | 'hsb' | undefined>('hex');
+
+    const [backgroundColor, setBackgroundColor] = React.useState<string | Color>(CONFIG.BASE_COLOR_LIGHT);
+    const [backgroundColorFormatHex, setBackgroundColorFormatHex] = React.useState<'hex' | 'rgb' | 'hsb' | undefined>(
+        'hex',
+    );
+
+    const textHexString = React.useMemo(
+        () => (typeof textColor === 'string' ? textColor : textColor.toHexString()),
+        [textColor],
+    );
+    const backgroundHexString = React.useMemo(
+        () => (typeof backgroundColor === 'string' ? backgroundColor : backgroundColor.toHexString()),
+        [backgroundColor],
+    );
+    // /Темы
+
     const { createAvatar } = useAvatar();
+    const { createTheme } = useTheme();
     const { alertNotify } = useAlert();
     const router = useRouter();
 
@@ -150,7 +171,7 @@ const AdminStoreCreate = () => {
 
     // Сделать разделение по функциям
 
-    const createAvatarHandler = () => {
+    const createProductHandler = () => {
         if (!name) {
             return alertNotify('Предупреждение', 'Название товара должно быть заполнено', 'warn');
         }
@@ -183,7 +204,13 @@ const AdminStoreCreate = () => {
 
         formData.append('options', JSON.stringify(options));
 
-        createAvatar(formData, () => router.push('/admin/store'));
+        if (type === 'avatar_decoration') {
+            createAvatar(formData, () => router.push('/admin/store/products/avatar'));
+        } else if (type === 'theme') {
+            createTheme(name, textHexString, backgroundHexString, price, () =>
+                router.push('/admin/store/products/theme'),
+            );
+        }
     };
 
     React.useEffect(() => {
@@ -256,7 +283,7 @@ const AdminStoreCreate = () => {
             <CreatePageWrapper
                 title="Создание товара"
                 button={
-                    <Button auto levitation onClick={createAvatarHandler}>
+                    <Button auto levitation onClick={createProductHandler}>
                         Создать
                     </Button>
                 }
@@ -321,234 +348,276 @@ const AdminStoreCreate = () => {
                         </Text>
                     )}
 
-                    {condition && (
+                    {condition && type && (
                         <>
-                            <div className={styles.createProductTabs}>
-                                <button
-                                    className={cn(styles.createProductTab, {
-                                        [styles.active]: view === 'static',
-                                    })}
-                                    onClick={() => setView('static')}
-                                >
-                                    Статика
-                                </button>
-
-                                <button
-                                    className={cn(styles.createProductTab, {
-                                        [styles.active]: view === 'animation',
-                                    })}
-                                    onClick={() => setView('animation')}
-                                >
-                                    Анимация
-                                </button>
-                            </div>
-
-                            {view === 'static' && (
+                            {type === 'avatar_decoration' && (
                                 <>
-                                    <File
-                                        id="productImage"
-                                        setImgPreview={setProductImagePreview}
-                                        setFile={setProductImage}
-                                        accept="image/png, image/jpeg, image/svg+xml, image/gif"
-                                    />
+                                    <div className={styles.createProductTabs}>
+                                        <button
+                                            className={cn(styles.createProductTab, {
+                                                [styles.active]: view === 'static',
+                                            })}
+                                            onClick={() => setView('static')}
+                                        >
+                                            Статика
+                                        </button>
 
-                                    <label
-                                        htmlFor="productImage"
-                                        className={cn(styles.createProductImage, {
-                                            [styles.imageFill]: productImage,
-                                        })}
-                                    >
-                                        {productImagePreview ? (
-                                            <Image src={productImagePreview.toString()} alt="image" fill />
-                                        ) : (
-                                            <Photo />
-                                        )}
+                                        <button
+                                            className={cn(styles.createProductTab, {
+                                                [styles.active]: view === 'animation',
+                                            })}
+                                            onClick={() => setView('animation')}
+                                        >
+                                            Анимация
+                                        </button>
+                                    </div>
 
-                                        {productImagePreview && (
-                                            <IconButton
-                                                small
-                                                circle
-                                                variant="danger"
-                                                className={styles.createProductImageDelete}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setProductImagePreview(null);
-                                                    setProductImage(null);
-                                                }}
-                                            >
-                                                <Delete />
-                                            </IconButton>
-                                        )}
-                                    </label>
-
-                                    {productImagePreview && (
+                                    {view === 'static' && (
                                         <>
-                                            <Text variant="text2" fontWeight={500} center>
-                                                Выберите позицию товара
-                                            </Text>
-
-                                            <div className={styles.createProductPosition}>
-                                                <Badge
-                                                    image={avatar}
-                                                    text={nickname}
-                                                    style={{ width: 92, height: 92 }}
-                                                    className={styles.createProductCurrentAvatar}
-                                                />
-
-                                                <Rnd
-                                                    bounds="parent"
-                                                    size={{ width, height }}
-                                                    position={position}
-                                                    onResize={handleResize}
-                                                    onDragStop={handleDragStop}
-                                                    onDragStart={handleDragStart}
-                                                    lockAspectRatio={aspectRatio}
-                                                    minWidth={minWidth}
-                                                    minHeight={minHeight / aspectRatio}
-                                                    maxWidth={maxWidth}
-                                                    maxHeight={maxHeight / aspectRatio}
-                                                    enableResizing={{
-                                                        bottomRight: true,
-                                                        bottomLeft: true,
-                                                        topRight: true,
-                                                        topLeft: true,
-                                                    }}
-                                                >
-                                                    <div
-                                                        className={cn(styles.createProductPositionImage, {
-                                                            [styles.opacity]: draggable,
-                                                        })}
-                                                    >
-                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img
-                                                            src={productImagePreview.toString()}
-                                                            alt="image"
-                                                            ref={imageRef}
-                                                            onLoad={() => {
-                                                                if (imageRef.current) {
-                                                                    const img = imageRef.current;
-                                                                    const aspectRatio =
-                                                                        img.naturalWidth / img.naturalHeight;
-                                                                    setAspectRatio(aspectRatio);
-
-                                                                    if (img.naturalHeight > maxHeight) {
-                                                                        setHeight(maxHeight);
-                                                                        setWidth(maxHeight / aspectRatio);
-                                                                    } else if (img.naturalWidth > maxWidth) {
-                                                                        setWidth(maxWidth);
-                                                                        setHeight(maxWidth / aspectRatio);
-                                                                    } else {
-                                                                        setWidth(img.naturalWidth);
-                                                                        setHeight(img.naturalWidth / aspectRatio);
-                                                                    }
-                                                                }
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </Rnd>
-                                            </div>
-
-                                            <PositionController
-                                                position={position}
-                                                setPosition={setPosition}
-                                                maxWidth={maxWidth}
-                                                maxHeight={maxHeight}
-                                                width={width}
-                                                height={height}
+                                            <File
+                                                id="productImage"
+                                                setImgPreview={setProductImagePreview}
+                                                setFile={setProductImage}
+                                                accept="image/png, image/jpeg, image/svg+xml, image/gif"
                                             />
+
+                                            <label
+                                                htmlFor="productImage"
+                                                className={cn(styles.createProductImage, {
+                                                    [styles.imageFill]: productImage,
+                                                })}
+                                            >
+                                                {productImagePreview ? (
+                                                    <Image src={productImagePreview.toString()} alt="image" fill />
+                                                ) : (
+                                                    <Photo />
+                                                )}
+
+                                                {productImagePreview && (
+                                                    <IconButton
+                                                        small
+                                                        circle
+                                                        variant="danger"
+                                                        className={styles.createProductImageDelete}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            setProductImagePreview(null);
+                                                            setProductImage(null);
+                                                        }}
+                                                    >
+                                                        <Delete />
+                                                    </IconButton>
+                                                )}
+                                            </label>
+
+                                            {productImagePreview && (
+                                                <>
+                                                    <Text variant="text2" fontWeight={500} center>
+                                                        Выберите позицию товара
+                                                    </Text>
+
+                                                    <div className={styles.createProductPosition}>
+                                                        <Badge
+                                                            image={avatar}
+                                                            text={nickname}
+                                                            style={{ width: 92, height: 92 }}
+                                                            className={styles.createProductCurrentAvatar}
+                                                        />
+
+                                                        <Rnd
+                                                            bounds="parent"
+                                                            size={{ width, height }}
+                                                            position={position}
+                                                            onResize={handleResize}
+                                                            onDragStop={handleDragStop}
+                                                            onDragStart={handleDragStart}
+                                                            lockAspectRatio={aspectRatio}
+                                                            minWidth={minWidth}
+                                                            minHeight={minHeight / aspectRatio}
+                                                            maxWidth={maxWidth}
+                                                            maxHeight={maxHeight / aspectRatio}
+                                                            enableResizing={{
+                                                                bottomRight: true,
+                                                                bottomLeft: true,
+                                                                topRight: true,
+                                                                topLeft: true,
+                                                            }}
+                                                        >
+                                                            <div
+                                                                className={cn(styles.createProductPositionImage, {
+                                                                    [styles.opacity]: draggable,
+                                                                })}
+                                                            >
+                                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                                <img
+                                                                    src={productImagePreview.toString()}
+                                                                    alt="image"
+                                                                    ref={imageRef}
+                                                                    onLoad={() => {
+                                                                        if (imageRef.current) {
+                                                                            const img = imageRef.current;
+                                                                            const aspectRatio =
+                                                                                img.naturalWidth / img.naturalHeight;
+                                                                            setAspectRatio(aspectRatio);
+
+                                                                            if (img.naturalHeight > maxHeight) {
+                                                                                setHeight(maxHeight);
+                                                                                setWidth(maxHeight / aspectRatio);
+                                                                            } else if (img.naturalWidth > maxWidth) {
+                                                                                setWidth(maxWidth);
+                                                                                setHeight(maxWidth / aspectRatio);
+                                                                            } else {
+                                                                                setWidth(img.naturalWidth);
+                                                                                setHeight(
+                                                                                    img.naturalWidth / aspectRatio,
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </Rnd>
+                                                    </div>
+
+                                                    <PositionController
+                                                        position={position}
+                                                        setPosition={setPosition}
+                                                        maxWidth={maxWidth}
+                                                        maxHeight={maxHeight}
+                                                        width={width}
+                                                        height={height}
+                                                    />
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {view === 'animation' && (
+                                        <>
+                                            <File
+                                                id="productAnimation"
+                                                setFile={setProductAnimationFile}
+                                                accept=".json"
+                                            />
+
+                                            <label htmlFor="productAnimation" className={styles.createProductAnimation}>
+                                                <FileEmpty />
+                                                {productAnimationFile ? productAnimationFile.name : 'Выберите файл'}
+
+                                                {productAnimationFile && (
+                                                    <IconButton
+                                                        small
+                                                        circle
+                                                        variant="danger"
+                                                        className={styles.createProductImageDelete}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            setProductAnimationFile(null);
+                                                            setAnimationData(null);
+                                                        }}
+                                                    >
+                                                        <Delete />
+                                                    </IconButton>
+                                                )}
+                                            </label>
+
+                                            {animationError && (
+                                                <Text
+                                                    variant="text2"
+                                                    fontWeight={600}
+                                                    style={{ color: 'var(--error)' }}
+                                                >
+                                                    {animationError}
+                                                </Text>
+                                            )}
+
+                                            {animationData && (
+                                                <>
+                                                    <Text variant="text2" fontWeight={500} center>
+                                                        Выберите позицию товара
+                                                    </Text>
+
+                                                    <div className={styles.createProductPosition}>
+                                                        <Badge
+                                                            image={avatar}
+                                                            text={nickname}
+                                                            style={{ width: 92, height: 92 }}
+                                                            className={styles.createProductCurrentAvatar}
+                                                        />
+
+                                                        <Rnd
+                                                            bounds="parent"
+                                                            size={{ width, height }}
+                                                            position={position}
+                                                            onResize={handleResize}
+                                                            onDragStop={handleDragStop}
+                                                            onDragStart={handleDragStart}
+                                                            lockAspectRatio={aspectRatio}
+                                                            minWidth={minWidth}
+                                                            minHeight={minHeight / aspectRatio}
+                                                            maxWidth={maxWidth}
+                                                            maxHeight={maxHeight / aspectRatio}
+                                                            enableResizing={{
+                                                                bottomRight: true,
+                                                                bottomLeft: true,
+                                                                topRight: true,
+                                                                topLeft: true,
+                                                            }}
+                                                        >
+                                                            <div
+                                                                className={cn(styles.createProductPositionImage, {
+                                                                    [styles.opacity]: draggable,
+                                                                })}
+                                                            >
+                                                                <Lottie
+                                                                    animationData={animationData}
+                                                                    className={styles.createProductAnimationPreview}
+                                                                    ref={imageRef}
+                                                                />
+                                                            </div>
+                                                        </Rnd>
+                                                    </div>
+
+                                                    <PositionController
+                                                        position={position}
+                                                        setPosition={setPosition}
+                                                        maxWidth={maxWidth}
+                                                        maxHeight={maxHeight}
+                                                        width={width}
+                                                        height={height}
+                                                    />
+                                                </>
+                                            )}
                                         </>
                                     )}
                                 </>
                             )}
-
-                            {view === 'animation' && (
+                            {type === 'theme' && (
                                 <>
-                                    <File id="productAnimation" setFile={setProductAnimationFile} accept=".json" />
+                                    <ColorPickerInput
+                                        title="Основной цвет"
+                                        hexString={textHexString}
+                                        value={textColor}
+                                        format={textColorFormatHex}
+                                        onFormatChange={setTextColorFormatHex}
+                                        onChangeComplete={(color) => setTextColor(color)}
+                                    />
 
-                                    <label htmlFor="productAnimation" className={styles.createProductAnimation}>
-                                        <FileEmpty />
-                                        {productAnimationFile ? productAnimationFile.name : 'Выберите файл'}
+                                    <ColorPickerInput
+                                        title="Фоновый цвет"
+                                        hexString={backgroundHexString}
+                                        value={backgroundColor}
+                                        format={backgroundColorFormatHex}
+                                        onFormatChange={setBackgroundColorFormatHex}
+                                        onChangeComplete={(color) => setBackgroundColor(color)}
+                                    />
 
-                                        {productAnimationFile && (
-                                            <IconButton
-                                                small
-                                                circle
-                                                variant="danger"
-                                                className={styles.createProductImageDelete}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setProductAnimationFile(null);
-                                                    setAnimationData(null);
-                                                }}
-                                            >
-                                                <Delete />
-                                            </IconButton>
-                                        )}
-                                    </label>
+                                    <Button auto variant="light">
+                                        <Eye />
+                                        Предпросмотр
+                                    </Button>
 
-                                    {animationError && (
-                                        <Text variant="text2" fontWeight={600} style={{ color: 'var(--error)' }}>
-                                            {animationError}
-                                        </Text>
-                                    )}
-
-                                    {animationData && (
-                                        <>
-                                            <Text variant="text2" fontWeight={500} center>
-                                                Выберите позицию товара
-                                            </Text>
-
-                                            <div className={styles.createProductPosition}>
-                                                <Badge
-                                                    image={avatar}
-                                                    text={nickname}
-                                                    style={{ width: 92, height: 92 }}
-                                                    className={styles.createProductCurrentAvatar}
-                                                />
-
-                                                <Rnd
-                                                    bounds="parent"
-                                                    size={{ width, height }}
-                                                    position={position}
-                                                    onResize={handleResize}
-                                                    onDragStop={handleDragStop}
-                                                    onDragStart={handleDragStart}
-                                                    lockAspectRatio={aspectRatio}
-                                                    minWidth={minWidth}
-                                                    minHeight={minHeight / aspectRatio}
-                                                    maxWidth={maxWidth}
-                                                    maxHeight={maxHeight / aspectRatio}
-                                                    enableResizing={{
-                                                        bottomRight: true,
-                                                        bottomLeft: true,
-                                                        topRight: true,
-                                                        topLeft: true,
-                                                    }}
-                                                >
-                                                    <div
-                                                        className={cn(styles.createProductPositionImage, {
-                                                            [styles.opacity]: draggable,
-                                                        })}
-                                                    >
-                                                        <Lottie
-                                                            animationData={animationData}
-                                                            className={styles.createProductAnimationPreview}
-                                                            ref={imageRef}
-                                                        />
-                                                    </div>
-                                                </Rnd>
-                                            </div>
-
-                                            <PositionController
-                                                position={position}
-                                                setPosition={setPosition}
-                                                maxWidth={maxWidth}
-                                                maxHeight={maxHeight}
-                                                width={width}
-                                                height={height}
-                                            />
-                                        </>
-                                    )}
+                                    <div className={styles.themePreviewBlock}></div>
                                 </>
                             )}
                         </>

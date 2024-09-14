@@ -23,6 +23,10 @@ const storeTabs: StoreTab[] = [
         name: 'Баннеры',
         link: '/admin/store/products/banner',
     },
+    {
+        name: 'Темы',
+        link: '/admin/store/products/theme',
+    },
 ];
 
 const StoreTabs = () => {

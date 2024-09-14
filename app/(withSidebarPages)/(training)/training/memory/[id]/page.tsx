@@ -2,8 +2,6 @@
 
 import React from 'react';
 import cn from 'classnames';
-import Image from 'next/image';
-import parse from 'html-react-parser';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +26,6 @@ import {
     TypesSelection,
     TypesTest,
 } from '@/shared/icons';
-import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { formatDate } from '@/shared/utils/formatDate';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useCollections } from '@/features/collection';
@@ -36,13 +33,14 @@ import CollectionSettings from './CollectionSettings';
 import { Copy } from '@/shared/icons/Copy';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import { CollectionByIdItem } from '@/entities/collection/ui';
 
+import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { SearchInput } from '@/shared/ui/SearchInput';
+import { SearchInput } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { ConfirmModal } from '@/shared/ui/Modal';
 import { Text } from '@/shared/ui/Text';
-import { TextPoint } from '@/shared/ui/TextPoint';
 import { Badge } from '@/shared/ui/Badge';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
 import { NotContent } from '@/shared/ui/NotContent';
@@ -302,31 +300,7 @@ const MemoryCardInfo = () => {
                                 <div className={base.contentItems}>
                                     {collectionPairs?.pages.map((pair) =>
                                         pair?.cards?.map((data) => (
-                                            <div key={data.id} className={cn(base.item2, styles.memoCollectionPair)}>
-                                                <TextPoint title="Термин">
-                                                    {data.questionPicture && (
-                                                        <div className={styles.memoCollectionPairImage}>
-                                                            <Image src={data.questionPicture} alt="image" fill />
-                                                        </div>
-                                                    )}
-
-                                                    <div className={styles.memoCollectionPairText}>
-                                                        {parse(data.questionText)}
-                                                    </div>
-                                                </TextPoint>
-
-                                                <TextPoint blur={!showAnswers} title="Определение">
-                                                    {data.answerPicture && (
-                                                        <div className={styles.memoCollectionPairImage}>
-                                                            <Image src={data.answerPicture} alt="image" fill />
-                                                        </div>
-                                                    )}
-
-                                                    <div className={styles.memoCollectionPairText}>
-                                                        {parse(data.answerText)}
-                                                    </div>
-                                                </TextPoint>
-                                            </div>
+                                            <CollectionByIdItem key={data.id} data={data} showAnswers={showAnswers} />
                                         )),
                                     )}
                                 </div>

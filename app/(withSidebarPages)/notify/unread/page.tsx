@@ -10,7 +10,7 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotifyItem } from '@/shared/ui/Notify';
-import useNotify from '@/features/notify/useNotify';
+import { useNotify } from '@/features/notify';
 import { NotifyItemSkeleton } from '@/shared/ui/Skeleton';
 
 const UnreadNotifyPage = () => {
@@ -51,7 +51,10 @@ const UnreadNotifyPage = () => {
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
                         Уведомления{' '}
-                        {!isError && !isPending && data?.pages[0]?.totalCount !== 0 && `(${data?.pages[0]?.totalCount})`}
+                        {!isError &&
+                            !isPending &&
+                            data?.pages[0]?.totalCount !== 0 &&
+                            `(${data?.pages[0]?.totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />

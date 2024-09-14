@@ -1,8 +1,7 @@
 'use client';
 
+import type { ChatsDTO, Message, ChatInfo, ChatItem } from '@/entities/messenger';
 import useRequest from '@/shared/hooks/useRequest';
-import { ChatsDTO, Message } from '@/entities/messenger';
-import { ChatInfo, ChatItem } from '@/entities/messenger/model';
 
 const useMessenger = () => {
     const { request, catchRequestError, errorController } = useRequest();

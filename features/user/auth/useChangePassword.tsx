@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { ChangePassword, VerifyChangePassword } from '@/entities/user';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { ChangePassword, VerifyChangePassword } from '@/entities/user';
 
 const useChangePassword = () => {
     const [isLoading, setIsLoading] = React.useState(false);

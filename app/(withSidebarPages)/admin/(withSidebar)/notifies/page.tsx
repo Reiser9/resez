@@ -4,7 +4,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { Checkbox, TimePicker, Select as SelectAnt } from 'antd';
 import { Dayjs } from 'dayjs';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
@@ -16,7 +16,7 @@ import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { ArrowBottom, Clock, Cross } from '@/shared/icons';
-import useNotify from '@/features/notify/useNotify';
+import { useNotify } from '@/features/notify';
 import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { useUserPermissions, useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
@@ -59,6 +59,7 @@ const AdminNotifies = () => {
     const userSearchDebounce = useDebounce(searchValue, 500);
 
     const searchParams = useSearchParams();
+    const router = useRouter();
     const usersIds = searchParams.get('users');
     const { getUserPermissions } = useUserPermissions();
 
@@ -85,8 +86,8 @@ const AdminNotifies = () => {
         isPending: usersIsLoading,
         isError: usersError,
     } = useQuery({
-        queryKey: ['users_short_search', userSearchDebounce],
-        queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
+        queryKey: ['users_short_search', userSearchDebounce, userIDs],
+        queryFn: () => getPaginationUsersShort(0, userSearchDebounce, userIDs),
         enabled: checkPermission(permissions || [], [PERMISSIONS.USERS]),
     });
 
@@ -125,6 +126,7 @@ const AdminNotifies = () => {
             setDelayedSend(false);
             setType(null);
             editorRef.current?.clear();
+            router.replace('/admin/notifies');
         });
     };
 
@@ -189,19 +191,23 @@ const AdminNotifies = () => {
                                             id: `ID: ${data.id}`,
                                             avatar: data.avatar,
                                         }))}
-                                        optionRender={({ data }) => (
-                                            <div className={base.userSelectOption}>
-                                                <div className={base.titleWrapper}>
-                                                    <Badge image={data.avatar} text={data.label} size="small" />
+                                        optionRender={({ data }) => {
+                                            const { label, id, avatar } = data || {};
 
-                                                    <Text variant="text2">{data.label}</Text>
+                                            return (
+                                                <div className={base.userSelectOption}>
+                                                    <div className={base.titleWrapper}>
+                                                        <Badge image={avatar} text={label} size="small" />
+
+                                                        <Text variant="text2">{label}</Text>
+                                                    </div>
+
+                                                    <Text variant="text2" fontWeight={600}>
+                                                        {id}
+                                                    </Text>
                                                 </div>
-
-                                                <Text variant="text2" fontWeight={600}>
-                                                    {data.id}
-                                                </Text>
-                                            </div>
-                                        )}
+                                            );
+                                        }}
                                         showSearch
                                         mode="multiple"
                                         maxTagCount="responsive"

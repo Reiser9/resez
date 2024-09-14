@@ -8,6 +8,10 @@
     justify-content: center;
 }
 
+.badge.border{
+    border: 1px solid var(--white);
+}
+
 .badge svg{
     width: 24px;
     color: var(--main);

@@ -1,0 +1,9 @@
+.promoExpiredContent{
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+.promoExpiredItem{
+    width: calc(100% / 2 - 8px / 2);
+}

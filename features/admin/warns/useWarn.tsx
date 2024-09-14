@@ -1,9 +1,9 @@
 'use client';
 
+import type { WarnsPaggination } from '@/entities/admin';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { WarnsPaggination } from '@/entities/admin';
 
 const useWarn = () => {
     const { request, catchRequestError, errorController } = useRequest();

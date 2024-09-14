@@ -4,13 +4,15 @@ import React from 'react';
 
 import type { UserShortInfo } from '@/entities/user';
 import { useAppDispatch } from '@/shared/hooks/useRedux';
-import { initSessionId, initUser, setIsAuth } from '@/store/slices/user';
+import { setIsAuth } from '@/store/slices/user';
 import { setAppIsLoading, setAuthIsLoading } from '@/store/slices/app';
 import useRequest from '@/shared/hooks/useRequest';
+import useClearLocalData from '@/shared/hooks/useClearLocalData';
 
 const useCheckAuth = () => {
     const dispatch = useAppDispatch();
-    const { request, clearLocalData, getHealthServer, catchRequestError, errorController } = useRequest();
+    const { request, getHealthServer, catchRequestError, errorController } = useRequest();
+    const { clearLocalData } = useClearLocalData();
 
     const checkAuth = async () => {
         await getHealthServer();
@@ -35,8 +37,6 @@ const useCheckAuth = () => {
 
         if ('data' in data) {
             dispatch(setIsAuth(true));
-            dispatch(initUser(data.data.user));
-            dispatch(initSessionId(data.data.sessionId));
         }
     };
 

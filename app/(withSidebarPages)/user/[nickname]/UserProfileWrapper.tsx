@@ -35,6 +35,7 @@ import { useDialog } from '@/features/messenger';
 import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import { fetchAnimationData } from '@/shared/utils/fetchAnimationData';
 
 import { Modal } from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
@@ -43,6 +44,7 @@ import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Badge } from '@/shared/ui/Badge';
+import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
     const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
@@ -91,31 +93,6 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
 
     const { id: userId, avatar, firstName, lastName, nickname: userNickname, avatarDecoration } = data || {};
     const { contentUrl, title, options, contentType } = avatarDecoration || {};
-    const { width, x, y } = options || {};
-
-    const [animationData, setAnimationData] = React.useState<any | null>(null);
-
-    React.useEffect(() => {
-        const fetchAnimationData = async () => {
-            try {
-                if (!contentUrl) {
-                    return;
-                }
-                const response = await fetch(contentUrl);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setAnimationData(data);
-            } catch (error) {
-                console.error('Error fetching animation data:', error);
-            }
-        };
-
-        if (contentType === 'animation') {
-            fetchAnimationData();
-        }
-    }, [contentUrl, contentType]);
 
     React.useEffect(() => {
         if (userNickname && userNickname === myNickname) {
@@ -154,25 +131,12 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
                             </Tooltip> */}
 
                             {avatarDecoration && (
-                                <div className={styles.avatarDecorationWrapper}>
-                                    {contentType === 'animation' ? (
-                                        <Lottie
-                                            animationData={animationData}
-                                            className={base.avatarDecoration}
-                                            style={{ width: width, top: y, left: x }}
-                                        />
-                                    ) : (
-                                        <>
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img
-                                                src={contentUrl}
-                                                alt={title}
-                                                className={base.avatarDecoration}
-                                                style={{ width: width, top: y, left: x }}
-                                            />
-                                        </>
-                                    )}
-                                </div>
+                                <AvatarDecoration
+                                    contentType={contentType}
+                                    title={title}
+                                    contentUrl={contentUrl}
+                                    options={options}
+                                />
                             )}
                         </div>
                     </div>

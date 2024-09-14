@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import useRequest from '@/shared/hooks/useRequest';
-import useAlert from '@/shared/hooks/useAlert';
 import type {
     Collection,
     CollectionChoice,
@@ -16,6 +14,8 @@ import type {
     PairDTO,
     PairsCollectionById,
 } from '@/entities/collection';
+import useRequest from '@/shared/hooks/useRequest';
+import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useCollections = () => {

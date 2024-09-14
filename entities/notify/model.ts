@@ -1,4 +1,4 @@
-import { Paggination } from '../pagination';
+import type { Paggination } from '../pagination';
 
 export type TypesLocalNotify = 'success' | 'info' | 'warn' | 'error' | 'default';
 type TypesNotify = 'Сессия' | 'Информация' | 'Подарок' | 'Голосование' | 'Добавление';

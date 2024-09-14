@@ -8,14 +8,15 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import Tabs from './ui/Tabs';
+import { CollectionItem } from '@/entities/collection/ui';
+import { ArrowRight, Cross } from '@/shared/icons';
+import { useCollections } from '@/features/collection';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
-import { ArrowRight, Cross } from '@/shared/icons';
 import { NotContent } from '@/shared/ui/NotContent';
-import { useCollections } from '@/features/collection';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
-import { CollectionItem } from '@/shared/ui/CollectionItem';
-import { useAppSelector } from '@/shared/hooks/useRedux';
 
 const Memory = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);

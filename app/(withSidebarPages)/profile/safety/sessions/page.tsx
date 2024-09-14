@@ -52,7 +52,7 @@ const ProfileSessions = () => {
 
                     <Text variant="h3">
                         Сеансы{' '}
-                        {!isError && !isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount + 1})`}
+                        {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount + 1})`}
                     </Text>
                 </div>
 

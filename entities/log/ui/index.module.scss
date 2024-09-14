@@ -1,0 +1,57 @@
+.logsItem{
+    width: calc(100% / 2 - 12px / 2);
+    padding: 1.2rem;
+    border-radius: 4px;
+    background: var(--input);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+@media (max-width: 1100px) {
+    .logsItem{
+        width: 100%;
+    }
+}
+
+.logsItemContent{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.logsItemArrow, .logsItemTypeInner{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--lighten);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.logsItemArrow svg, .logsItemTypeInner svg{
+    width: 24px;
+    color: var(--main);
+}
+
+.logsItemInfo{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.logsItemDate{
+    color: var(--grey);
+}
+
+.logsItemUserInner{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

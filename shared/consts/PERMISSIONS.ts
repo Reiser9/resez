@@ -13,6 +13,7 @@ export const PERMISSIONS = {
     UPDATE_THEMES: 'Редактирование тем',
     DELETE_THEMES: 'Удаление тем',
     LOGS: 'Логирование',
+    EDUCATION: 'Обучение',
     TESTS: 'Тесты',
     CREATE_OFFICIAL_TESTS: 'Создание официальных тестов',
     DELETE_TESTS: 'Удаление тестов',
@@ -33,4 +34,5 @@ export const PERMISSIONS = {
     DELETE_PRODUCTS: 'Удаление товаров',
     ASSIGN_PRODUCTS: 'Выдача товаров',
     PUBLISH_PRODUCTS: 'Публикация товаров',
+    PROMOCODES: 'Промокоды',
 };

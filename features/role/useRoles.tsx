@@ -2,9 +2,9 @@
 
 import React from 'react';
 
+import type { EditRoleDTO, RoleCreateDTO, RoleDTO, Roles } from '@/entities/role';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import type { EditRoleDTO, RoleCreateDTO, RoleDTO, Roles } from '@/entities/role';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useRoles = () => {
@@ -15,11 +15,12 @@ const useRoles = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPaginationRoles = async (page: number) => {
+    const getPaginationRoles = async (page: number, search = '') => {
         const limit = 12;
         const queryString = buildQueryString({
             offset: page * limit,
             limit,
+            search,
         });
 
         const response = await request<Roles>({

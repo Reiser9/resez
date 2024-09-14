@@ -11,7 +11,7 @@ import useAlert from '@/shared/hooks/useAlert';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useRedux';
 import { socket } from '@/api/socket';
 import { AuthFormsWrapper } from '@/shared/wrappers/AuthFormsWrapper';
-import { initUser, initVerificationCodeData } from '@/store/slices/user';
+import { initVerificationCodeData } from '@/store/slices/user';
 import { useLogout, useVerificationCode } from '@/features/user';
 
 import { Text } from '@/shared/ui/Text';
@@ -60,7 +60,6 @@ const ConfirmCode = () => {
         }
 
         socket.on('verify', (data: { user: User }) => {
-            dispatch(initUser(data.user));
             dispatch(initVerificationCodeData(null));
             alertNotify('Успешно', 'Аккаунт верифицирован', 'success');
         });

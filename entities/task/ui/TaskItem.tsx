@@ -5,20 +5,21 @@ import cn from 'classnames';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
+
+import type{ SubjectTask } from '../model';
+import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
+import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 import { ConfirmModal } from '@/shared/ui/Modal';
 import { Text } from '@/shared/ui/Text';
 import { IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
-import { Tooltip } from 'antd';
-import { SubjectTask } from '../model';
 import { Badge } from '@/shared/ui/Badge';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
-import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,

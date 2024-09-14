@@ -4,25 +4,41 @@ import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { Switch } from 'antd';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
-import { ArrowBottom, Cross, Enter, Exit, Menu, Moon, Notify, ResCoin, Snowflake, Trophy, User } from '@/shared/icons';
+import {
+    ArrowBottom,
+    Cross,
+    Enter,
+    Exit,
+    Menu,
+    Moon,
+    Notify,
+    ResCoin,
+    Snowflake,
+    Ticket,
+    Trophy,
+    User,
+} from '@/shared/icons';
 import { useEventContext } from '@/shared/context/EventProvider';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { useSidebarContext } from '@/shared/context/SidebarProvider';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useLogout } from '@/features/user';
 import { getHolidayEvent } from '@/shared/utils/getHolidayEvent';
-import useNotify from '@/features/notify/useNotify';
+import { useNotify } from '@/features/notify';
+import { usePromocode } from '@/features/promocode';
 import useShortInfo from '@/features/user/data/useShortInfo';
 
-import { ConfirmModal } from '@/shared/ui/Modal';
+import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 import { Logo } from '@/shared/ui/Logo';
 import { HoverMenu } from '@/shared/ui/HoverMenu';
 import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
+import { Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/ui/Button';
 
 type Props = {
     empty?: boolean;
@@ -31,6 +47,8 @@ type Props = {
 const Header: React.FC<Props> = ({ empty = false }) => {
     const [profileMenu, setProfileMenu] = React.useState(false);
     const [confirmLogout, setConfirmLogout] = React.useState(false);
+    const [promocodeModal, setPromocodeModal] = React.useState(false);
+    const [promocode, setPromocode] = React.useState('');
 
     const profileMenuRef = React.useRef<HTMLDivElement>(null);
 
@@ -41,7 +59,13 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { isLoading, logout } = useLogout();
     const { getUnreadNotifies } = useNotify();
     const { getShortInfo } = useShortInfo();
+    const { activatePromocode } = usePromocode();
+    const queryClient = useQueryClient();
     const isAuth = useAppSelector((state) => state.user.isAuth);
+
+    const invalidateShortInfo = () => {
+        queryClient.invalidateQueries({ queryKey: ['short_info'] });
+    };
 
     const { data: unreadNotifiesCount } = useQuery({
         queryKey: ['notify_count'],
@@ -52,7 +76,7 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const { data: user, isLoading: userIsLoading } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
-        enabled: isAuth
+        enabled: isAuth,
     });
 
     const { avatar, levelInfo, nickname, balance } = user?.user || {};
@@ -75,6 +99,14 @@ const Header: React.FC<Props> = ({ empty = false }) => {
 
     const toggleMenuProfile = () => {
         setProfileMenu((prev) => !prev);
+    };
+
+    const activatePromocodeHandler = () => {
+        activatePromocode(promocode, () => {
+            setPromocodeModal(false);
+            setPromocode('');
+            invalidateShortInfo();
+        });
     };
 
     return (
@@ -181,6 +213,17 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         )}
                                     </Link>
 
+                                    <div
+                                        className={styles.headerProfileMenuLink}
+                                        onClick={() => {
+                                            closeProfileMenu();
+                                            setPromocodeModal(true);
+                                        }}
+                                    >
+                                        <Ticket />
+                                        Промокод
+                                    </div>
+
                                     {/* <Link
                                         href="/profile/achievements"
                                         className={styles.headerProfileMenuLink}
@@ -228,15 +271,47 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                 )}
             </header>
 
-            <ConfirmModal
-                value={confirmLogout}
-                setValue={setConfirmLogout}
-                text="Вы действительно хотите выйти?"
-                rejectText="Отмена"
-                confirmText="Выйти"
-                callback={logoutHandler}
-                loading={isLoading}
-            ></ConfirmModal>
+            {!empty && (
+                <>
+                    <ConfirmModal
+                        value={confirmLogout}
+                        setValue={setConfirmLogout}
+                        text="Вы действительно хотите выйти?"
+                        rejectText="Отмена"
+                        confirmText="Выйти"
+                        callback={logoutHandler}
+                        loading={isLoading}
+                    ></ConfirmModal>
+
+                    <Modal value={promocodeModal} setValue={setPromocodeModal} title="Активация промокода">
+                        <Input
+                            value={promocode}
+                            setValue={setPromocode}
+                            title="Промокод"
+                            trackLength
+                            lengthLimit={20}
+                        />
+
+                        <Text variant="text2">
+                            В нашей группе{' '}
+                            <a href={process.env.NEXT_PUBLIC_VK_LINK} target="_blank">
+                                ВКонтакте
+                            </a>{' '}
+                            и канале{' '}
+                            <a href={process.env.NEXT_PUBLIC_TELEGRAM_LINK} target="_blank">
+                                Telegram
+                            </a>{' '}
+                            регулярно появляются новые промокоды, которые помогут вам получить скидки и другие приятные
+                            бонусы. Мы всегда стараемся радовать наших подписчиков эксклюзивными предложениями, поэтому
+                            следите за обновлениями, чтобы не упустить выгодные возможности!
+                        </Text>
+
+                        <Button onClick={activatePromocodeHandler} disabled={!promocode}>
+                            Активировать
+                        </Button>
+                    </Modal>
+                </>
+            )}
         </>
     );
 };

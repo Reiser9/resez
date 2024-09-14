@@ -20,7 +20,7 @@ type Props = {
 const Notify: React.FC<Props> = ({ data }) => {
     const { id, title, text, type, to, time } = data;
 
-    const notifyTimeout: React.MutableRefObject<number | undefined> = React.useRef(undefined);
+    const notifyTimeout = React.useRef<number | undefined>(undefined);
 
     const dispatch = useAppDispatch();
     const router = useRouter();

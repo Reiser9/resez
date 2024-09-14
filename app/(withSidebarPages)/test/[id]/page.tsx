@@ -11,13 +11,12 @@ import base from '@/shared/styles/base.module.scss';
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
 import { useTest } from '@/features/test';
-import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { Date, Delete, DotsHorizontal, Lock, Settings, TypesVariantStart } from '@/shared/icons';
 import { formatDate } from '@/shared/utils/formatDate';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import TestQuestionItem from '@/entities/test/ui/TestQuestionItem';
+import { TestQuestionItem } from '@/entities/test/ui';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import useCopyText from '@/features/utils/useCopyText';
 import { useUserPermissions } from '@/features/user';
@@ -30,6 +29,7 @@ import { ConfirmModal } from '@/shared/ui/Modal';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
 import { Badge } from '@/shared/ui/Badge';
 import { Preloader } from '@/shared/ui/Preloader';
+import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 
 const TestPage = () => {
     const { getUserPermissions } = useUserPermissions();

@@ -2,20 +2,21 @@
 
 import React from 'react';
 import { Tooltip } from 'antd';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { Cross, Plus } from '@/shared/icons';
-import { Text } from '@/shared/ui/Text';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAvatar } from '@/features/store';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { NotContent } from '@/shared/ui/NotContent';
-import AvatarItem from '@/entities/store/ui/AvatarItem';
-import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
+import { AvatarItem } from '@/entities/store/ui';
 import { useUserPermissions } from '@/features/user';
+
+import { NotContent } from '@/shared/ui/NotContent';
+import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
 
 const AdminStoreAvatar = () => {
     const { getUserPermissions } = useUserPermissions();
@@ -61,7 +62,7 @@ const AdminStoreAvatar = () => {
                 <div className={base.titleWrapper}>
                     <Text variant="h3">
                         Аватарки{' '}
-                        {!isError && !isPending && data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
+                        {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                     </Text>
 
                     <ReloadButton onClick={resetRequest} disabled={isPending} />

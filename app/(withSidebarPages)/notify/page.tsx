@@ -10,7 +10,7 @@ import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
 import { NotifyItem } from '@/shared/ui/Notify';
-import useNotify from '@/features/notify/useNotify';
+import { useNotify } from '@/features/notify';
 import { NotifyItemSkeleton } from '@/shared/ui/Skeleton';
 
 const NotifyPage = () => {

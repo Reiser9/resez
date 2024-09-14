@@ -66,8 +66,6 @@ const Card: React.FC<Props> = ({
             setIsDragging(true);
         },
         onSwiping: (data) => {
-            console.log(data);
-            
             const { deltaX, deltaY } = data;
 
             setPosition({

@@ -1,4 +1,44 @@
-import { Paggination } from '../pagination';
+import type { Paggination } from '../pagination';
+
+type TaskBody = {
+    theme: string;
+    primaryScore: number | string;
+    isDetailedAnswer: boolean;
+    tasksCount: number;
+};
+
+export type Task = TaskBody & {
+    id?: number;
+    subThemes: SubTheme[];
+};
+
+export type CreatedTask = TaskBody & {
+    id: number;
+    number: number;
+    subThemes: CreatedSubTheme[];
+};
+
+type SubjectBody = {
+    subject: string;
+    slug: string;
+    durationMinutes: string | number;
+    isPublished: boolean;
+    isMark: boolean;
+    order: number;
+};
+
+export type Subject = SubjectBody & {
+    id?: number;
+    subjectTasks: Task[];
+};
+
+export type CreatedSubject = SubjectBody & {
+    id: number;
+    isArchived: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    subjectTasks: CreatedTask[];
+};
 
 export type SubTheme = {
     id?: number;
@@ -6,27 +46,13 @@ export type SubTheme = {
     tasksCount: number;
 };
 
-export type Task = {
-    id?: number;
-    theme: string;
-    primaryScore: string;
-    isDetailedAnswer: boolean;
-    subThemes: SubTheme[];
+export type CreatedSubTheme = {
+    id: number;
+    subTheme: string;
     tasksCount: number;
 };
 
-export type Subject = {
-    id?: number;
-    subject: string;
-    slug: string;
-    durationMinutes: string;
-    isPublished: boolean;
-    isMark: boolean;
-    order: number;
-    subjectTasks: Task[];
-};
-
-export type SubjectDTO = {
+export type SubjectFilter = {
     id: number;
     subject: string;
     slug: string;
@@ -35,7 +61,7 @@ export type SubjectDTO = {
     tasksCount: number;
 };
 
-export type SubjectTaskDTO = {
+export type SubjectTheme = {
     id: number;
     number: number;
     theme: string;
@@ -43,7 +69,7 @@ export type SubjectTaskDTO = {
     isDetailedAnswer: boolean;
 };
 
-export type SubjectTaskCreate = SubjectTaskDTO & {
+export type SubjectTaskCreate = CreatedTask & {
     subThemes: {
         id: number;
         subTheme: string;
@@ -52,13 +78,13 @@ export type SubjectTaskCreate = SubjectTaskDTO & {
     tasksCount: number;
 };
 
-export type SubjectSubThemeDTO = {
+export type SubjectSubTheme = {
     id: number;
     subTheme: string;
 };
 
 export type PagginationSubjects = Paggination & {
-    subjects: SubjectDTO[];
+    subjects: SubjectFilter[];
 };
 
 export type ScoreConversionItem = {

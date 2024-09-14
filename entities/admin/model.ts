@@ -1,4 +1,4 @@
-import { Paggination } from '../pagination';
+import type { Paggination } from '../pagination';
 
 export type AdminStats = {
     usersCount: number;

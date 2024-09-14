@@ -1,4 +1,5 @@
-import { Paggination } from '../pagination';
+import type { Paggination } from '../pagination';
+import type { SubjectTaskById } from '../task';
 
 export type Test = {
     id: number;
@@ -59,4 +60,35 @@ export type TestResult = {
     maxPrimaryScore: number;
     grade: number;
     secondaryScore: number;
+    secondsSpent: number;
+};
+
+export type TestHistory = {
+    id: number;
+    testId: number;
+    subject: {
+        id: number;
+        subject: string;
+        slug: string;
+    };
+    durationMinutes: number;
+    maxPrimaryScore: number;
+    secondsSpent: number;
+    primaryScore: number;
+    secondaryScore: number;
+    grade: number;
+    createdAt: Date;
+};
+
+export type TestHistoryById = TestHistory & {
+    user: {
+        id: number;
+        avatar: string;
+        nickname: string;
+    };
+    task: SubjectTaskById[];
+};
+
+export type PagginationTestsHistory = Paggination & {
+    history: TestHistory[];
 };

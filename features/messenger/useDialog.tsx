@@ -1,7 +1,7 @@
 'use client';
 
+import type { Message } from '@/entities/messenger';
 import useRequest from '@/shared/hooks/useRequest';
-import { Message } from '@/entities/messenger';
 
 const useDialog = () => {
     const { request, catchRequestError, errorController } = useRequest();

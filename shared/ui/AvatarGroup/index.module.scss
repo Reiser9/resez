@@ -1,0 +1,15 @@
+.avatarGroupInner{
+    display: flex;
+}
+
+.avatarGroupItem{
+    margin-left: -12px;
+}
+
+.avatarGroupItem:first-child{
+    margin-left: 0;
+}
+
+.avatarGroupAllCount{
+    background: var(--input);
+}
