@@ -16,10 +16,12 @@ import { setSiteColors } from '@/shared/utils/setSiteColors';
 import { Preloader } from '@/shared/ui/Preloader';
 import { ServerNotAvailable } from '@/shared/ui/ServerNotAvailable';
 import { Ban } from '@/shared/ui/Ban';
+import useBattleSocket from '@/shared/hooks/useBattleSocket';
 
 const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
     useCheckAuth();
     useSocket();
+    useBattleSocket();
 
     const isAuth = useAppSelector((state) => state.user.isAuth);
     const { appIsLoading, serverIsAvailable } = useAppSelector((state) => state.app);
@@ -37,6 +39,8 @@ const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
     React.useEffect(() => {
         if (theme) {
             setSiteColors(theme.primary, theme.light);
+        } else {
+            setSiteColors();
         }
     }, [theme]);
 

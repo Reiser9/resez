@@ -15,7 +15,7 @@ import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 
 const PersonalizationTheme = () => {
     const queryClient = useQueryClient();
-    const { getPaginationProfileThemes, applyTheme } = useTheme();
+    const { getPaginationProfileThemes, applyTheme, resetTheme } = useTheme();
 
     const revalidateThemes = () => {
         queryClient.invalidateQueries({ queryKey: ['profile_theme'] });
@@ -55,6 +55,7 @@ const PersonalizationTheme = () => {
                                 key={data.id}
                                 data={data}
                                 useProduct={() => applyTheme(data.id, revalidateThemes)}
+                                resetProduct={() => resetTheme(revalidateThemes)}
                             />
                         )),
                     )}

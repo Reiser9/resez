@@ -40,6 +40,7 @@ import { Button, IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Badge } from '@/shared/ui/Badge';
 import { ConfirmModal, Modal } from '@/shared/ui/Modal';
+import { CopyLink } from '@/shared/ui/CopyLink';
 
 type Props = {
     selectedMessegesIDs: Message[];
@@ -67,8 +68,6 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
     const [deleteHistoryCheckbox, setDeleteHistoryCheckbox] = React.useState(false);
 
     const [chatAvatar, setChatAvatar] = React.useState<File>();
-
-    const [chatLinkCopied, setChatLinkCopied] = React.useState(false);
 
     const queryClient = useQueryClient();
     const router = useRouter();
@@ -124,15 +123,6 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
             revalidateChat();
             router.push('/messenger');
         });
-    };
-
-    const copyChatLink = () => {
-        copyText(`${window.location.host}/i/${inviteLink}`);
-        setChatLinkCopied(true);
-
-        setTimeout(() => {
-            setChatLinkCopied(false);
-        }, 2000);
     };
 
     const updateChatAvatarHandler = async () => {
@@ -357,12 +347,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                             <p className={styles.infoModalInfoUserCount}>Участников: {membersCount}</p>
                         </div>
 
-                        <Tooltip title={chatLinkCopied ? 'Скопировано' : 'Скопировать'}>
-                            <div className={styles.infoModalChatLink} onClick={copyChatLink}>
-                                {window.location.host}/i/{inviteLink}
-                                <LinkIcon />
-                            </div>
-                        </Tooltip>
+                        {inviteLink && <CopyLink link={inviteLink} />}
 
                         <div className={styles.messangerNewChatUsersSearch}>
                             {/* <Button variant="light">

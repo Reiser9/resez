@@ -30,6 +30,7 @@ const MemoryCards = () => {
     const [prevAnswer, setPrevAnswer] = React.useState<boolean | null>(null);
     const [isProcessPlaying, setIsProcessPlaying] = React.useState(false);
     const [resultBlock, setResultBlock] = React.useState(false);
+    const [positive, setPositive] = React.useState(false);
 
     const [visibleCards, setVisibleCards] = React.useState<Pair[]>();
 
@@ -50,6 +51,7 @@ const MemoryCards = () => {
         setCurrentCardNumber((prev) => prev + 1);
         setTotalWrong((prev) => prev + 1);
         setPrevAnswer(false);
+        setPositive(false);
     };
 
     const correctAnswer = () => {
@@ -60,6 +62,7 @@ const MemoryCards = () => {
         setCurrentCardNumber((prev) => prev + 1);
         setTotalCorrect((prev) => prev + 1);
         setPrevAnswer(true);
+        setPositive(true);
     };
 
     const restart = async () => {
@@ -143,6 +146,7 @@ const MemoryCards = () => {
                                         prev={(currentCardNumber > buffer ? buffer : currentCardNumber) === id + 1}
                                         correctCallback={correctAnswer}
                                         wrongCallback={wrongAnswer}
+                                        positive={positive}
                                     />
                                 ))}
                             </div>

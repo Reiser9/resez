@@ -22,7 +22,7 @@ const Logo = () => {
 
             {event?.icon && <Image width={24} height={24} src={event?.icon} alt="event" className={styles.logoImg} />}
 
-            <span className={styles.logoVersion}>beta</span>
+            <span className={styles.logoVersion}>{process.env.NEXT_PUBLIC_APP_VERSION}</span>
         </Link>
     );
 };

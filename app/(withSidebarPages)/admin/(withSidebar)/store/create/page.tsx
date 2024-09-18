@@ -13,7 +13,7 @@ import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Delete, Eye, FileEmpty, Photo } from '@/shared/icons';
+import { Delete, FileEmpty, Photo } from '@/shared/icons';
 import { useAvatar, useTheme } from '@/features/store';
 import PositionController from '../PositionController';
 import useAlert from '@/shared/hooks/useAlert';
@@ -611,11 +611,6 @@ const AdminStoreCreate = () => {
                                         onFormatChange={setBackgroundColorFormatHex}
                                         onChangeComplete={(color) => setBackgroundColor(color)}
                                     />
-
-                                    <Button auto variant="light">
-                                        <Eye />
-                                        Предпросмотр
-                                    </Button>
 
                                     <div className={styles.themePreviewBlock}></div>
                                 </>

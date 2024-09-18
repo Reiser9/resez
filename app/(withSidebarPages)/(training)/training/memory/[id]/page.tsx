@@ -268,7 +268,7 @@ const MemoryCardInfo = () => {
                             <TypesLearn />
                         </LinkBlock>
 
-                        <LinkBlock title="Подбор" href={`/memory/${id}/selection`} disabled className={base.item4}>
+                        <LinkBlock title="Подбор" href={`/memory/${id}/selection`} className={base.item4}>
                             <TypesSelection />
                         </LinkBlock>
                     </div>

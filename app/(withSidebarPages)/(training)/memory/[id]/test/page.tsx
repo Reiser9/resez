@@ -37,7 +37,7 @@ const MemoryTest = () => {
     const { id } = useParams();
 
     const { data, isLoading, isFetching, isError, refetch } = useQuery({
-        queryKey: ['collection_cards', id],
+        queryKey: ['collection_test', id],
         queryFn: () => getTestCollection(String(id)),
         enabled: !!id,
     });

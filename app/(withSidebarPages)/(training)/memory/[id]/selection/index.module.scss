@@ -1,0 +1,152 @@
+.selection {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 480px) {
+    .selection{
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 8px;
+    }
+}
+
+.selectionItemWrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selectionItem {
+    background: var(--input);
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    border: 1px solid var(--input);
+    transition: .3s ease-in-out;
+    transform-origin: center;
+    padding: 1.2rem;
+    text-align: center;
+    position: relative;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.selectionItemTextInner{
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.selectionItemText{
+    width: 100%;
+    height: 100%;
+    word-break: break-word;
+    text-align: center;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: center;
+    // align-items: center;
+}
+
+.selectionItemImage{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-position: 50%;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.selectionItemImage.opacity{
+    opacity: 0.16;
+}
+
+.correct .selectionItem,
+.wrong .selectionItem{
+    pointer-events: none;
+}
+
+.selectionItem.selected{
+    border: 1px solid var(--main);
+    background: var(--lighten);
+}
+
+.selectionItem.corrected{
+    animation: fadeOut .3s ease-in-out forwards;
+    animation-delay: .2s;
+    pointer-events: none;
+}
+
+@keyframes fadeOut{
+    0%{
+        transform: scale(1);
+    }
+    100%{
+        transform: scale(0);
+    }
+}
+
+.correct .selectionItem.selected{
+    border: 1px solid var(--success);
+    background: var(--successB);
+}
+
+.wrong .selectionItem.selected{
+    border: 1px solid var(--error);
+    background: var(--errorB);
+    animation: shake .3s cubic-bezier(0,.83,.79,.83);
+}
+
+@keyframes shake{
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+@media (any-hover: hover) {
+    .selectionItem{
+        cursor: pointer;
+    }
+
+    .selectionItem:hover{
+        background: var(--lighten);
+    }
+}
+
+@media (max-width: 768px) {
+    .selectionItem {
+        font-size: 1.8rem;
+    }
+}
+@media (max-width: 480px) {
+    .selectionItem {
+        font-size: 1.6rem;
+    }
+}
+
+.selectionEndScreen, .startScreen{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.startScreen{
+    gap: 16px;
+}

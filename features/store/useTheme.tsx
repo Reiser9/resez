@@ -1,6 +1,7 @@
 'use client';
 
 import type { Theme, ThemePaggination } from '@/entities/store';
+import type { ProfileInfo } from '@/entities/user';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
@@ -129,10 +130,28 @@ const useTheme = () => {
     };
 
     const applyTheme = async (id: number, successCallback = () => {}) => {
-        const response = await request<{ user: Theme }>({
+        const response = await request<{ user: ProfileInfo }>({
             url: `/user/theme/${id}`,
             isAuth: true,
             method: 'PATCH',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const resetTheme = async (successCallback = () => {}) => {
+        const response = await request<{ user: ProfileInfo }>({
+            url: '/user/theme/',
+            isAuth: true,
+            method: 'DELETE',
         });
 
         if (catchRequestError(response)) {
@@ -154,6 +173,7 @@ const useTheme = () => {
         togglePublishTheme,
         addThemeToProfile,
         applyTheme,
+        resetTheme,
     };
 };
 

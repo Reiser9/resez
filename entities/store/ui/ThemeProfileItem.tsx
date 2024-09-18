@@ -7,7 +7,7 @@ import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import type { Theme } from '../model';
-import { Added, Check, DotsHorizontal, ResCoin } from '@/shared/icons';
+import { Added, Blind, Check, DotsHorizontal, ResCoin } from '@/shared/icons';
 
 import { Text } from '@/shared/ui/Text';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
@@ -16,9 +16,10 @@ import { IconButton } from '@/shared/ui/Button';
 type Props = {
     data: Theme;
     useProduct?: () => void;
+    resetProduct?: () => void;
 };
 
-const ThemeProfileItem: React.FC<Props> = ({ data, useProduct = () => {} }) => {
+const ThemeProfileItem: React.FC<Props> = ({ data, useProduct = () => {}, resetProduct = () => {} }) => {
     const { title, light, primary, isActive, price } = data || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -58,9 +59,9 @@ const ThemeProfileItem: React.FC<Props> = ({ data, useProduct = () => {} }) => {
                     setValue={setActionMenu}
                 >
                     {isActive ? (
-                        <MenuLink disabled>
-                            <Check />
-                            Используется
+                        <MenuLink onClick={resetProduct}>
+                            <Blind />
+                            Отключить
                         </MenuLink>
                     ) : (
                         <MenuLink onClick={useProduct}>

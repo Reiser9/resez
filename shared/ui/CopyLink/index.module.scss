@@ -1,0 +1,23 @@
+.copyLink{
+    width: 100%;
+    padding: 0.8rem 4.4rem .8rem 1.6rem;
+    border-radius: 4px;
+    background: var(--lighten);
+    color: var(--main);
+    position: relative;
+    text-align: left;
+}
+
+.copyLink svg{
+    width: 20px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
+}
+
+@media (any-hover: hover) {
+    .copyLink{
+        cursor: pointer;
+    }
+}

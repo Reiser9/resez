@@ -29,6 +29,7 @@ type Props = {
     prev?: boolean;
     correctCallback?: () => void;
     wrongCallback?: () => void;
+    positive: boolean;
 };
 
 const Card: React.FC<Props> = ({
@@ -39,6 +40,7 @@ const Card: React.FC<Props> = ({
     prev = false,
     correctCallback = () => {},
     wrongCallback = () => {},
+    positive,
 }) => {
     const [rotate, setRotate] = React.useState(false);
     const [isDragging, setIsDragging] = React.useState(false);
@@ -46,8 +48,6 @@ const Card: React.FC<Props> = ({
     const [position, setPosition] = React.useState<Position>({ x: 0, y: 0, rotate: 0 });
     const [correct, setCorrect] = React.useState(0);
     const [wrong, setWrong] = React.useState(0);
-
-    const [positive, setPositive] = React.useState(false);
 
     const clearCard = () => {
         setPosition({
@@ -89,11 +89,9 @@ const Card: React.FC<Props> = ({
 
             if (deltaX > offsetTranslateCard) {
                 correctCallback();
-                setPositive(true);
                 speechSynthesis.cancel();
             } else if (deltaX < -offsetTranslateCard) {
                 wrongCallback();
-                setPositive(false);
                 speechSynthesis.cancel();
             }
 
@@ -107,7 +105,7 @@ const Card: React.FC<Props> = ({
             clearCard();
         },
         preventScrollOnSwipe: true,
-        trackMouse: true
+        trackMouse: true,
     });
 
     const myRef = React.useRef<HTMLDivElement>();

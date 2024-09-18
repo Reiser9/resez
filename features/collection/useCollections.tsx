@@ -298,7 +298,7 @@ const useCollections = () => {
         }
 
         if ('data' in response) {
-            return response.data;
+            return response.data.matches;
         }
     };
 

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import io, { Socket } from "socket.io-client";
+import io, { Socket } from 'socket.io-client';
 import { v4 } from 'uuid';
 
 const uniqueId = v4();
-if(typeof window !== "undefined"){
-    localStorage.setItem("uniqueId", uniqueId);
+if (typeof window !== 'undefined') {
+    localStorage.setItem('uniqueId', uniqueId);
 }
 
-export const socket: Socket = io(process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8081", {
+export const socket: Socket = io(process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8081', {
     withCredentials: true,
     forceNew: true,
     reconnectionAttempts: Infinity,
     timeout: 10000,
-    transports: ["websocket"],
+    transports: ['websocket'],
     auth: {
-        uniqueId
-    }
+        uniqueId,
+    },
 });

@@ -122,7 +122,13 @@ const Sidebar = () => {
                 </div>
 
                 <div className={styles.sidebarFooter}>
-                    <Button variant="light" onClick={() => setModalSupport(true)}>
+                    <Button
+                        variant="light"
+                        onClick={() => {
+                            closeSidebar();
+                            setModalSupport(true);
+                        }}
+                    >
                         <Lifebuoy className={styles.sidebarFooterButtonIcon} />
 
                         <span className={styles.sidebarFooterButtonText}>Обратная связь</span>
@@ -157,11 +163,11 @@ const Sidebar = () => {
                         </a>
                     </div>
 
-                    <Link href="/docs/rules" className={styles.sidebarFooterLink}>
+                    <Link href="/docs/rules" className={styles.sidebarFooterLink} onClick={closeSidebar}>
                         Правила проекта
                     </Link>
 
-                    <Link href="/docs/publicoffer" className={styles.sidebarFooterLink}>
+                    <Link href="/docs/publicoffer" className={styles.sidebarFooterLink} onClick={closeSidebar}>
                         Публичная оферта
                     </Link>
 
