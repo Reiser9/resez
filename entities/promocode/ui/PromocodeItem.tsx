@@ -15,6 +15,7 @@ import { Badge } from '@/shared/ui/Badge';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 import { Delete, DotsHorizontal } from '@/shared/icons';
+import Link from 'next/link';
 
 type Props = {
     data: Promocode;
@@ -22,7 +23,7 @@ type Props = {
 };
 
 const PromocodeItem: React.FC<Props> = ({ data, finishPromocode = () => {} }) => {
-    const { code, limit, expiredDate, coins, xp, activationsCount, creator, isFinished, createdAt } = data || {};
+    const { code, limit, expiredDate, coins, xp, activationsCount, creator, isFinished, createdAt, id } = data || {};
     const { nickname, avatar } = creator || {};
 
     const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
@@ -30,31 +31,35 @@ const PromocodeItem: React.FC<Props> = ({ data, finishPromocode = () => {} }) =>
     return (
         <div className={cn(base.item3, styles.promocodeItem)}>
             <div className={base.titleInnerNowrap}>
-                <Text fontWeight={600}>{code}</Text>
+                <Link href={`/admin/promo/${id}`}>
+                    <Text fontWeight={600}>{code}</Text>
+                </Link>
 
-                <HoverMenu
-                    button={
-                        <IconButton variant="light" small onClick={() => setCollectionItemMenu(true)}>
-                            <DotsHorizontal />
-                        </IconButton>
-                    }
-                    value={collectionItemMenu}
-                    setValue={setCollectionItemMenu}
-                >
-                    <MenuLink
-                        danger
-                        onClick={() => {
-                            setCollectionItemMenu(false);
-                            finishPromocode();
-                        }}
+                {!isFinished && (
+                    <HoverMenu
+                        button={
+                            <IconButton variant="light" small onClick={() => setCollectionItemMenu(true)}>
+                                <DotsHorizontal />
+                            </IconButton>
+                        }
+                        value={collectionItemMenu}
+                        setValue={setCollectionItemMenu}
                     >
-                        <Delete />
-                        Завершить
-                    </MenuLink>
-                </HoverMenu>
+                        <MenuLink
+                            danger
+                            onClick={() => {
+                                setCollectionItemMenu(false);
+                                finishPromocode();
+                            }}
+                        >
+                            <Delete />
+                            Завершить
+                        </MenuLink>
+                    </HoverMenu>
+                )}
             </div>
 
-            <TextPoint title="Лимит:" text={limit ? `${activationsCount} / ${limit}` : 'Безлимитный'} />
+            <TextPoint title="Количество активаций:" text={`${activationsCount} / ${limit ?? 'Безлимитно'}`} />
             <TextPoint title="Дата истечения:" text={expiredDate ? formatDate(expiredDate) : '-'} />
             <div className={base.titleWrapper}>
                 <Badge image={avatar} text={nickname} />

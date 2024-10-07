@@ -52,6 +52,7 @@ const MemoryCards = () => {
         setTotalWrong((prev) => prev + 1);
         setPrevAnswer(false);
         setPositive(false);
+        speechSynthesis.cancel();
     };
 
     const correctAnswer = () => {
@@ -63,6 +64,7 @@ const MemoryCards = () => {
         setTotalCorrect((prev) => prev + 1);
         setPrevAnswer(true);
         setPositive(true);
+        speechSynthesis.cancel();
     };
 
     const restart = async () => {
@@ -184,7 +186,7 @@ const MemoryCards = () => {
                                     <Text variant="text2">Выучи то, что плохо запоминаешь</Text>
                                 </LinkBlock>
 
-                                <LinkBlock replace title="Подбор" href={`selection`} className={base.item4} disabled>
+                                <LinkBlock replace title="Подбор" href={`selection`} className={base.item4}>
                                     <Text variant="text2">Выбирай пары определение - термин</Text>
                                 </LinkBlock>
                             </div>

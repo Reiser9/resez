@@ -2,7 +2,6 @@ export type {
     Collection,
     PairsCollectionById,
     Pair,
-    CollectionDTO,
     Collections,
     CollectionSettings,
     Excel,
@@ -11,4 +10,5 @@ export type {
     CollectionValidation,
     CollectionWrite,
     MatchItem,
+    LeaderItemSelection
 } from './model';

@@ -55,6 +55,7 @@ const ProfileData = () => {
 
     const revalidateProfile = async () => {
         await queryClient.invalidateQueries({ queryKey: ['profile_data'] });
+        await queryClient.invalidateQueries({ queryKey: ['short_info'] });
     };
 
     const saveData = () => {
@@ -63,7 +64,7 @@ const ProfileData = () => {
             lastName: surname,
             birthDate: birthday,
             gender: sex,
-        });
+        }, revalidateProfile);
     };
 
     React.useEffect(() => {

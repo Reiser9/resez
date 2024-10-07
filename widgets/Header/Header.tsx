@@ -39,6 +39,7 @@ import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
+import { PromocodeReward } from '@/entities/promocode';
 
 type Props = {
     empty?: boolean;
@@ -49,6 +50,10 @@ const Header: React.FC<Props> = ({ empty = false }) => {
     const [confirmLogout, setConfirmLogout] = React.useState(false);
     const [promocodeModal, setPromocodeModal] = React.useState(false);
     const [promocode, setPromocode] = React.useState('');
+    const [rewardModal, setRewardModal] = React.useState(false);
+    const [reward, setReward] = React.useState<PromocodeReward | null>(null);
+
+    const { coins, xp } = reward || {};
 
     const profileMenuRef = React.useRef<HTMLDivElement>(null);
 
@@ -101,12 +106,17 @@ const Header: React.FC<Props> = ({ empty = false }) => {
         setProfileMenu((prev) => !prev);
     };
 
-    const activatePromocodeHandler = () => {
-        activatePromocode(promocode, () => {
+    const activatePromocodeHandler = async () => {
+        const reward = await activatePromocode(promocode, () => {
             setPromocodeModal(false);
             setPromocode('');
             invalidateShortInfo();
         });
+
+        if (!reward) return;
+
+        setRewardModal(true);
+        setReward(reward);
     };
 
     return (
@@ -224,14 +234,14 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                         Промокод
                                     </div>
 
-                                    {/* <Link
+                                    <Link
                                         href="/profile/achievements"
                                         className={styles.headerProfileMenuLink}
                                         onClick={closeProfileMenu}
                                     >
                                         <Trophy />
                                         Достижения
-                                    </Link> */}
+                                    </Link>
                                 </>
                             ) : (
                                 <Link href="/login" className={styles.headerProfileMenuLink} onClick={closeProfileMenu}>
@@ -309,6 +319,24 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                         <Button onClick={activatePromocodeHandler} disabled={!promocode}>
                             Активировать
                         </Button>
+                    </Modal>
+
+                    <Modal value={rewardModal} setValue={setRewardModal} title="Промокод успешно активирован">
+                        <div className={styles.rewardPromoWrapper}>
+                            <Text variant="h4">Награда за активацию:</Text>
+
+                            <div className={styles.rewardPromo}>
+                                {!!coins && <Text fontWeight={600}>ResCoin: {coins}</Text>}
+
+                                {!!xp && <Text fontWeight={600}>Опыт: {xp}</Text>}
+
+                                {!coins && !xp && <Text fontWeight={600}>Промокод не включает в себя награды</Text>}
+                            </div>
+
+                            <Button auto onClick={() => setRewardModal(false)}>
+                                Понятно
+                            </Button>
+                        </div>
                     </Modal>
                 </>
             )}

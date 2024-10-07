@@ -1,8 +1,14 @@
 'use client';
 
 import type { SubjectTaskById } from '@/entities/task';
-import type { PagginationTests, PagginationTestsHistory, Test, TestById, TestResult } from '@/entities/test';
-import { TestHistoryById } from '@/entities/test/model';
+import type {
+    PagginationTests,
+    PagginationTestsHistory,
+    Test,
+    TestById,
+    TestResult,
+    TestHistoryById,
+} from '@/entities/test';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
 import { buildQueryString } from '@/shared/utils/buildQueryString';

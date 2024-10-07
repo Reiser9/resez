@@ -89,10 +89,8 @@ const Card: React.FC<Props> = ({
 
             if (deltaX > offsetTranslateCard) {
                 correctCallback();
-                speechSynthesis.cancel();
             } else if (deltaX < -offsetTranslateCard) {
                 wrongCallback();
-                speechSynthesis.cancel();
             }
 
             setTimeout(() => {

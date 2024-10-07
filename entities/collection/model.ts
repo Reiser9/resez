@@ -1,10 +1,9 @@
 import type { Paggination } from '../pagination';
+import { UserShort } from '../user';
 
 export type Collections = Paggination & {
     collections: Collection[];
 };
-
-export type CollectionDTO = {};
 
 export type Collection = {
     id: number;
@@ -102,3 +101,10 @@ export type MatchItem = {
     picture: string;
     answerId: string;
 };
+
+export type LeaderItemSelection = {
+    id: number,
+    time: number,
+    createdAt: Date,
+    user: UserShort
+}

@@ -3,6 +3,7 @@
 import React from 'react';
 
 import type { AdminUserSessions, UserAdmin, UserAdminProfile, UsersAdmin, UsersShortAdmin } from '@/entities/user';
+import type { Collections } from '@/entities/collection';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
@@ -164,6 +165,29 @@ const useUsers = () => {
         }
     };
 
+    const getUserCollections = async (page: number, userId: number | string, search = '') => {
+        const limit = 9;
+        const offset = page * limit;
+        const queryString = buildQueryString({
+            offset: offset,
+            limit,
+            search,
+        });
+
+        const response = await request<Collections>({
+            url: `/memory-ms/admin/user/${userId}/collection?${queryString}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         usersIsLoading,
         getPaginationUsers,
@@ -173,6 +197,7 @@ const useUsers = () => {
         changeUserBalance,
         getUserInfoById,
         getUserSessions,
+        getUserCollections,
     };
 };
 

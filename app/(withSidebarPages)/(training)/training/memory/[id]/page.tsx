@@ -33,7 +33,7 @@ import CollectionSettings from './CollectionSettings';
 import { Copy } from '@/shared/icons/Copy';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import useShortInfo from '@/features/user/data/useShortInfo';
-import { CollectionByIdItem } from '@/entities/collection/ui';
+import { CollectionPairItem } from '@/entities/collection/ui';
 
 import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
@@ -300,7 +300,7 @@ const MemoryCardInfo = () => {
                                 <div className={base.contentItems}>
                                     {collectionPairs?.pages.map((pair) =>
                                         pair?.cards?.map((data) => (
-                                            <CollectionByIdItem key={data.id} data={data} showAnswers={showAnswers} />
+                                            <CollectionPairItem key={data.id} data={data} showAnswers={showAnswers} />
                                         )),
                                     )}
                                 </div>

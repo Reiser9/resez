@@ -333,3 +333,19 @@
     width: 20px;
     flex-shrink: 0;
 }
+
+.rewardPromoWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.rewardPromo{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}

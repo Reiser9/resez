@@ -1,1 +1,1 @@
-export type { PagginationPromocodes, Promocode, PromocodeReward } from './model';
+export type { PagginationPromocodes, Promocode, PromocodeReward, PromocodeActivationUsers } from './model';

@@ -2,8 +2,10 @@
 
 import React from 'react';
 import cn from 'classnames';
+import Link from 'next/link';
 import { Tooltip } from 'antd';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -18,22 +20,30 @@ import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { PromocodeItem } from '@/entities/promocode/ui';
 import { TestItemSkeleton } from '@/shared/ui/Skeleton';
+import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';
 
 const AdminPromo = () => {
     const queryClient = useQueryClient();
-    const { getPagginationPromocodes } = usePromocode();
+    const pathname = usePathname();
+    const { getPagginationPromocodes, deactivatePromocode } = usePromocode();
+    const searchParams = useSearchParams();
+    const active = searchParams.get('active');
 
     const revalidateRequest = () => {
-        queryClient.invalidateQueries({ queryKey: ['admin_promocodes'] });
+        queryClient.invalidateQueries({ queryKey: ['admin_promocodes', active] });
     };
 
     const resetRequest = () => {
-        queryClient.resetQueries({ queryKey: ['admin_promocodes'] });
+        queryClient.resetQueries({ queryKey: ['admin_promocodes', active] });
+    };
+
+    const deactivatePromocodeHandler = (id: number | string) => {
+        deactivatePromocode(id, revalidateRequest);
     };
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['admin_promocodes'],
-        queryFn: (params) => getPagginationPromocodes(params.pageParam),
+        queryKey: ['admin_promocodes', active],
+        queryFn: (params) => getPagginationPromocodes(params.pageParam, active || ''),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -45,6 +55,28 @@ const AdminPromo = () => {
     return (
         <PrivateWrapper permissions={[PERMISSIONS.PROMOCODES]}>
             <div className={base.baseWrapperGap16}>
+                <ScrollWithArrow>
+                    <Link
+                        href="/admin/promo"
+                        className={cn(base.tag, {
+                            [base.active]: pathname === '/admin/promo' && !active,
+                        })}
+                        replace
+                    >
+                        Активные
+                    </Link>
+
+                    <Link
+                        href="/admin/promo?active=false"
+                        className={cn(base.tag, {
+                            [base.active]: pathname === '/admin/promo' && active,
+                        })}
+                        replace
+                    >
+                        Завершенные
+                    </Link>
+                </ScrollWithArrow>
+
                 <div className={base.titleInner}>
                     <div className={base.titleWrapper}>
                         <Text variant="h3">
@@ -78,7 +110,11 @@ const AdminPromo = () => {
                         <div className={base.contentItems}>
                             {data?.pages.map((promo) =>
                                 promo?.promoCodes.map((data) => (
-                                    <PromocodeItem key={data.id} data={data} finishPromocode={() => {}} />
+                                    <PromocodeItem
+                                        key={data.id}
+                                        data={data}
+                                        finishPromocode={() => deactivatePromocodeHandler(data.id)}
+                                    />
                                 )),
                             )}
                         </div>

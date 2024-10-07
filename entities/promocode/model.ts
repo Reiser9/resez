@@ -1,4 +1,5 @@
 import { Paggination } from '../pagination';
+import { UserShort } from '../user';
 
 export type Promocode = {
     id: number;
@@ -11,11 +12,7 @@ export type Promocode = {
     createdAt: Date;
     updatedAt: Date;
     activationsCount: number;
-    creator: {
-        id: number;
-        nickname: string;
-        avatar: string;
-    };
+    creator: UserShort;
 };
 
 export type PromocodeReward = {
@@ -25,4 +22,10 @@ export type PromocodeReward = {
 
 export type PagginationPromocodes = Paggination & {
     promoCodes: Promocode[];
+};
+
+export type PromocodeActivationUsers = Paggination & {
+    users: (UserShort & {
+        date: Date;
+    })[];
 };

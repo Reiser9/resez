@@ -65,6 +65,18 @@
     position: relative;
 }
 
+.taskTestItem.correct{
+    border: 1px solid var(--success);
+}
+
+.taskTestItem.wrong{
+    border: 1px solid var(--error);
+}
+
+.taskTestItem.partTrue{
+    border: 1px solid var(--warn);
+}
+
 .taskTestItemAnswer{
     font-weight: 600;
 }

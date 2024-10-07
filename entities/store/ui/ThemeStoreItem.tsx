@@ -46,6 +46,12 @@ const ThemeStoreItem: React.FC<Props> = ({ data, addProductToProfile = () => {} 
                 </div>
 
                 <div className={styles.avatarItemContent} style={{ background: light }}>
+                    {isCollected && (
+                        <div className={styles.avatarItemCollected}>
+                            <Check />
+                        </div>
+                    )}
+                    
                     <div style={{ background: primary, width: '100px', height: '100px', borderRadius: '50%' }}></div>
                 </div>
 

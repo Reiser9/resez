@@ -9,6 +9,7 @@ import type {
     CollectionValidation,
     CollectionWrite,
     Collections,
+    LeaderItemSelection,
     MatchItem,
     Pair,
     PairDTO,
@@ -255,9 +256,9 @@ const useCollections = () => {
     };
 
     // Получить пары коллекции при игре в карточки (сделать с учетом пагинации)
-    const getPairsCollection = async (id: string | number) => {
+    const getPairsCollection = async (collectionId: string | number) => {
         const response = await request<{ cards: Pair[] }>({
-            url: `/memory-ms/collection/${id}/cards?limit=500`,
+            url: `/memory-ms/collection/${collectionId}/cards?limit=500`,
             isAuth: true,
         });
 
@@ -271,9 +272,9 @@ const useCollections = () => {
     };
 
     // Получить коллекцию вопросов для теста
-    const getTestCollection = async (id: string | number) => {
+    const getTestCollection = async (collectionId: string | number) => {
         const response = await request<{ test: (CollectionChoice | CollectionWrite | CollectionValidation)[] }>({
-            url: `/memory-ms/collection/${id}/test`,
+            url: `/memory-ms/collection/${collectionId}/test`,
             isAuth: true,
         });
 
@@ -287,9 +288,9 @@ const useCollections = () => {
     };
 
     // Получить коллекцию вопросов для совпадений
-    const getMatchesCollection = async (id: string | number) => {
+    const getMatchesCollection = async (collectionId: string | number) => {
         const response = await request<{ matches: MatchItem[] }>({
-            url: `/memory-ms/collection/${id}/match`,
+            url: `/memory-ms/collection/${collectionId}/match`,
             isAuth: true,
         });
 
@@ -299,6 +300,43 @@ const useCollections = () => {
 
         if ('data' in response) {
             return response.data.matches;
+        }
+    };
+
+    const sendMatchScore = async (time: number, collectionId: number | string) => {
+        const response = await request({
+            url: `/memory-ms/match-score`,
+            isAuth: true,
+            method: 'POST',
+            data: {
+                time,
+                collectionId,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getLeaderboardSelection = async (collectionId: number | string) => {
+        const limit = 10;
+
+        const response = await request<{ scores: LeaderItemSelection[] }>({
+            url: `/memory-ms/collection/${collectionId}/match-score?limit=${limit}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.scores;
         }
     };
 
@@ -366,6 +404,8 @@ const useCollections = () => {
         updateSettings,
         getTestCollection,
         getMatchesCollection,
+        sendMatchScore,
+        getLeaderboardSelection,
         likeCollection,
         getPopularCollections,
         getUserCollectionsByNickname,

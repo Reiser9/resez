@@ -62,7 +62,7 @@
 .selectionItemImage{
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     background-position: 50%;
     border-radius: 8px;
     pointer-events: none;
@@ -70,6 +70,7 @@
 
 .selectionItemImage.opacity{
     opacity: 0.16;
+    object-fit: cover;
 }
 
 .correct .selectionItem,
@@ -145,8 +146,76 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    padding: 3.2rem 0;
 }
 
 .startScreen{
     gap: 16px;
+}
+
+.testMoreContent{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.selectionLeaderboard{
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 2.4rem;
+}
+
+.selectionLeaderboardItem{
+    width: 100%;
+    padding: 1.2rem 1.6rem;
+    border-radius: 4px;
+    background: var(--input);
+    border: 2px solid var(--input);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.selectionLeaderboardItem.current{
+    border: 2px solid var(--main);
+}
+
+.selectionLeaderboardItemWrapper{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.selectionLeaderboardItemNumber{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    background: var(--lighten);
+    color: var(--main);
+    flex-shrink: 0;
+}
+
+.selectionLeaderboardItemNumber.leader{
+    color: #ffcd1f;
+    background: #fff3c8;
+}
+
+.selectionLeaderboardItemNumber svg{
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.selectionLeaderboardItemNumber.leader svg path{
+    fill: #ffcd1f;
 }

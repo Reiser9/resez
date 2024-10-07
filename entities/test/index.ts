@@ -8,4 +8,6 @@ export type {
     TestResult,
     PagginationTestsHistory,
     TestHistory,
+    TestHistoryById,
+    TaskHistory,
 } from './model';

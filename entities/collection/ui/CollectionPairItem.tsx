@@ -16,7 +16,7 @@ type Props = {
     showAnswers?: boolean;
 };
 
-const CollectionByIdItem: React.FC<Props> = ({ data, showAnswers = false }) => {
+const CollectionPairItem: React.FC<Props> = ({ data, showAnswers = false }) => {
     const { questionText, questionPicture, answerText, answerPicture } = data || {};
 
     return (
@@ -44,4 +44,4 @@ const CollectionByIdItem: React.FC<Props> = ({ data, showAnswers = false }) => {
     );
 };
 
-export default CollectionByIdItem;
+export default CollectionPairItem;

@@ -11,6 +11,7 @@ import { useAppSelector } from './useRedux';
 import useAlert from './useAlert';
 import useShortInfo from '@/features/user/data/useShortInfo';
 import useClearLocalData from './useClearLocalData';
+import { Achievement } from '@/entities/achievement';
 
 const useSocket = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -104,6 +105,11 @@ const useSocket = () => {
             alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
         });
 
+        socket.on('achievement', (data: {userId: number, achievement: Achievement}) => {
+            console.log(data);
+            alertNotify('Информация', `Получено достижение: ${data.achievement}`, 'info', '/profile/achievements', 4000);
+        });
+
         return () => {
             socket.off('notify');
             socket.off('end-session');
@@ -111,6 +117,7 @@ const useSocket = () => {
             socket.off('unblocked');
             socket.off('message');
             socket.off('role-updated');
+            socket.off('achievement');
         };
     }, []);
 };

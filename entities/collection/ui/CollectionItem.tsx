@@ -26,10 +26,9 @@ type Props = {
     data: Collection;
     loading?: boolean;
     deleteCallback?: () => void;
-    style?: React.CSSProperties;
 };
 
-const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback = () => {}, style }) => {
+const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback }) => {
     const { id, collection, description, isPrivate, pairsCount, user, likesCount, isLiked, hasPictures } = data || {};
     const { avatar, nickname, id: authorId } = user || {};
 
@@ -49,7 +48,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
     const { id: currentUserId } = userInfo?.user || {};
 
     return (
-        <div className={cn(base.item3, styles.collectionItem)} style={style}>
+        <div className={cn(base.item3, styles.collectionItem)}>
             <Link href={`/training/memory/${id}`} className={styles.collectionItemInfoInner}>
                 <span className={styles.collectionItemInfo}>
                     <p className={styles.collectionItemName}>{collection}</p>
@@ -118,23 +117,25 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                             Редактировать
                         </MenuLink>
 
-                        <MenuLink
-                            danger
-                            onClick={() => {
-                                setCollectionItemMenu(false);
-                                setDeleteCollectionModal(true);
-                            }}
-                        >
-                            <Delete />
-                            Удалить
-                        </MenuLink>
+                        {deleteCallback && (
+                            <MenuLink
+                                danger
+                                onClick={() => {
+                                    setCollectionItemMenu(false);
+                                    setDeleteCollectionModal(true);
+                                }}
+                            >
+                                <Delete />
+                                Удалить
+                            </MenuLink>
+                        )}
                     </HoverMenu>
                 )}
             </div>
 
             {loading && <LoaderForItem />}
 
-            {authorId === currentUserId && (
+            {deleteCallback && authorId === currentUserId && (
                 <ConfirmModal
                     text="Вы действительно хотите удалить коллекцию?"
                     confirmText="Удалить"
