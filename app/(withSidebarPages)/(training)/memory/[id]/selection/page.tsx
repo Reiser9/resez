@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import type { MatchItem } from '@/entities/collection';
+import type { MatchItem, ScoreItem, ScoreItemLocal } from '@/entities/collection';
 import { useCollections } from '@/features/collection';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 
@@ -21,6 +21,7 @@ import { Button } from '@/shared/ui/Button';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
 import { Badge } from '@/shared/ui/Badge';
 import { Crown } from '@/shared/icons';
+import LeaderboardItem from './LeaderboardItem';
 
 const MemorySelection = () => {
     const { id } = useParams();
@@ -38,22 +39,17 @@ const MemorySelection = () => {
     const [isCorrect, setIsCorrect] = React.useState(false);
     const [correctedCardIds, setCorrectedCardIds] = React.useState<string[]>([]);
 
-    const { getMatchesCollection, sendMatchScore, getLeaderboardSelection } = useCollections();
+    const [score, setScore] = React.useState<ScoreItemLocal | null>(null);
+    const [scores, setScores] = React.useState<ScoreItem[] | null>(null);
+    const [inLeadTable, setInLeadTable] = React.useState(false);
+    const [scoresIsLoading, setScoresIsLoading] = React.useState(false);
+
+    const { getMatchesCollection, sendMatchScore } = useCollections();
 
     const { data, isLoading, isFetching, isError, refetch } = useQuery({
         queryKey: ['collection_match', id],
         queryFn: () => getMatchesCollection(String(id)),
         enabled: !!id,
-    });
-
-    const {
-        data: leaderboard,
-        isLoading: leaderboardIsLoading,
-        isError: leaderboardIsError,
-    } = useQuery({
-        queryKey: ['match_leaderboard', id],
-        queryFn: () => getLeaderboardSelection(String(id)),
-        enabled: !!id && !!data && correctedCardIds.length === data.length,
     });
 
     const selectCard = (card: MatchItem) => {
@@ -114,13 +110,20 @@ const MemorySelection = () => {
     };
 
     const matchResult = async () => {
-        if (!isAuth) return;
+        setScoresIsLoading(true);
+        const result = await sendMatchScore(+(time + extraSeconds).toFixed(1), String(id));
+        setScoresIsLoading(false);
 
-        sendMatchScore(+(time + extraSeconds).toFixed(1), String(id));
-    };
+        if (!result) return;
 
-    const getLeaderboard = async () => {
-        getLeaderboardSelection(String(id));
+        const { score, scores } = result;
+
+        if (score.user && !!scores.filter((elem) => elem.user.id === score.user.id).length) {
+            setInLeadTable(true);
+        }
+
+        setScore(score);
+        setScores(scores);
     };
 
     React.useEffect(() => {
@@ -139,7 +142,6 @@ const MemorySelection = () => {
         if (correctedCardIds.length === data?.length) {
             pauseTimer();
             matchResult();
-            getLeaderboard();
         }
     }, [correctedCardIds, data]);
 
@@ -190,7 +192,7 @@ const MemorySelection = () => {
                         ))}
                     </div>
                 </>
-            ) : leaderboardIsLoading ? (
+            ) : scoresIsLoading ? (
                 <Preloader page small />
             ) : (
                 <div className={styles.selectionEndScreen}>
@@ -200,47 +202,9 @@ const MemorySelection = () => {
 
                     <Text variant="h4">Ошибок: {extraSeconds}</Text>
 
-                    {!isAuth && <Text color="error">Для сохранения результата требуется авторизация</Text>}
-
                     <Button auto variant="light" onClick={restartSelection} loading={isFetching}>
                         Играть снова
                     </Button>
-
-                    <div className={styles.selectionLeaderboard}>
-                        <Text fontWeight={600}>Топ-10</Text>
-
-                        {leaderboard?.map((data, key) => {
-                            const { time, createdAt, user, id } = data || {};
-                            const { nickname, avatar } = user || {};
-
-                            return (
-                                <div
-                                    key={id}
-                                    className={cn(styles.selectionLeaderboardItem, {
-                                        [styles.current]: true,
-                                    })}
-                                >
-                                    <div className={styles.selectionLeaderboardItemWrapper}>
-                                        <div
-                                            className={cn(styles.selectionLeaderboardItemNumber, {
-                                                [styles.leader]: key === 0,
-                                            })}
-                                        >
-                                            {key === 0 ? <Crown /> : key + 1}
-                                        </div>
-
-                                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
-                                            <Badge image={avatar} text={nickname} isUserAvatar />
-
-                                            <Text>{nickname}</Text>
-                                        </Link>
-                                    </div>
-
-                                    <Text fontWeight={600}>{time} сек.</Text>
-                                </div>
-                            );
-                        })}
-                    </div>
 
                     <div className={base.baseWrapperGap8}>
                         <Text variant="h3">Попробуйте также другой тип запоминания:</Text>
@@ -259,6 +223,24 @@ const MemorySelection = () => {
                             </LinkBlock>
                         </div>
                     </div>
+
+                    {!!scores?.length && (
+                        <div className={styles.selectionLeaderboard}>
+                            <Text fontWeight={600}>Топ-10</Text>
+
+                            {scores?.map((data) => (
+                                <LeaderboardItem key={data.id} data={data} current={score?.user?.id === data.user.id} />
+                            ))}
+
+                            {!isAuth && (
+                                <Text center color="error">
+                                    Для сохранения результата требуется авторизация
+                                </Text>
+                            )}
+
+                            {!inLeadTable && score && <LeaderboardItem data={score} current />}
+                        </div>
+                    )}
                 </div>
             )}
         </div>

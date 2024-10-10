@@ -12,20 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import {
-    Block,
-    Delete,
-    DotsHorizontal,
-    Edit,
-    Lvl20,
-    Lvl30,
-    Lvl75,
-    Message,
-    Paintbruh,
-    Qr,
-    Send,
-    User,
-} from '@/shared/icons';
+import { Block, Delete, DotsHorizontal, Edit, Message, Paintbruh, Qr, Send, User } from '@/shared/icons';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 import useCopyText from '@/features/utils/useCopyText';
 import { CONFIG } from '@/shared/consts/CONFIG';

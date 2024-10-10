@@ -9,11 +9,12 @@ import type {
     CollectionValidation,
     CollectionWrite,
     Collections,
-    LeaderItemSelection,
     MatchItem,
     Pair,
     PairDTO,
     PairsCollectionById,
+    ScoreItem,
+    ScoreItemLocal,
 } from '@/entities/collection';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
@@ -304,7 +305,7 @@ const useCollections = () => {
     };
 
     const sendMatchScore = async (time: number, collectionId: number | string) => {
-        const response = await request({
+        const response = await request<{ score: ScoreItemLocal; scores: ScoreItem[] }>({
             url: `/memory-ms/match-score`,
             isAuth: true,
             method: 'POST',
@@ -320,23 +321,6 @@ const useCollections = () => {
 
         if ('data' in response) {
             return response.data;
-        }
-    };
-
-    const getLeaderboardSelection = async (collectionId: number | string) => {
-        const limit = 10;
-
-        const response = await request<{ scores: LeaderItemSelection[] }>({
-            url: `/memory-ms/collection/${collectionId}/match-score?limit=${limit}`,
-            isAuth: true,
-        });
-
-        if (catchRequestError(response)) {
-            return errorController(response);
-        }
-
-        if ('data' in response) {
-            return response.data.scores;
         }
     };
 
@@ -405,7 +389,6 @@ const useCollections = () => {
         getTestCollection,
         getMatchesCollection,
         sendMatchScore,
-        getLeaderboardSelection,
         likeCollection,
         getPopularCollections,
         getUserCollectionsByNickname,

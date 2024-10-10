@@ -1,1 +1,1 @@
-export type { Achievement } from './model';
+export type { Achievement, AchievementCategory } from './model';

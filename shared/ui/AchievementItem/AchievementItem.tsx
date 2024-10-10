@@ -9,36 +9,40 @@ import styles from './index.module.scss';
 import { Info } from '@/shared/icons';
 
 import { Text } from '../Text';
+import { Achievement } from '@/entities/achievement';
+import Image from 'next/image';
+import { formatDate } from '@/shared/utils/formatDate';
+import { Badge } from '../Badge';
 
 type Props = {
-    done?: boolean;
-    title: string;
-    description: string;
     progress: number;
     endValue: number;
-    reward: string;
-    icon: React.ReactNode;
+    data: Achievement;
 };
 
-const AchievementItem: React.FC<Props> = ({ done = false, title, description, progress, endValue, reward, icon }) => {
+const AchievementItem: React.FC<Props> = ({ progress, endValue, data }) => {
+    const { achievement, coins, xp, type, description, icon, isCollected, createdAt, id } = data || {};
+
     return (
         <div
             className={cn(styles.achievementItem, {
-                [styles.done]: done,
+                [styles.done]: isCollected,
             })}
         >
             <div className={styles.achievementItemWrapper}>
                 <div className={styles.achievementItemTitleInner}>
-                    <div className={styles.achievementItemMedalInner}>{icon}</div>
+                    <div className={styles.achievementItemIcon}>
+                        {icon ? <Image src={icon} alt={achievement} fill /> : <Badge text="?" />}
+                    </div>
 
-                    <Text variant="h4">{title}</Text>
+                    <Text variant="h4">{achievement ?? '?????'}</Text>
                 </div>
 
                 <Tooltip
                     title={
                         <>
                             <p>Награды:</p>
-                            {reward}
+                            {xp && `Опыт: ${xp}`} {coins && `ResCoins: ${coins}`}
                         </>
                     }
                 >
@@ -49,23 +53,29 @@ const AchievementItem: React.FC<Props> = ({ done = false, title, description, pr
             </div>
 
             <Text variant="text2" className={styles.achievementItemDescription}>
-                {description}
+                {description ?? '?????'}
             </Text>
 
-            <div className={styles.achievementItemProgress}>
-                <div className={styles.achievementItemProgressLine}>
-                    <div
-                        className={styles.achievementItemProgressBar}
-                        style={{ width: `${(progress / endValue) * 100}%` }}
-                    ></div>
-                </div>
+            {!isCollected ? (
+                <div className={styles.achievementItemProgress}>
+                    <div className={styles.achievementItemProgressLine}>
+                        <div
+                            className={styles.achievementItemProgressBar}
+                            style={{ width: `${(progress / endValue) * 100}%` }}
+                        ></div>
+                    </div>
 
-                <div className={styles.achievementItemProgressValues}>
-                    <Text variant="text3" className={styles.achievementItemProgressValue}>
-                        {progress} / {endValue}
-                    </Text>
+                    <div className={styles.achievementItemProgressValues}>
+                        <Text variant="text3" className={styles.achievementItemProgressValue}>
+                            {progress} / {endValue}
+                        </Text>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <Text variant="text2" fontWeight={600}>
+                    Выполнено: {formatDate(createdAt)}
+                </Text>
+            )}
         </div>
     );
 };

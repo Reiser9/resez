@@ -102,9 +102,13 @@ export type MatchItem = {
     answerId: string;
 };
 
-export type LeaderItemSelection = {
-    id: number,
-    time: number,
-    createdAt: Date,
-    user: UserShort
-}
+export type ScoreItemLocal = {
+    time: number;
+    place: number;
+    user: UserShort;
+};
+
+export type ScoreItem = ScoreItemLocal & {
+    id: number;
+    updatedAt: number;
+};

@@ -10,5 +10,6 @@ export type {
     CollectionValidation,
     CollectionWrite,
     MatchItem,
-    LeaderItemSelection
+    ScoreItemLocal,
+    ScoreItem,
 } from './model';

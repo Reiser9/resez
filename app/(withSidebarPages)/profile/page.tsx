@@ -13,7 +13,7 @@ import base from '@/shared/styles/base.module.scss';
 
 import { CONFIG } from '@/shared/consts/CONFIG';
 import { useProfileData } from '@/features/user';
-import { Block, Delete, DotsHorizontal, Edit, Lvl20, Lvl30, Lvl75, Message, Paintbruh, Qr, User } from '@/shared/icons';
+import { Block, Delete, DotsHorizontal, Edit, Message, Paintbruh, Qr, User } from '@/shared/icons';
 import useCopyText from '@/features/utils/useCopyText';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';

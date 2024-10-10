@@ -105,9 +105,16 @@ const useSocket = () => {
             alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
         });
 
-        socket.on('achievement', (data: {userId: number, achievement: Achievement}) => {
+        socket.on('achievement', (data: { userId: number; achievement: Achievement }) => {
             console.log(data);
-            alertNotify('Информация', `Получено достижение: ${data.achievement}`, 'info', '/profile/achievements', 4000);
+            alertNotify(
+                'Информация',
+                `Получено достижение: ${data.achievement}`,
+                'info',
+                '/profile/achievements',
+                4000,
+            );
+            queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 
         return () => {

@@ -13,6 +13,7 @@ type Props = {
     offIndent?: boolean;
     animationDuration?: number;
     wrapperClassName?: string;
+    percent?: number | string;
 } & HTMLAttributes<HTMLDivElement>;
 
 const Preloader: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const Preloader: React.FC<Props> = ({
     animationDuration = 1,
     className,
     wrapperClassName,
+    percent,
     ...props
 }) => {
     return (
@@ -41,6 +43,7 @@ const Preloader: React.FC<Props> = ({
                 })}
                 style={{ animationDuration: `${animationDuration}s` }}
             ></div>
+            {percent && <span className={styles.percentText}>{percent}</span>}
         </div>
     );
 };
