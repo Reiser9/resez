@@ -45,6 +45,7 @@ const IconButton: React.FC<IconButtonProps> = ({
             ) : href ? (
                 <Link
                     href={href}
+                    prefetch={false}
                     className={cn(styles.iconButton, className, styles[variant], {
                         [styles.small]: small,
                         [styles.full]: full,

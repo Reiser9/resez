@@ -17,7 +17,7 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { Preloader } from '@/shared/ui/Preloader';
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
+import { BackButton, Button } from '@/shared/ui/Button';
 import { LinkBlock } from '@/shared/ui/LinkBlock';
 import { Badge } from '@/shared/ui/Badge';
 import { Crown } from '@/shared/icons';
@@ -118,7 +118,7 @@ const MemorySelection = () => {
 
         const { score, scores } = result;
 
-        if (score.user && !!scores.filter((elem) => elem.user.id === score.user.id).length) {
+        if (score.user && !!scores.filter((elem) => elem.user?.id === score.user?.id).length) {
             setInLeadTable(true);
         }
 
@@ -151,47 +151,51 @@ const MemorySelection = () => {
 
     return (
         <div className={base.baseWrapperGap16}>
-            {correctedCardIds.length !== data?.length ? (
-                <>
-                    <Text fontWeight={600} center color={isWrong ? 'error' : ''}>
+            <div className={base.titleInner}>
+                <BackButton />
+
+                {correctedCardIds.length !== data?.length && (
+                    <Text fontWeight={600} color={isWrong ? 'error' : ''}>
                         {(time + extraSeconds).toFixed(1)} сек.
                     </Text>
+                )}
+            </div>
 
-                    <div
-                        className={cn(styles.selection, {
-                            [styles.wrong]: isWrong,
-                            [styles.correct]: isCorrect,
-                        })}
-                    >
-                        {data?.map((data) => (
-                            <div key={data.id} className={styles.selectionItemWrapper}>
-                                <div
-                                    className={cn(styles.selectionItem, {
-                                        [styles.selected]:
-                                            firstSelectedCardId === data.id || secondSelectedCardId === data.id,
-                                        [styles.corrected]: correctedCardIds.includes(data.id),
-                                    })}
-                                    onClick={() => selectCard(data)}
-                                >
-                                    <div className={styles.selectionItemTextInner}>
-                                        <div className={styles.selectionItemText}>{parse(data.text)}</div>
-                                    </div>
-
-                                    {data.picture && (
-                                        <Image
-                                            src={data.picture}
-                                            alt="image"
-                                            fill
-                                            className={cn(styles.selectionItemImage, {
-                                                [styles.opacity]: data.text,
-                                            })}
-                                        />
-                                    )}
+            {correctedCardIds.length !== data?.length ? (
+                <div
+                    className={cn(styles.selection, {
+                        [styles.wrong]: isWrong,
+                        [styles.correct]: isCorrect,
+                    })}
+                >
+                    {data?.map((data) => (
+                        <div key={data.id} className={styles.selectionItemWrapper}>
+                            <div
+                                className={cn(styles.selectionItem, {
+                                    [styles.selected]:
+                                        firstSelectedCardId === data.id || secondSelectedCardId === data.id,
+                                    [styles.corrected]: correctedCardIds.includes(data.id),
+                                })}
+                                onClick={() => selectCard(data)}
+                            >
+                                <div className={styles.selectionItemTextInner}>
+                                    <div className={styles.selectionItemText}>{parse(data.text)}</div>
                                 </div>
+
+                                {data.picture && (
+                                    <Image
+                                        src={data.picture}
+                                        alt="image"
+                                        fill
+                                        className={cn(styles.selectionItemImage, {
+                                            [styles.opacity]: data.text,
+                                        })}
+                                    />
+                                )}
                             </div>
-                        ))}
-                    </div>
-                </>
+                        </div>
+                    ))}
+                </div>
             ) : scoresIsLoading ? (
                 <Preloader page small />
             ) : (
@@ -229,7 +233,7 @@ const MemorySelection = () => {
                             <Text fontWeight={600}>Топ-10</Text>
 
                             {scores?.map((data) => (
-                                <LeaderboardItem key={data.id} data={data} current={score?.user?.id === data.user.id} />
+                                <LeaderboardItem key={data.id} data={data} current={score?.user?.id === data?.user?.id} />
                             ))}
 
                             {!isAuth && (

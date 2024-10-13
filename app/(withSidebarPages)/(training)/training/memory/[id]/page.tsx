@@ -238,7 +238,7 @@ const MemoryCardInfo = () => {
                     </div>
 
                     <div className={base.titleInner}>
-                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                        <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                             <Badge image={avatar} text={nickname} isUserAvatar />
 
                             <Text>{nickname}</Text>
@@ -264,12 +264,12 @@ const MemoryCardInfo = () => {
                             <TypesTest />
                         </LinkBlock>
 
-                        <LinkBlock title="Заучивание" href={`/memory/${id}/learn`} disabled className={base.item4}>
-                            <TypesLearn />
-                        </LinkBlock>
-
                         <LinkBlock title="Подбор" href={`/memory/${id}/selection`} className={base.item4}>
                             <TypesSelection />
+                        </LinkBlock>
+
+                        <LinkBlock title="Заучивание" href={`/memory/${id}/learn`} disabled className={base.item4}>
+                            <TypesLearn />
                         </LinkBlock>
                     </div>
 

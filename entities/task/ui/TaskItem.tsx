@@ -63,7 +63,7 @@ const TaskItem: React.FC<Props> = ({
             <div className={styles.taskItem}>
                 <div className={base.baseWrapperGap12}>
                     <div className={cn(base.titleInnerNowrap, base.aifs)}>
-                        <Link href={href ? href : `/task/${id}`} className={styles.taskItemWrapper}>
+                        <Link prefetch={false} href={href ? href : `/task/${id}`} className={styles.taskItemWrapper}>
                             <span className={base.titleWrapper}>
                                 <span className={base.circle32}>{number ?? '?'}</span>
 
@@ -135,7 +135,7 @@ const TaskItem: React.FC<Props> = ({
                     </div>
 
                     <div className={base.titleInner}>
-                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                        <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                             <Badge text={nickname} image={avatar} />
 
                             <Text>{nickname}</Text>

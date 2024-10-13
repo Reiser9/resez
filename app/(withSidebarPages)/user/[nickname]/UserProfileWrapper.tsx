@@ -206,6 +206,7 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
                 <ScrollWithArrows>
                     <Link
                         href={`/user/${nickname}`}
+                        prefetch={false}
                         replace
                         className={cn(base.tag, {
                             [base.active]: path === `/user/${nickname}`,
@@ -216,6 +217,7 @@ const UserProfileWrapper = ({ children }: { children: React.ReactNode }) => {
 
                     <Link
                         href={`/user/${nickname}/collections`}
+                        prefetch={false}
                         replace
                         className={cn(base.tag, {
                             [base.active]: path === `/user/${nickname}/collections`,

@@ -184,7 +184,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                         {chat}
                                     </div>
                                 ) : (
-                                    <Link href={`/user/${chat}`} className={typography.h4}>
+                                    <Link prefetch={false} href={`/user/${chat}`} className={typography.h4}>
                                         {chat}
                                     </Link>
                                 )}

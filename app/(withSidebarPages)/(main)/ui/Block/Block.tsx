@@ -43,7 +43,7 @@ const Block: React.FC<Props> = ({
                 {text && <p className={`${typography.text} ${styles.mainSubtitle}`}>{parse(text)}</p>}
 
                 {buttonText && href && (
-                    <Link href={href} className={styles.mainBlockLink}>
+                    <Link prefetch={false} href={href} className={styles.mainBlockLink}>
                         {buttonText}
 
                         <ArrowRight />

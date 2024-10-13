@@ -28,7 +28,7 @@ const CatalogItem: React.FC<Props> = ({ data, ...props }) => {
             <div className={styles.catalogItemSubthemes}>
                 {subThemes.map((data) =>
                     data.tasksCount !== 0 ? (
-                        <Link key={data.id} href={`/task/subtheme/${data.id}`} className={styles.catalogItemLink}>
+                        <Link prefetch={false} key={data.id} href={`/task/subtheme/${data.id}`} className={styles.catalogItemLink}>
                             ({data.tasksCount}) {data.subTheme}
                         </Link>
                     ) : (

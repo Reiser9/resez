@@ -169,7 +169,7 @@ const TestPage = () => {
                                             <Text>{'ResEz Team'}</Text>
                                         </div>
                                     ) : (
-                                        <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                                        <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                                             <Badge text={nickname} image={avatar} />
 
                                             <Text>{nickname}</Text>

@@ -182,12 +182,12 @@ const MemoryCards = () => {
                                     <Text variant="text2">Запоминания в формате теста</Text>
                                 </LinkBlock>
 
-                                <LinkBlock replace title="Заучивание" href={`learn`} className={base.item4} disabled>
-                                    <Text variant="text2">Выучи то, что плохо запоминаешь</Text>
-                                </LinkBlock>
-
                                 <LinkBlock replace title="Подбор" href={`selection`} className={base.item4}>
                                     <Text variant="text2">Выбирай пары определение - термин</Text>
+                                </LinkBlock>
+
+                                <LinkBlock replace title="Заучивание" href={`learn`} className={base.item4} disabled>
+                                    <Text variant="text2">Выучи то, что плохо запоминаешь</Text>
                                 </LinkBlock>
                             </div>
                         </div>

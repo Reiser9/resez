@@ -14,7 +14,7 @@ import useBattleSocket from '@/shared/hooks/useBattleSocket';
 import useAlert from '@/shared/hooks/useAlert';
 
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
+import { BackButton, Button } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Badge } from '@/shared/ui/Badge';
 import { TextPoint } from '@/shared/ui/TextPoint';
@@ -50,15 +50,15 @@ const BattleViewPage = () => {
             battleSocket.on('battle-joined', (battle: Battle) => {
                 setBattleIsLoading(false);
                 setBattleInfo(battle.battle);
-                setBattleUsers(battle.users);
+                setBattleUsers(battle.battle.users);
             });
 
             battleSocket.on('user-joined', ({ user }: { user: BattleUserInfo }) => {
-                setBattleUsers((prev) => [...prev, user]);
+                setBattleUsers((prev) => (prev ? [...prev, user] : prev));
             });
 
             battleSocket.on('user-leaved', ({ user }: { user: BattleUserInfo }) => {
-                setBattleUsers((prev) => prev.filter((data) => data.id !== user.id));
+                setBattleUsers((prev) => prev?.filter((data) => data.id !== user.id));
             });
 
             battleSocket.on('battle-full', () => {
@@ -94,7 +94,11 @@ const BattleViewPage = () => {
         <>
             <div className={base.baseWrapperGap24}>
                 <div className={base.titleInnerNowrap}>
-                    <Text variant="h3">Битва #{id}</Text>
+                    <div className={base.titleWrapper}>
+                        <BackButton confirmExit />
+
+                        <Text variant="h3">Битва #{id}</Text>
+                    </div>
 
                     <Button auto variant="light" small>
                         Запустить
@@ -191,7 +195,7 @@ const BattleViewPage = () => {
                             </Button>
                         </div> */}
 
-                        {[...Array((playersCount || 0) - battleUsers.length)].map((_, id) => (
+                        {[...Array(Math.max(0, (playersCount || 0) - (battleUsers?.length || 0)))].map((_, id) => (
                             <div
                                 key={id}
                                 className={cn(base.item4, styles.battleInviteItem)}

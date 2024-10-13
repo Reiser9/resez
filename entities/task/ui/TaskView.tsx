@@ -40,17 +40,17 @@ const TaskView: React.FC<Props> = ({ task }) => {
 
     return (
         <>
-            {nickname && (
+            {/* {nickname && (
                 <div className={base.baseWrapperGap4}>
                     <Text variant="text3">Задание создал</Text>
 
-                    <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                    <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                         <Badge text={nickname} image={avatar} />
 
                         <Text>{nickname}</Text>
                     </Link>
                 </div>
-            )}
+            )} */}
 
             <FakeInput title="Предмет" value={subject.subject} />
             <FakeInput title="Номер задания" value={subjectTask.theme} />

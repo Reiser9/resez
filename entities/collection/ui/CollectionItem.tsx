@@ -49,7 +49,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
 
     return (
         <div className={cn(base.item3, styles.collectionItem)}>
-            <Link href={`/training/memory/${id}`} className={styles.collectionItemInfoInner}>
+            <Link prefetch={false} href={`/training/memory/${id}`} className={styles.collectionItemInfoInner}>
                 <span className={styles.collectionItemInfo}>
                     <p className={styles.collectionItemName}>{collection}</p>
 
@@ -96,7 +96,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
             )}
 
             <div className={styles.collectionItemBottom}>
-                <Link href={`/user/${nickname}`} className={styles.collectionItemAuthor}>
+                <Link prefetch={false} href={`/user/${nickname}`} className={styles.collectionItemAuthor}>
                     <Badge isUserAvatar image={avatar} text={nickname} />
 
                     <p className={styles.collectionItemAuthorName}>{nickname}</p>

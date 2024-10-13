@@ -67,7 +67,7 @@ const UserItem: React.FC<Props> = ({
             <div className={styles.userItem}>
                 <div className={styles.userInfoInner}>
                     <div className={styles.userAvatarInner}>
-                        <Link href={`/user/${nickname}`}>
+                        <Link prefetch={false} href={`/user/${nickname}`}>
                             <Badge isUserAvatar size="big" image={avatar} text={nickname} />
                         </Link>
 
@@ -92,7 +92,7 @@ const UserItem: React.FC<Props> = ({
 
                     <div className={styles.userInfo}>
                         {firstName && lastName && (
-                            <Link href={`/user/${nickname}`}>
+                            <Link prefetch={false} href={`/user/${nickname}`}>
                                 <Text className={styles.userInfoName}>{`${firstName} ${lastName}`}</Text>
                             </Link>
                         )}
@@ -173,23 +173,6 @@ const UserItem: React.FC<Props> = ({
                 </div>
 
                 <div className={styles.userItemWrapper}>
-                    {/* <div className={styles.userLvlInner}>
-                        <p className={styles.userLvlPoint}>{level || 1}</p>
-
-                        <div className={styles.userLvlProgressTotal}>
-                            <div
-                                className={styles.userLvlProgressLine}
-                                style={{ width: `${((xp || 0) / (limit || 1)) * 100}%` }}
-                            ></div>
-
-                            <Text variant="text3" className={styles.userLvlExp}>
-                                {xp || 0} / {limit || 0}
-                            </Text>
-                        </div>
-
-                        <p className={styles.userLvlPoint}>{(level || 1) + 1}</p>
-                    </div> */}
-
                     <div className={styles.userItemButtons}>
                         <Button variant="light" href={`/admin/users/${id}`}>
                             Подробнее

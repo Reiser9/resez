@@ -42,7 +42,7 @@ const WarnItem: React.FC<Props> = ({ data, readWarnCallback = () => {} }) => {
                 <div className={styles.warnItemWrapper}>
                     <div className={base.titleInner}>
                         {user ? (
-                            <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                            <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                                 <Badge image={avatar} text={nickname} isUserAvatar />
 
                                 <Text>{nickname}</Text>

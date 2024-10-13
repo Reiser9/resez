@@ -20,6 +20,7 @@ const SidebarLink: React.FC<Props> = ({ href, disabled = false, end = false, cla
     return (
         <Link
             href={href}
+            prefetch={false}
             className={cn(styles.sidebarLink, className, {
                 [styles.disabled]: disabled,
                 [styles.active]: end ? pathname === href : pathname.startsWith(href),

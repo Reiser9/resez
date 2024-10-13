@@ -31,7 +31,7 @@ const PromocodeItem: React.FC<Props> = ({ data, finishPromocode = () => {} }) =>
     return (
         <div className={cn(base.item3, styles.promocodeItem)}>
             <div className={base.titleInnerNowrap}>
-                <Link href={`/admin/promo/${id}`}>
+                <Link prefetch={false} href={`/admin/promo/${id}`}>
                     <Text fontWeight={600}>{code}</Text>
                 </Link>
 

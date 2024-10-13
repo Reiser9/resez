@@ -142,12 +142,12 @@ const MemoryTest = () => {
                                     <Text variant="text2">С одной стороны термин, с другой определение</Text>
                                 </LinkBlock>
 
-                                <LinkBlock replace title="Заучивание" href={`learn`} className={base.item4} disabled>
-                                    <Text variant="text2">Выучи то, что плохо запоминаешь</Text>
-                                </LinkBlock>
-
                                 <LinkBlock replace title="Подбор" href={`selection`} className={base.item4}>
                                     <Text variant="text2">Выбирай пары определение - термин</Text>
+                                </LinkBlock>
+
+                                <LinkBlock replace title="Заучивание" href={`learn`} className={base.item4} disabled>
+                                    <Text variant="text2">Выучи то, что плохо запоминаешь</Text>
                                 </LinkBlock>
                             </div>
 

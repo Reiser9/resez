@@ -8,6 +8,8 @@ export type Achievement = {
     xp: number;
     isCollected: boolean;
     createdAt: Date;
+    targetValue: number;
+    progress: number;
 };
 
 export type AchievementCategory = {

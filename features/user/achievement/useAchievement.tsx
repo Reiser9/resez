@@ -7,7 +7,7 @@ const useAchievement = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const getAchievements = async () => {
-        const response = await request<{ achievements: AchievementCategory[] }>({
+        const response = await request<{ achievements: AchievementCategory[]; totalCount: number }>({
             url: '/user/achievement',
             isAuth: true,
         });
@@ -17,7 +17,7 @@ const useAchievement = () => {
         }
 
         if ('data' in response) {
-            return response.data.achievements;
+            return response.data;
         }
     };
 

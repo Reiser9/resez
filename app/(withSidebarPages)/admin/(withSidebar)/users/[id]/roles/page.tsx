@@ -42,7 +42,7 @@ const AdminUserByIdRoles = () => {
     });
 
     return (
-        <div className={base.baseWrapperGap16}>
+        <div className={base.baseWrapperGap8}>
             <div className={base.titleInner}>
                 <Text variant="h3">
                     Роли {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
@@ -77,7 +77,7 @@ const AdminUserByIdRoles = () => {
                         )}
                     </div>
                 ) : (
-                    <NotContent text="Терминов не найдено" />
+                    <NotContent text="Ролей не найдено" />
                 )}
 
                 {hasNextPage && (

@@ -1,7 +1,7 @@
 import { Dayjs } from 'dayjs';
 import type { Paggination } from '../pagination';
 import type { Role } from '../role';
-import type { AvatarDecoration, ProductDTO } from '../store';
+import type { AvatarDecoration } from '../store';
 
 export type LoginData = {
     nickname: string;
@@ -41,6 +41,12 @@ export type Settings = {
     isHideAvatars?: boolean;
 };
 
+export type LevelInfo = {
+    level: number;
+    xp: number;
+    limit: number;
+};
+
 export type User = {
     id: number;
     nickname: string;
@@ -48,11 +54,7 @@ export type User = {
     isBlocked: boolean;
     blockReason: string;
     avatar: string;
-    levelInfo: {
-        level: number;
-        xp: number;
-        limit: number;
-    };
+    levelInfo: LevelInfo;
     subscription: {
         name: string;
         canUploadImages: boolean;
@@ -83,11 +85,7 @@ export type UserAdmin = {
     blockReason: string;
     avatar: string;
     status: string;
-    levelInfo: {
-        level: number;
-        xp: number;
-        limit: number;
-    };
+    levelInfo: LevelInfo;
     roles: Role[];
     balance: number;
     subscription: {
@@ -115,6 +113,24 @@ export type UserAdminProfile = {
         isOnline: boolean;
         lastSeen: Date;
     } | null;
+};
+
+export type ActivityItem = {
+    id: number;
+    type: string;
+    date: Date;
+};
+
+export type UserMainInfo = {
+    levelInfo: LevelInfo;
+    balance: number;
+    subscription: {
+        id: number;
+        subscription: string;
+        expiredDate: Date;
+        isPermanent: boolean;
+    };
+    activity: ActivityItem[];
 };
 
 export type UsersShortAdmin = Paggination & {

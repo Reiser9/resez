@@ -69,7 +69,7 @@ const ProfilePage = () => {
                 <div className={styles.profileBannerInner}>
                     <Image src="/img/banner.jpg" alt="banner" className={styles.profileBanner} fill />
 
-                    <Link href="/personalization" className={styles.dataPersonalizationButton}>
+                    <Link prefetch={false} href="/personalization" className={styles.dataPersonalizationButton}>
                         <Paintbruh />
                         Персонализация
                     </Link>
@@ -77,7 +77,7 @@ const ProfilePage = () => {
                     <div className={styles.profileAvatarInner}>
                         <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
 
-                        <Link href="profile/data" className={styles.profileAvatarLink}>
+                        <Link prefetch={false} href="profile/data" className={styles.profileAvatarLink}>
                             Изменить
                         </Link>
 

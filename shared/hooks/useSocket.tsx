@@ -12,6 +12,7 @@ import useAlert from './useAlert';
 import useShortInfo from '@/features/user/data/useShortInfo';
 import useClearLocalData from './useClearLocalData';
 import { Achievement } from '@/entities/achievement';
+import { LevelInfo } from '@/entities/user/model';
 
 const useSocket = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -106,7 +107,6 @@ const useSocket = () => {
         });
 
         socket.on('achievement', (data: { userId: number; achievement: Achievement }) => {
-            console.log(data);
             alertNotify(
                 'Информация',
                 `Получено достижение: ${data.achievement}`,
@@ -114,6 +114,11 @@ const useSocket = () => {
                 '/profile/achievements',
                 4000,
             );
+            queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
+        });
+
+        socket.on('new-level', (data: LevelInfo) => {
+            alertNotify('Информация', `Получен новый уровень: ${data.level}`, 'info', '', 4000);
             queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 
@@ -125,6 +130,7 @@ const useSocket = () => {
             socket.off('message');
             socket.off('role-updated');
             socket.off('achievement');
+            socket.off('new-level');
         };
     }, []);
 };

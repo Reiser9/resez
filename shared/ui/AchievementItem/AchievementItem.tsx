@@ -15,13 +15,12 @@ import { formatDate } from '@/shared/utils/formatDate';
 import { Badge } from '../Badge';
 
 type Props = {
-    progress: number;
-    endValue: number;
     data: Achievement;
 };
 
-const AchievementItem: React.FC<Props> = ({ progress, endValue, data }) => {
-    const { achievement, coins, xp, type, description, icon, isCollected, createdAt, id } = data || {};
+const AchievementItem: React.FC<Props> = ({ data }) => {
+    const { achievement, coins, xp, type, description, icon, isCollected, createdAt, id, progress, targetValue } =
+        data || {};
 
     return (
         <div
@@ -61,13 +60,13 @@ const AchievementItem: React.FC<Props> = ({ progress, endValue, data }) => {
                     <div className={styles.achievementItemProgressLine}>
                         <div
                             className={styles.achievementItemProgressBar}
-                            style={{ width: `${(progress / endValue) * 100}%` }}
+                            style={{ width: `${(progress / targetValue) * 100}%` }}
                         ></div>
                     </div>
 
                     <div className={styles.achievementItemProgressValues}>
                         <Text variant="text3" className={styles.achievementItemProgressValue}>
-                            {progress} / {endValue}
+                            {progress} / {targetValue}
                         </Text>
                     </div>
                 </div>

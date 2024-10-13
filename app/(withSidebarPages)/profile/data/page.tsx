@@ -165,7 +165,7 @@ const ProfileData = () => {
                     <div className={styles.dataBanner}>
                         <Image src="/img/banner.jpg" alt="Аватар" fill className={styles.dataBannerImg} />
 
-                        <Link href="/personalization" className={styles.dataPersonalizationButton}>
+                        <Link prefetch={false} href="/personalization" className={styles.dataPersonalizationButton}>
                             <Paintbruh />
                             Персонализация
                         </Link>

@@ -53,3 +53,32 @@
     color: var(--error);
     border: 1px solid var(--error);
 }
+
+// Battle Item
+.battleItem{
+    padding: 1.2rem;
+    border-radius: 4px;
+    background: var(--input);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.battleItemTime{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.battleItemTime svg{
+    width: 20px;
+    flex-shrink: 0;
+    color: var(--main);
+}
+
+.battleItemUsers{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

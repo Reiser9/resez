@@ -57,7 +57,7 @@ const Badge: React.FC<Props> = ({
             {(image && !isHideAvatars) || (image && !isUserAvatar) ? (
                 <Image src={image} alt="Аватар" className={styles.badgeImg} fill />
             ) : (
-                text && <p className={styles.badgeText}>{text ? (showFullText ? text : text[0]) : 'No'}</p>
+                text && <p className={styles.badgeText}>{showFullText ? text : text[0]}</p>
             )}
 
             {icon && icon}

@@ -38,6 +38,7 @@ const PersonalizationProfileTabs = () => {
                 <Link
                     key={id}
                     href={data.link}
+                    prefetch={false}
                     className={cn(base.tag, {
                         [base.active]: pathname === data.link,
                     })}

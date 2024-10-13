@@ -59,7 +59,7 @@ const AdminLogById = () => {
                     Пользователь:
                 </Text>
 
-                <Link href={`/admin/users/${userId}`} className={base.titleWrapper}>
+                <Link prefetch={false} href={`/admin/users/${userId}`} className={base.titleWrapper}>
                     <Badge image={avatar} text={nickname} isUserAvatar />
 
                     <Text>{nickname}</Text>

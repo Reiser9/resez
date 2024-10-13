@@ -38,7 +38,7 @@ const LeaderboardItem: React.FC<Props> = ({ data, current = false }) => {
                 </div>
 
                 {user ? (
-                    <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                    <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                         <Badge image={avatar} text={nickname} isUserAvatar />
 
                         <Text>{nickname}</Text>

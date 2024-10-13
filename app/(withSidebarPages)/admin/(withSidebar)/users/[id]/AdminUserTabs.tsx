@@ -17,6 +17,7 @@ const AdminUserTabs = () => {
         <ScrollWithArrow>
             <Link
                 href={`/admin/users/${id}`}
+                prefetch={false}
                 className={cn(base.tag, {
                     [base.active]: pathname === `/admin/users/${id}`,
                 })}
@@ -27,6 +28,7 @@ const AdminUserTabs = () => {
 
             <Link
                 href={`/admin/users/${id}/roles`}
+                prefetch={false}
                 className={cn(base.tag, {
                     [base.active]: pathname === `/admin/users/${id}/roles`,
                 })}
@@ -37,6 +39,7 @@ const AdminUserTabs = () => {
 
             <Link
                 href={`/admin/users/${id}/sessions`}
+                prefetch={false}
                 className={cn(base.tag, {
                     [base.active]: pathname === `/admin/users/${id}/sessions`,
                 })}
@@ -47,6 +50,7 @@ const AdminUserTabs = () => {
 
             <Link
                 href={`/admin/users/${id}/collections`}
+                prefetch={false}
                 className={cn(base.tag, {
                     [base.active]: pathname === `/admin/users/${id}/collections`,
                 })}

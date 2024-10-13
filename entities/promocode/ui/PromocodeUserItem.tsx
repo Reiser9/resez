@@ -24,7 +24,7 @@ const PromocodeUserItem: React.FC<Props> = ({ data }) => {
 
     return (
         <div className={cn(base.item4, styles.promoUserItem)}>
-            <Link href={`/admin/users/${id}`} className={base.titleWrapper}>
+            <Link prefetch={false} href={`/admin/users/${id}`} className={base.titleWrapper}>
                 <Badge image={avatar} text={nickname} />
 
                 <Text>{nickname}</Text>

@@ -48,7 +48,7 @@ const Button: React.FC<Props> = ({
 
         if (href) {
             return (
-                <Link href={href} className={defaultClasses} {...props}>
+                <Link prefetch={false} href={href} className={defaultClasses} {...props}>
                     {!loading && children}
                 </Link>
             );

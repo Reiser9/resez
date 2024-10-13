@@ -58,6 +58,7 @@ const AdminPromo = () => {
                 <ScrollWithArrow>
                     <Link
                         href="/admin/promo"
+                        prefetch={false}
                         className={cn(base.tag, {
                             [base.active]: pathname === '/admin/promo' && !active,
                         })}
@@ -68,6 +69,7 @@ const AdminPromo = () => {
 
                     <Link
                         href="/admin/promo?active=false"
+                        prefetch={false}
                         className={cn(base.tag, {
                             [base.active]: pathname === '/admin/promo' && active,
                         })}

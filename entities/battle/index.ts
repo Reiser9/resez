@@ -1,1 +1,1 @@
-export type { Battle, BattleInfo, BattleUserInfo } from './model';
+export type { Battle, BattleInfo, BattleUserInfo, BattleItem } from './model';

@@ -124,7 +124,7 @@ const NotifyItem: React.FC<Props> = ({ data, loading = false, unread = false, ca
 
                     {notifyType?.name === 'session' && (
                         <Text className={styles.notifySessionLink}>
-                            <Link href="/profile/safety/sessions" className={styles.notifyItemLink}>
+                            <Link prefetch={false} href="/profile/safety/sessions" className={styles.notifyItemLink}>
                                 Нажмите
                             </Link>
                             , чтобы посмотреть всю историю активности

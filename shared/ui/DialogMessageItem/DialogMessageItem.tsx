@@ -67,7 +67,7 @@ const DialogMessageItem: React.FC<Props> = ({
                 </div>
             ) : (
                 <>
-                    <Link href={`/user/${nickname}`} onClick={(e) => e.stopPropagation()}>
+                    <Link prefetch={false} href={`/user/${nickname}`} onClick={(e) => e.stopPropagation()}>
                         <Badge isUserAvatar text={nickname} image={avatar} />
                     </Link>
 
@@ -75,6 +75,7 @@ const DialogMessageItem: React.FC<Props> = ({
                         <div className={base.titleInner}>
                             <Link
                                 href={`/user/${nickname}`}
+                                prefetch={false}
                                 className={styles.messangerDialogItemName}
                                 onClick={(e) => e.stopPropagation()}
                             >

@@ -34,10 +34,10 @@ const LogItem: React.FC<Props> = ({ data }) => {
                     </Text>
 
                     <Text fontWeight={500}>
-                        <Link href={`/admin/task/${entityId}`}>{type}</Link>
+                        <Link prefetch={false} href={`/admin/task/${entityId}`}>{type}</Link>
                     </Text>
 
-                    <Link href={`/admin/users/${userId}`} className={base.titleWrapper}>
+                    <Link prefetch={false} href={`/admin/users/${userId}`} className={base.titleWrapper}>
                         <Badge image={avatar} text={nickname} />
 
                         <Text>{nickname}</Text>

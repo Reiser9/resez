@@ -71,7 +71,7 @@ const TaskTestItem: React.FC<Props> = ({
             <div className={styles.taskTestItem}>
                 <div className={base.titleInnerNowrap}>
                     {taskWithLink ? (
-                        <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
+                        <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
                             {taskInfoContent()}
                         </Link>
                     ) : (

@@ -37,6 +37,7 @@ const PersonalizationTabs = () => {
             {personalizationTabs.map((data, id) => (
                 <Link
                     key={id}
+                    prefetch={false}
                     href={data.link}
                     className={cn(base.tag, {
                         [base.active]: pathname === data.link,

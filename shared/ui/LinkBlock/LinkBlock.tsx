@@ -37,6 +37,7 @@ const LinkBlock: React.FC<Props> = ({
             className={cn(styles.trainingItem, className, {
                 [styles.disabled]: disabled,
             })}
+            prefetch={false}
             {...props}
         >
             <span className={styles.trainingItemTitleInner}>

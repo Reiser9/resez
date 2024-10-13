@@ -24,6 +24,7 @@ export type {
     UserShort,
     UsersShortAdmin,
     UserAdminProfile,
+    UserMainInfo
 } from './model';
 
 export type { Session, Sessions, AdminUserSessions } from './session';

@@ -21,16 +21,16 @@ const AdminUserByIdCollections = () => {
     const queryClient = useQueryClient();
     const { id } = useParams();
 
-    const revalidateSessions = () => {
-        queryClient.invalidateQueries({ queryKey: ['user_sessions_by_id', id] });
+    const revalidateRequest = () => {
+        queryClient.invalidateQueries({ queryKey: ['user_collections_by_id', id] });
     };
 
     const resetRequest = () => {
-        queryClient.resetQueries({ queryKey: ['user_sessions_by_id', id] });
+        queryClient.resetQueries({ queryKey: ['user_collections_by_id', id] });
     };
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['user_sessions_by_id', id],
+        queryKey: ['user_collections_by_id', id],
         queryFn: (param) => getUserCollections(param.pageParam, String(id)),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
@@ -42,7 +42,7 @@ const AdminUserByIdCollections = () => {
     });
 
     return (
-        <>
+        <div className={base.baseWrapperGap8}>
             <div className={base.titleInner}>
                 <Text variant="h3">
                     Коллекции{' '}
@@ -62,12 +62,14 @@ const AdminUserByIdCollections = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : (
+            ) : data?.pages[0]?.totalCount ? (
                 <div className={base.contentItems}>
                     {data?.pages.map((collection) =>
                         collection?.collections?.map((data) => <CollectionItem key={data.id} data={data} />),
                     )}
                 </div>
+            ) : (
+                <NotContent text="Коллекций не найдено" />
             )}
 
             {hasNextPage && (
@@ -75,7 +77,7 @@ const AdminUserByIdCollections = () => {
                     Показать еще
                 </Button>
             )}
-        </>
+        </div>
     );
 };
 

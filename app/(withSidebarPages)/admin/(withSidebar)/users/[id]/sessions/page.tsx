@@ -42,7 +42,7 @@ const AdminUserByIdSessions = () => {
     });
 
     return (
-        <>
+        <div className={base.baseWrapperGap8}>
             <div className={base.titleInner}>
                 <Text variant="h3">
                     Сеансы{' '}
@@ -75,7 +75,7 @@ const AdminUserByIdSessions = () => {
                     Показать еще
                 </Button>
             )}
-        </>
+        </div>
     );
 };
 

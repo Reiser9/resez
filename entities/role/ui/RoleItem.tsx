@@ -47,6 +47,7 @@ const RoleItem: React.FC<Props> = ({
                 {role && (
                     <Link
                         href={`/admin/roles/${id}`}
+                        prefetch={false}
                         className={styles.roleItemName}
                         style={{ background: backgroundColor, color: textColor }}
                     >

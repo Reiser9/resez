@@ -34,6 +34,7 @@ const SubjectsTabs = ({ baseUrl = '/useful/points/', exact = true }) => {
                     {subjects?.map((data) => (
                         <Link
                             key={data.id}
+                            prefetch={false}
                             href={`${baseUrl}${data.slug}`}
                             replace
                             className={cn(base.tag, {

@@ -37,7 +37,7 @@ const TaskTestItemWithAnswer: React.FC<Props> = ({ data, setValue }) => {
         <>
             <div className={styles.taskTestItem}>
                 <div className={base.titleInner}>
-                    <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
+                    <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
                         <span className={base.titleWrapper}>
                             <span className={base.circle32}>{number}</span>
 

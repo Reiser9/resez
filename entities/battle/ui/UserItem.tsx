@@ -19,7 +19,7 @@ type Props = {
 };
 
 const UserItem: React.FC<Props> = ({ data }) => {
-    const { id, avatar, nickname, socketId } = data || {};
+    const { id, avatar, nickname, socketId, isLeader } = data || {};
 
     return (
         <div className={cn(base.item4, styles.battleUserItem)}>
@@ -30,11 +30,13 @@ const UserItem: React.FC<Props> = ({ data }) => {
                     <Text>{nickname}</Text>
                 </div>
 
-                {/* <Tooltip title="Создатель битвы">
-                    <div className={styles.battleOwner}>
-                        <Crown />
-                    </div>
-                </Tooltip> */}
+                {isLeader && (
+                    <Tooltip title="Создатель битвы">
+                        <div className={styles.battleOwner}>
+                            <Crown />
+                        </div>
+                    </Tooltip>
+                )}
             </div>
 
             <TextPoint title="Статус:">

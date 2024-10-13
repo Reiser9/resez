@@ -2,7 +2,14 @@
 
 import React from 'react';
 
-import type { AdminUserSessions, UserAdmin, UserAdminProfile, UsersAdmin, UsersShortAdmin } from '@/entities/user';
+import type {
+    AdminUserSessions,
+    UserAdmin,
+    UserAdminProfile,
+    UserMainInfo,
+    UsersAdmin,
+    UsersShortAdmin,
+} from '@/entities/user';
 import type { Collections } from '@/entities/collection';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
@@ -188,6 +195,36 @@ const useUsers = () => {
         }
     };
 
+    const getUserMainInfoById = async (userId: number | string) => {
+        const response = await request<{ info: UserMainInfo }>({
+            url: `/admin/user/${userId}/info`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.info;
+        }
+    };
+
+    const removeUserSubscription = async (userId: number | string, successCallback = () => {}) => {
+        const response = await request({
+            url: `/admin/user/${userId}/subscription`,
+            isAuth: true,
+            method: 'DELETE',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify("Успешно", "Подписка удалена", "success");
+    };
+
     return {
         usersIsLoading,
         getPaginationUsers,
@@ -198,6 +235,8 @@ const useUsers = () => {
         getUserInfoById,
         getUserSessions,
         getUserCollections,
+        getUserMainInfoById,
+        removeUserSubscription,
     };
 };
 

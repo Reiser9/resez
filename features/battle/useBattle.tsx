@@ -1,5 +1,6 @@
 'use client';
 
+import { BattleItem } from '@/entities/battle';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useBattle = () => {
@@ -32,8 +33,24 @@ const useBattle = () => {
         }
     };
 
+    const getPublicBattles = async () => {
+        const response = await request<BattleItem[]>({
+            url: `/battle-ms/battle`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         createBattle,
+        getPublicBattles,
     };
 };
 

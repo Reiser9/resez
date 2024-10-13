@@ -29,7 +29,7 @@ const TestQuestionItem: React.FC<Props> = ({ data }) => {
     return (
         <div className={styles.testQuestionItem}>
             <div className={base.titleInnerNowrap}>
-                <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
+                <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
                     <span className={base.circle32}>{number}</span>
 
                     <Text variant="h4">Задание</Text>

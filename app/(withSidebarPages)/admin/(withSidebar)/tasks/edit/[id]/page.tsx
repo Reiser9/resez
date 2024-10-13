@@ -337,7 +337,7 @@ const AdminTaskEdit = () => {
                         <div className={base.baseWrapperGap4}>
                             <Text variant="text3">Задание создал</Text>
 
-                            <Link href={`/user/${nickname}`} className={base.titleWrapper}>
+                            <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
                                 <Badge text={nickname} image={avatar} />
 
                                 <Text>{nickname}</Text>

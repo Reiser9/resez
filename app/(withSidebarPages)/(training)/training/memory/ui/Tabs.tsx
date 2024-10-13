@@ -32,6 +32,7 @@ const Tabs = () => {
             {tabs.map((data, id) => (
                 <Link
                     key={id}
+                    prefetch={false}
                     href={data.href}
                     replace
                     className={cn(base.tag, {

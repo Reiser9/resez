@@ -28,9 +28,9 @@ const ProfileAchievements = () => {
 
     return (
         <div className={base.baseWrapperGap16}>
-            <Text variant="h3">Достижения (2)</Text>
+            <Text variant="h3">Достижения {data?.totalCount && `(${data.totalCount})`}</Text>
 
-            {data?.map((data, id) => (
+            {data?.achievements?.map((data, id) => (
                 <div key={id} className={base.baseWrapperGap8}>
                     <Text variant="h4" fontWeight={600}>
                         {data.type} {!!data.elements.length && `(${data.elements.length})`}
@@ -39,7 +39,7 @@ const ProfileAchievements = () => {
                     {!!data.elements.length ? (
                         <div className={styles.achievementContent}>
                             {data.elements.map((elem) => (
-                                <AchievementItem key={elem.id} progress={1} endValue={5} data={elem} />
+                                <AchievementItem key={elem.id} data={elem} />
                             ))}
                         </div>
                     ) : (

@@ -38,7 +38,7 @@ const TaskItemResult: React.FC<Props> = ({ data }) => {
             })}
         >
             <div className={base.titleInnerNowrap}>
-                <Link href={`/task/${id}`} className={styles.taskItemWrapper}>
+                <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
                     <span className={base.circle32}>{number ?? '?'}</span>
 
                     {theme && <p className={styles.taskTheme}>{theme}</p>}
