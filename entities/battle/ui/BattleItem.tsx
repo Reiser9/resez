@@ -6,7 +6,7 @@ import cn from 'classnames';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import type { BattleItem } from '../model';
+import type { BattleItem as BattleItemType } from '../model';
 import { Clock } from '@/shared/icons';
 
 import { Button } from '@/shared/ui/Button';
@@ -15,7 +15,7 @@ import { Text } from '@/shared/ui/Text';
 import { AvatarGroup } from '@/shared/ui/AvatarGroup';
 
 type Props = {
-    data: BattleItem;
+    data: BattleItemType;
 };
 
 const BattleItem: React.FC<Props> = ({ data }) => {
@@ -23,7 +23,9 @@ const BattleItem: React.FC<Props> = ({ data }) => {
 
     return (
         <div className={cn(base.item3, styles.battleItem)}>
-            <Text variant='h4' fontWeight={600}>Битва #{id}</Text>
+            <Text variant="h4" fontWeight={600}>
+                Битва #{id}
+            </Text>
 
             <div className={base.baseWrapperGap8} style={{ margin: '1.2rem 0' }}>
                 <Preloader page small offIndent animationDuration={0.7} />
