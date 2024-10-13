@@ -10,7 +10,7 @@ import { Tooltip } from 'antd';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import type{ SubjectTask } from '../model';
+import type { SubjectTask } from '../model';
 import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
@@ -51,7 +51,7 @@ const TaskItem: React.FC<Props> = ({
 }) => {
     const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source, updatedAt } =
         data || {};
-    const { avatar, nickname } = user;
+    const { avatar, nickname } = user || {};
 
     const router = useRouter();
 

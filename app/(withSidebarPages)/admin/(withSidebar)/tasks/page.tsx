@@ -392,7 +392,7 @@ const AdminTasks = () => {
                         filterOption={false}
                         value={user}
                         clear
-                        options={users?.users.map((data) => ({
+                        options={users?.users?.map((data) => ({
                             label: data.nickname,
                             value: String(data.id),
                             id: `ID: ${data.id}`,
@@ -401,7 +401,7 @@ const AdminTasks = () => {
                         optionRender={({ data }) => (
                             <div className={base.userSelectOption}>
                                 <div className={base.titleWrapper}>
-                                    <Badge image={data.avatar} text={data.label} size="small" />
+                                    <Badge image={data?.avatar} text={data.label} size="small" />
 
                                     <Text variant="text2">{data.label}</Text>
                                 </div>

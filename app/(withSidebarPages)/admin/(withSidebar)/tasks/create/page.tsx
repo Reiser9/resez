@@ -19,10 +19,11 @@ import { useSubjects } from '@/features/subjects';
 import { useTask } from '@/features/task';
 import useAlert from '@/shared/hooks/useAlert';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
-import { Delete, Plus, ScanEye } from '@/shared/icons';
+import { Delete, Plus, ScanEye, Shufle } from '@/shared/icons';
 import { Text } from '@/shared/ui/Text';
 import TaskItem from '@/entities/task/ui/TaskItem';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { generatePairs } from '@/shared/utils/generatePairs';
 import { useUserPermissions } from '@/features/user';
 import { useHandlers } from '@/features/collection';
 
@@ -220,6 +221,24 @@ const AdminTaskCreate = () => {
         setModalCheckMatch(true);
     };
 
+    const generateAnswers = () => {
+        if (!answers.length || !answers[0]) return;
+
+        const variants = answers[0].trim().split(' ');
+
+        if (variants.length > 4) {
+            return alertNotify(
+                'Предупреждение',
+                'Максимальное количество вариантов ответа - 4, убедитесь, что все данные введены корректно',
+                'warn',
+                '',
+                4000,
+            );
+        }
+
+        setAnswers(generatePairs(variants));
+    };
+
     React.useEffect(() => {
         if (theme) {
             const foundTheme = themes.find((item) => String(item.id) === theme);
@@ -346,25 +365,44 @@ const AdminTaskCreate = () => {
                             {!isDetailedAnswer && (
                                 <>
                                     <div className={styles.answerWrapper}>
-                                        <Text variant="text3">Ответ{answers.length > 1 && 'ы'}</Text>
-                                        {answers.map((answer, id) => (
-                                            <div key={id} className={styles.answerItem}>
-                                                <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+                                        <Text variant="text3">
+                                            Ответ{answers.length > 1 && 'ы'}{' '}
+                                            {answers.length > 1 && `(${answers.length})`}
+                                        </Text>
+                                        {!!answers.length &&
+                                            answers.map((answer, id) => (
+                                                <div key={id} className={styles.answerItem}>
+                                                    <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
 
-                                                {answers.length > 1 && (
-                                                    <IconButton
-                                                        variant="danger"
-                                                        small
-                                                        circle
-                                                        className={styles.answerItemDelete}
-                                                        onClick={() => removeAnswer(id)}
-                                                    >
-                                                        <Delete />
-                                                    </IconButton>
-                                                )}
-                                            </div>
-                                        ))}
+                                                    {answers.length > 1 && (
+                                                        <IconButton
+                                                            variant="danger"
+                                                            small
+                                                            circle
+                                                            className={styles.answerItemDelete}
+                                                            onClick={() => removeAnswer(id)}
+                                                        >
+                                                            <Delete />
+                                                        </IconButton>
+                                                    )}
+                                                </div>
+                                            ))}
+
+                                        <Text variant="text3" color="error" fontWeight={600}>
+                                            Регистр ответа учитывает система, в ответ нужно указать слово или
+                                            последовательность в обычном регистре
+                                        </Text>
+
+                                        <Text variant="text3" fontWeight={600}>
+                                            Если в ответе порядок записи не важен, то можете ввести в ответ варианты
+                                            через пробел и нажать кнопку «Порядок неважен»
+                                        </Text>
                                     </div>
+
+                                    <Button variant="light" auto onClick={generateAnswers} disabled={!answers[0]}>
+                                        <Shufle />
+                                        Порядок неважен
+                                    </Button>
 
                                     <Button variant="light" auto onClick={addAnswer}>
                                         <Plus />
