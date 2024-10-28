@@ -4,14 +4,13 @@ import React from 'react';
 import cn from 'classnames';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
 import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import type { SubjectTask } from '../model';
-import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Verified } from '@/shared/icons';
+import { Archive, Check, DotsHorizontal, Edit, Notebook, Restore, Swap, Verified } from '@/shared/icons';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 import { ConfirmModal } from '@/shared/ui/Modal';
@@ -31,10 +30,12 @@ type Props = {
     edit?: boolean;
     remove?: boolean;
     verify?: boolean;
+    swap?: boolean;
     href?: string;
     archiveCallback?: () => void;
     restoreCallback?: () => void;
     toggleVerify?: () => void;
+    swapCallback?: () => void;
     matchPercent?: number;
 };
 
@@ -43,17 +44,32 @@ const TaskItem: React.FC<Props> = ({
     edit = false,
     remove = false,
     verify = false,
+    swap = false,
     href,
     archiveCallback,
     restoreCallback,
     toggleVerify,
+    swapCallback,
     matchPercent,
 }) => {
-    const { id, subject, number, theme, subTheme, isVerified, createdAt, task, user, isArchived, source, updatedAt } =
-        data || {};
+    const {
+        id,
+        subject,
+        number,
+        theme,
+        subTheme,
+        isVerified,
+        createdAt,
+        task,
+        user,
+        isArchived,
+        source,
+        updatedAt,
+        current,
+        tests,
+        testsCount,
+    } = data || {};
     const { avatar, nickname } = user || {};
-
-    const router = useRouter();
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmDelete, setConfirmDelete] = React.useState(false);
@@ -75,7 +91,7 @@ const TaskItem: React.FC<Props> = ({
                             {subTheme && <p className={styles.taskTheme}>{subTheme}</p>}
                         </Link>
 
-                        {(edit || remove || verify) && (
+                        {(edit || remove || verify || swap) && (
                             <HoverMenu
                                 button={
                                     <IconButton variant="light" small onClick={() => setActionMenu((prev) => !prev)}>
@@ -85,6 +101,13 @@ const TaskItem: React.FC<Props> = ({
                                 value={actionMenu}
                                 setValue={setActionMenu}
                             >
+                                {swap && (
+                                    <MenuLink onClick={swapCallback}>
+                                        <Swap />
+                                        Заменить
+                                    </MenuLink>
+                                )}
+
                                 {isArchived && (
                                     <MenuLink onClick={restoreCallback}>
                                         <Restore />
@@ -113,7 +136,7 @@ const TaskItem: React.FC<Props> = ({
                                 )}
 
                                 {edit && (
-                                    <MenuLink onClick={() => router.push(`/admin/tasks/edit/${id}`)}>
+                                    <MenuLink href={`/admin/tasks/edit/${id}`}>
                                         <Edit />
                                         Редактировать
                                     </MenuLink>
@@ -197,12 +220,14 @@ const TaskItem: React.FC<Props> = ({
                 )}
             </div>
 
-            <ConfirmModal
-                text="Вы действительно хотите архивировать задание? Задание больше не будет доступно пользователям"
-                value={confirmDelete}
-                setValue={setConfirmDelete}
-                callback={archiveCallback}
-            />
+            {remove && (
+                <ConfirmModal
+                    text="Вы действительно хотите архивировать задание? Задание больше не будет доступно пользователям"
+                    value={confirmDelete}
+                    setValue={setConfirmDelete}
+                    callback={archiveCallback}
+                />
+            )}
         </>
     );
 };

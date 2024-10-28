@@ -22,7 +22,7 @@ const MemoryLiked = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const [searchValue, setSearchValue] = React.useState('');
-    const debounceTimeout = useDebounce(searchValue, 500);
+    const debounceSearch = useDebounce(searchValue, 500);
 
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getLikedPaginationCollections, deleteCollectionById } = useCollections();
@@ -35,9 +35,9 @@ const MemoryLiked = () => {
         queryClient.invalidateQueries({ queryKey: ['collections_liked'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
-        queryKey: ['collections_liked'],
-        queryFn: (page) => getLikedPaginationCollections(page.pageParam, searchValue),
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+        queryKey: ['collections_liked', debounceSearch],
+        queryFn: (page) => getLikedPaginationCollections(page.pageParam, debounceSearch),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -50,14 +50,6 @@ const MemoryLiked = () => {
     const deleteCollectionHandler = (id: string) => {
         deleteCollectionById(id, revalidateRequest);
     };
-
-    React.useEffect(() => {
-        if (!isAuth) {
-            return;
-        }
-
-        refetch();
-    }, [debounceTimeout, isAuth]);
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -108,7 +100,7 @@ const MemoryLiked = () => {
                         </div>
                     )}
 
-                    {hasNextPage && (
+                    {!isError && hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}

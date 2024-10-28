@@ -19,7 +19,7 @@ type Props = {
 };
 
 const UserItem: React.FC<Props> = ({ data }) => {
-    const { id, avatar, nickname, socketId, isLeader } = data || {};
+    const { id, avatar, nickname, socketId, isLeader, isReady } = data || {};
 
     return (
         <div className={cn(base.item4, styles.battleUserItem)}>
@@ -40,7 +40,14 @@ const UserItem: React.FC<Props> = ({ data }) => {
             </div>
 
             <TextPoint title="Статус:">
-                <div className={cn(styles.battleStatus, styles.notready)}>Не готов</div>
+                <div
+                    className={cn(styles.battleStatus, {
+                        [styles.notready]: !isReady,
+                        [styles.ready]: isReady,
+                    })}
+                >
+                    {isReady ? 'Готов' : 'Не готов'}
+                </div>
             </TextPoint>
         </div>
     );

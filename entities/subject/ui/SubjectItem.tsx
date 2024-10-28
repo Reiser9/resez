@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import cn from 'classnames';
 
 import base from '@/shared/styles/base.module.scss';
@@ -56,7 +55,6 @@ const SubjectItem: React.FC<Props> = ({
         queryClient.invalidateQueries({ queryKey: ['archive_subjects'] });
     };
 
-    const router = useRouter();
     const { restoreArchiveSubject } = useArchive();
 
     const restoreArchiveSubjectHandler = async () => {
@@ -106,7 +104,7 @@ const SubjectItem: React.FC<Props> = ({
                             )}
 
                             {edit && (
-                                <MenuLink onClick={() => router.push(`/admin/subjects/edit/${id}`)}>
+                                <MenuLink href={`/admin/subjects/edit/${id}`}>
                                     <Edit />
                                     Редактировать
                                 </MenuLink>

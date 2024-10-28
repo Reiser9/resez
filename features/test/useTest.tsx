@@ -200,6 +200,29 @@ const useTest = () => {
         }
     };
 
+    const swapTask = async (
+        testId: number | string,
+        oldTaskId: number,
+        newTaskId: number,
+        successCallback = () => {},
+    ) => {
+        const response = await request({
+            url: `/education-ms/admin/test/${testId}`,
+            isAuth: true,
+            method: 'PATCH',
+            data: {
+                oldTaskId,
+                newTaskId,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+    };
+
     return {
         getPagginationTests,
         getPagginationOfficialTests,
@@ -210,6 +233,7 @@ const useTest = () => {
         checkResultTestById,
         getPagginationTestsHistory,
         getTestHistoryById,
+        swapTask,
     };
 };
 

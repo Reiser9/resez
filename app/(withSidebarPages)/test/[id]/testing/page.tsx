@@ -119,11 +119,9 @@ const TestingTestById = () => {
     };
 
     const fillEmptyAnswers = () => {
-        if (test && test.tasks) {
-            const { tasks } = test;
-
+        if (test && tasks) {
             const simpleTasks = tasks
-                .filter((el) => !el.isDetailedAnswer)
+                .filter((el) => !el.subjectTask.isDetailedAnswer)
                 .map((data) => {
                     return {
                         id: data.id,
@@ -132,7 +130,7 @@ const TestingTestById = () => {
                 });
 
             const detailedTasks = tasks
-                .filter((el) => el.isDetailedAnswer)
+                .filter((el) => el.subjectTask.isDetailedAnswer)
                 .map((data) => {
                     return {
                         id: data.id,
@@ -180,7 +178,8 @@ const TestingTestById = () => {
                                     (testIsLoading ? (
                                         <Preloader page small />
                                     ) : (
-                                        test?.tasks.map((data, id) => (
+                                        !!tasks?.length &&
+                                        tasks?.map((data, id) => (
                                             <TaskTestItemWithAnswer key={id} data={data} setValue={setAnswerHandler} />
                                         ))
                                     ))}
@@ -359,8 +358,8 @@ const TestingTestById = () => {
                                             className={cn(styles.testInfoButton, styles.danger)}
                                             onClick={() => {
                                                 pause();
-                                                setConfirmRestart(true);
                                                 setSidebarActive(false);
+                                                setConfirmRestart(true);
                                             }}
                                         >
                                             <Reload />

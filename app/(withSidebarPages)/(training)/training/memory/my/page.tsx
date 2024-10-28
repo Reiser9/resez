@@ -23,7 +23,7 @@ const MemoryMy = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
     const [searchValue, setSearchValue] = React.useState('');
-    const debounceTimeout = useDebounce(searchValue, 500);
+    const debounceSearch = useDebounce(searchValue, 500);
 
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getPaginationCollections, deleteCollectionById } = useCollections();
@@ -37,8 +37,8 @@ const MemoryMy = () => {
     };
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
-        queryKey: ['collections'],
-        queryFn: (param) => getPaginationCollections(param.pageParam, searchValue),
+        queryKey: ['collections', debounceSearch],
+        queryFn: (param) => getPaginationCollections(param.pageParam, debounceSearch),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -51,14 +51,6 @@ const MemoryMy = () => {
     const deleteCollectionHandler = (id: string) => {
         deleteCollectionById(id, revalidateRequest);
     };
-
-    React.useEffect(() => {
-        if (!isAuth) {
-            return;
-        }
-
-        refetch();
-    }, [debounceTimeout, isAuth]);
 
     return (
         <div className={base.baseWrapperGap16}>
@@ -121,7 +113,7 @@ const MemoryMy = () => {
                         </div>
                     )}
 
-                    {hasNextPage && (
+                    {!isError && hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}

@@ -70,11 +70,7 @@ export type SubjectTheme = {
 };
 
 export type SubjectTaskCreate = CreatedTask & {
-    subThemes: {
-        id: number;
-        subTheme: string;
-        tasksCount: number;
-    }[];
+    subThemes: CreatedSubTheme[];
     tasksCount: number;
 };
 

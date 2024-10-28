@@ -58,6 +58,17 @@ const AdminUserTabs = () => {
             >
                 Коллекции
             </Link>
+
+            <Link
+                href={`/admin/users/${id}/activity`}
+                prefetch={false}
+                className={cn(base.tag, {
+                    [base.active]: pathname === `/admin/users/${id}/activity`,
+                })}
+                replace
+            >
+                Активность
+            </Link>
         </ScrollWithArrow>
     );
 };

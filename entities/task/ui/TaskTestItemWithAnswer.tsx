@@ -28,7 +28,9 @@ type Props = {
 };
 
 const TaskTestItemWithAnswer: React.FC<Props> = ({ data, setValue }) => {
-    const { id, isDetailedAnswer, number, task, subTheme, theme } = data || {};
+    const { id, task, subTheme, subjectTask } = data || {};
+    const { number, theme, isDetailedAnswer } = subjectTask || {};
+    const { subTheme: subThemeName } = subTheme || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
@@ -46,7 +48,7 @@ const TaskTestItemWithAnswer: React.FC<Props> = ({ data, setValue }) => {
 
                         {theme && <p className={styles.taskTheme}>{theme}</p>}
 
-                        {subTheme && <p className={styles.taskTheme}>{subTheme}</p>}
+                        {subTheme && <p className={styles.taskTheme}>{subThemeName}</p>}
                     </Link>
 
                     {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>

@@ -31,7 +31,7 @@ const AdminStoreAvatar = () => {
     });
 
     const queryClient = useQueryClient();
-    const { getPaginationAvatars, togglePublishAvatar } = useAvatar();
+    const { getPaginationAvatars, togglePublishAvatar, deleteAvatar } = useAvatar();
 
     const revalidateAvatars = () => {
         queryClient.invalidateQueries({ queryKey: ['admin_avatars'] });
@@ -96,6 +96,7 @@ const AdminStoreAvatar = () => {
                                 publish={checkPermission(permissions || [], [PERMISSIONS.PUBLISH_PRODUCTS])}
                                 remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_PRODUCTS])}
                                 togglePublish={() => togglePublishHandler(data.id)}
+                                deleteCallback={() => deleteAvatar(data.id, revalidateAvatars)}
                             />
                         )),
                     )}
@@ -104,7 +105,7 @@ const AdminStoreAvatar = () => {
                 <NotContent text="Украшений аватарок не найдено" />
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

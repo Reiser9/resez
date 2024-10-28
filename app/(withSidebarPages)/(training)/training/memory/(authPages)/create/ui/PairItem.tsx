@@ -163,7 +163,7 @@ const PairItem: React.FC<Props> = ({
             <div className={styles.cardCollectionItemContent}>
                 <div className={styles.cardCollectionItemHalf}>
                     <Input
-                        resizeChange={(e) => handleChange(number, e.target.value, 'questionText')}
+                        resizeChange={(value) => handleChange(number, value, 'questionText')}
                         title="Термин"
                         resizable
                         lengthLimit={750}
@@ -212,7 +212,7 @@ const PairItem: React.FC<Props> = ({
 
                 <div className={styles.cardCollectionItemHalf}>
                     <Input
-                        resizeChange={(e) => handleChange(number, e.target.value, 'answerText')}
+                        resizeChange={(value) => handleChange(number, value, 'answerText')}
                         title="Определение"
                         resizable
                         lengthLimit={750}

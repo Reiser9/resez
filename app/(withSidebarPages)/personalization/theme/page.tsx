@@ -5,8 +5,8 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { AvatarProfileItem, ThemeProfileItem } from '@/entities/store/ui';
-import { useAvatar, useTheme } from '@/features/store';
+import { ThemeProfileItem } from '@/entities/store/ui';
+import { useTheme } from '@/features/store';
 import { Cross } from '@/shared/icons';
 
 import { NotContent } from '@/shared/ui/NotContent';
@@ -64,7 +64,7 @@ const PersonalizationTheme = () => {
                 <NotContent text="Тем не найдено" />
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { TimePicker } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/navigation';
 
@@ -22,6 +21,8 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { DatePicker } from '@/shared/ui/DatePicker';
 import { Text } from '@/shared/ui/Text';
+import { TimePicker } from '@/shared/ui/TimePicker';
+import { useMutation } from '@tanstack/react-query';
 
 const AdminCreatePromo = () => {
     const [promocode, setPromocode] = React.useState('');
@@ -36,7 +37,7 @@ const AdminCreatePromo = () => {
 
     const { createPromocode } = usePromocode();
 
-    const createPromocodeHandler = () => {
+    const createPromocodeHandler = async () => {
         if (!promocode) {
             return alertNotify('Предупреждение', 'Промокод не может быть пустым', 'warn');
         }
@@ -60,8 +61,13 @@ const AdminCreatePromo = () => {
             );
         }
 
-        createPromocode(promocode, expiredDate ?? '', limit, xp, coins, () => router.push('/admin/promo'));
+        await createPromocode(promocode, expiredDate ?? '', limit, xp, coins, () => router.push('/admin/promo'));
     };
+
+    const createPromocodeMutation = useMutation({
+        mutationKey: ['admin_create_promocode'],
+        mutationFn: () => createPromocodeHandler(),
+    });
 
     const generatePromo = () => {
         const randomString = generateRandomString(20);
@@ -74,7 +80,12 @@ const AdminCreatePromo = () => {
             <CreatePageWrapper
                 title="Создание промокода"
                 button={
-                    <Button auto levitation onClick={createPromocodeHandler}>
+                    <Button
+                        auto
+                        loading={createPromocodeMutation.isPending}
+                        levitation
+                        onClick={() => createPromocodeMutation.mutate()}
+                    >
                         Создать
                     </Button>
                 }
@@ -93,18 +104,16 @@ const AdminCreatePromo = () => {
                         <div className={styles.promoExpiredContent}>
                             <DatePicker
                                 disablePrevDate
-                                placeholder="Дата"
                                 wrapperClass={styles.promoExpiredItem}
                                 value={date}
                                 setValue={setDate}
                             />
 
                             <TimePicker
-                                placeholder="Время"
                                 format="HH:mm"
-                                className={styles.promoExpiredItem}
+                                wrapperClass={styles.promoExpiredItem}
                                 value={time}
-                                onChange={(e) => setTime(e ?? undefined)}
+                                setValue={setTime}
                                 suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
                             />
                         </div>

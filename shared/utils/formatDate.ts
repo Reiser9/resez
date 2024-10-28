@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import moment from 'moment';
 import 'moment/locale/ru';
 

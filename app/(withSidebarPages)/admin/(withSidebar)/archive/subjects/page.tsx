@@ -82,7 +82,7 @@ const AdminArchiveSubjects = () => {
                         )}
                     </div>
 
-                    {hasNextPage && (
+                    {!isError && hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}

@@ -117,7 +117,7 @@ const useUsers = () => {
         successCallback();
     };
 
-    const changeUserBalance = async (userId: number, amount: number, successCallback = () => {}) => {
+    const changeUserBalance = async (userId: number | string, amount: number, successCallback = () => {}) => {
         const response = await request<UserAdmin>({
             url: `/admin/user/${userId}/add-coins`,
             isAuth: true,
@@ -222,7 +222,7 @@ const useUsers = () => {
         }
 
         successCallback();
-        alertNotify("Успешно", "Подписка удалена", "success");
+        alertNotify('Успешно', 'Подписка удалена', 'success');
     };
 
     return {

@@ -2,65 +2,49 @@
 
 import React from 'react';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Checkbox } from 'antd';
+import { useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useUserPermissions, useUsers } from '@/features/user';
 import { Cross, Filter } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { buildQueryString } from '@/shared/utils/buildQueryString';
-import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
-import { useRoles } from '@/features/role';
 import { UserItem } from '@/entities/admin/ui';
+import UsersFilter from './UsersFilter';
 
 import { SearchInput } from '@/shared/ui/Input';
 import { NotContent } from '@/shared/ui/NotContent';
 import { UserAdminItemSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
-import { Modal } from '@/shared/ui/Modal';
-import { Select } from '@/shared/ui/Select';
+import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 
 const AdminUsers = () => {
     const [usersFilter, setUsersFilter] = React.useState(false);
 
-    const [onlyOnline, setOnlyOnline] = React.useState(false);
-    const [isBlocked, setIsBlocked] = React.useState<string | null>(null);
-    const [isVerify, setIsVerify] = React.useState<string | null>(null);
-    const [hasRole, setHasRole] = React.useState(false);
-    const [roleId, setRoleId] = React.useState<string | null>(null);
     const [searchValue, setSearchValue] = React.useState('');
-    const [roleSearchValue, setRoleSearchValue] = React.useState('');
     const userSearchDebounce = useDebounce(searchValue, 500);
-    const roleSearchDebounce = useDebounce(roleSearchValue, 500);
 
-    const { getUserPermissions } = useUserPermissions();
-
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
-        queryKey: ['user_permissions'],
-        queryFn: getUserPermissions,
-    });
-
-    const { usersIsLoading, getPaginationUsers, blockUser, unblockUser } = useUsers();
-    const { getPaginationRoles } = useRoles();
-    const queryClient = useQueryClient();
     const searchParams = useSearchParams();
-    const router = useRouter();
     const online = searchParams.get('online');
     const blocked = searchParams.get('blocked');
     const verified = searchParams.get('verified');
     const isHasRole = searchParams.get('has_role');
     const role = searchParams.get('role');
+    
+    const { getUserPermissions } = useUserPermissions();
 
-    const revalidateUsers = () => {
+    const { data: permissions } = useQuery({
+        queryKey: ['user_permissions'],
+        queryFn: getUserPermissions,
+    });
+
+    const queryClient = useQueryClient();
+    const { usersIsLoading, getPaginationUsers, blockUser, unblockUser } = useUsers();
+
+    const revalidateRequest = () => {
         queryClient.invalidateQueries({
             queryKey: ['adminUsers', online, blocked, verified, isHasRole, role, userSearchDebounce],
         });
@@ -71,21 +55,6 @@ const AdminUsers = () => {
             queryKey: ['adminUsers', online, blocked, verified, isHasRole, role, userSearchDebounce],
         });
     };
-
-    const {
-        data: roles,
-        isPending: rolesIsLoading,
-        isError: rolesIsErrror,
-    } = useInfiniteQuery({
-        queryKey: ['roles', roleSearchDebounce],
-        queryFn: (param) => getPaginationRoles(param.pageParam, roleSearchDebounce),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
-    });
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ['adminUsers', online, blocked, verified, isHasRole, role, userSearchDebounce],
@@ -107,58 +76,6 @@ const AdminUsers = () => {
         },
         refetchInterval: 10000,
     });
-
-    const resetFilter = () => {
-        setOnlyOnline(false);
-        setIsBlocked('');
-        setIsVerify('');
-        setHasRole(false);
-        setRoleId('');
-        router.replace('/admin/users');
-        setUsersFilter(false);
-    };
-
-    const applyFilters = () => {
-        const newUrl = buildQueryString({
-            online: onlyOnline || '',
-            blocked: isBlocked,
-            verified: isVerify,
-            has_role: hasRole || '',
-            role: hasRole ? roleId : '',
-        });
-        router.replace(`?${newUrl}`);
-        setUsersFilter(false);
-    };
-
-    React.useEffect(() => {
-        if (online && online === 'true') {
-            setOnlyOnline(!!online);
-        }
-    }, [online]);
-
-    React.useEffect(() => {
-        if (blocked) {
-            setIsBlocked(blocked);
-        }
-    }, [blocked]);
-
-    React.useEffect(() => {
-        if (verified) {
-            setIsVerify(verified);
-        }
-    }, [verified]);
-
-    React.useEffect(() => {
-        if (isHasRole && isHasRole === 'true') {
-            setHasRole(!!isHasRole);
-        }
-    }, [isHasRole]);
-
-    React.useEffect(() => {
-        if (role) {
-            setRoleId(role);
-        }
-    }, [role]);
 
     return (
         <PrivateWrapper permissions={[PERMISSIONS.USERS]}>
@@ -200,8 +117,8 @@ const AdminUsers = () => {
                                 <UserItem
                                     key={data.id}
                                     data={data}
-                                    userBlock={(reason: string) => blockUser(data.id, reason, () => revalidateUsers())}
-                                    userUnblock={() => unblockUser(data.id, () => revalidateUsers())}
+                                    userBlock={(reason: string) => blockUser(data.id, reason, () => revalidateRequest())}
+                                    userUnblock={() => unblockUser(data.id, () => revalidateRequest())}
                                     notify={checkPermission(permissions || [], [PERMISSIONS.NOTIFIES])}
                                     block={checkPermission(permissions || [], [PERMISSIONS.BLOCK_USERS])}
                                     loading={usersIsLoading.includes(data.id)}
@@ -211,87 +128,22 @@ const AdminUsers = () => {
                     </div>
                 )}
 
-                {hasNextPage && (
+                {!isError && hasNextPage && (
                     <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                         Показать еще
                     </Button>
                 )}
             </div>
 
-            <Modal value={usersFilter} setValue={setUsersFilter} title="Фильтры" size="small">
-                <Checkbox checked={onlyOnline} onChange={(e) => setOnlyOnline(e.target.checked)}>
-                    Только онлайн пользователи
-                </Checkbox>
-
-                <Select
-                    title="Заблокирован"
-                    onChange={(value) => setIsBlocked(value)}
-                    value={isBlocked}
-                    clear
-                    options={[
-                        {
-                            label: 'Да',
-                            value: 'true',
-                        },
-                        {
-                            label: 'Нет',
-                            value: 'false',
-                        },
-                    ]}
-                />
-
-                <Select
-                    title="Верифицирован"
-                    onChange={(value) => setIsVerify(value)}
-                    value={isVerify}
-                    clear
-                    options={[
-                        {
-                            label: 'Да',
-                            value: 'true',
-                        },
-                        {
-                            label: 'Нет',
-                            value: 'false',
-                        },
-                    ]}
-                />
-
-                <Checkbox checked={hasRole} onChange={(e) => setHasRole(e.target.checked)}>
-                    Имеет роль
-                </Checkbox>
-
-                {checkPermission(permissions || [], [PERMISSIONS.ROLES]) && hasRole && (
-                    <Select
-                        title="Роль"
-                        onChange={(value) => setRoleId(value)}
-                        onSearch={(value) => setRoleSearchValue(value.trim())}
-                        value={roleId}
-                        filterOption={false}
-                        onClear={() => setRoleSearchValue('')}
-                        showSearch
-                        clear
-                        loading={rolesIsLoading}
-                        error={rolesIsErrror}
-                        options={roles?.pages[0]?.roles.map((data) => ({
-                            label: data.role,
-                            value: String(data.id),
-                            textColor: data.textColor,
-                        }))}
-                        optionRender={({ data }) => (
-                            <Text style={{ color: data.textColor }} variant="text2">
-                                {data.label}
-                            </Text>
-                        )}
-                    />
-                )}
-
-                <Button variant="light" color="danger" onClick={resetFilter}>
-                    Сбросить
-                </Button>
-
-                <Button onClick={applyFilters}>Применить</Button>
-            </Modal>
+            <UsersFilter
+                filterOpen={usersFilter}
+                setFilterOpen={setUsersFilter}
+                online={online}
+                blocked={blocked}
+                verified={verified}
+                isHasRole={isHasRole}
+                role={role}
+            />
         </PrivateWrapper>
     );
 };

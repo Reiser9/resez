@@ -1,24 +1,24 @@
 import type { Paggination } from '../pagination';
 import type { SubjectFilter, SubjectSubTheme, CreatedTask } from '../subject';
+import type { UserShort } from '../user';
 
 export type SubjectTask = {
     id: number;
     task: string;
-    answers: string[];
     isVerified: boolean;
     isArchived: boolean;
     source: string;
-    user: {
-        id: number;
-        avatar: string;
-        nickname: string;
-    };
+    user: UserShort;
     createdAt: Date;
     updatedAt: Date;
     subject: string;
     subTheme: string;
     number: number;
     theme: string;
+
+    current: boolean;
+    tests: { id: number; subject: string }[];
+    testsCount: number;
 };
 
 export type SubjectTaskById = SubjectTask & {

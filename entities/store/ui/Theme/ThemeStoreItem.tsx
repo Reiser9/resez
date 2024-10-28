@@ -3,80 +3,87 @@
 import React from 'react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from './index.module.scss';
+import styles from '../index.module.scss';
 
-import type { AvatarDecoration as AvatarDecorationType } from '../model';
-import useShortInfo from '@/features/user/data/useShortInfo';
-import { useAppSelector } from '@/shared/hooks/useRedux';
-import { Added, Check, Clapperboard, DotsHorizontal, Photo, ResCoin } from '@/shared/icons';
+import type { ThemeProfileAndStore } from '../../model';
+import { Added, Check, DotsHorizontal, ResCoin, ResezPremium, ResezPremiumPlus, Trophy } from '@/shared/icons';
+import { formatDate } from '@/shared/utils/formatDate';
 
-import { Text } from '@/shared/ui/Text';
-import { Badge } from '@/shared/ui/Badge';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
 import { ConfirmModal } from '@/shared/ui/Modal';
-import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 type Props = {
-    data: AvatarDecorationType;
-    addProductToProfile: () => void;
+    data: ThemeProfileAndStore;
+    addProductToProfile?: () => void;
 };
 
-const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
-    const { title, contentType, options, contentUrl, isCollected, price } = data || {};
+const ThemeStoreItem: React.FC<Props> = ({ data, addProductToProfile = () => {} }) => {
+    const {
+        title,
+        light,
+        primary,
+        price,
+        isCollected,
+        requiredAchievement,
+        requiredSubscription,
+        seasonEndDate,
+        seasonStartDate,
+        isFree,
+    } = data || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmBuyModal, setConfirmBuyModal] = React.useState(false);
 
-    const isAuth = useAppSelector((state) => state.user.isAuth);
-    const { getShortInfo } = useShortInfo();
-
-    const { data: user, isLoading: userIsLoading } = useQuery({
-        queryKey: ['short_info'],
-        queryFn: () => getShortInfo(),
-        enabled: isAuth,
-    });
-
-    const { avatar, nickname } = user?.user || {};
-
     return (
         <>
             <div className={cn(base.item3, styles.avatarItem)}>
-                <div className={styles.avatarItemTags}>
-                    {contentType === 'animation' ? (
-                        <Tooltip title="Анимация">
-                            <span className={styles.avatarItemTag}>
-                                <Clapperboard />
-                            </span>
-                        </Tooltip>
-                    ) : (
-                        <Tooltip title="Изображение">
-                            <span className={styles.avatarItemTag}>
-                                <Photo />
-                            </span>
-                        </Tooltip>
-                    )}
-                </div>
-
-                <div className={styles.avatarItemContent}>
+                <div className={styles.avatarItemContent} style={{ background: light }}>
                     {isCollected && (
                         <div className={styles.avatarItemCollected}>
                             <Check />
                         </div>
                     )}
 
-                    <Badge image={avatar} text={nickname || 'R'} style={{ width: 92, height: 92 }} />
+                    <div style={{ background: primary, width: '100px', height: '100px', borderRadius: '50%' }}></div>
+                </div>
 
-                    <AvatarDecoration
-                        title={title}
-                        contentUrl={contentUrl}
-                        contentType={contentType}
-                        options={options}
-                        hoverAnimation
-                    />
+                <div className={styles.avatarItemTags}>
+                    {requiredSubscription && (
+                        <Tooltip title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}>
+                            <span className={styles.avatarItemTag}>
+                                {requiredSubscription.subscription === 'ResEz Premium' ? (
+                                    <ResezPremium />
+                                ) : (
+                                    <ResezPremiumPlus />
+                                )}
+                            </span>
+                        </Tooltip>
+                    )}
+
+                    {requiredAchievement && (
+                        <Tooltip title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}>
+                            <span className={styles.avatarItemTag}>
+                                <Trophy />
+                            </span>
+                        </Tooltip>
+                    )}
+
+                    {(seasonStartDate || seasonEndDate) && (
+                        <Tooltip
+                            title={`Доступна к покупке с ${formatDate(seasonStartDate, 'D.MM')} до ${formatDate(
+                                seasonEndDate,
+                                'D.MM',
+                            )}`}
+                        >
+                            <span className={styles.avatarItemTagText}>
+                                {formatDate(seasonStartDate, 'D.MM')} - {formatDate(seasonEndDate, 'D.MM')}
+                            </span>
+                        </Tooltip>
+                    )}
                 </div>
 
                 <Text variant="h4" fontWeight={600}>
@@ -84,14 +91,14 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                 </Text>
 
                 <div className={styles.avatarItemBottom}>
-                    {price ? (
+                    {isFree ? (
+                        <Text fontWeight={600}>Бесплатно</Text>
+                    ) : (
                         <div className={styles.avatarItemPrice}>
                             {price}
 
                             <ResCoin />
                         </div>
-                    ) : (
-                        <Text fontWeight={600}>Бесплатно</Text>
                     )}
 
                     <HoverMenu
@@ -108,7 +115,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                                 <Check />
                                 Добавлено
                             </MenuLink>
-                        ) : price ? (
+                        ) : !isFree ? (
                             <MenuLink
                                 onClick={() => {
                                     setActionMenu(false);
@@ -140,4 +147,4 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
     );
 };
 
-export default AvatarStoreItem;
+export default ThemeStoreItem;

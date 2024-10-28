@@ -9,7 +9,7 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import type { Battle, BattleInfo, BattleUserInfo } from '@/entities/battle';
-import { Clock, Crown, Plus, Task, Tests, User } from '@/shared/icons';
+import { Clock, Crown, Lock, Plus, Task, Tests, User } from '@/shared/icons';
 import useBattleSocket from '@/shared/hooks/useBattleSocket';
 import useAlert from '@/shared/hooks/useAlert';
 
@@ -32,8 +32,16 @@ const BattleViewPage = () => {
     const [inviteModal, setInviteModal] = React.useState(false);
     const [battleInfo, setBattleInfo] = React.useState<BattleInfo>();
     const [battleUsers, setBattleUsers] = React.useState<BattleUserInfo[]>([]);
+    const [isReady, setIsReady] = React.useState(false);
 
     const { isPrivate, playersCount } = battleInfo || {};
+
+    const toggleReady = () => {
+        if (battleSocket) {
+            battleSocket.emit('toggle-ready');
+            setIsReady((prev) => !prev);
+        }
+    };
 
     React.useEffect(() => {
         if (battleSocket && isConnected && id) {
@@ -76,12 +84,22 @@ const BattleViewPage = () => {
                 return alertNotify('Ошибка', 'Пользователь не найден', 'error');
             });
 
+            battleSocket.on('already-in-battle', () => {
+                return alertNotify('Ошибка', 'Пользователь уже в батле', 'error');
+            });
+
+            battleSocket.on('user-toggle-ready', ({ user }: { user: BattleUserInfo }) => {
+                setBattleUsers((prev) => prev.map((item) => (item.id === user.id ? { ...item, ...user } : item)));
+            });
+
             return () => {
                 battleSocket.off('battle-joined');
                 battleSocket.off('battle-full');
                 battleSocket.off('incorrect-battle-id');
                 battleSocket.off('battle-not-found');
                 battleSocket.off('user-not-found');
+                battleSocket.off('already-in-battle');
+                battleSocket.off('user-toggle-ready');
             };
         }
     }, [battleSocket]);
@@ -100,9 +118,15 @@ const BattleViewPage = () => {
                         <Text variant="h3">Битва #{id}</Text>
                     </div>
 
-                    <Button auto variant="light" small>
-                        Запустить
-                    </Button>
+                    {isReady ? (
+                        <Button auto variant="light" color="danger" small onClick={toggleReady}>
+                            Отменить
+                        </Button>
+                    ) : (
+                        <Button auto variant="light" small onClick={toggleReady}>
+                            Запустить
+                        </Button>
+                    )}
                 </div>
 
                 <div className={base.baseWrapperGap8}>
@@ -113,14 +137,14 @@ const BattleViewPage = () => {
                     <div className={base.contentItems}>
                         <div className={cn(base.item4, styles.battleInfoItem)}>
                             <div className={styles.battleInfoIconInner}>
-                                <Tests />
+                                <Lock />
                             </div>
 
                             <div className={styles.battleInfoTextInner}>
                                 <Text variant="text2" color="grey">
-                                    Предмет:
+                                    Доступ:
                                 </Text>
-                                <Text>Математика</Text>
+                                <Text>{isPrivate ? "Приватный" : "Публичный"}</Text>
                             </div>
                         </div>
 

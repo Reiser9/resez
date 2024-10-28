@@ -21,7 +21,7 @@ const UserCollections = () => {
     const { nickname } = useParams();
 
     const [searchValue, setSearchValue] = React.useState('');
-    const debounceTimeout = useDebounce(searchValue, 500);
+    const debounceSearch = useDebounce(searchValue, 500);
 
     const queryClient = useQueryClient();
     const { collectionsIsLoading, getUserCollectionsByNickname, deleteCollectionById } = useCollections();
@@ -34,9 +34,9 @@ const UserCollections = () => {
         queryClient.invalidateQueries({ queryKey: ['user_collection'] });
     };
 
-    const { data, isPending, error, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
-        queryKey: ['user_collection', nickname],
-        queryFn: (page) => getUserCollectionsByNickname(page.pageParam, String(nickname), searchValue),
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+        queryKey: ['user_collection', nickname, debounceSearch],
+        queryFn: (page) => getUserCollectionsByNickname(page.pageParam, String(nickname), debounceSearch),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages.length : undefined;
@@ -50,10 +50,6 @@ const UserCollections = () => {
         deleteCollectionById(id, revalidateRequest);
     };
 
-    React.useEffect(() => {
-        refetch();
-    }, [debounceTimeout]);
-
     return (
         <div className={base.baseWrapperGap16}>
             <SearchInput value={searchValue} setValue={setSearchValue} />
@@ -61,7 +57,7 @@ const UserCollections = () => {
             <div className={base.titleInner}>
                 <Text variant="h3">
                     Коллекции{' '}
-                    {!isPending && !error && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
+                    {!isPending && !isError && !!data?.pages[0]?.totalCount && `(${data?.pages[0]?.totalCount})`}
                 </Text>
 
                 <ReloadButton onClick={resetRequest} disabled={isPending} />
@@ -73,7 +69,7 @@ const UserCollections = () => {
                         <CollectionItemSkeleton key={id} />
                     ))}
                 </div>
-            ) : error ? (
+            ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data?.pages[0]?.totalCount === 0 ? (
                 searchValue ? (
@@ -96,7 +92,7 @@ const UserCollections = () => {
                 </div>
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

@@ -1,9 +1,10 @@
 'use client';
 
-import type { Subscription } from '@/entities/subscription/model';
+import { Dayjs } from 'dayjs';
+
+import type { Subscription } from '@/entities/subscription';
 import useAlert from '@/shared/hooks/useAlert';
 import useRequest from '@/shared/hooks/useRequest';
-import { Dayjs } from 'dayjs';
 
 const useSubscription = () => {
     const { request, catchRequestError, errorController } = useRequest();
@@ -35,6 +36,7 @@ const useSubscription = () => {
         }
 
         successCallback();
+        alertNotify('Успешно', 'Подписка куплена', 'success');
 
         if ('data' in response) {
             return response.data;
@@ -55,7 +57,7 @@ const useSubscription = () => {
             data: {
                 subscriptionId,
                 userId,
-                expiredDate,
+                ...(expiredDate && { expiredDate }),
                 isPermanent,
             },
         });

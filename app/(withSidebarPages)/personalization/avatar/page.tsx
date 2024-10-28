@@ -15,7 +15,7 @@ import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 
 const PersonalizationAvatar = () => {
     const queryClient = useQueryClient();
-    const { getPaginationProfileAvatars, applyAvatarDecoration } = useAvatar();
+    const { getPaginationProfileAvatars, applyAvatarDecoration, resetAvatarDecoration } = useAvatar();
 
     const revalidateAvatars = () => {
         queryClient.invalidateQueries({ queryKey: ['profile_avatars'] });
@@ -54,6 +54,7 @@ const PersonalizationAvatar = () => {
                                 key={data.id}
                                 data={data}
                                 useProduct={() => applyAvatarDecoration(data.id, revalidateAvatars)}
+                                resetProduct={() => resetAvatarDecoration(revalidateAvatars)}
                             />
                         )),
                     )}
@@ -62,7 +63,7 @@ const PersonalizationAvatar = () => {
                 <NotContent text="Украшений аватарок не найдено" />
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

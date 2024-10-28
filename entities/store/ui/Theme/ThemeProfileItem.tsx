@@ -4,23 +4,23 @@ import React from 'react';
 import cn from 'classnames';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from './index.module.scss';
+import styles from '../index.module.scss';
 
-import type { Theme } from '../model';
-import { Added, Blind, Check, DotsHorizontal, ResCoin } from '@/shared/icons';
+import type { ThemeProfileAndStore } from '../../model';
+import { Added, Blind, DotsHorizontal } from '@/shared/icons';
 
 import { Text } from '@/shared/ui/Text';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
 
 type Props = {
-    data: Theme;
+    data: ThemeProfileAndStore;
     useProduct?: () => void;
     resetProduct?: () => void;
 };
 
 const ThemeProfileItem: React.FC<Props> = ({ data, useProduct = () => {}, resetProduct = () => {} }) => {
-    const { title, light, primary, isActive, price } = data || {};
+    const { title, light, primary, isActive,  } = data || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
 
@@ -35,16 +35,6 @@ const ThemeProfileItem: React.FC<Props> = ({ data, useProduct = () => {}, resetP
             </div>
 
             <div className={styles.avatarItemBottom}>
-                {/* {price ? (
-                    <div className={styles.avatarItemPrice}>
-                        {price}
-
-                        <ResCoin />
-                    </div>
-                ) : (
-                    <Text fontWeight={600}>Бесплатно</Text>
-                )} */}
-
                 <Text variant="h4" fontWeight={600}>
                     {title}
                 </Text>

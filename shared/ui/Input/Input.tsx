@@ -1,7 +1,7 @@
 'use client';
 
-import React, { TextareaHTMLAttributes, InputHTMLAttributes, ClipboardEvent, WheelEvent } from 'react';
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
+import React, { TextareaHTMLAttributes, InputHTMLAttributes, WheelEvent } from 'react';
+import ContentEditable from 'react-contenteditable';
 import sanitizeHtml from 'sanitize-html';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
@@ -30,7 +30,7 @@ interface InputsProps {
     resizable?: boolean;
     color?: 'default' | 'white';
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement>) => void;
-    resizeChange?: (e: ContentEditableEvent) => void;
+    resizeChange?: (value: string) => void;
     children?: React.ReactNode;
 }
 
@@ -81,20 +81,10 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
         ref: React.ForwardedRef<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         const [show, setShow] = React.useState(false);
-
-        const sanitize = (e: ClipboardEvent<HTMLInputElement>) => {
-            e.preventDefault();
-
-            setValue((prev) => `${prev} ${sanitizeHtml(e.clipboardData.getData('text'), sanitizeConf)}`);
-        };
-
-        const changeResizable = (e: ContentEditableEvent) => {
-            setValue(e.target.value);
-        };
+        const [textLength, setTextLength] = React.useState(0);
 
         const handleWheel = (event: WheelEvent<HTMLInputElement>) => {
             event.currentTarget.blur();
-            event.preventDefault();
         };
 
         const content = () => {
@@ -125,11 +115,14 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                             [styles.error]: isError,
                             [styles.success]: isSuccess,
                         })}
-                        html={String(value)}
+                        html={`${value}`}
                         tagName="div"
                         disabled={disabled}
-                        onChange={resizeChange ? resizeChange : changeResizable}
-                        onPaste={sanitize}
+                        onChange={(e) => {
+                            const sanitizeValue = sanitizeHtml(e.target.value, sanitizeConf);
+
+                            resizeChange ? resizeChange(sanitizeValue) : setValue(sanitizeValue);
+                        }}
                     />
                 );
             }
@@ -150,7 +143,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     onWheel={handleWheel}
                     onChange={(e) => {
                         const value = e.target.value;
-                        if (value.length > lengthLimit) {
+                        if (textLength > lengthLimit) {
                             return;
                         }
 
@@ -165,6 +158,14 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             );
         };
 
+        React.useEffect(() => {
+            const tempElement = document.createElement('div');
+            tempElement.innerHTML = `${value}`;
+            const text = tempElement.textContent || tempElement.innerText || '';
+
+            setTextLength(text.length);
+        }, [value]);
+
         return (
             <div className={cn(styles.inputWrapper, wrapperClass)}>
                 {(title || trackLength) && (
@@ -173,10 +174,10 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                         {trackLength && (
                             <p
                                 className={cn(typography.text3, styles.limitText, {
-                                    [styles.limit]: (value?.length || 0) >= lengthLimit,
+                                    [styles.limit]: (textLength || 0) >= lengthLimit,
                                 })}
                             >
-                                {value?.length || 0}
+                                {textLength || 0}
                                 {lengthLimit ? ` / ${lengthLimit}` : ''}
                             </p>
                         )}

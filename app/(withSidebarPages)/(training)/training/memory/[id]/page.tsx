@@ -80,7 +80,7 @@ const MemoryCardInfo = () => {
     const {
         data: collectionPairs,
         isPending: collectionPairsIsLoading,
-        error: collectionPairsError,
+        isError: collectionPairsError,
         fetchNextPage,
         isFetchingNextPage,
         hasNextPage,
@@ -196,12 +196,18 @@ const MemoryCardInfo = () => {
 
                                 {userId === authorId && (
                                     <>
-                                        <MenuLink onClick={() => router.push(`/training/memory/edit/${id}`)}>
+                                        <MenuLink href={`/training/memory/edit/${id}`}>
                                             <Edit />
                                             Редактировать
                                         </MenuLink>
 
-                                        <MenuLink danger onClick={() => setDeleteCollectionModal(true)}>
+                                        <MenuLink
+                                            danger
+                                            onClick={() => {
+                                                setDeleteCollectionModal(true);
+                                                setActionMenu(false);
+                                            }}
+                                        >
                                             <Delete />
                                             Удалить
                                         </MenuLink>
@@ -308,7 +314,7 @@ const MemoryCardInfo = () => {
                                 <NotContent text="Терминов не найдено" />
                             )}
 
-                            {hasNextPage && (
+                            {!collectionPairsError && hasNextPage && (
                                 <Button
                                     auto
                                     onClick={fetchNextPage}

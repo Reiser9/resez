@@ -1,66 +1,64 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { Tooltip } from 'antd';
-import { useParams, useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useParams } from 'next/navigation';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 import pws from '@/shared/styles/pageWithSidebar.module.scss';
 
 import { useTest } from '@/features/test';
-import { Date, Delete, DotsHorizontal, Lock, Settings, TypesVariantStart } from '@/shared/icons';
-import { formatDate } from '@/shared/utils/formatDate';
+import { Cross } from '@/shared/icons';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { TestQuestionItem } from '@/entities/test/ui';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
-import useCopyText from '@/features/utils/useCopyText';
 import { useUserPermissions } from '@/features/user';
-import useShortInfo from '@/features/user/data/useShortInfo';
+import { useTask } from '@/features/task';
+import TestInfo from '../ui/TestInfo';
 
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
-import { ConfirmModal } from '@/shared/ui/Modal';
-import { LinkBlock } from '@/shared/ui/LinkBlock';
-import { Badge } from '@/shared/ui/Badge';
+import { Modal } from '@/shared/ui/Modal';
 import { Preloader } from '@/shared/ui/Preloader';
-import { BackButton, Button, IconButton } from '@/shared/ui/Button';
+import { Button } from '@/shared/ui/Button';
+import { TaskItem } from '@/entities/task/ui';
 
 const TestPage = () => {
     const { getUserPermissions } = useUserPermissions();
-    const { getShortInfo } = useShortInfo();
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
         enabled: isAuth,
     });
 
-    const { data: userInfo, isLoading: userIsLoading } = useQuery({
-        queryKey: ['short_info'],
-        queryFn: () => getShortInfo(),
-        enabled: isAuth,
-    });
+    const [subjectTaskId, setSubjectTaskId] = React.useState<number | null>(null);
+    const [currentTaskId, setCurrentTaskId] = React.useState<number | null>(null);
 
-    const { id: userId } = userInfo?.user || {};
-
-    const [actionMenu, setActionMenu] = React.useState(false);
-    const [confirmDelete, setConfirmDelete] = React.useState(false);
+    const [swapModal, setSwapModal] = React.useState(false);
 
     const { id } = useParams();
-    const router = useRouter();
-    const { getTestById, deleteTest } = useTest();
-    const { copyTextWithNotify } = useCopyText();
+
+    const { getTestById, swapTask } = useTest();
+    const { getPagginationTasks, archiveTask, toggleVerify } = useTask();
+    const queryClient = useQueryClient();
+
+    const revalidateRequest = () => {
+        queryClient.invalidateQueries({
+            queryKey: ['admin_tasks', subjectTaskId, currentTaskId],
+        });
+    };
+
+    const revalidateTest = () => {
+        queryClient.invalidateQueries({
+            queryKey: ['test_by_id', id],
+        });
+    };
 
     const {
         data: test,
@@ -72,11 +70,56 @@ const TestPage = () => {
         enabled: !!id,
     });
 
-    const { id: testId, isOfficial, isPrivate, isExam, createdAt, subject, tasksCount, user, tasks } = test || {};
-    const { id: authorId, nickname, avatar } = user || {};
+    const {
+        data,
+        isPending,
+        isError: adminTasksIsLoading,
+        fetchNextPage,
+        isFetchingNextPage,
+        hasNextPage,
+    } = useInfiniteQuery({
+        queryKey: ['admin_tasks', subjectTaskId, currentTaskId],
+        queryFn: (pageParam) =>
+            getPagginationTasks(pageParam.pageParam, '', subjectTaskId || '', '', '', '', 9, currentTaskId || ''),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
+
+            return nextPage;
+        },
+        enabled: !!subjectTaskId && !!currentTaskId,
+    });
+
+    const { tasksCount, tasks } = test || {};
+
+    const swapCallback = (subjectTaskId: number, currentTaskId: number) => {
+        setSubjectTaskId(subjectTaskId);
+        setCurrentTaskId(currentTaskId);
+        setSwapModal(true);
+    };
+
+    const toggleVerifyHandler = (id: number) => {
+        toggleVerify(id, revalidateRequest);
+    };
+
+    const swapTaskHandler = (newTaskId: number) => {
+        if (!currentTaskId) return;
+
+        swapTask(String(id), currentTaskId, newTaskId, () => {
+            revalidateRequest();
+            revalidateTest();
+            setSubjectTaskId(null);
+            setCurrentTaskId(null);
+            setSwapModal(false);
+        });
+    };
 
     if (testIsLoading) {
         return <Preloader page />;
+    }
+
+    if (isError) {
+        return <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />;
     }
 
     return (
@@ -85,131 +128,7 @@ const TestPage = () => {
                 <div className={pws.wrapper}>
                     <div className={pws.contentFull}>
                         <div className={base.baseWrapperGap40}>
-                            <div className={base.baseWrapperGap16}>
-                                <div className={base.titleInnerNowrap}>
-                                    <div className={styles.testTags}>
-                                        <BackButton />
-
-                                        <div className={base.tagElement}>{subject}</div>
-
-                                        <div className={base.tagElement}>Вопросов: {tasksCount}</div>
-
-                                        {isPrivate && (
-                                            <Tooltip title="Скрыта">
-                                                <div className={base.tagElementIcon}>
-                                                    <Lock />
-                                                </div>
-                                            </Tooltip>
-                                        )}
-
-                                        {isOfficial && (
-                                            <Tooltip title="Тест разработан командой ResEz">
-                                                <div className={base.tagElement}>ResEz</div>
-                                            </Tooltip>
-                                        )}
-
-                                        {isExam && (
-                                            <Tooltip title="Вариант ЕГЭ">
-                                                <div className={base.tagElement}>ЕГЭ</div>
-                                            </Tooltip>
-                                        )}
-                                    </div>
-
-                                    <div className={styles.testTags}>
-                                        <HoverMenu
-                                            value={actionMenu}
-                                            setValue={setActionMenu}
-                                            button={
-                                                <IconButton
-                                                    variant="light"
-                                                    small
-                                                    onClick={() => setActionMenu((prev) => !prev)}
-                                                >
-                                                    <DotsHorizontal />
-                                                </IconButton>
-                                            }
-                                        >
-                                            <MenuLink disabled>
-                                                <Settings />
-                                                Настройки
-                                            </MenuLink>
-
-                                            {(checkPermission(permissions || [], [PERMISSIONS.DELETE_TESTS]) ||
-                                                userId === authorId) && (
-                                                <MenuLink
-                                                    danger
-                                                    onClick={() => {
-                                                        setConfirmDelete(true);
-                                                        setActionMenu(false);
-                                                    }}
-                                                >
-                                                    <Delete />
-                                                    Удалить
-                                                </MenuLink>
-                                            )}
-                                        </HoverMenu>
-                                    </div>
-                                </div>
-
-                                <Tooltip title="Скопировать">
-                                    <Text
-                                        variant="h4"
-                                        className={styles.testId}
-                                        onClick={() => copyTextWithNotify(String(id), 'ID теста скопировано')}
-                                    >
-                                        Номер варианта: {id}
-                                    </Text>
-                                </Tooltip>
-
-                                <div className={base.titleInner}>
-                                    {isOfficial ? (
-                                        <div className={base.titleWrapper}>
-                                            <Badge text="R" />
-
-                                            <Text>{'ResEz Team'}</Text>
-                                        </div>
-                                    ) : (
-                                        <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
-                                            <Badge text={nickname} image={avatar} />
-
-                                            <Text>{nickname}</Text>
-                                        </Link>
-                                    )}
-
-                                    <Tooltip title="Дата создания теста">
-                                        <div className={styles.testDateInner}>
-                                            <Date />
-
-                                            {formatDate(createdAt, 'D MMMM YYYY')}
-                                        </div>
-                                    </Tooltip>
-                                </div>
-                            </div>
-
-                            <div className={base.baseWrapperGap12}>
-                                {!isAuth && (
-                                    <div className={base.titleInner}>
-                                        <Text className={base.warningText}>
-                                            Авторизуйтесь, чтобы сохранить результат прорешивания варианта
-                                        </Text>
-
-                                        <Button variant="light" small auto href="/login">
-                                            Авторизация
-                                        </Button>
-                                    </div>
-                                )}
-
-                                <div className={base.contentItems}>
-                                    <LinkBlock
-                                        title="Решать"
-                                        href={`/test/${id}/testing`}
-                                        disabled={!tasks?.length}
-                                        className={base.item4}
-                                    >
-                                        <TypesVariantStart />
-                                    </LinkBlock>
-                                </div>
-                            </div>
+                            {!!test && <TestInfo data={test} />}
 
                             <div className={base.baseWrapperGap12}>
                                 <Text variant="h4">Задания ({tasksCount})</Text>
@@ -217,7 +136,12 @@ const TestPage = () => {
                                 {!!tasks?.length ? (
                                     <div className={base.contentItems}>
                                         {tasks?.map((data) => (
-                                            <TestQuestionItem key={data.id} data={data} />
+                                            <TestQuestionItem
+                                                key={data.id}
+                                                data={data}
+                                                edit={checkPermission(permissions || [], [PERMISSIONS.TESTS])}
+                                                swapCallback={() => swapCallback(data.subjectTask.id, data.id)}
+                                            />
                                         ))}
                                     </div>
                                 ) : (
@@ -229,13 +153,46 @@ const TestPage = () => {
                 </div>
             </ContentWrapper>
 
-            {(checkPermission(permissions || [], [PERMISSIONS.DELETE_TESTS]) || userId === authorId) && (
-                <ConfirmModal
-                    value={confirmDelete}
-                    setValue={setConfirmDelete}
-                    text="Вы действительно хотите удалить тест?"
-                    callback={() => deleteTest(String(testId), () => router.replace('/tests'))}
-                />
+            {checkPermission(permissions || [], [PERMISSIONS.TESTS]) && (
+                <Modal title="Заменить задание" value={swapModal} setValue={setSwapModal}>
+                    {isPending ? (
+                        <Preloader small page />
+                    ) : data?.pages[0]?.totalCount ? (
+                        <div className={cn(base.baseWrapperGap16, base.aic)}>
+                            <div className={base.contentItems}>
+                                {data?.pages.map((task) =>
+                                    task?.tasks.map((data) => (
+                                        <TaskItem
+                                            key={data.id}
+                                            data={data}
+                                            href={`/admin/task/${data.id}`}
+                                            edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                                            remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
+                                            verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
+                                            swap={checkPermission(permissions || [], [PERMISSIONS.TESTS])}
+                                            archiveCallback={() => archiveTask(data.id, revalidateRequest)}
+                                            toggleVerify={() => toggleVerifyHandler(data.id)}
+                                            swapCallback={() => swapTaskHandler(data.id)}
+                                        />
+                                    )),
+                                )}
+                            </div>
+
+                            {!isError && hasNextPage && (
+                                <Button
+                                    auto
+                                    onClick={fetchNextPage}
+                                    loading={isFetchingNextPage}
+                                    className={base.buttonShowMore}
+                                >
+                                    Показать еще
+                                </Button>
+                            )}
+                        </div>
+                    ) : (
+                        <NotContent text="Заданий не найдено" />
+                    )}
+                </Modal>
             )}
         </>
     );

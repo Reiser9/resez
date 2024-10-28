@@ -3,7 +3,6 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -49,8 +48,6 @@ const TaskTestItem: React.FC<Props> = ({
     const [warnText, setWarnText] = React.useState('');
 
     const [actionMenu, setActionMenu] = React.useState(false);
-
-    const router = useRouter();
 
     const taskInfoContent = () => {
         return (
@@ -108,7 +105,7 @@ const TaskTestItem: React.FC<Props> = ({
                             )} */}
 
                             {edit && (
-                                <MenuLink onClick={() => router.push(`/admin/tasks/edit/${id}`)}>
+                                <MenuLink href={`/admin/tasks/edit/${id}`}>
                                     <Edit />
                                     Редактировать
                                 </MenuLink>

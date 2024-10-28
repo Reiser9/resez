@@ -1,0 +1,22 @@
+.achievementOption{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.achievementOptionIcon{
+    width: 32px;
+    height: 32px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.userSelectOption{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-right: 0.8rem;
+}

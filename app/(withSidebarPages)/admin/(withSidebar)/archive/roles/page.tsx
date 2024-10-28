@@ -88,7 +88,7 @@ const AdminArchiveRoles = () => {
                         )}
                     </div>
 
-                    {hasNextPage && (
+                    {!isError && hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}

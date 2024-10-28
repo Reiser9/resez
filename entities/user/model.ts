@@ -1,7 +1,8 @@
 import { Dayjs } from 'dayjs';
 import type { Paggination } from '../pagination';
 import type { Role } from '../role';
-import type { AvatarDecoration } from '../store';
+import type { AvatarDecorationAdmin } from '../store';
+import type { SubscriptionOfUser } from '../subscription';
 
 export type LoginData = {
     nickname: string;
@@ -55,10 +56,7 @@ export type User = {
     blockReason: string;
     avatar: string;
     levelInfo: LevelInfo;
-    subscription: {
-        name: string;
-        canUploadImages: boolean;
-    };
+    subscription: SubscriptionOfUser;
     balance: number;
     theme: {
         id: number;
@@ -88,10 +86,7 @@ export type UserAdmin = {
     levelInfo: LevelInfo;
     roles: Role[];
     balance: number;
-    subscription: {
-        id: number;
-        subscription: string;
-    };
+    subscription: SubscriptionOfUser;
     activity: {
         isOnline: boolean;
         lastSeen: Date;
@@ -107,7 +102,7 @@ export type UserAdminProfile = {
     isBlocked: boolean;
     blockReason: string;
     avatar: string;
-    avatarDecoration: AvatarDecoration;
+    avatarDecoration: AvatarDecorationAdmin;
     status: string;
     activity: {
         isOnline: boolean;
@@ -124,12 +119,7 @@ export type ActivityItem = {
 export type UserMainInfo = {
     levelInfo: LevelInfo;
     balance: number;
-    subscription: {
-        id: number;
-        subscription: string;
-        expiredDate: Date;
-        isPermanent: boolean;
-    };
+    subscription: SubscriptionOfUser;
     activity: ActivityItem[];
 };
 
@@ -149,7 +139,7 @@ export type ProfileInfo = {
     birthDate: Dayjs | undefined | null;
     gender: 'Мужской' | 'Женский' | null;
     avatar?: string;
-    avatarDecoration?: AvatarDecoration;
+    avatarDecoration?: AvatarDecorationAdmin;
 };
 
 export type ProfileInfoDTO = {
@@ -200,5 +190,5 @@ export type UserProfile = {
     firstName: string;
     lastName: string;
     avatar: string;
-    avatarDecoration?: AvatarDecoration;
+    avatarDecoration?: AvatarDecorationAdmin;
 };

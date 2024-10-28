@@ -72,7 +72,7 @@ const AdminUserByIdCollections = () => {
                 <NotContent text="Коллекций не найдено" />
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

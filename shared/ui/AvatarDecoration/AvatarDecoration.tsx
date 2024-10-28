@@ -90,8 +90,8 @@ const AvatarDecoration: React.FC<Props> = ({ contentType, contentUrl, title, opt
                     <Image
                         src={contentUrl}
                         alt={title}
-                        width={width}
-                        height={height}
+                        width={width || 0}
+                        height={height || 0}
                         style={{ top: y, left: x }}
                         className={styles.avatarDecoration}
                     />

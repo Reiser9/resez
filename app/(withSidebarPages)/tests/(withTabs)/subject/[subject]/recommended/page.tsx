@@ -89,7 +89,7 @@ const RecommendedSubjectTests = () => {
                 )}
             </div>
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

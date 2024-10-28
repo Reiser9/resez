@@ -17,12 +17,13 @@ const useTask = () => {
 
     const getPagginationTasks = async (
         page: number,
-        subjectId?: string,
-        subjectTaskId?: string,
-        subThemeId?: string,
-        userId?: string,
+        subjectId?: number | string,
+        subjectTaskId?: number | string,
+        subThemeId?: number | string,
+        userId?: number | string,
         isVerified?: string,
         limit = 9,
+        currentTaskId?: number | string
     ) => {
         const queryString = buildQueryString({
             offset: page * limit,
@@ -32,6 +33,7 @@ const useTask = () => {
             subTheme_id: subThemeId,
             user_id: userId,
             is_verified: isVerified,
+            current_task_id: currentTaskId
         });
 
         const response = await request<PagginationTasks>({

@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { Swords, Battle as BattleIcon, Enter } from '@/shared/icons';
+import { Swords, Battle as BattleIcon, Enter, Plus } from '@/shared/icons';
 import { useBattle } from '@/features/battle';
 import { BattleItem } from '@/entities/battle/ui';
 import { useAppSelector } from '@/shared/hooks/useRedux';
@@ -14,7 +14,7 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { InfoBlock } from '@/shared/ui/InfoBlock';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Button } from '@/shared/ui/Button';
+import { Button, IconButton } from '@/shared/ui/Button';
 
 const Battle = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -39,6 +39,10 @@ const Battle = () => {
             <div className={base.baseWrapperGap8}>
                 <div className={base.titleInner}>
                     <Text variant="h3">Битвы {!!data?.length && `(${data.length})`}</Text>
+
+                    <IconButton circle href="/training/battle/create" small variant="light">
+                        <Plus />
+                    </IconButton>
                 </div>
 
                 <div className={base.contentItems}>
@@ -51,7 +55,10 @@ const Battle = () => {
                     ) : data?.length ? (
                         data.map((data) => <BattleItem key={data.id} data={data} />)
                     ) : (
-                        <NotContent text="Пока нет активных сражений. Но вы можете создать своё прямо сейчас!">
+                        <NotContent
+                            text="Пока нет активных сражений. Но вы можете создать своё прямо сейчас!"
+                            icon={<Swords />}
+                        >
                             <Button href="/training/battle/create" auto variant="light">
                                 Создать битву
                             </Button>

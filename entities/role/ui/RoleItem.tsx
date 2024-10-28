@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
-import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -39,8 +38,6 @@ const RoleItem: React.FC<Props> = ({
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmDelete, setConfirmDelete] = React.useState(false);
 
-    const router = useRouter();
-
     return (
         <>
             <div className={cn(base.item4, styles.roleItem)}>
@@ -71,7 +68,7 @@ const RoleItem: React.FC<Props> = ({
                             setValue={setActionMenu}
                         >
                             {edit && (
-                                <MenuLink onClick={() => router.push(`/admin/roles/edit/${id}`)}>
+                                <MenuLink href={`/admin/roles/edit/${id}`}>
                                     <Edit />
                                     Редактировать
                                 </MenuLink>

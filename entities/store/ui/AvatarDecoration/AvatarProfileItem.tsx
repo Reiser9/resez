@@ -6,10 +6,10 @@ import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
-import styles from './index.module.scss';
+import styles from '../index.module.scss';
 
-import type { AvatarDecoration as AvatarDecorationType } from '../model';
-import { Added, Check, Clapperboard, DotsHorizontal, Photo, ResCoin } from '@/shared/icons';
+import type { AvatarDecorationProfileAndStore as AvatarDecorationType } from '../../model';
+import { Added, Blind, Clapperboard, DotsHorizontal, Photo } from '@/shared/icons';
 import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Text } from '@/shared/ui/Text';
@@ -20,11 +20,12 @@ import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 type Props = {
     data: AvatarDecorationType;
-    useProduct: () => void;
+    useProduct?: () => void;
+    resetProduct?: () => void;
 };
 
-const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
-    const { title, contentType, options, contentUrl, isActive, price } = data || {};
+const AvatarProfileItem: React.FC<Props> = ({ data, useProduct = () => {}, resetProduct = () => {} }) => {
+    const { title, contentType, options, contentUrl, isActive } = data || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
 
@@ -43,6 +44,18 @@ const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
                 [styles.active]: isActive,
             })}
         >
+            <div className={styles.avatarItemContent}>
+                <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
+
+                <AvatarDecoration
+                    title={title}
+                    contentUrl={contentUrl}
+                    contentType={contentType}
+                    options={options}
+                    hoverAnimation
+                />
+            </div>
+
             <div className={styles.avatarItemTags}>
                 {contentType === 'animation' ? (
                     <Tooltip title="Анимация">
@@ -59,28 +72,7 @@ const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
                 )}
             </div>
 
-            <div className={styles.avatarItemContent}>
-                <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
-
-                <AvatarDecoration
-                    title={title}
-                    contentUrl={contentUrl}
-                    contentType={contentType}
-                    options={options}
-                    hoverAnimation
-                />
-            </div>
-
             <div className={styles.avatarItemBottom}>
-                {/* {price ? (
-                    <div className={styles.avatarItemPrice}>
-                        {price}
-
-                        <ResCoin />
-                    </div>
-                ) : (
-                    <Text fontWeight={600}>Бесплатно</Text>
-                )} */}
                 <Text variant="h4" fontWeight={600}>
                     {title}
                 </Text>
@@ -95,9 +87,9 @@ const AvatarProfileItem: React.FC<Props> = ({ data, useProduct }) => {
                     setValue={setActionMenu}
                 >
                     {isActive ? (
-                        <MenuLink disabled>
-                            <Check />
-                            Используется
+                        <MenuLink onClick={resetProduct}>
+                            <Blind />
+                            Отключить
                         </MenuLink>
                     ) : (
                         <MenuLink onClick={useProduct}>

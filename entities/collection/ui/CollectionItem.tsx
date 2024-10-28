@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
@@ -35,7 +34,6 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
     const [collectionItemMenu, setCollectionItemMenu] = React.useState(false);
     const [deleteCollectionModal, setDeleteCollectionModal] = React.useState(false);
 
-    const router = useRouter();
     const isAuth = useAppSelector((state) => state.user.isAuth);
     const { getShortInfo } = useShortInfo();
 
@@ -112,7 +110,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                         value={collectionItemMenu}
                         setValue={setCollectionItemMenu}
                     >
-                        <MenuLink onClick={() => router.push(`/training/memory/edit/${id}`)}>
+                        <MenuLink href={`/training/memory/edit/${id}`}>
                             <Edit />
                             Редактировать
                         </MenuLink>

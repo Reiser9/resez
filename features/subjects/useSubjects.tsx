@@ -277,7 +277,7 @@ const useSubjects = () => {
     };
 
     const getTasksBySubjectId = async (id: number | string) => {
-        const response = await request<{ subjectTasks: SubjectTaskCreate[] }>({
+        const response = await request<{ subjectTasks: SubjectTaskCreate[]; tasksCount: number }>({
             url: `/education-ms/admin/subject/${id}/task-info`,
             isAuth: true,
         });
@@ -287,12 +287,12 @@ const useSubjects = () => {
         }
 
         if ('data' in response) {
-            return response.data.subjectTasks;
+            return response.data;
         }
     };
 
     const getTasksCatalogBySubject = async (slug: string) => {
-        const response = await request<{ subjectTasks: SubjectTaskCreate[] }>({
+        const response = await request<{ subjectTasks: SubjectTaskCreate[]; tasksCount: number }>({
             url: `/education-ms/subject/${slug}/task-info`,
             isAuth: true,
         });
@@ -302,7 +302,7 @@ const useSubjects = () => {
         }
 
         if ('data' in response) {
-            return response.data.subjectTasks;
+            return response.data;
         }
     };
 

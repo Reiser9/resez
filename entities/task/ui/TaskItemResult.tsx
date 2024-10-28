@@ -37,7 +37,7 @@ const TaskItemResult: React.FC<Props> = ({ data }) => {
                 [styles.partTrue]: primaryScore > 0 && primaryScore < taskPrimaryScore,
             })}
         >
-            <div className={base.titleInnerNowrap}>
+            <div className={base.titleInner}>
                 <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
                     <span className={base.circle32}>{number ?? '?'}</span>
 

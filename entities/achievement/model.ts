@@ -12,7 +12,19 @@ export type Achievement = {
     progress: number;
 };
 
+export type AchievementShort = {
+    id: number;
+    achievement: string;
+    description: string;
+    icon: string;
+}
+
 export type AchievementCategory = {
     type: string;
     elements: Achievement[];
 };
+
+export type AchievementCategoryShort = {
+    type: string;
+    elements: AchievementShort[];
+}

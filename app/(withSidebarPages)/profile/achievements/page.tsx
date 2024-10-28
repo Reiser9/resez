@@ -15,11 +15,11 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { Trophy } from '@/shared/icons';
 
 const ProfileAchievements = () => {
-    const { getAchievements } = useAchievement();
+    const { getProfileAchievements } = useAchievement();
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['profile_achievements'],
-        queryFn: getAchievements,
+        queryFn: getProfileAchievements,
     });
 
     if (isLoading) {

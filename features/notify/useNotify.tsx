@@ -3,9 +3,9 @@
 import React from 'react';
 
 import type { Notifies, Notify, NotifyType } from '@/entities/notify';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
-import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useNotify = () => {
     const [isLoading, setIsLoading] = React.useState(false);
@@ -101,14 +101,12 @@ const useNotify = () => {
             ...(type && { notifyTypeId: type }),
         };
 
-        setIsLoading(true);
         const response = await request({
-            url: 'admin/notify',
+            url: '/admin/notify',
             method: 'POST',
             isAuth: true,
             data: notifyData,
         });
-        setIsLoading(false);
 
         if (catchRequestError(response)) {
             return errorController(response);

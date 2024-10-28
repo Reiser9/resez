@@ -66,7 +66,7 @@ const InitialWrapper = ({ children }: { children: React.ReactNode }) => {
             theme={{
                 token: {
                     colorPrimary: theme ? theme.primary : CONFIG.BASE_COLOR,
-                    fontFamily: 'var(--font-nunito)',
+                    fontFamily: 'Nunito, sans-serif',
                 },
             }}
         >

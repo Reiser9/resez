@@ -16,7 +16,7 @@ type Props = {
     children: React.ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-const InnerSidebar: React.FC<Props> = ({
+const InnerPageSidebar: React.FC<Props> = ({
     icon = <MenuBlock />,
     big = false,
     value,
@@ -31,7 +31,7 @@ const InnerSidebar: React.FC<Props> = ({
 
     const toggleSidebar = (value: boolean): void => {
         if (setValue) {
-            setValue(value);
+            return setValue(value);
         }
 
         setSidebarActive(value);
@@ -39,17 +39,11 @@ const InnerSidebar: React.FC<Props> = ({
 
     React.useEffect(() => {
         if (setValue) {
-            setValue(false);
+            return setValue(false);
         }
 
         setSidebarActive(false);
     }, [pathname, setValue]);
-
-    React.useEffect(() => {
-        if (setValue && value) {
-            setSidebarActive(value);
-        }
-    }, [value, setValue]);
 
     return (
         <>
@@ -86,4 +80,4 @@ const InnerSidebar: React.FC<Props> = ({
     );
 };
 
-export default InnerSidebar;
+export default InnerPageSidebar;

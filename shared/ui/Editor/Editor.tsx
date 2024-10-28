@@ -57,14 +57,18 @@ const Editor: React.FC<Props> = (props) => {
         [editorRef],
     );
 
-    const uploadByFile = async (file: File) => {
+    const uploadImageByFile = async (file: File) => {
+        console.log(file);
+        
         const formData = new FormData();
         formData.append('file', file);
 
         return await uploadImageOnServerByFile(formData);
     };
 
-    const uploadByUrl = async (url: string) => {
+    const uploadImageByUrl = async (url: string) => {
+        console.log(url);
+        
         return await uploadImageOnServerByUrl(url);
     };
 
@@ -88,8 +92,8 @@ const Editor: React.FC<Props> = (props) => {
             class: Image,
             config: {
                 uploader: {
-                    uploadByFile,
-                    uploadByUrl,
+                    uploadImageByFile,
+                    uploadImageByUrl,
                 },
             },
         },

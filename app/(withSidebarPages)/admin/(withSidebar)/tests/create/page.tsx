@@ -18,6 +18,7 @@ import GenerateTestItem from './GenerateTestItem';
 import { Preloader } from '@/shared/ui/Preloader';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
+import { Text } from '@/shared/ui/Text';
 
 const AdminTestCreate = () => {
     const [subject, setSubject] = React.useState<string | null>(null);
@@ -134,21 +135,28 @@ const AdminTestCreate = () => {
                                 Вариант от ResEz Team
                             </Checkbox>
 
-                            {!generateVariant &&
-                                (tasksIsLoading ? (
-                                    <Preloader page small />
-                                ) : (
-                                    <div className={styles.generateForm}>
-                                        {tasksData?.map((data) => (
-                                            <GenerateTestItem
-                                                key={data.id}
-                                                data={data}
-                                                // setSubThemes={setSubThemesHandler}
-                                                // setCountTasks={setCountTasksHandler}
-                                            />
-                                        ))}
-                                    </div>
-                                ))}
+                            {!generateVariant && (
+                                <>
+                                    <Text variant="text2" fontWeight={600}>
+                                        Всего заданий: {tasksData?.tasksCount || 0}
+                                    </Text>
+
+                                    {tasksIsLoading ? (
+                                        <Preloader page small />
+                                    ) : (
+                                        <div className={styles.generateForm}>
+                                            {tasksData?.subjectTasks.map((data) => (
+                                                <GenerateTestItem
+                                                    key={data.id}
+                                                    data={data}
+                                                    // setSubThemes={setSubThemesHandler}
+                                                    // setCountTasks={setCountTasksHandler}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </>
                     )}
                 </div>

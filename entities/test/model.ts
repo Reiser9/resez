@@ -1,4 +1,5 @@
 import type { Paggination } from '../pagination';
+import type { SubjectTheme, SubjectSubTheme } from '../subject';
 
 export type Test = {
     id: number;
@@ -18,11 +19,9 @@ export type PagginationTests = Paggination & {
 
 export type TestTask = {
     id: number;
-    number: number;
-    theme: string;
-    subTheme: string;
-    isDetailedAnswer: boolean;
     task: string;
+    subTheme: SubjectSubTheme;
+    subjectTask: SubjectTheme;
 };
 
 export type TestById = Test & {
@@ -97,17 +96,8 @@ export type TaskHistory = {
     isCorrect: boolean;
     primaryScore: number;
     answers: string[];
-    subjectTask: {
-        id: number;
-        number: number;
-        theme: string;
-        primaryScore: number;
-        isDetailedAnswer: boolean;
-    };
-    subTheme: {
-        id: number;
-        subTheme: string;
-    };
+    subjectTask: SubjectTheme;
+    subTheme: SubjectSubTheme;
 };
 
 export type PagginationTestsHistory = Paggination & {

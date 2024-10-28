@@ -2,16 +2,16 @@
 
 import React from 'react';
 import cn from 'classnames';
+import Image from 'next/image';
 import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 
+import type { Achievement } from '@/entities/achievement';
+import { formatDate } from '@/shared/utils/formatDate';
 import { Info } from '@/shared/icons';
 
 import { Text } from '../Text';
-import { Achievement } from '@/entities/achievement';
-import Image from 'next/image';
-import { formatDate } from '@/shared/utils/formatDate';
 import { Badge } from '../Badge';
 
 type Props = {
@@ -37,18 +37,20 @@ const AchievementItem: React.FC<Props> = ({ data }) => {
                     <Text variant="h4">{achievement ?? '?????'}</Text>
                 </div>
 
-                <Tooltip
-                    title={
-                        <>
-                            <p>Награды:</p>
-                            {xp && `Опыт: ${xp}`} {coins && `ResCoins: ${coins}`}
-                        </>
-                    }
-                >
-                    <div className={styles.achievementItemInfo}>
-                        <Info />
-                    </div>
-                </Tooltip>
+                {(xp || coins) && (
+                    <Tooltip
+                        title={
+                            <>
+                                <p>Награды:</p>
+                                {xp && `Опыт: ${xp}`} {coins && `ResCoins: ${coins}`}
+                            </>
+                        }
+                    >
+                        <div className={styles.achievementItemInfo}>
+                            <Info />
+                        </div>
+                    </Tooltip>
+                )}
             </div>
 
             <Text variant="text2" className={styles.achievementItemDescription}>

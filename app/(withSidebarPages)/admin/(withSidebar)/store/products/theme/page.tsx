@@ -31,7 +31,7 @@ const AdminStoreAvatar = () => {
     });
 
     const queryClient = useQueryClient();
-    const { getPaginationThemes, togglePublishTheme } = useTheme();
+    const { getPaginationThemes, togglePublishTheme, deleteTheme } = useTheme();
 
     const revalidateTheme = () => {
         queryClient.invalidateQueries({ queryKey: ['admin_themes'] });
@@ -92,10 +92,11 @@ const AdminStoreAvatar = () => {
                             <ThemeItem
                                 key={data.id}
                                 data={data}
-                                // edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_PRODUCTS])}
+                                edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_PRODUCTS])}
                                 publish={checkPermission(permissions || [], [PERMISSIONS.PUBLISH_PRODUCTS])}
-                                // remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_PRODUCTS])}
+                                remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_PRODUCTS])}
                                 togglePublish={() => togglePublishHandler(data.id)}
+                                deleteCallback={() => deleteTheme(data.id, revalidateTheme)}
                             />
                         )),
                     )}
@@ -104,7 +105,7 @@ const AdminStoreAvatar = () => {
                 <NotContent text="Тем не найдено" />
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

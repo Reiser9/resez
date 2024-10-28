@@ -47,9 +47,9 @@ const TestsHistory = () => {
                     {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                 </Text>
 
-                <IconButton small variant="light" onClick={() => setTestHistoryFilters(true)}>
+                {/* <IconButton small variant="light" onClick={() => setTestHistoryFilters(true)}>
                     <Filter />
-                </IconButton>
+                </IconButton> */}
             </div>
 
             {isPending ? (
@@ -74,7 +74,7 @@ const TestsHistory = () => {
                 </NotContent>
             )}
 
-            {hasNextPage && (
+            {!isError && hasNextPage && (
                 <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
                     Показать еще
                 </Button>

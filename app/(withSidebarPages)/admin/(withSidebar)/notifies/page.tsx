@@ -2,10 +2,10 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { Checkbox, TimePicker, Select as SelectAnt } from 'antd';
+import { Checkbox, Select as SelectAnt } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -30,10 +30,11 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Badge } from '@/shared/ui/Badge';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { UserOption } from '@/shared/ui/OptionComponents';
+import { TimePicker } from '@/shared/ui/TimePicker';
 
-const Editor = dynamic(() => import('@/shared/ui/Editor').then((module) => module.Editor), {
+const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
     loading: () => <DynamicSkeleton />,
 });
@@ -53,7 +54,7 @@ const AdminNotifies = () => {
     const [sendForOne, setSendForOne] = React.useState(false);
     const [delayedSend, setDelayedSend] = React.useState(false);
 
-    const { isLoading, sendNotify, getNotifyTypes } = useNotify();
+    const { sendNotify, getNotifyTypes } = useNotify();
     const { alertNotify } = useAlert();
     const { getPaginationUsersShort } = useUsers();
     const userSearchDebounce = useDebounce(searchValue, 500);
@@ -63,11 +64,7 @@ const AdminNotifies = () => {
     const usersIds = searchParams.get('users');
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -116,7 +113,7 @@ const AdminNotifies = () => {
             return alertNotify('Предупреждение', 'Контент уведомления не должен быть пустой', 'warn');
         }
 
-        sendNotify(title, author, userIDs, newDate ?? '', content, type, () => {
+        await sendNotify(title, author, userIDs, newDate ?? '', content, type, () => {
             setTitle('');
             setAuthor('');
             setDate(undefined);
@@ -129,6 +126,11 @@ const AdminNotifies = () => {
             router.replace('/admin/notifies');
         });
     };
+
+    const createNotifyMutation = useMutation({
+        mutationKey: ['admin_notify'],
+        mutationFn: () => createNotify(),
+    });
 
     React.useEffect(() => {
         if (usersIds) {
@@ -179,6 +181,13 @@ const AdminNotifies = () => {
                                         notFoundContent={
                                             usersIsLoading ? (
                                                 <Preloader small wrapperClassName={styles.loader} />
+                                            ) : usersError ? (
+                                                <NotContent
+                                                    text="Произошло ошибка при загрузке данных"
+                                                    danger
+                                                    icon={<Cross />}
+                                                    small
+                                                />
                                             ) : (
                                                 <NotContent text="Пользователей не найдено" />
                                             )
@@ -194,19 +203,7 @@ const AdminNotifies = () => {
                                         optionRender={({ data }) => {
                                             const { label, id, avatar } = data || {};
 
-                                            return (
-                                                <div className={base.userSelectOption}>
-                                                    <div className={base.titleWrapper}>
-                                                        <Badge image={avatar} text={label} size="small" />
-
-                                                        <Text variant="text2">{label}</Text>
-                                                    </div>
-
-                                                    <Text variant="text2" fontWeight={600}>
-                                                        {id}
-                                                    </Text>
-                                                </div>
-                                            );
+                                            return <UserOption id={id} avatar={avatar} nickname={label} />;
                                         }}
                                         showSearch
                                         mode="multiple"
@@ -229,18 +226,18 @@ const AdminNotifies = () => {
                         <div className={styles.notifiesDelayInner}>
                             <DatePicker
                                 disablePrevDate
-                                placeholder="Выберите дату"
+                                title="Выберите дату"
                                 wrapperClass={styles.notifiesDelayItem}
                                 value={date}
                                 setValue={setDate}
                             />
 
                             <TimePicker
-                                placeholder="Выберите время"
+                                title="Выберите время"
                                 format="HH:mm"
-                                className={styles.notifiesDelayItem}
+                                wrapperClass={styles.notifiesDelayItem}
                                 value={time}
-                                onChange={(e) => setTime(e ?? undefined)}
+                                setValue={setTime}
                                 suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
                             />
                         </div>
@@ -251,6 +248,7 @@ const AdminNotifies = () => {
                             title="Тип уведомления"
                             notContentText="Типов уведомления не найдено"
                             loading={isPending}
+                            error={isError}
                             onChange={(value) => setType(value)}
                             value={type}
                             options={notifyTypes?.map((data) => ({
@@ -263,7 +261,12 @@ const AdminNotifies = () => {
                     <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
                 </div>
 
-                <Button auto onClick={createNotify} loading={isLoading} levitation>
+                <Button
+                    auto
+                    onClick={() => createNotifyMutation.mutate()}
+                    loading={createNotifyMutation.isPending}
+                    levitation
+                >
                     Отправить
                 </Button>
             </div>

@@ -8,10 +8,10 @@ import { useAchievement } from '@/features/user';
 const WpAdminPage = () => {
     const router = useRouter();
 
-    const { getSecretAchievement } = useAchievement();
+    const { completeSecretAchievement } = useAchievement();
 
     React.useEffect(() => {
-        getSecretAchievement();
+        completeSecretAchievement();
         router.push('/');
     }, []);
 };

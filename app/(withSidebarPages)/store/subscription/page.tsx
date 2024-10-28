@@ -1,51 +1,76 @@
 'use client';
 
 import React from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
-import { Text } from '@/shared/ui/Text';
+
+import { useSubscription } from '@/features/subscription';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import { Cross } from '@/shared/icons';
+import { useShortInfo } from '@/features/user';
+import SubscriptionItem from './ui/SubscriptionItem';
+import { refreshToken } from '@/shared/utils/refreshToken';
+
+import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const StoreSubscription = () => {
+    const isAuth = useAppSelector((state) => state.user.isAuth);
+
+    const { getSubscriptions, buySubscription } = useSubscription();
+    const { getShortInfo } = useShortInfo();
+    const queryClient = useQueryClient();
+
+    const invalidateShortInfo = () => {
+        queryClient.invalidateQueries({ queryKey: ['short_info'] });
+    };
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['subscriptions'],
+        queryFn: () => getSubscriptions(),
+    });
+
+    const { data: userInfo } = useQuery({
+        queryKey: ['short_info'],
+        queryFn: () => getShortInfo(),
+        enabled: isAuth,
+    });
+
+    const { subscription } = userInfo?.user || {};
+
+    const buySubscriptionHandler = (subscriptionId: number | null) => {
+        if (!subscriptionId) return;
+
+        buySubscription(subscriptionId, () => {
+            invalidateShortInfo();
+            refreshToken();
+        });
+    };
+
+    if (isLoading) {
+        return <Preloader page />;
+    }
+
     return (
-        <div className={styles.subscriptionWrapper}>
-            <div className={styles.subscriptionPoints}>
-                <Text fontWeight={600}>Добавление картинок в коллекциях</Text>
-                <Text fontWeight={600}>Размер загружаемых картинок</Text>
-                <Text fontWeight={600}>Уникальные персонализации</Text>
+        <>
+            <div className={styles.subscriptionWrapper}>
+                {isError ? (
+                    <NotContent danger icon={<Cross />} text="Произошла ошибка при загрузке данных" />
+                ) : data?.length ? (
+                    data.map((data) => (
+                        <SubscriptionItem
+                            key={data.id}
+                            data={data}
+                            buyCallback={buySubscriptionHandler}
+                            userSubscription={subscription}
+                        />
+                    ))
+                ) : (
+                    <NotContent text="Подписок не найдено" />
+                )}
             </div>
-
-            <div className={styles.subscriptionElements}>
-                <div className={styles.subscriptionItem}>
-                    <p className={styles.subscriptionItemName}>Без подписки</p>
-
-                    <div className={styles.subscriptionItemPoints}>
-                        <Text fontWeight={600}>-</Text>
-                        <Text fontWeight={600}>1 Mb</Text>
-                        <Text fontWeight={600}>-</Text>
-                    </div>
-                </div>
-
-                <div className={styles.subscriptionItem}>
-                    <p className={styles.subscriptionItemName}>ResEz Premium</p>
-
-                    <div className={styles.subscriptionItemPoints}>
-                        <Text fontWeight={600}>+</Text>
-                        <Text fontWeight={600}>5 Mb</Text>
-                        <Text fontWeight={600}>+</Text>
-                    </div>
-                </div>
-
-                <div className={styles.subscriptionItem}>
-                    <p className={styles.subscriptionItemName}>ResEz Premium Plus</p>
-
-                    <div className={styles.subscriptionItemPoints}>
-                        <Text fontWeight={600}>+</Text>
-                        <Text fontWeight={600}>10 Mb</Text>
-                        <Text fontWeight={600}>+</Text>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </>
     );
 };
 

@@ -27,7 +27,7 @@ type Props = {
 
 const DatePicker: React.FC<Props> = ({
     format = 'DD.MM.YYYY',
-    placeholder,
+    placeholder = '',
     title,
     value,
     setValue,
@@ -37,7 +37,7 @@ const DatePicker: React.FC<Props> = ({
     className,
     ...props
 }) => {
-    const disabledDate = (current: Dayjs): boolean => {
+    const disabledDate = (current: Dayjs) => {
         return current < moment().startOf('day');
     };
 

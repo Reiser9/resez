@@ -7,12 +7,13 @@ import { socket } from '@/api/socket';
 
 import type { Message } from '@/entities/messenger';
 import type { Notify } from '@/entities/notify';
+import type { LevelInfo } from '@/entities/user/model';
+import type { Achievement } from '@/entities/achievement';
 import { useAppSelector } from './useRedux';
 import useAlert from './useAlert';
 import useShortInfo from '@/features/user/data/useShortInfo';
 import useClearLocalData from './useClearLocalData';
-import { Achievement } from '@/entities/achievement';
-import { LevelInfo } from '@/entities/user/model';
+import { refreshToken } from '@/shared/utils/refreshToken';
 
 const useSocket = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -101,9 +102,16 @@ const useSocket = () => {
             }
         });
 
-        socket.on('role-updated', () => {
+        socket.on('refresh', (action: string) => {
             queryRef.current.invalidateQueries({ queryKey: ['user_permissions'] });
-            alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
+            refreshToken();
+
+            if(action === "role"){
+                alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
+            }
+            else if(action === "subscription"){
+                alertNotify('Информация', 'Ваша подписка изменена', 'info', '', 4000);
+            }
         });
 
         socket.on('achievement', (data: { userId: number; achievement: Achievement }) => {

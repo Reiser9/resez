@@ -11,6 +11,7 @@ export type BattleInfo = {
 export type BattleUserInfo = UserShort & {
     socketId: string;
     isLeader: boolean;
+    isReady: boolean;
 };
 
 export type Battle = {

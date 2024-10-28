@@ -169,7 +169,7 @@ const AdminPromoById = () => {
                         <NotContent text="Ни один пользователь не активировал промокод" />
                     )}
 
-                    {hasNextPage && (
+                    {!usersIsError && hasNextPage && (
                         <Button
                             auto
                             onClick={fetchNextPage}

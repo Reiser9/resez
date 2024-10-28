@@ -1,37 +1,35 @@
 'use client';
 
 import React from 'react';
-import cn from 'classnames';
-import Image from 'next/image';
-import Lottie from 'lottie-react';
-import { DraggableData, Rnd } from 'react-rnd';
 import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
 import { Color } from 'antd/es/color-picker';
+import { useQuery } from '@tanstack/react-query';
+import { Dayjs } from 'dayjs';
+import 'dayjs/locale/ru';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
+import { IMAGE_MAX_HEIGHT, IMAGE_MAX_WIDTH, IMAGE_MIN_HEIGHT, IMAGE_MIN_WIDTH } from '@/shared/consts/STORE_VARS';
+import { CONFIG } from '@/shared/consts/CONFIG';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Delete, FileEmpty, Photo } from '@/shared/icons';
 import { useAvatar, useTheme } from '@/features/store';
-import PositionController from '../PositionController';
+import { useSubscription } from '@/features/subscription';
 import useAlert from '@/shared/hooks/useAlert';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import useShortInfo from '@/features/user/data/useShortInfo';
+import ThemeCreate from '../ui/ThemeCreate';
+import AvatarDecorationCreate from '../ui/AvatarDecorationCreate';
+import { useAchievement } from '@/features/user';
 
-import { Button, IconButton } from '@/shared/ui/Button';
-import { ColorPickerInput, Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
 import { Select } from '@/shared/ui/Select';
-import { Text } from '@/shared/ui/Text';
-import { File } from '@/shared/ui/File';
-import { Badge } from '@/shared/ui/Badge';
-import { CONFIG } from '@/shared/consts/CONFIG';
+import { DatePicker } from '@/shared/ui/DatePicker';
+import { AchievementOption } from '@/shared/ui/OptionComponents';
 
 type ProductTypes = 'avatar_decoration' | 'banner' | 'theme' | 'chat_effect' | 'status' | 'sticker';
-type ProductConditions = 'free' | 'event' | 'achievement' | 'buy' | 'subscription';
-type ProductViews = 'static' | 'animation';
+export type ProductViews = 'static' | 'animation';
 
 const productTypes: { label: string; value: ProductTypes }[] = [
     {
@@ -42,10 +40,6 @@ const productTypes: { label: string; value: ProductTypes }[] = [
         label: 'Тема',
         value: 'theme',
     },
-    // {
-    //     label: 'Тема',
-    //     value: 'Тема',
-    // },
     // {
     //     label: 'Эффект чата',
     //     value: 'Эффект чата',
@@ -60,66 +54,28 @@ const productTypes: { label: string; value: ProductTypes }[] = [
     // },
 ];
 
-const productConditions: { label: string; value: ProductConditions }[] = [
-    {
-        label: 'Бесплатно',
-        value: 'free',
-    },
-    // {
-    //     label: 'Сезонно/Временно',
-    //     value: 'event',
-    // },
-    // {
-    //     label: 'За достижение',
-    //     value: 'achievement',
-    // },
-    {
-        label: 'За валюту',
-        value: 'buy',
-    },
-    // {
-    //     label: 'За подписку',
-    //     value: 'subscription',
-    // },
-];
-
-const minWidth = 40;
-const minHeight = 40;
-const maxWidth = 200;
-const maxHeight = 200;
-
 const AdminStoreCreate = () => {
-    const [view, setView] = React.useState<ProductViews>('static');
-
-    const [productImage, setProductImage] = React.useState<File | null>(null);
-    const [productImagePreview, setProductImagePreview] = React.useState<string | ArrayBuffer | null>(null);
-
     const [name, setName] = React.useState('');
     const [type, setType] = React.useState<ProductTypes | null>(null);
-    const [condition, setCondition] = React.useState<ProductConditions | null>(null);
-
     const [price, setPrice] = React.useState('');
+    const [subscriptionId, setSubscriptionId] = React.useState<number | null>(null);
+    const [startSeasonDate, setStartSeasonDate] = React.useState<Dayjs | null>();
+    const [endSeasonDate, setEndSeasonDate] = React.useState<Dayjs | null>();
+    const [achievementId, setAchievementId] = React.useState<number | null>(null);
 
+    // Avatar Decoration
+    const [view, setView] = React.useState<ProductViews>('static');
+    const [productImage, setProductImage] = React.useState<File | null>(null);
     const [productAnimationFile, setProductAnimationFile] = React.useState<File | null>(null);
-    const [animationData, setAnimationData] = React.useState<any | null>(null);
-    const [animationError, setAnimationError] = React.useState<string | null>(null);
 
-    const [draggable, setDraggable] = React.useState(false);
     const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
-    const [width, setWidth] = React.useState(minWidth);
-    const [height, setHeight] = React.useState(minHeight);
-    const [aspectRatio, setAspectRatio] = React.useState(1);
-    const imageRef = React.useRef<HTMLImageElement>(null);
+    const [width, setWidth] = React.useState(IMAGE_MIN_WIDTH);
+    const [height, setHeight] = React.useState(IMAGE_MIN_HEIGHT);
 
-    // Темы
+    // Theme
     const [textColor, setTextColor] = React.useState<string | Color>(CONFIG.BASE_COLOR);
-    const [textColorFormatHex, setTextColorFormatHex] = React.useState<'hex' | 'rgb' | 'hsb' | undefined>('hex');
-
     const [backgroundColor, setBackgroundColor] = React.useState<string | Color>(CONFIG.BASE_COLOR_LIGHT);
-    const [backgroundColorFormatHex, setBackgroundColorFormatHex] = React.useState<'hex' | 'rgb' | 'hsb' | undefined>(
-        'hex',
-    );
 
     const textHexString = React.useMemo(
         () => (typeof textColor === 'string' ? textColor : textColor.toHexString()),
@@ -129,154 +85,103 @@ const AdminStoreCreate = () => {
         () => (typeof backgroundColor === 'string' ? backgroundColor : backgroundColor.toHexString()),
         [backgroundColor],
     );
-    // /Темы
 
     const { createAvatar } = useAvatar();
     const { createTheme } = useTheme();
     const { alertNotify } = useAlert();
+    const { getSubscriptions } = useSubscription();
+    const { getAchievements } = useAchievement();
+
     const router = useRouter();
 
-    const { getShortInfo } = useShortInfo();
-
-    const { data: user, isLoading: userIsLoading } = useQuery({
-        queryKey: ['short_info'],
-        queryFn: () => getShortInfo(),
+    const {
+        data: subscriptionsData,
+        isLoading: subscriptionsIsLoading,
+        isError: subscriptionsIsError,
+    } = useQuery({
+        queryKey: ['subscriptions'],
+        queryFn: () => getSubscriptions(),
     });
 
-    const { avatar, nickname } = user?.user || {};
+    const {
+        data: achievementsData,
+        isLoading: achievementsIsLoading,
+        isError: achievementsIsError,
+    } = useQuery({
+        queryKey: ['admin_achievements'],
+        queryFn: () => getAchievements(),
+    });
 
-    const handleResize = (e: MouseEvent | TouchEvent, direction: any, ref: HTMLElement, delta: any, position: any) => {
-        const newWidth = ref.offsetWidth;
-        const newHeight = newWidth / aspectRatio;
-        setWidth(newWidth);
-        setHeight(newHeight);
-        setPosition(position);
-    };
-
-    const handleDragStart = () => {
-        setDraggable(true);
-    };
-
-    const handleDragStop = (
-        e:
-            | React.MouseEvent<HTMLElement | SVGElement, MouseEvent>
-            | React.TouchEvent<HTMLElement | SVGElement>
-            | MouseEvent
-            | TouchEvent,
-        d: DraggableData,
-    ) => {
-        setPosition({ x: d.x, y: d.y });
-        setDraggable(false);
-    };
-
-    // Сделать разделение по функциям
-
-    const createProductHandler = () => {
+    const isValidFields = () => {
         if (!name) {
-            return alertNotify('Предупреждение', 'Название товара должно быть заполнено', 'warn');
+            alertNotify('Предупреждение', 'Название товара должно быть заполнено', 'warn');
+            return false;
         }
         if (!type) {
-            return alertNotify('Предупреждение', 'Тип товара должен быть заполнен', 'warn');
+            alertNotify('Предупреждение', 'Тип товара должен быть заполнен', 'warn');
+            return false;
         }
+
+        return true;
+    };
+
+    const createAvatarDecoration = () => {
+        // if (!isValidFields()) return;
 
         const formData = new FormData();
 
         formData.append('title', name);
 
-        if (view === 'static' && productImage) {
+        if (view === 'static') {
+            if (!productImage)
+                return alertNotify('Предупреждение', 'Изображение украшения аватара должно быть выбрано', 'warn');
+
             formData.append('content', productImage);
-        } else if (view === 'animation' && productAnimationFile) {
+        } else if (view === 'animation') {
+            if (!productAnimationFile)
+                return alertNotify('Предупреждение', 'Анимация украшения аватара должна быть выбрана', 'warn');
+
             formData.append('content', productAnimationFile);
         }
 
         formData.append('contentType', view);
-
-        if (condition === 'buy') {
-            formData.append('price', price);
-        }
+        price && formData.append('price', price);
+        subscriptionId && formData.append('requiredSubscriptionId', String(subscriptionId));
+        achievementId && formData.append('requiredAchievementId', String(achievementId));
+        startSeasonDate && formData.append('seasonStartDate', startSeasonDate.toISOString());
+        endSeasonDate && formData.append('seasonEndDate', endSeasonDate.toISOString());
 
         const options = {
             width,
             height,
-            x: `${((position.x + width / 2) / maxWidth) * 100}%`,
-            y: `${((position.y + height / 2) / maxHeight) * 100}%`,
+            x: `${((position.x + width / 2) / IMAGE_MAX_WIDTH) * 100}%`,
+            y: `${((position.y + height / 2) / IMAGE_MAX_HEIGHT) * 100}%`,
         };
 
         formData.append('options', JSON.stringify(options));
 
+        createAvatar(formData, () => router.push('/admin/store/products/avatar'));
+    };
+
+    const createProductHandler = () => {
+        if (!isValidFields()) return;
+
         if (type === 'avatar_decoration') {
-            createAvatar(formData, () => router.push('/admin/store/products/avatar'));
+            createAvatarDecoration();
         } else if (type === 'theme') {
-            createTheme(name, textHexString, backgroundHexString, price, () =>
-                router.push('/admin/store/products/theme'),
+            createTheme(
+                name,
+                textHexString,
+                backgroundHexString,
+                price,
+                subscriptionId,
+                achievementId,
+                startSeasonDate,
+                endSeasonDate,
+                () => router.push('/admin/store/products/theme'),
             );
         }
     };
-
-    React.useEffect(() => {
-        if (position.x < 0) {
-            setPosition((prev) => {
-                return {
-                    x: 0,
-                    y: prev.y,
-                };
-            });
-        }
-
-        if (position.y < 0) {
-            setPosition((prev) => {
-                return {
-                    x: prev.x,
-                    y: 0,
-                };
-            });
-        }
-
-        if (position.x + width > maxWidth) {
-            setPosition((prev) => {
-                return {
-                    x: maxWidth - width,
-                    y: prev.y,
-                };
-            });
-        }
-
-        if (position.y + height > maxHeight) {
-            setPosition((prev) => {
-                return {
-                    x: prev.x,
-                    y: maxHeight - height,
-                };
-            });
-        }
-    }, [draggable]);
-
-    React.useEffect(() => {
-        setPosition({
-            x: 0,
-            y: 0,
-        });
-    }, [productImagePreview]);
-
-    React.useEffect(() => {
-        if (productAnimationFile) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (e.target?.result) {
-                    try {
-                        const json = JSON.parse(e.target.result as string);
-                        setAnimationData(json);
-                        setAnimationError(null);
-                    } catch (error) {
-                        setAnimationError('Некорректный JSON файл. Пожалуйста, загрузите правильный JSON файл.');
-                        setAnimationData(null);
-                        setProductAnimationFile(null);
-                    }
-                }
-            };
-            reader.readAsText(productAnimationFile);
-        }
-    }, [productAnimationFile]);
 
     return (
         <PrivateWrapper permissions={[PERMISSIONS.CREATE_PRODUCTS]}>
@@ -306,314 +211,82 @@ const AdminStoreCreate = () => {
                         options={productTypes}
                     />
 
-                    <Select<ProductConditions>
-                        title="Условие получения"
-                        placeholder="Выберите условие"
-                        value={condition}
-                        setValue={setCondition}
-                        options={productConditions}
+                    <Input
+                        value={price}
+                        setValue={setPrice}
+                        type="number"
+                        title="Цена товара"
+                        infoText="Оставьте поле пустым, чтобы товар был бесплатным"
                     />
 
-                    {condition === 'buy' && (
-                        <Input value={price} setValue={setPrice} type="number" title="Цена товара" />
-                    )}
+                    <DatePicker title="Дата начала сезона" value={startSeasonDate} setValue={setStartSeasonDate} />
 
-                    {condition === 'free' && (
-                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                            Пользователь может получить товар бесплатно
-                        </Text>
-                    )}
+                    <DatePicker title="Дата окончания сезона" value={endSeasonDate} setValue={setEndSeasonDate} />
 
-                    {condition === 'event' && (
-                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                            Пользователь может получить товар в определенное время: --:--
-                        </Text>
-                    )}
+                    <Select
+                        title="Выберите достижение"
+                        value={achievementId}
+                        loading={achievementsIsLoading}
+                        options={achievementsData?.map((data, index) => ({
+                            label: data.type,
+                            value: index,
+                            options: data.elements.map((el) => ({
+                                value: el.id,
+                                label: el.achievement,
+                                desc: el.description,
+                                icon: el.icon,
+                            })),
+                        }))}
+                        optionRender={(data) => {
+                            const { desc, icon, label } = data?.data || {};
 
-                    {condition === 'achievement' && (
-                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                            Пользователь может получить товар, выполнив достижение: название достижения
-                        </Text>
-                    )}
+                            return <AchievementOption desc={desc} icon={icon} label={label} />;
+                        }}
+                        onChange={(value) => {
+                            setAchievementId(value);
+                        }}
+                    />
 
-                    {condition === 'buy' && (
-                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                            Пользователь может получить товар за валюту: {price || 0} ResCoin
-                        </Text>
-                    )}
+                    <Select
+                        title="Выберите подписку"
+                        value={subscriptionId}
+                        options={subscriptionsData?.map((data) => ({
+                            label: data.subscription,
+                            value: data.id,
+                        }))}
+                        onChange={(value) => {
+                            setSubscriptionId(value);
+                        }}
+                    />
 
-                    {condition === 'subscription' && (
-                        <Text variant="text2" fontWeight={500} center className={styles.createProductInfo}>
-                            Пользователь может получить товар за подписку: название подписки
-                        </Text>
-                    )}
-
-                    {condition && type && (
+                    {type && (
                         <>
                             {type === 'avatar_decoration' && (
-                                <>
-                                    <div className={styles.createProductTabs}>
-                                        <button
-                                            className={cn(styles.createProductTab, {
-                                                [styles.active]: view === 'static',
-                                            })}
-                                            onClick={() => setView('static')}
-                                        >
-                                            Статика
-                                        </button>
-
-                                        <button
-                                            className={cn(styles.createProductTab, {
-                                                [styles.active]: view === 'animation',
-                                            })}
-                                            onClick={() => setView('animation')}
-                                        >
-                                            Анимация
-                                        </button>
-                                    </div>
-
-                                    {view === 'static' && (
-                                        <>
-                                            <File
-                                                id="productImage"
-                                                setImgPreview={setProductImagePreview}
-                                                setFile={setProductImage}
-                                                accept="image/png, image/jpeg, image/svg+xml, image/gif"
-                                            />
-
-                                            <label
-                                                htmlFor="productImage"
-                                                className={cn(styles.createProductImage, {
-                                                    [styles.imageFill]: productImage,
-                                                })}
-                                            >
-                                                {productImagePreview ? (
-                                                    <Image src={productImagePreview.toString()} alt="image" fill />
-                                                ) : (
-                                                    <Photo />
-                                                )}
-
-                                                {productImagePreview && (
-                                                    <IconButton
-                                                        small
-                                                        circle
-                                                        variant="danger"
-                                                        className={styles.createProductImageDelete}
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            setProductImagePreview(null);
-                                                            setProductImage(null);
-                                                        }}
-                                                    >
-                                                        <Delete />
-                                                    </IconButton>
-                                                )}
-                                            </label>
-
-                                            {productImagePreview && (
-                                                <>
-                                                    <Text variant="text2" fontWeight={500} center>
-                                                        Выберите позицию товара
-                                                    </Text>
-
-                                                    <div className={styles.createProductPosition}>
-                                                        <Badge
-                                                            image={avatar}
-                                                            text={nickname}
-                                                            style={{ width: 92, height: 92 }}
-                                                            className={styles.createProductCurrentAvatar}
-                                                        />
-
-                                                        <Rnd
-                                                            bounds="parent"
-                                                            size={{ width, height }}
-                                                            position={position}
-                                                            onResize={handleResize}
-                                                            onDragStop={handleDragStop}
-                                                            onDragStart={handleDragStart}
-                                                            lockAspectRatio={aspectRatio}
-                                                            minWidth={minWidth}
-                                                            minHeight={minHeight / aspectRatio}
-                                                            maxWidth={maxWidth}
-                                                            maxHeight={maxHeight / aspectRatio}
-                                                            enableResizing={{
-                                                                bottomRight: true,
-                                                                bottomLeft: true,
-                                                                topRight: true,
-                                                                topLeft: true,
-                                                            }}
-                                                        >
-                                                            <div
-                                                                className={cn(styles.createProductPositionImage, {
-                                                                    [styles.opacity]: draggable,
-                                                                })}
-                                                            >
-                                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                                <img
-                                                                    src={productImagePreview.toString()}
-                                                                    alt="image"
-                                                                    ref={imageRef}
-                                                                    onLoad={() => {
-                                                                        if (imageRef.current) {
-                                                                            const img = imageRef.current;
-                                                                            const aspectRatio =
-                                                                                img.naturalWidth / img.naturalHeight;
-                                                                            setAspectRatio(aspectRatio);
-
-                                                                            if (img.naturalHeight > maxHeight) {
-                                                                                setHeight(maxHeight);
-                                                                                setWidth(maxHeight / aspectRatio);
-                                                                            } else if (img.naturalWidth > maxWidth) {
-                                                                                setWidth(maxWidth);
-                                                                                setHeight(maxWidth / aspectRatio);
-                                                                            } else {
-                                                                                setWidth(img.naturalWidth);
-                                                                                setHeight(
-                                                                                    img.naturalWidth / aspectRatio,
-                                                                                );
-                                                                            }
-                                                                        }
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </Rnd>
-                                                    </div>
-
-                                                    <PositionController
-                                                        position={position}
-                                                        setPosition={setPosition}
-                                                        maxWidth={maxWidth}
-                                                        maxHeight={maxHeight}
-                                                        width={width}
-                                                        height={height}
-                                                    />
-                                                </>
-                                            )}
-                                        </>
-                                    )}
-
-                                    {view === 'animation' && (
-                                        <>
-                                            <File
-                                                id="productAnimation"
-                                                setFile={setProductAnimationFile}
-                                                accept=".json"
-                                            />
-
-                                            <label htmlFor="productAnimation" className={styles.createProductAnimation}>
-                                                <FileEmpty />
-                                                {productAnimationFile ? productAnimationFile.name : 'Выберите файл'}
-
-                                                {productAnimationFile && (
-                                                    <IconButton
-                                                        small
-                                                        circle
-                                                        variant="danger"
-                                                        className={styles.createProductImageDelete}
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            setProductAnimationFile(null);
-                                                            setAnimationData(null);
-                                                        }}
-                                                    >
-                                                        <Delete />
-                                                    </IconButton>
-                                                )}
-                                            </label>
-
-                                            {animationError && (
-                                                <Text
-                                                    variant="text2"
-                                                    fontWeight={600}
-                                                    style={{ color: 'var(--error)' }}
-                                                >
-                                                    {animationError}
-                                                </Text>
-                                            )}
-
-                                            {animationData && (
-                                                <>
-                                                    <Text variant="text2" fontWeight={500} center>
-                                                        Выберите позицию товара
-                                                    </Text>
-
-                                                    <div className={styles.createProductPosition}>
-                                                        <Badge
-                                                            image={avatar}
-                                                            text={nickname}
-                                                            style={{ width: 92, height: 92 }}
-                                                            className={styles.createProductCurrentAvatar}
-                                                        />
-
-                                                        <Rnd
-                                                            bounds="parent"
-                                                            size={{ width, height }}
-                                                            position={position}
-                                                            onResize={handleResize}
-                                                            onDragStop={handleDragStop}
-                                                            onDragStart={handleDragStart}
-                                                            lockAspectRatio={aspectRatio}
-                                                            minWidth={minWidth}
-                                                            minHeight={minHeight / aspectRatio}
-                                                            maxWidth={maxWidth}
-                                                            maxHeight={maxHeight / aspectRatio}
-                                                            enableResizing={{
-                                                                bottomRight: true,
-                                                                bottomLeft: true,
-                                                                topRight: true,
-                                                                topLeft: true,
-                                                            }}
-                                                        >
-                                                            <div
-                                                                className={cn(styles.createProductPositionImage, {
-                                                                    [styles.opacity]: draggable,
-                                                                })}
-                                                            >
-                                                                <Lottie
-                                                                    animationData={animationData}
-                                                                    className={styles.createProductAnimationPreview}
-                                                                    ref={imageRef}
-                                                                />
-                                                            </div>
-                                                        </Rnd>
-                                                    </div>
-
-                                                    <PositionController
-                                                        position={position}
-                                                        setPosition={setPosition}
-                                                        maxWidth={maxWidth}
-                                                        maxHeight={maxHeight}
-                                                        width={width}
-                                                        height={height}
-                                                    />
-                                                </>
-                                            )}
-                                        </>
-                                    )}
-                                </>
+                                <AvatarDecorationCreate
+                                    view={view}
+                                    setView={setView}
+                                    width={width}
+                                    setWidth={setWidth}
+                                    height={height}
+                                    setHeight={setHeight}
+                                    position={position}
+                                    setPosition={setPosition}
+                                    productAnimationFile={productAnimationFile}
+                                    setProductAnimationFile={setProductAnimationFile}
+                                    productImage={productImage}
+                                    setProductImage={setProductImage}
+                                />
                             )}
+
                             {type === 'theme' && (
-                                <>
-                                    <ColorPickerInput
-                                        title="Основной цвет"
-                                        hexString={textHexString}
-                                        value={textColor}
-                                        format={textColorFormatHex}
-                                        onFormatChange={setTextColorFormatHex}
-                                        onChangeComplete={(color) => setTextColor(color)}
-                                    />
-
-                                    <ColorPickerInput
-                                        title="Фоновый цвет"
-                                        hexString={backgroundHexString}
-                                        value={backgroundColor}
-                                        format={backgroundColorFormatHex}
-                                        onFormatChange={setBackgroundColorFormatHex}
-                                        onChangeComplete={(color) => setBackgroundColor(color)}
-                                    />
-
-                                    <div className={styles.themePreviewBlock}></div>
-                                </>
+                                <ThemeCreate
+                                    textHexString={textHexString}
+                                    backgroundHexString={backgroundHexString}
+                                    textColor={textColor}
+                                    backgroundColor={backgroundColor}
+                                    setTextColor={setTextColor}
+                                    setBackgroundColor={setBackgroundColor}
+                                />
                             )}
                         </>
                     )}

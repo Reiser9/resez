@@ -106,7 +106,7 @@ const AdminRolePage = () => {
                             </IconButton>
                         }
                     >
-                        <MenuLink onClick={() => router.push(`edit/${id}`)}>
+                        <MenuLink href={`edit/${id}`}>
                             <Edit />
                             Редактировать
                         </MenuLink>

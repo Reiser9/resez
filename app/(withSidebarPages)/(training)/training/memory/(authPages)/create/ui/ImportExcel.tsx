@@ -111,15 +111,16 @@ const ImportExcel: React.FC<Props> = ({ valueModal, setValueModal, scrollBottom,
                                 <p className={styles.cardCollectionExcelPointNumber}>2</p>
 
                                 <Text fontWeight={600}>
-                                    Напомним, что максимальное число карточек в коллекции для вас - 100, если в вашем
-                                    файле их будет больше, то импортируются лишь 100
+                                    Напомним, что максимальное число карточек в коллекции -{' '}
+                                    {CONFIG.MAX_PAIRS_COUNT}, если в вашем файле их будет больше, то импортируются лишь{' '}
+                                    {CONFIG.MAX_PAIRS_COUNT}
                                 </Text>
                             </div>
 
                             <div className={styles.cardCollectionExcelPoint}>
                                 <p className={styles.cardCollectionExcelPointNumber}>3</p>
 
-                                <Text fontWeight={600}>Пример как должен выглядеть файл вы можете наблюдать слева</Text>
+                                <Text fontWeight={600}>Пример как должен выглядеть файл изображен на картинке</Text>
                             </div>
                         </div>
                     </div>

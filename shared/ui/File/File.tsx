@@ -10,9 +10,10 @@ type Props = {
     setFile?: (value: File) => void;
     setImgPreview?: (value: string | ArrayBuffer | null) => void;
     onChange?: (file: File) => void;
+    onImageLoad?: (width: number, height: number) => void;
 };
 
-const File: React.FC<Props> = ({ id, accept, setFile, setImgPreview, onChange }) => {
+const File: React.FC<Props> = ({ id, accept, setFile, setImgPreview, onChange, onImageLoad }) => {
     const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || !e.target.files[0]) {
             return;
@@ -27,6 +28,16 @@ const File: React.FC<Props> = ({ id, accept, setFile, setImgPreview, onChange })
 
         fileReader.onloadend = () => {
             setImgPreview && setImgPreview(fileReader.result);
+
+            const img = new Image();
+            img.src = fileReader.result as string;
+
+            img.onload = () => {
+                const { width, height } = img;
+
+                onImageLoad && onImageLoad(width, height);
+            };
+
             e.target.value = '';
         };
     };

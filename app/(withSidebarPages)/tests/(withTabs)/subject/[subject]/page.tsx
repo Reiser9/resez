@@ -110,15 +110,15 @@ const TestsSubject = () => {
             </div>
 
             <div className={base.baseWrapperGap12}>
-                <Text variant="h4">Каталог заданий</Text>
+                <Text variant="h4">Каталог заданий {!!taskCatalog?.tasksCount && `(${taskCatalog?.tasksCount})`}</Text>
 
                 <div className={base.contentItems}>
                     {taskCatalogIsLoading ? (
                         [...Array(4)].map((_, id) => <CatalogItemSkeleton key={id} />)
                     ) : taskCatalogError ? (
-                        <NotContent text="Ошибка при загрузке тестов" danger icon={<Cross />} />
-                    ) : !!taskCatalog?.length ? (
-                        taskCatalog.map((data) => <CatalogItem key={data.id} data={data} />)
+                        <NotContent text="Ошибка при загрузке заданий" danger icon={<Cross />} />
+                    ) : !!taskCatalog?.subjectTasks.length ? (
+                        taskCatalog.subjectTasks.map((data) => <CatalogItem key={data.id} data={data} />)
                     ) : (
                         <NotContent text="Заданий не найдено" />
                     )}

@@ -121,7 +121,7 @@ const AdminPromo = () => {
                             )}
                         </div>
 
-                        {hasNextPage && (
+                        {!isError && hasNextPage && (
                             <Button
                                 auto
                                 onClick={fetchNextPage}

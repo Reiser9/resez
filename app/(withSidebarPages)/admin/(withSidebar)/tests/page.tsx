@@ -104,7 +104,7 @@ const AdminTests = () => {
                             )}
                         </div>
 
-                        {hasNextPage && (
+                        {!isError && hasNextPage && (
                             <Button
                                 auto
                                 onClick={fetchNextPage}
