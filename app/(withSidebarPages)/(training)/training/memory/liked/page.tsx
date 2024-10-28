@@ -80,7 +80,7 @@ const MemoryLiked = () => {
                     ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data?.pages[0]?.totalCount === 0 ? (
-                        searchValue ? (
+                        debounceSearch ? (
                             <NotContent text="По вашему запросу коллекций не найдено" />
                         ) : (
                             <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />

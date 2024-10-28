@@ -42,7 +42,7 @@ const TaskTestItem: React.FC<Props> = ({
     removeCallback = () => {},
     verify = false,
 }) => {
-    const { task, solution, answers, subjectTask, id, source, subTheme, subject, isVerified } = data || {};
+    const { task, solution, subjectTask, id, source, subTheme, subject, isVerified, answers } = data || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');

@@ -89,7 +89,7 @@ const MemoryMy = () => {
                     ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
                     ) : data?.pages[0]?.totalCount === 0 ? (
-                        searchValue ? (
+                        debounceSearch ? (
                             <NotContent text="По вашему запросу коллекций не найдено" />
                         ) : (
                             <NotContent text="Коллекций не найдено">

@@ -34,6 +34,7 @@ export type SubjectTaskById = SubjectTask & {
     userAnswer: string;
     isCorrect: boolean;
     primaryScore: number;
+    answers: string[];
 };
 
 export type PagginationTasks = Paggination & {
