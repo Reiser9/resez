@@ -16,6 +16,9 @@ import { TaskItemResult } from '@/entities/task/ui';
 import { BackButton, Button } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { TextPoint } from '@/shared/ui/TextPoint';
+import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
+import { Cross } from '@/shared/icons';
 
 const TestsHistoryId = () => {
     const { id } = useParams();
@@ -40,6 +43,14 @@ const TestsHistoryId = () => {
         tasks,
         user,
     } = data || {};
+
+    if (isLoading) {
+        return <Preloader page />;
+    }
+
+    if (isError) {
+        return <NotContent text="Произошла ошибка при загрузке данных" danger icon={<Cross />} />;
+    }
 
     return (
         <>

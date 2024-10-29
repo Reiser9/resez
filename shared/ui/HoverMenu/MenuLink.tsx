@@ -22,6 +22,10 @@ const MenuLink: React.FC<Props> = ({ danger = false, disabled = false, className
             [styles.disabled]: disabled,
         });
 
+        if (disabled) {
+            return <button className={defaultClasses}>{children}</button>;
+        }
+
         if (href) {
             return (
                 <Link className={defaultClasses} href={href}>

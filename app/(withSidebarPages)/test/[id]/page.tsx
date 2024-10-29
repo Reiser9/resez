@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { useParams } from 'next/navigation';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -73,7 +73,7 @@ const TestPage = () => {
     const {
         data,
         isPending,
-        isError: adminTasksIsLoading,
+        isError: adminTasksError,
         fetchNextPage,
         isFetchingNextPage,
         hasNextPage,
@@ -98,21 +98,25 @@ const TestPage = () => {
         setSwapModal(true);
     };
 
-    const toggleVerifyHandler = (id: number) => {
-        toggleVerify(id, revalidateRequest);
-    };
+    const toggleVerifyMutation = useMutation({
+        mutationFn: async (id: number) => {
+            await toggleVerify(id, revalidateRequest);
+        },
+    });
 
-    const swapTaskHandler = (newTaskId: number) => {
-        if (!currentTaskId) return;
+    const swapTaskMutation = useMutation({
+        mutationFn: async (newTaskId: number) => {
+            if (!currentTaskId) return;
 
-        swapTask(String(id), currentTaskId, newTaskId, () => {
-            revalidateRequest();
-            revalidateTest();
-            setSubjectTaskId(null);
-            setCurrentTaskId(null);
-            setSwapModal(false);
-        });
-    };
+            await swapTask(String(id), currentTaskId, newTaskId, () => {
+                revalidateRequest();
+                revalidateTest();
+                setSubjectTaskId(null);
+                setCurrentTaskId(null);
+                setSwapModal(false);
+            });
+        },
+    });
 
     if (testIsLoading) {
         return <Preloader page />;
@@ -157,6 +161,8 @@ const TestPage = () => {
                 <Modal title="Заменить задание" value={swapModal} setValue={setSwapModal}>
                     {isPending ? (
                         <Preloader small page />
+                    ) : adminTasksError ? (
+                        <NotContent icon={<Cross />} danger text="Произошла ошибка при загрузке данных" />
                     ) : data?.pages[0]?.totalCount ? (
                         <div className={cn(base.baseWrapperGap16, base.aic)}>
                             <div className={base.contentItems}>
@@ -171,14 +177,14 @@ const TestPage = () => {
                                             verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
                                             swap={checkPermission(permissions || [], [PERMISSIONS.TESTS])}
                                             archiveCallback={() => archiveTask(data.id, revalidateRequest)}
-                                            toggleVerify={() => toggleVerifyHandler(data.id)}
-                                            swapCallback={() => swapTaskHandler(data.id)}
+                                            toggleVerify={() => toggleVerifyMutation.mutate(data.id)}
+                                            swapCallback={() => swapTaskMutation.mutate(data.id)}
                                         />
                                     )),
                                 )}
                             </div>
 
-                            {!isError && hasNextPage && (
+                            {!adminTasksError && hasNextPage && (
                                 <Button
                                     auto
                                     onClick={fetchNextPage}

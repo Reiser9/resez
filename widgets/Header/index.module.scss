@@ -40,6 +40,23 @@
     gap: 8px;
 }
 
+.headerAvatarWrapper{
+    position: relative;
+}
+
+.headerSubscriptionLogo{
+    position: absolute;
+    bottom: -2px;
+    left: -2px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+}
+
+.headerSubscriptionLogo svg{
+    width: 100%;
+}
+
 .headerProfileImgInner,
 .headerProfileMenuImgInner {
     width: 40px;

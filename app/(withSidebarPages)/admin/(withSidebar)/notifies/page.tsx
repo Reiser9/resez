@@ -128,7 +128,6 @@ const AdminNotifies = () => {
     };
 
     const createNotifyMutation = useMutation({
-        mutationKey: ['admin_notify'],
         mutationFn: () => createNotify(),
     });
 

@@ -76,7 +76,11 @@ const TaskItem: React.FC<Props> = ({
 
     return (
         <>
-            <div className={styles.taskItem}>
+            <div
+                className={cn(styles.taskItem, {
+                    [styles.active]: current,
+                })}
+            >
                 <div className={base.baseWrapperGap12}>
                     <div className={cn(base.titleInnerNowrap, base.aifs)}>
                         <Link prefetch={false} href={href ? href : `/task/${id}`} className={styles.taskItemWrapper}>
@@ -102,7 +106,7 @@ const TaskItem: React.FC<Props> = ({
                                 setValue={setActionMenu}
                             >
                                 {swap && (
-                                    <MenuLink onClick={swapCallback}>
+                                    <MenuLink onClick={swapCallback} disabled={current}>
                                         <Swap />
                                         Заменить
                                     </MenuLink>
@@ -216,6 +220,22 @@ const TaskItem: React.FC<Props> = ({
                                 style={{ width: `${matchPercent}%` }}
                             ></div>
                         </div>
+                    </div>
+                )}
+
+                {swap && (
+                    <div className={base.baseWrapperGap12}>
+                        <Text fontWeight={600}>Используется в тестах: {testsCount}</Text>
+
+                        {!!tests.length && (
+                            <div className={base.baseWrapperGap8}>
+                                {tests.map((data) => (
+                                    <Link key={data.id} href={`/test/${data.id}`} className={styles.testsUseLink}>
+                                        Тест #{data.id} - {data.subject}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

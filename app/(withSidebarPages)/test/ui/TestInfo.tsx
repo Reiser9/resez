@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Tooltip } from 'antd';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
@@ -57,6 +57,10 @@ const TestInfo: React.FC<Props> = ({ data }) => {
     const { id: authorId, nickname, avatar } = user || {};
 
     const { id: userId } = userInfo?.user || {};
+
+    const deleteTestMutation = useMutation({
+        mutationFn: async () => await deleteTest(String(testId), () => router.replace('/tests')),
+    });
 
     return (
         <>
@@ -187,7 +191,8 @@ const TestInfo: React.FC<Props> = ({ data }) => {
                     value={confirmDelete}
                     setValue={setConfirmDelete}
                     text="Вы действительно хотите удалить тест?"
-                    callback={() => deleteTest(String(testId), () => router.replace('/tests'))}
+                    callback={() => deleteTestMutation.mutate()}
+                    loading={deleteTestMutation.isPending}
                 />
             )}
         </>

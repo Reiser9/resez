@@ -17,6 +17,7 @@ import {
     Moon,
     Notify,
     ResCoin,
+    ResezPremium,
     Snowflake,
     Ticket,
     Trophy,
@@ -40,6 +41,7 @@ import { Badge } from '@/shared/ui/Badge';
 import { Input } from '@/shared/ui/Input';
 import { Button } from '@/shared/ui/Button';
 import { PromocodeReward } from '@/entities/promocode';
+import Image from 'next/image';
 
 type Props = {
     empty?: boolean;
@@ -78,14 +80,15 @@ const Header: React.FC<Props> = ({ empty = false }) => {
         enabled: isAuth,
     });
 
-    const { data: user, isLoading: userIsLoading } = useQuery({
+    const { data: user } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
         enabled: isAuth,
     });
 
-    const { avatar, levelInfo, nickname, balance } = user?.user || {};
+    const { avatar, levelInfo, nickname, balance, subscription } = user?.user || {};
     const { level } = levelInfo || {};
+    const { icon, subscription: subscriptionName } = subscription || {};
 
     const closeProfileMenu = () => {
         setProfileMenu(false);
@@ -148,12 +151,25 @@ const Header: React.FC<Props> = ({ empty = false }) => {
                                 <div className={styles.headerProfileWrap} onClick={toggleMenuProfile}>
                                     {isAuth ? (
                                         <>
-                                            <Badge
-                                                isUserAvatar
-                                                image={avatar}
-                                                text={nickname}
-                                                dot={!!unreadNotifiesCount}
-                                            />
+                                            <div className={styles.headerAvatarWrapper}>
+                                                <Badge
+                                                    isUserAvatar
+                                                    image={avatar}
+                                                    text={nickname}
+                                                    dot={!!unreadNotifiesCount}
+                                                />
+
+                                                {!!subscription && icon && (
+                                                    <div className={styles.headerSubscriptionLogo}>
+                                                        <Image
+                                                            src={icon}
+                                                            alt={`${subscriptionName}`}
+                                                            width={20}
+                                                            height={20}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
 
                                             <Text className={styles.headerProfileNick}>{nickname}</Text>
                                         </>

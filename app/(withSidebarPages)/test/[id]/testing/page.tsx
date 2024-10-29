@@ -12,7 +12,7 @@ import styles from './index.module.scss';
 
 import type { TestResult } from '@/entities/test';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
-import { Pause, Play, Reload } from '@/shared/icons';
+import { Cross, Pause, Play, Reload } from '@/shared/icons';
 import { useTest } from '@/features/test';
 import { TaskTestItem, TaskTestItemWithAnswer } from '@/entities/task/ui';
 import { formatMinutes } from '@/shared/utils/formatMinutes';
@@ -28,6 +28,7 @@ import { TextPoint } from '@/shared/ui/TextPoint';
 import { Button } from '@/shared/ui/Button';
 import { ConfirmModal } from '@/shared/ui/Modal';
 import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
 
 type TaskAnswer = { id: string | number; answer: string };
 type TaskDetailed = { id: string | number; primaryScore: number | string };
@@ -177,6 +178,12 @@ const TestingTestById = () => {
                                 {step === 1 &&
                                     (testIsLoading ? (
                                         <Preloader page small />
+                                    ) : isError ? (
+                                        <NotContent
+                                            danger
+                                            text="Произошла ошибка при загрузке теста"
+                                            icon={<Cross />}
+                                        />
                                     ) : (
                                         !!tasks?.length &&
                                         tasks?.map((data, id) => (
@@ -302,7 +309,7 @@ const TestingTestById = () => {
                                     </div>
                                 )}
 
-                                {step < 3 && !detailedAnswerTasksIsLoading && !testIsLoading && (
+                                {!isError && step < 3 && !detailedAnswerTasksIsLoading && !testIsLoading && (
                                     <div className={styles.taskTestButtons}>
                                         {step > 1 && (
                                             <Button auto variant="light" onClick={backHandler}>
@@ -326,46 +333,55 @@ const TestingTestById = () => {
                             </div>
 
                             <InfoSidebar value={sidebarActive} setValue={setSidebarActive}>
-                                {step !== 3 && (
-                                    <div className={styles.testInfoWrapper}>
-                                        <TextPoint title="Прошло:" className={styles.testInfoItem}>
-                                            <Text variant="h4">{formatTime(elapsedTime)}</Text>
+                                {isError ? (
+                                    <NotContent danger icon={<Cross />} text="Произошла ошибка при загрузке теста" />
+                                ) : (
+                                    <>
+                                        {step !== 3 && (
+                                            <div className={styles.testInfoWrapper}>
+                                                <TextPoint title="Прошло:" className={styles.testInfoItem}>
+                                                    <Text variant="h4">{formatTime(elapsedTime)}</Text>
+                                                </TextPoint>
+
+                                                <TextPoint title="Осталось:" className={styles.testInfoItem}>
+                                                    <Text variant="h4">{formatTime(remainingTime)}</Text>
+                                                </TextPoint>
+                                            </div>
+                                        )}
+
+                                        <TextPoint title="Предмет:">
+                                            <Text variant="h4">{subject}</Text>
                                         </TextPoint>
 
-                                        <TextPoint title="Осталось:" className={styles.testInfoItem}>
-                                            <Text variant="h4">{formatTime(remainingTime)}</Text>
+                                        <TextPoint title="Длительность экзамена:">
+                                            <Text variant="h4">{formatMinutes(durationMinutes)}</Text>
                                         </TextPoint>
-                                    </div>
-                                )}
 
-                                <TextPoint title="Предмет:">
-                                    <Text variant="h4">{subject}</Text>
-                                </TextPoint>
+                                        {step === 1 && (
+                                            <div className={styles.testInfoButtons}>
+                                                <button
+                                                    className={styles.testInfoButton}
+                                                    onClick={togglePauseCountdown}
+                                                >
+                                                    {!isPaused ? <Pause /> : <Play />}
 
-                                <TextPoint title="Длительность экзамена:">
-                                    <Text variant="h4">{formatMinutes(durationMinutes)}</Text>
-                                </TextPoint>
+                                                    {!isPaused ? 'Пауза' : 'Продолжить'}
+                                                </button>
 
-                                {step === 1 && (
-                                    <div className={styles.testInfoButtons}>
-                                        <button className={styles.testInfoButton} onClick={togglePauseCountdown}>
-                                            {!isPaused ? <Pause /> : <Play />}
-
-                                            {!isPaused ? 'Пауза' : 'Продолжить'}
-                                        </button>
-
-                                        <button
-                                            className={cn(styles.testInfoButton, styles.danger)}
-                                            onClick={() => {
-                                                pause();
-                                                setSidebarActive(false);
-                                                setConfirmRestart(true);
-                                            }}
-                                        >
-                                            <Reload />
-                                            Начать заново
-                                        </button>
-                                    </div>
+                                                <button
+                                                    className={cn(styles.testInfoButton, styles.danger)}
+                                                    onClick={() => {
+                                                        pause();
+                                                        setSidebarActive(false);
+                                                        setConfirmRestart(true);
+                                                    }}
+                                                >
+                                                    <Reload />
+                                                    Начать заново
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </InfoSidebar>
                         </div>

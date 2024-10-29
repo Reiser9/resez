@@ -53,7 +53,6 @@ const SubscriptionBlock: React.FC<Props> = ({ subscription }) => {
     };
 
     const removeUserSubscriptionMutation = useMutation({
-        mutationKey: ['remove_subscription_of_user'],
         mutationFn: async () => {
             await removeUserSubscription(String(id), () => {
                 setSubscriptionId(null);
@@ -65,7 +64,6 @@ const SubscriptionBlock: React.FC<Props> = ({ subscription }) => {
     });
 
     const assignSubscriptionMutation = useMutation({
-        mutationKey: ['assign_subscription_to_user'],
         mutationFn: async () => {
             if (!subscriptionId) {
                 return alertNotify('Предупреждение', 'Подписка не может быть пустой', 'warn');

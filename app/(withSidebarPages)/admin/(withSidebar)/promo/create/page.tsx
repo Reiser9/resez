@@ -65,7 +65,6 @@ const AdminCreatePromo = () => {
     };
 
     const createPromocodeMutation = useMutation({
-        mutationKey: ['admin_create_promocode'],
         mutationFn: () => createPromocodeHandler(),
     });
 

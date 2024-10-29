@@ -8,6 +8,11 @@
     align-items: flex-start;
     gap: 24px;
     position: relative;
+    border: 2px solid var(--input);
+}
+
+.taskItem.active{
+    border: 2px solid var(--main);
 }
 
 .taskItemWrapper{
@@ -53,6 +58,11 @@
     overflow: hidden;
 }
 
+.testsUseLink{
+    font-weight: 600;
+    color: var(--main);
+}
+
 .taskTestItem{
     width: 100%;
     display: flex;
@@ -63,18 +73,19 @@
     border-radius: 4px;
     background: var(--input);
     position: relative;
+    border: 2px solid transparent
 }
 
 .taskTestItem.correct{
-    border: 1px solid var(--success);
+    border: 2px solid var(--success);
 }
 
 .taskTestItem.wrong{
-    border: 1px solid var(--error);
+    border: 2px solid var(--error);
 }
 
 .taskTestItem.partTrue{
-    border: 1px solid var(--warn);
+    border: 2px solid var(--warn);
 }
 
 .taskTestItemAnswer{

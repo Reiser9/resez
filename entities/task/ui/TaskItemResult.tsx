@@ -33,7 +33,7 @@ const TaskItemResult: React.FC<Props> = ({ data }) => {
         <div
             className={cn(styles.taskTestItem, {
                 [styles.wrong]: isCorrect === false || primaryScore === 0,
-                [styles.correct]: isCorrect,
+                [styles.correct]: isCorrect || primaryScore === taskPrimaryScore,
                 [styles.partTrue]: primaryScore > 0 && primaryScore < taskPrimaryScore,
             })}
         >
@@ -46,7 +46,7 @@ const TaskItemResult: React.FC<Props> = ({ data }) => {
                     {subTheme?.subTheme && <p className={styles.taskTheme}>{subTheme.subTheme}</p>}
                 </Link>
 
-                {isCorrect && (
+                {(isCorrect || primaryScore === taskPrimaryScore) && (
                     <Text fontWeight={600} color="success">
                         Верно
                     </Text>

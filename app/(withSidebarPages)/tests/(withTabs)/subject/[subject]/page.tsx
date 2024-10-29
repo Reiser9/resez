@@ -6,7 +6,7 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Cross, Tests } from '@/shared/icons';
+import { Cross, Plus, Tests } from '@/shared/icons';
 import CatalogItem from './CatalogItem';
 import { useTest } from '@/features/test';
 import { TestItem } from '@/entities/test/ui';
@@ -19,7 +19,8 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { NotContent } from '@/shared/ui/NotContent';
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
+import { Button, IconButton } from '@/shared/ui/Button';
+import { Tooltip } from 'antd';
 
 const TestsSubject = () => {
     const { subject } = useParams();
@@ -70,17 +71,25 @@ const TestsSubject = () => {
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.baseWrapperGap12}>
-                <div className={base.titleInner}>
+                <div className={base.titleInner} style={{ minHeight: 38 }}>
                     <Text variant="h4">
                         Варианты от ResEz{' '}
                         {!isError && !isPending && !!data?.pages[0]?.totalCount && `(${data?.pages[0].totalCount})`}
                     </Text>
 
-                    {Number(data?.pages[0]?.totalCount) > 3 && (
-                        <Button auto small variant="light" href={`/tests/subject/${subject}/recommended`}>
-                            Смотреть все
-                        </Button>
-                    )}
+                    <div className={base.titleWrapper}>
+                        {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && <Tooltip title="Создать">
+                            <IconButton circle small variant="light" href="/admin/tests/create">
+                                <Plus />
+                            </IconButton>
+                        </Tooltip>}
+
+                        {Number(data?.pages[0]?.totalCount) > 3 && (
+                            <Button auto small variant="light" href={`/tests/subject/${subject}/recommended`}>
+                                Смотреть все
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 <div className={base.contentItems}>
