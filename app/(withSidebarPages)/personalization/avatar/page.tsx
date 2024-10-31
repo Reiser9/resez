@@ -60,7 +60,11 @@ const PersonalizationAvatar = () => {
                     )}
                 </div>
             ) : (
-                <NotContent text="Украшений аватарок не найдено" />
+                <NotContent text="Украшений аватарок не найдено">
+                    <Button href="/store/personalization/avatar" variant="light">
+                        В магазин
+                    </Button>
+                </NotContent>
             )}
 
             {!isError && hasNextPage && (

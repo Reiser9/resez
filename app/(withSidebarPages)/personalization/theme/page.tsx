@@ -61,7 +61,11 @@ const PersonalizationTheme = () => {
                     )}
                 </div>
             ) : (
-                <NotContent text="Тем не найдено" />
+                <NotContent text="Тем не найдено">
+                    <Button href="/store/personalization/theme" variant="light">
+                        В магазин
+                    </Button>
+                </NotContent>
             )}
 
             {!isError && hasNextPage && (
