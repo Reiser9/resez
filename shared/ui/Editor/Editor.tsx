@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from 'react';
 import Embed from '@editorjs/embed';
@@ -48,7 +48,7 @@ export interface EditorCore {
 const Editor: React.FC<Props> = (props) => {
     const { placeholder = '', id = '', minHeight = 60, title, editorRef, onReady, ...editorProps } = props;
 
-    const { uploadImageOnServerByFile, uploadImageOnServerByUrl, uploadFile } = useFile();
+    const { uploadImageOnServerByUrl, uploadFile } = useFile();
 
     const handleInitialize = React.useCallback(
         (instance: EditorCore) => {
@@ -57,18 +57,7 @@ const Editor: React.FC<Props> = (props) => {
         [editorRef],
     );
 
-    const uploadImageByFile = async (file: File) => {
-        console.log(file);
-        
-        const formData = new FormData();
-        formData.append('file', file);
-
-        return await uploadImageOnServerByFile(formData);
-    };
-
     const uploadImageByUrl = async (url: string) => {
-        console.log(url);
-        
         return await uploadImageOnServerByUrl(url);
     };
 
@@ -92,8 +81,8 @@ const Editor: React.FC<Props> = (props) => {
             class: Image,
             config: {
                 uploader: {
-                    uploadImageByFile,
-                    uploadImageByUrl,
+                    uploadByFile: uploadFileHandler,
+                    uploadByUrl: uploadImageByUrl,
                 },
             },
         },

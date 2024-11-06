@@ -20,7 +20,7 @@ import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { PromocodeItem } from '@/entities/promocode/ui';
 import { TestItemSkeleton } from '@/shared/ui/Skeleton';
-import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';
+import { ScrollWithArrows } from '@/shared/ui/ScrollWithArrows';
 
 const AdminPromo = () => {
     const queryClient = useQueryClient();
@@ -55,7 +55,7 @@ const AdminPromo = () => {
     return (
         <PrivateWrapper permissions={[PERMISSIONS.PROMOCODES]}>
             <div className={base.baseWrapperGap16}>
-                <ScrollWithArrow>
+                <ScrollWithArrows>
                     <Link
                         href="/admin/promo"
                         prefetch={false}
@@ -77,7 +77,7 @@ const AdminPromo = () => {
                     >
                         Завершенные
                     </Link>
-                </ScrollWithArrow>
+                </ScrollWithArrows>
 
                 <div className={base.titleInner}>
                     <div className={base.titleWrapper}>

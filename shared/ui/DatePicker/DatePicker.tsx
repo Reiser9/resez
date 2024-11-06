@@ -3,7 +3,7 @@
 import React from 'react';
 import moment from 'moment-timezone';
 import cn from 'classnames';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker as DatePickerAnt } from 'antd';
 import { DatePickerProps } from 'antd/lib';
 
@@ -21,8 +21,8 @@ type Props = {
     children?: React.ReactNode;
     wrapperClass?: string;
     className?: string;
-    value?: Dayjs | null;
-    setValue: (value: Dayjs | undefined | null) => void;
+    value: Dayjs | null;
+    setValue: React.Dispatch<React.SetStateAction<Dayjs | null>>
 } & DatePickerProps;
 
 const DatePicker: React.FC<Props> = ({

@@ -14,13 +14,13 @@ import base from '@/shared/styles/base.module.scss';
 import styles from '../../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection/model';
-import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
-import { Excel } from '@/shared/icons';
 import useAlert from '@/shared/hooks/useAlert';
-import { useCollections, useHandlers } from '@/features/collection';
 import ImportExcel from '../../create/ui/ImportExcel';
 import PairItem from '../../create/ui/PairItem';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
+import { Excel } from '@/shared/icons';
+import { useCollections, useHandlers } from '@/features/collection';
 import { CONFIG } from '@/shared/consts/CONFIG';
 
 import { Button, IconButton } from '@/shared/ui/Button';

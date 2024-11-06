@@ -1,7 +1,7 @@
 import { Dayjs } from 'dayjs';
 import moment from 'moment-timezone';
 
-export const isDateTimePast = (date?: Dayjs | null, time?: Dayjs) => {
+export const isDateTimePast = (date?: Dayjs | null, time?: Dayjs | null) => {
     if (!date || !time) {
         return;
     }

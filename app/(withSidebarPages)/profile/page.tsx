@@ -16,7 +16,7 @@ import { useProfileData } from '@/features/user';
 import { Block, Delete, DotsHorizontal, Edit, Message, Paintbruh, Qr, User } from '@/shared/icons';
 import useCopyText from '@/features/utils/useCopyText';
 import { Handshake } from '@/shared/icons/awards/Handshake';
-import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';
+import { ScrollWithArrows } from '@/shared/ui/ScrollWithArrows';
 import { useShortInfo } from '@/features/user';
 
 import { Badge } from '@/shared/ui/Badge';
@@ -163,7 +163,7 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* <ScrollWithArrow>
+            {/* <ScrollWithArrows>
                 {tabs.map((data, id) => (
                     <Link
                         key={id}
@@ -176,7 +176,7 @@ const ProfilePage = () => {
                         {data.name}
                     </Link>
                 ))}
-            </ScrollWithArrow> */}
+            </ScrollWithArrows> */}
 
             <NotContent text="Страница в доработке" />
 

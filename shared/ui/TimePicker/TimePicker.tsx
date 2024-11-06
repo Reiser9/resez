@@ -16,8 +16,8 @@ type Props = {
     placeholder?: string;
     title?: string;
     format?: string;
-    value?: Dayjs;
-    setValue: (value?: Dayjs) => void;
+    value: Dayjs | null;
+    setValue: (value: Dayjs | null) => void;
     wrapperClass?: string;
 } & TimePickerProps;
 
@@ -39,7 +39,7 @@ const TimePicker: React.FC<Props> = ({
                 format={format}
                 style={{ width: '100%' }}
                 value={value}
-                onChange={(e) => setValue(e ?? undefined)}
+                onChange={(e) => setValue(e ?? null)}
                 suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
                 {...props}
             />

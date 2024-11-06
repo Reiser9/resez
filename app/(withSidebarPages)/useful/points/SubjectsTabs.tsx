@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 
-import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
+import ScrollWithArrows from '@/shared/ui/ScrollWithArrows/ScrollWithArrows';
 import { useSubjects } from '@/features/subjects';
 import { ScrollSkeleton } from '@/shared/ui/Skeleton';
 

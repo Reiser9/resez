@@ -7,14 +7,14 @@ import { useParams, usePathname } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';
+import { ScrollWithArrows } from '@/shared/ui/ScrollWithArrows';
 
 const AdminUserTabs = () => {
     const { id } = useParams();
     const pathname = usePathname();
 
     return (
-        <ScrollWithArrow>
+        <ScrollWithArrows>
             <Link
                 href={`/admin/users/${id}`}
                 prefetch={false}
@@ -69,7 +69,7 @@ const AdminUserTabs = () => {
             >
                 Активность
             </Link>
-        </ScrollWithArrow>
+        </ScrollWithArrows>
     );
 };
 

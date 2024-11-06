@@ -13,7 +13,7 @@ export type Message = {
         nickname: string;
         avatar: string;
     };
-    readCount: number;
+    readsCount: number;
 };
 
 export type ChatInfo = {

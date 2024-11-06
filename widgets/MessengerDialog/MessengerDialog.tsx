@@ -45,7 +45,7 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
         enabled: !!dialogId,
     });
 
-    const { data: user, isLoading: userIsLoading } = useQuery({
+    const { data: user } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
     });

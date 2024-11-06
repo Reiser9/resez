@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { ScrollWithArrow } from '@/shared/ui/ScrollWithArrow';
+import { ScrollWithArrows } from '@/shared/ui/ScrollWithArrows';
 
 type PersonalizationTab = {
     name: string;
@@ -33,7 +33,7 @@ const PersonalizationProfileTabs = () => {
     const pathname = usePathname();
 
     return (
-        <ScrollWithArrow>
+        <ScrollWithArrows>
             {personalizationTabs.map((data, id) => (
                 <Link
                     key={id}
@@ -47,7 +47,7 @@ const PersonalizationProfileTabs = () => {
                     {data.name}
                 </Link>
             ))}
-        </ScrollWithArrow>
+        </ScrollWithArrows>
     );
 };
 

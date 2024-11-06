@@ -36,7 +36,6 @@ const QRCodeWithTimer: React.FC<Props> = ({
                 color={theme === 'dark' ? '#fff' : '#000'}
                 status={loading ? 'loading' : qrExpired ? 'expired' : 'active'}
                 onRefresh={onRefresh}
-                type="svg"
             />
 
             {!!remainingTime && (

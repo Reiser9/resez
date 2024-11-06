@@ -61,7 +61,8 @@ const useRequest = () => {
             case 413:
                 alertNotify(
                     'Ошибка',
-                    `Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`,
+                    response.response?.data.message ||
+                        `Размер файла не должен превышать ${process.env.NEXT_PUBLIC_MAX_SIZE} MB`,
                     'error',
                 );
                 throw new Error('Размер файла слишком большой');

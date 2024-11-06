@@ -37,7 +37,7 @@ const SubscriptionBlock: React.FC<Props> = ({ subscription }) => {
     const [subscriptionAddModal, setSubscriptionAddModal] = React.useState(false);
     const [subscriptionId, setSubscriptionId] = React.useState<number | null>(null);
     const [isPermanentSubscription, setIsPermanentSubscription] = React.useState(false);
-    const [expiredDateSubscripion, setExpiredDateSubscripion] = React.useState<Dayjs | null>();
+    const [expiredDateSubscripion, setExpiredDateSubscripion] = React.useState<Dayjs | null>(null);
 
     const {
         data: subscriptionsData,

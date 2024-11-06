@@ -37,7 +37,7 @@ const genderValues: { label: string; value: GenderType }[] = [
 const ProfileData = () => {
     const [name, setName] = React.useState('');
     const [surname, setSurname] = React.useState('');
-    const [birthday, setBirthday] = React.useState<Dayjs | null>();
+    const [birthday, setBirthday] = React.useState<Dayjs | null>(null);
     const [sex, setSex] = React.useState<GenderType | null>(null);
     const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
 
@@ -59,12 +59,15 @@ const ProfileData = () => {
     };
 
     const saveData = () => {
-        saveProfileData({
-            firstName: name,
-            lastName: surname,
-            birthDate: birthday,
-            gender: sex,
-        }, revalidateProfile);
+        saveProfileData(
+            {
+                firstName: name,
+                lastName: surname,
+                birthDate: birthday,
+                gender: sex,
+            },
+            revalidateProfile,
+        );
     };
 
     React.useEffect(() => {
@@ -81,7 +84,7 @@ const ProfileData = () => {
 
             setName(firstName || '');
             setSurname(lastName || '');
-            setBirthday(birthDate ? dayjs(birthDate) : undefined);
+            setBirthday(birthDate ? dayjs(birthDate) : null);
             setSex(gender || null);
         }
     }, [data]);
@@ -177,7 +180,6 @@ const ProfileData = () => {
                             setValue={setName}
                             wrapperClass={styles.dataItem}
                             title="Имя"
-                            placeholder="Введите имя"
                             lengthLimit={20}
                             trackLength
                         />
@@ -186,7 +188,6 @@ const ProfileData = () => {
                             setValue={setSurname}
                             wrapperClass={styles.dataItem}
                             title="Фамилия"
-                            placeholder="Введите фамилию"
                             lengthLimit={30}
                             trackLength
                         />
@@ -198,7 +199,6 @@ const ProfileData = () => {
                         />
                         <Select<GenderType>
                             title="Пол"
-                            placeholder="Выберите пол"
                             value={sex}
                             setValue={setSex}
                             wrapperClass={styles.dataItem}

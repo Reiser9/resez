@@ -59,8 +59,8 @@ const AdminStoreCreate = () => {
     const [type, setType] = React.useState<ProductTypes | null>(null);
     const [price, setPrice] = React.useState('');
     const [subscriptionId, setSubscriptionId] = React.useState<number | null>(null);
-    const [startSeasonDate, setStartSeasonDate] = React.useState<Dayjs | null>();
-    const [endSeasonDate, setEndSeasonDate] = React.useState<Dayjs | null>();
+    const [startSeasonDate, setStartSeasonDate] = React.useState<Dayjs | null>(null);
+    const [endSeasonDate, setEndSeasonDate] = React.useState<Dayjs | null>(null);
     const [achievementId, setAchievementId] = React.useState<number | null>(null);
 
     // Avatar Decoration

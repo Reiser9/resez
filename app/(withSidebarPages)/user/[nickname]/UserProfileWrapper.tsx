@@ -19,7 +19,7 @@ import { CONFIG } from '@/shared/consts/CONFIG';
 import { useProfileData } from '@/features/user';
 import { useThemeContext } from '@/shared/context/ThemeProvider';
 import { useDialog } from '@/features/messenger';
-import ScrollWithArrows from '@/shared/ui/ScrollWithArrow/ScrollWithArrow';
+import { ScrollWithArrows } from '@/shared/ui/ScrollWithArrows';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import useShortInfo from '@/features/user/data/useShortInfo';
 import { fetchAnimationData } from '@/shared/utils/fetchAnimationData';

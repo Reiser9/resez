@@ -29,7 +29,7 @@ const BattleCreate = () => {
     const [usersCount, setUsersCount] = React.useState('');
     const [tasksCount, setTasksCount] = React.useState('');
     const [isPrivate, setIsPrivate] = React.useState(false);
-    const [time, setTime] = React.useState<Dayjs>();
+    const [time, setTime] = React.useState<Dayjs | null>(null);
 
     const [searchValue, setSearchValue] = React.useState('');
     const debounceSearch = useDebounce(searchValue, 500);

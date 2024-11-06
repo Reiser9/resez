@@ -11,8 +11,8 @@ import styles from '../../../index.module.scss';
 
 import type { PairDTO } from '@/entities/collection';
 import { Delete, NineDots, Photo, ResezPremium, Swap } from '@/shared/icons';
-import useCollections from '@/features/collection/useCollections';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import { useFile } from '@/features/file';
 
 import { IconButton } from '@/shared/ui/Button';
 import { File } from '@/shared/ui/File';
@@ -55,7 +55,7 @@ const PairItem: React.FC<Props> = ({
     };
 
     const { getShortInfo } = useShortInfo();
-    const { uploadImage } = useCollections();
+    const { uploadFile } = useFile();
 
     const { data: user, isLoading: userIsLoading } = useQuery({
         queryKey: ['short_info'],
@@ -113,9 +113,9 @@ const PairItem: React.FC<Props> = ({
         let formData = new FormData();
         formData.append('file', imageFile);
 
-        const url = await uploadImage(formData);
+        const url = await uploadFile(formData);
 
-        if (!url) {
+        if (!url?.file?.url) {
             return;
         }
 
@@ -123,7 +123,7 @@ const PairItem: React.FC<Props> = ({
 
         newValues[index] = {
             ...newValues[index],
-            [name]: url.url,
+            [name]: url.file.url,
         };
 
         setPairs(newValues);

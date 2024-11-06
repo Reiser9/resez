@@ -26,8 +26,8 @@ import { useMutation } from '@tanstack/react-query';
 
 const AdminCreatePromo = () => {
     const [promocode, setPromocode] = React.useState('');
-    const [date, setDate] = React.useState<Dayjs | null>();
-    const [time, setTime] = React.useState<Dayjs>();
+    const [date, setDate] = React.useState<Dayjs | null>(null);
+    const [time, setTime] = React.useState<Dayjs | null>(null);
     const [limit, setLimit] = React.useState('');
     const [xp, setXp] = React.useState('');
     const [coins, setCoins] = React.useState('');

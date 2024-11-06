@@ -42,8 +42,8 @@ const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
 const AdminNotifies = () => {
     const [title, setTitle] = React.useState('');
     const [author, setAuthor] = React.useState('');
-    const [date, setDate] = React.useState<Dayjs | null>();
-    const [time, setTime] = React.useState<Dayjs>();
+    const [date, setDate] = React.useState<Dayjs | null>(null);
+    const [time, setTime] = React.useState<Dayjs | null>(null);
 
     const [searchValue, setSearchValue] = React.useState('');
     const [userIDs, setUserIDs] = React.useState<string[]>([]);
@@ -61,7 +61,7 @@ const AdminNotifies = () => {
 
     const searchParams = useSearchParams();
     const router = useRouter();
-    const usersIds = searchParams.get('users');
+    const usersIdParam = searchParams.get('users');
     const { getUserPermissions } = useUserPermissions();
 
     const { data: permissions } = useQuery({
@@ -116,8 +116,8 @@ const AdminNotifies = () => {
         await sendNotify(title, author, userIDs, newDate ?? '', content, type, () => {
             setTitle('');
             setAuthor('');
-            setDate(undefined);
-            setTime(undefined);
+            setDate(null);
+            setTime(null);
             setSendAnonim(false);
             setSendForOne(false);
             setDelayedSend(false);
@@ -132,11 +132,11 @@ const AdminNotifies = () => {
     });
 
     React.useEffect(() => {
-        if (usersIds) {
+        if (usersIdParam) {
             setSendForOne(true);
-            setUserIDs(usersIds.split(','));
+            setUserIDs(usersIdParam.split(','));
         }
-    }, [usersIds]);
+    }, [usersIdParam]);
 
     return (
         <PrivateWrapper permissions={[PERMISSIONS.NOTIFIES]}>

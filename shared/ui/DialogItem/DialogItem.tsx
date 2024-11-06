@@ -27,7 +27,7 @@ type Props = {
 
 const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...props }) => {
     const { id, isGroup, isLeft, isAdmin, lastMessage, picture, chat, isKicked } = data || {};
-    const { createdAt, updatedAt, isEdited, message, sender, type, readCount } = lastMessage || {};
+    const { createdAt, updatedAt, isEdited, message, sender, type, readsCount } = lastMessage || {};
     const { nickname, avatar, id: senderId } = sender || {};
 
     const [clearHistoryConfirm, setClearHistoryConfirm] = React.useState(false);
@@ -77,7 +77,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                     image={picture}
                     text={chat}
                     style={{ width: 48, height: 48 }}
-                    indicator={readCount <= 999 ? readCount : '999+'}
+                    indicator={readsCount <= 999 ? readsCount : '999+'}
                 />
 
                 <div className={styles.dialogItemTextInner}>
