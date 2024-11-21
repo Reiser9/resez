@@ -9,14 +9,18 @@
     overflow-x: hidden;
     overflow-y: auto;
     display: block;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .2s ease-in-out;
+    animation: fadeInOverlay .2s ease-in-out forwards;
 }
 
-.modalOverlay.active{
-    pointer-events: all;
-    opacity: 1;
+@keyframes fadeInOverlay {
+    0% {
+        opacity: 0;
+        pointer-events: none;
+    }
+    100% {
+        pointer-events: all;
+        opacity: 1;
+    }
 }
 
 .modalWrapper{
@@ -61,12 +65,16 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transition: transform .2s ease-in-out;
-    transform: scale(.8);
+    animation: fadeInContent .2s ease-in-out forwards;
 }
 
-.modalContent.active{
-    transform: scale(1);
+@keyframes fadeInContent {
+    0% {
+        transform: scale(.8);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 @media (max-width: 520px) {
@@ -78,8 +86,13 @@
         max-height: calc(100dvh - 5rem);
     }
 
-    .modalContent.active{
-        transform: translateY(0);
+    @keyframes fadeInContent {
+        0% {
+            transform: scale(1) translateY(100dvh);
+        }
+        100% {
+            transform: translateY(0);
+        }
     }
 
     .modalContent:before{

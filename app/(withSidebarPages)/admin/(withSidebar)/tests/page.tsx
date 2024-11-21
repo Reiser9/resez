@@ -71,7 +71,7 @@ const AdminTests = () => {
                     </div>
 
                     {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && (
-                        <Tooltip title="Создать">
+                        <Tooltip destroyTooltipOnHide title="Создать">
                             <IconButton small variant="light" href="/admin/tests/create" circle>
                                 <Plus />
                             </IconButton>

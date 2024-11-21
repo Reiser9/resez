@@ -53,7 +53,7 @@ const ThemeStoreItem: React.FC<Props> = ({ data, addProductToProfile = () => {} 
 
                 <div className={styles.avatarItemTags}>
                     {requiredSubscription && (
-                        <Tooltip title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}>
+                        <Tooltip destroyTooltipOnHide title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}>
                             <span className={styles.avatarItemTag}>
                                 {requiredSubscription.subscription === 'ResEz Premium' ? (
                                     <ResezPremium />
@@ -65,7 +65,7 @@ const ThemeStoreItem: React.FC<Props> = ({ data, addProductToProfile = () => {} 
                     )}
 
                     {requiredAchievement && (
-                        <Tooltip title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}>
+                        <Tooltip destroyTooltipOnHide title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}>
                             <span className={styles.avatarItemTag}>
                                 <Trophy />
                             </span>
@@ -74,6 +74,7 @@ const ThemeStoreItem: React.FC<Props> = ({ data, addProductToProfile = () => {} 
 
                     {(seasonStartDate || seasonEndDate) && (
                         <Tooltip
+                            destroyTooltipOnHide
                             title={`Доступна к покупке с ${formatDate(seasonStartDate, 'D.MM')} до ${formatDate(
                                 seasonEndDate,
                                 'D.MM',

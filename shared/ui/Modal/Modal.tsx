@@ -52,20 +52,14 @@ const Modal: React.FC<Props> = ({
         };
     }, [value]);
 
+    if (!value) {
+        return;
+    }
+
     return ReactDOM.createPortal(
-        <div
-            className={cn(styles.modalOverlay, {
-                [styles.active]: value,
-            })}
-            onClick={closeModal}
-        >
+        <div className={styles.modalOverlay} onClick={closeModal}>
             <div className={cn(styles.modalWrapper, styles[size])}>
-                <div
-                    className={cn(styles.modalContent, {
-                        [styles.active]: value,
-                    })}
-                    onClick={(e) => e.stopPropagation()}
-                >
+                <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                     <div className={styles.modalTitleInner}>
                         <div className={styles.modalTitleWrapper}>
                             {title && <Text variant="h3">{title}</Text>}

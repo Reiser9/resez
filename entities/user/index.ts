@@ -24,7 +24,10 @@ export type {
     UserShort,
     UsersShortAdmin,
     UserAdminProfile,
-    UserMainInfo
+    UserMainInfo,
+    Gender,
+    ActivityItem,
+    LevelInfo
 } from './model';
 
 export type { Session, Sessions, AdminUserSessions } from './session';

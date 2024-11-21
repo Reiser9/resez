@@ -68,7 +68,7 @@ const AdminRoles = () => {
                     </div>
 
                     {checkPermission(permissions || [], [PERMISSIONS.CREATE_ROLES]) && (
-                        <Tooltip title="Создать">
+                        <Tooltip destroyTooltipOnHide title="Создать">
                             <IconButton href="roles/create" variant="light" small circle>
                                 <Plus />
                             </IconButton>

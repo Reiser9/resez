@@ -57,7 +57,7 @@ const AdminSubjects = () => {
                     </div>
 
                     {checkPermission(permissions || [], [PERMISSIONS.CREATE_SUBJECTS]) && (
-                        <Tooltip title="Создать">
+                        <Tooltip destroyTooltipOnHide title="Создать">
                             <IconButton small variant="light" href="subjects/create" circle>
                                 <Plus />
                             </IconButton>

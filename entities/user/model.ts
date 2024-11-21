@@ -1,7 +1,7 @@
 import { Dayjs } from 'dayjs';
 import type { Paggination } from '../pagination';
 import type { Role } from '../role';
-import type { AvatarDecorationAdmin } from '../store';
+import type { AvatarDecorationAdmin, AvatarDecorationProfileAndStore } from '../store';
 import type { SubscriptionOfUser } from '../subscription';
 
 export type LoginData = {
@@ -47,6 +47,8 @@ export type LevelInfo = {
     xp: number;
     limit: number;
 };
+
+export type Gender = 'Мужской' | 'Женский' | null;
 
 export type User = {
     id: number;
@@ -131,22 +133,25 @@ export type UsersAdmin = Paggination & {
     users: UserAdmin[];
 };
 
-export type ProfileInfo = {
-    id?: number;
+export type UserProfile = {
+    id: number;
     nickname: string;
     firstName: string;
     lastName: string;
+    avatar: string;
+    avatarDecoration?: AvatarDecorationProfileAndStore;
+};
+
+export type ProfileInfo = UserProfile & {
     birthDate: Dayjs | undefined | null;
-    gender: 'Мужской' | 'Женский' | null;
-    avatar?: string;
-    avatarDecoration?: AvatarDecorationAdmin;
+    gender: Gender;
 };
 
 export type ProfileInfoDTO = {
     firstName: string;
     lastName: string;
     birthDate: Dayjs | undefined | null;
-    gender: 'Мужской' | 'Женский' | null;
+    gender: Gender;
 };
 
 export type UserShortInfo = {
@@ -182,13 +187,4 @@ export type UserSearch = {
 
 export type UsersSearch = Paggination & {
     users: UserSearch[];
-};
-
-export type UserProfile = {
-    id: number;
-    nickname: string;
-    firstName: string;
-    lastName: string;
-    avatar: string;
-    avatarDecoration?: AvatarDecorationAdmin;
 };

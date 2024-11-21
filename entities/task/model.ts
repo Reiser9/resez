@@ -15,8 +15,6 @@ export type SubjectTask = {
     subTheme: string;
     number: number;
     theme: string;
-
-    current: boolean;
     tests: { id: number; subject: string }[];
     testsCount: number;
 };
@@ -38,6 +36,7 @@ export type SubjectTaskById = SubjectTask & {
 };
 
 export type PagginationTasks = Paggination & {
+    current?: SubjectTask;
     tasks: SubjectTask[];
 };
 

@@ -43,6 +43,7 @@ const TaskTestItem: React.FC<Props> = ({
     verify = false,
 }) => {
     const { task, solution, subjectTask, id, source, subTheme, subject, isVerified, answers } = data || {};
+    const { isDetailedAnswer } = subjectTask || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
@@ -133,7 +134,9 @@ const TaskTestItem: React.FC<Props> = ({
                         </div>
                     )}
 
-                    {!!answers?.length && <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>}
+                    {!isDetailedAnswer && !!answers?.length && (
+                        <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>
+                    )}
                 </Spoiler>
 
                 {source && <Text fontWeight={600}>Источник: {source}</Text>}

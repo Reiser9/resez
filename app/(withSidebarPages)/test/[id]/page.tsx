@@ -18,6 +18,7 @@ import { TestQuestionItem } from '@/entities/test/ui';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { useUserPermissions } from '@/features/user';
 import { useTask } from '@/features/task';
+import { TaskItem } from '@/entities/task/ui';
 import TestInfo from '../ui/TestInfo';
 
 import { Text } from '@/shared/ui/Text';
@@ -25,7 +26,6 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { Modal } from '@/shared/ui/Modal';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Button } from '@/shared/ui/Button';
-import { TaskItem } from '@/entities/task/ui';
 
 const TestPage = () => {
     const { getUserPermissions } = useUserPermissions();
@@ -80,7 +80,7 @@ const TestPage = () => {
     } = useInfiniteQuery({
         queryKey: ['admin_tasks', subjectTaskId, currentTaskId],
         queryFn: (pageParam) =>
-            getPagginationTasks(pageParam.pageParam, '', subjectTaskId || '', '', '', '', 9, currentTaskId || ''),
+            getPagginationTasks(pageParam.pageParam, '', subjectTaskId || '', '', '', '', '', 9, currentTaskId || ''),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
@@ -90,6 +90,7 @@ const TestPage = () => {
         enabled: !!subjectTaskId && !!currentTaskId,
     });
 
+    const currentTask = data?.pages?.[0]?.current;
     const { tasksCount, tasks } = test || {};
 
     const swapCallback = (subjectTaskId: number, currentTaskId: number) => {
@@ -163,40 +164,80 @@ const TestPage = () => {
                         <Preloader small page />
                     ) : adminTasksError ? (
                         <NotContent icon={<Cross />} danger text="Произошла ошибка при загрузке данных" />
-                    ) : data?.pages[0]?.totalCount ? (
-                        <div className={cn(base.baseWrapperGap16, base.aic)}>
-                            <div className={base.contentItems}>
-                                {data?.pages.map((task) =>
-                                    task?.tasks.map((data) => (
-                                        <TaskItem
-                                            key={data.id}
-                                            data={data}
-                                            href={`/admin/task/${data.id}`}
-                                            edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
-                                            remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
-                                            verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
-                                            swap={checkPermission(permissions || [], [PERMISSIONS.TESTS])}
-                                            archiveCallback={() => archiveTask(data.id, revalidateRequest)}
-                                            toggleVerify={() => toggleVerifyMutation.mutate(data.id)}
-                                            swapCallback={() => swapTaskMutation.mutate(data.id)}
-                                        />
-                                    )),
+                    ) : (
+                        <div className={base.baseWrapperGap24}>
+                            <div className={base.baseWrapperGap8}>
+                                <Text fontWeight={600} variant="text2">
+                                    Текущее задание
+                                </Text>
+
+                                {currentTask ? (
+                                    <TaskItem
+                                        data={currentTask}
+                                        href={`/admin/task/${currentTask.id}`}
+                                        edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
+                                        verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
+                                        swap={checkPermission(permissions || [], [PERMISSIONS.TESTS])}
+                                        archiveCallback={() =>
+                                            currentTask && archiveTask(currentTask.id, revalidateRequest)
+                                        }
+                                        toggleVerify={() => currentTask && toggleVerifyMutation.mutate(currentTask.id)}
+                                        active
+                                    />
+                                ) : (
+                                    <NotContent text="Текущее задание не выбрано" />
                                 )}
                             </div>
 
-                            {!adminTasksError && hasNextPage && (
-                                <Button
-                                    auto
-                                    onClick={fetchNextPage}
-                                    loading={isFetchingNextPage}
-                                    className={base.buttonShowMore}
-                                >
-                                    Показать еще
-                                </Button>
-                            )}
+                            <div className={base.baseWrapperGap8}>
+                                <Text fontWeight={600} variant="text2">
+                                    Все задания ({data?.pages[0]?.totalCount})
+                                </Text>
+
+                                {data?.pages[0]?.totalCount ? (
+                                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                                        <div className={base.contentItems}>
+                                            {data?.pages.map((task) =>
+                                                task?.tasks.map((data) => (
+                                                    <TaskItem
+                                                        key={data.id}
+                                                        data={data}
+                                                        href={`/admin/task/${data.id}`}
+                                                        edit={checkPermission(permissions || [], [
+                                                            PERMISSIONS.UPDATE_TASKS,
+                                                        ])}
+                                                        remove={checkPermission(permissions || [], [
+                                                            PERMISSIONS.DELETE_TASKS,
+                                                        ])}
+                                                        verify={checkPermission(permissions || [], [
+                                                            PERMISSIONS.VERIFY_TASKS,
+                                                        ])}
+                                                        swap={checkPermission(permissions || [], [PERMISSIONS.TESTS])}
+                                                        archiveCallback={() => archiveTask(data.id, revalidateRequest)}
+                                                        toggleVerify={() => toggleVerifyMutation.mutate(data.id)}
+                                                        swapCallback={() => swapTaskMutation.mutate(data.id)}
+                                                    />
+                                                )),
+                                            )}
+                                        </div>
+
+                                        {!adminTasksError && hasNextPage && (
+                                            <Button
+                                                auto
+                                                onClick={fetchNextPage}
+                                                loading={isFetchingNextPage}
+                                                className={base.buttonShowMore}
+                                            >
+                                                Показать еще
+                                            </Button>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <NotContent text="Заданий не найдено" />
+                                )}
+                            </div>
                         </div>
-                    ) : (
-                        <NotContent text="Заданий не найдено" />
                     )}
                 </Modal>
             )}

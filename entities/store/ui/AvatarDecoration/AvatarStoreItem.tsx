@@ -88,13 +88,13 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
 
                 <div className={styles.avatarItemTags}>
                     {contentType === 'animation' ? (
-                        <Tooltip title="Анимация">
+                        <Tooltip destroyTooltipOnHide title="Анимация">
                             <span className={styles.avatarItemTag}>
                                 <Clapperboard />
                             </span>
                         </Tooltip>
                     ) : (
-                        <Tooltip title="Изображение">
+                        <Tooltip destroyTooltipOnHide title="Изображение">
                             <span className={styles.avatarItemTag}>
                                 <Photo />
                             </span>
@@ -102,7 +102,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                     )}
 
                     {requiredSubscription && (
-                        <Tooltip title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}>
+                        <Tooltip destroyTooltipOnHide title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}>
                             <span className={styles.avatarItemTag}>
                                 {requiredSubscription.subscription === 'ResEz Premium' ? (
                                     <ResezPremium />
@@ -114,7 +114,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                     )}
 
                     {requiredAchievement && (
-                        <Tooltip title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}>
+                        <Tooltip destroyTooltipOnHide title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}>
                             <span className={styles.avatarItemTag}>
                                 <Trophy />
                             </span>
@@ -123,6 +123,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
 
                     {(seasonStartDate || seasonEndDate) && (
                         <Tooltip
+                            destroyTooltipOnHide
                             title={`Доступна к покупке с ${formatDate(seasonStartDate, 'D.MM')} до ${formatDate(
                                 seasonEndDate,
                                 'D.MM',

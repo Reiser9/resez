@@ -95,6 +95,7 @@ const useSubjects = () => {
         subjectTasks: Task[],
         isMark: boolean,
         durationMinutes: string,
+        examType: string,
         successCallback = () => {},
     ) => {
         const response = await request<{ subject: CreatedSubject }>({
@@ -109,6 +110,7 @@ const useSubjects = () => {
                 order,
                 isMark,
                 subjectTasks,
+                examType,
             },
         });
 
@@ -258,6 +260,21 @@ const useSubjects = () => {
         }
     };
 
+    const getAnalysisSubjectBySlug = async (slug: string) => {
+        const response = await request<{tasksAnalysis: {id: number, number: number}[]}>({
+            url: `/education-ms/subject/${slug}/task-analysis`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.tasksAnalysis;
+        }
+    };
+
     const publishSubject = async (id: number, successCallback = () => {}) => {
         const response = await request<SubjectFilter>({
             url: `/education-ms/admin/subject/${id}/toggle-publish`,
@@ -316,6 +333,7 @@ const useSubjects = () => {
         deleteSubject,
         editSubject,
         getPointsSubjectBySlug,
+        getAnalysisSubjectBySlug,
         getSubjectById,
         getPointsSubjectById,
         publishSubject,

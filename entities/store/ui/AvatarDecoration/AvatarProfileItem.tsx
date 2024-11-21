@@ -58,13 +58,13 @@ const AvatarProfileItem: React.FC<Props> = ({ data, useProduct = () => {}, reset
 
             <div className={styles.avatarItemTags}>
                 {contentType === 'animation' ? (
-                    <Tooltip title="Анимация">
+                    <Tooltip destroyTooltipOnHide title="Анимация">
                         <span className={styles.avatarItemTag}>
                             <Clapperboard />
                         </span>
                     </Tooltip>
                 ) : (
-                    <Tooltip title="Изображение">
+                    <Tooltip destroyTooltipOnHide title="Изображение">
                         <span className={styles.avatarItemTag}>
                             <Photo />
                         </span>

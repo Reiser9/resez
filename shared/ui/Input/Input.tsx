@@ -194,7 +194,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     )}
 
                     {type !== 'password' && infoText && (
-                        <Tooltip title={infoText} placement="topRight">
+                        <Tooltip destroyTooltipOnHide title={infoText} placement="topRight">
                             <div className={styles.infoIcon}>
                                 <Info />
                             </div>

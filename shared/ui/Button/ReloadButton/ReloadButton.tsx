@@ -10,7 +10,7 @@ import { IconButton } from '..';
 
 const ReloadButton: React.FC<IconButtonProps> = (props) => {
     return (
-        <Tooltip title="Обновить">
+        <Tooltip destroyTooltipOnHide title="Обновить">
             <IconButton small circle variant="light" {...props}>
                 <Reload />
             </IconButton>

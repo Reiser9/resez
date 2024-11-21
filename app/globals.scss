@@ -275,6 +275,10 @@ input::placeholder {
     button {
         cursor: default;
     }
+
+    .ant-tooltip{
+        display: none!important;
+    }
 }
 
 .carousel {
@@ -858,13 +862,14 @@ ol .cdx-list__item {
 
 .blockImage {
     width: 100%;
+    max-width: 500px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     margin: 0.6rem 0;
 }
 
 .blockImage img {
-    width: 500px;
+    width: auto;
     max-width: 100%;
 }
 

@@ -22,8 +22,9 @@ const useTask = () => {
         subThemeId?: number | string,
         userId?: number | string,
         isVerified?: string,
+        type?: string,
         limit = 9,
-        currentTaskId?: number | string
+        currentTaskId?: number | string,
     ) => {
         const queryString = buildQueryString({
             offset: page * limit,
@@ -33,7 +34,8 @@ const useTask = () => {
             subTheme_id: subThemeId,
             user_id: userId,
             is_verified: isVerified,
-            current_task_id: currentTaskId
+            exam_type: type,
+            current_task_id: currentTaskId,
         });
 
         const response = await request<PagginationTasks>({
@@ -150,16 +152,10 @@ const useTask = () => {
     const getTaskById = async (taskId: number | string, forAdmin = false) => {
         let response;
 
-        if (forAdmin) {
-            response = await request<{ task: SubjectTaskById }>({
-                url: `/education-ms/admin/task/${taskId}`,
-                isAuth: true,
-            });
-        } else {
-            response = await request<{ task: SubjectTaskById }>({
-                url: `/education-ms/task/${taskId}`,
-            });
-        }
+        response = await request<{ task: SubjectTaskById }>({
+            url: `/education-ms/${forAdmin ? 'admin/' : ''}task/${taskId}`,
+            isAuth: forAdmin,
+        });
 
         if (catchRequestError(response)) {
             return errorController(response);

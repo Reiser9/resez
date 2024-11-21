@@ -106,7 +106,7 @@ const DialogMessageItem: React.FC<Props> = ({
                             <Text className={styles.messangerDialogItemMessage}>
                                 {message}{' '}
                                 {isEdited && (
-                                    <Tooltip title={`Изменено ${formatDate(updatedAt)}`}>
+                                    <Tooltip destroyTooltipOnHide title={`Изменено ${formatDate(updatedAt)}`}>
                                         <span>(ред.)</span>
                                     </Tooltip>
                                 )}

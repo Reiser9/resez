@@ -73,7 +73,7 @@ const MemoryMy = () => {
                             <ReloadButton onClick={resetRequest} disabled={isPending} />
                         </div>
 
-                        <Tooltip title="Создать">
+                        <Tooltip destroyTooltipOnHide title="Создать">
                             <IconButton href="/training/memory/create" variant="light" small circle>
                                 <Plus />
                             </IconButton>

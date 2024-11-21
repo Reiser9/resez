@@ -55,7 +55,7 @@ const WarnItem: React.FC<Props> = ({ data, readWarnCallback = () => {} }) => {
                             </div>
                         )}
 
-                        <Tooltip title="Пометить как просмотренное">
+                        <Tooltip destroyTooltipOnHide title="Пометить как просмотренное">
                             <IconButton small variant="light" onClick={readWarnHandler}>
                                 <Eye />
                             </IconButton>

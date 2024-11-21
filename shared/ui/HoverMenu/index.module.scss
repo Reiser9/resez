@@ -10,8 +10,6 @@
     top: 100%;
     right: 0;
     z-index: 10;
-    opacity: 0;
-    pointer-events: none;
     transition: .2s ease-in-out;
 }
 
@@ -41,8 +39,6 @@
         overflow-x: hidden;
         overflow-y: auto;
         display: block;
-        opacity: 0;
-        pointer-events: none;
     }
 
     .hoverMenuOverlay, .hoverMenuOverlay.big{
@@ -78,6 +74,15 @@
     overflow-y: auto;
 }
 
+@keyframes fadeInContent{
+    0%{
+        transform: translateY(100dvh);
+    }
+    100%{
+        transform: translateY(0);
+    }
+}
+
 @media (any-hover: none) and (max-width: 768px) {
     .hoverMenuContent{
         border-radius: 4px 4px 0 0;
@@ -99,8 +104,8 @@
         transform: translateX(-50%);
     }
 
-    .active .hoverMenuContent{
-        transform: translateY(0);
+    .hoverMenuContent{
+        animation: fadeInContent .2s ease-in-out forwards;
     }
 }
 
@@ -114,7 +119,17 @@
 }
 
 @media (any-hover: none) {
-    .hoverMenuOverlay.active{
+    .hoverMenuOverlay{
+        animation: fadeInOverlay .2s ease-in-out forwards;
+    }
+}
+
+@keyframes fadeInOverlay{
+    0%{
+        opacity: 0;
+        pointer-events: none;
+    }
+    100%{
         opacity: 1;
         pointer-events: all;
     }
@@ -123,6 +138,11 @@
 @media (any-hover: hover) {
     .hoverMenuLink{
         cursor: pointer;
+    }
+
+    .hoverMenuOverlay{
+        opacity: 0;
+        pointer-events: none;
     }
 
     .hoverMenuWrapper:hover .hoverMenuOverlay{

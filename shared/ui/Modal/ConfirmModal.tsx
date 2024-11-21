@@ -38,7 +38,7 @@ const ConfirmModal: React.FC<Props> = ({
         setValue(false);
     };
 
-    return ReactDOM.createPortal(
+    return (
         <Modal
             title="Подтвердите действие"
             value={value}
@@ -70,8 +70,7 @@ const ConfirmModal: React.FC<Props> = ({
                     </Button>
                 )}
             </div>
-        </Modal>,
-        document.body,
+        </Modal>
     );
 };
 

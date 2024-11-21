@@ -32,6 +32,7 @@ type Props = {
     verify?: boolean;
     swap?: boolean;
     href?: string;
+    active?: boolean;
     archiveCallback?: () => void;
     restoreCallback?: () => void;
     toggleVerify?: () => void;
@@ -45,6 +46,7 @@ const TaskItem: React.FC<Props> = ({
     remove = false,
     verify = false,
     swap = false,
+    active = false,
     href,
     archiveCallback,
     restoreCallback,
@@ -65,7 +67,6 @@ const TaskItem: React.FC<Props> = ({
         isArchived,
         source,
         updatedAt,
-        current,
         tests,
         testsCount,
     } = data || {};
@@ -78,7 +79,7 @@ const TaskItem: React.FC<Props> = ({
         <>
             <div
                 className={cn(styles.taskItem, {
-                    [styles.active]: current,
+                    [styles.active]: active,
                 })}
             >
                 <div className={base.baseWrapperGap12}>
@@ -106,7 +107,7 @@ const TaskItem: React.FC<Props> = ({
                                 setValue={setActionMenu}
                             >
                                 {swap && (
-                                    <MenuLink onClick={swapCallback} disabled={current}>
+                                    <MenuLink onClick={swapCallback} disabled={active}>
                                         <Swap />
                                         Заменить
                                     </MenuLink>
@@ -169,26 +170,26 @@ const TaskItem: React.FC<Props> = ({
                         </Link>
 
                         <div className={base.titleWrapper}>
-                            <Tooltip title="Дата создания">
+                            <Tooltip destroyTooltipOnHide title="Дата создания">
                                 <Text variant="text2" className={styles.taskItemDate}>
                                     {getFormattedDate(createdAt)}
                                 </Text>
                             </Tooltip>
 
                             {updatedAt && (
-                                <Tooltip title={`Последнее изменение: ${getFormattedDate(updatedAt)}`}>
+                                <Tooltip destroyTooltipOnHide title={`Последнее изменение: ${getFormattedDate(updatedAt)}`}>
                                     <Edit className={styles.taskVerified} />
                                 </Tooltip>
                             )}
 
                             {isVerified && (
-                                <Tooltip title="Проверено">
+                                <Tooltip destroyTooltipOnHide title="Проверено">
                                     <Verified className={styles.taskVerified} />
                                 </Tooltip>
                             )}
 
                             {isArchived && (
-                                <Tooltip title="В архиве">
+                                <Tooltip destroyTooltipOnHide title="В архиве">
                                     <Archive className={styles.taskVerified} />
                                 </Tooltip>
                             )}

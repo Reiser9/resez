@@ -72,7 +72,7 @@ const FakeInput: React.FC<Props> = ({
                 </div>
 
                 {infoText && (
-                    <Tooltip title={infoText} placement="topRight">
+                    <Tooltip destroyTooltipOnHide title={infoText} placement="topRight">
                         <div className={styles.infoIcon}>
                             <Info />
                         </div>

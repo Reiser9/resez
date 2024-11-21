@@ -38,7 +38,7 @@ const SessionItem: React.FC<Props> = ({ current = false, data, active = false, c
                     [styles.active]: active,
                 })}
             >
-                <Tooltip title={getDeviceByName(deviceType)?.name}>
+                <Tooltip destroyTooltipOnHide title={getDeviceByName(deviceType)?.name}>
                     <div className={styles.sessionItemIcon}>{getDeviceByName(deviceType)?.icon}</div>
                 </Tooltip>
 

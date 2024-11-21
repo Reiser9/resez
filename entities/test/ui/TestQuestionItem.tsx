@@ -15,7 +15,6 @@ import { Swap } from '@/shared/icons';
 import { IconButton } from '@/shared/ui/Button';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Text } from '@/shared/ui/Text';
-import { Modal } from '@/shared/ui/Modal';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -29,7 +28,7 @@ type Props = {
 };
 
 const TestQuestionItem: React.FC<Props> = ({ data, edit = false, swapCallback = () => {} }) => {
-    const { id, subjectTask, task, subTheme } = data || {};
+    const { id, subjectTask, task, subTheme, testsCount } = data || {};
     const { subTheme: subThemeTask } = subTheme || {};
     const { theme, number } = subjectTask || {};
 
@@ -47,13 +46,19 @@ const TestQuestionItem: React.FC<Props> = ({ data, edit = false, swapCallback = 
                 </Link>
 
                 {edit && (
-                    <Tooltip title="Заменить">
+                    <Tooltip destroyTooltipOnHide title="Заменить">
                         <IconButton small variant="light" onClick={swapCallback}>
                             <Swap />
                         </IconButton>
                     </Tooltip>
                 )}
             </div>
+
+            {edit && (
+                <Text fontWeight={600} color={testsCount > 1 ? 'error' : 'success'}>
+                    Используется в тестах: {testsCount}
+                </Text>
+            )}
 
             {task && (
                 <div className={cn(base.format, styles.testQuestionTask)}>

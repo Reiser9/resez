@@ -31,6 +31,7 @@ const AdminTasks = () => {
     const subThemeId = searchParams.get('subTheme_id');
     const isVerified = searchParams.get('is_verified');
     const userId = searchParams.get('user_id');
+    const typeId = searchParams.get('type_id');
 
     const { getUserPermissions } = useUserPermissions();
 
@@ -44,16 +45,16 @@ const AdminTasks = () => {
 
     const revalidateRequest = () => {
         queryClient.invalidateQueries({
-            queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified],
+            queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified, typeId],
         });
     };
 
     const resetRequest = () => {
-        queryClient.resetQueries({ queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified] });
+        queryClient.resetQueries({ queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified, typeId] });
     };
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified],
+        queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified, typeId],
         queryFn: (pageParam) =>
             getPagginationTasks(
                 pageParam.pageParam,
@@ -61,7 +62,8 @@ const AdminTasks = () => {
                 subjectTaskId || '',
                 subThemeId || '',
                 userId || '',
-                isVerified || ''
+                isVerified || '',
+                typeId || ''
             ),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
@@ -97,7 +99,7 @@ const AdminTasks = () => {
                         </IconButton>
 
                         {checkPermission(permissions || [], [PERMISSIONS.CREATE_TASKS]) && (
-                            <Tooltip title="Создать">
+                            <Tooltip destroyTooltipOnHide title="Создать">
                                 <IconButton small variant="light" href="/admin/tasks/create" circle>
                                     <Plus />
                                 </IconButton>
@@ -157,6 +159,7 @@ const AdminTasks = () => {
                 subThemeId={subThemeId}
                 userId={userId}
                 isVerified={isVerified}
+                typeId={typeId}
             />
         </PrivateWrapper>
     );

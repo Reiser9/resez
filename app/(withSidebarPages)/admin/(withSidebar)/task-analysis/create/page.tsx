@@ -2,7 +2,8 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -11,6 +12,9 @@ import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useSubjects } from '@/features/subjects';
+import { useTaskAnalysis } from '@/features/task-analysis';
+import { getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
+import useAlert from '@/shared/hooks/useAlert';
 
 import { Button } from '@/shared/ui/Button';
 import { Select } from '@/shared/ui/Select';
@@ -31,9 +35,12 @@ const CreateTaskAnalisys = () => {
     const [themes, setThemes] = React.useState<SubjectTheme[]>([]);
     const [themesFilter, setThemesFilter] = React.useState<SubjectTheme[]>([]);
 
-    const analisysRef = React.useRef<EditorCore | null>(null);
+    const analysisRef = React.useRef<EditorCore | null>(null);
 
     const { getPagginationSubjects, getSubjectThemes } = useSubjects();
+    const { createTaskAnalysis } = useTaskAnalysis();
+    const { alertNotify } = useAlert();
+    const router = useRouter();
 
     const {
         data: subjectsData,
@@ -71,6 +78,24 @@ const CreateTaskAnalisys = () => {
         setThemesFilter(filteredOptions);
     };
 
+    const createTaskAnalysisMutation = useMutation({
+        mutationFn: async () => {
+            const savedData = await analysisRef.current?.save();
+            const content = getHtmlInEditor(savedData?.blocks);
+
+            if (!theme) {
+                return alertNotify('Предупреждение', 'Задание должно быть выбрано', 'warn');
+            }
+            if (!content) {
+                return alertNotify('Предупреждение', 'Разбор задания не должен быть пустым', 'warn');
+            }
+
+            createTaskAnalysis(theme, content, () => {
+                router.push('/admin/task-analysis');
+            });
+        },
+    });
+
     React.useEffect(() => {
         if (subjectsData) {
             setSubjects(subjectsData.subjects);
@@ -86,12 +111,17 @@ const CreateTaskAnalisys = () => {
     }, [themesData]);
 
     return (
-        <PrivateWrapper permissions={[PERMISSIONS.CREATE_TASKS]}>
+        <PrivateWrapper permissions={[PERMISSIONS.ANALYSIS_TASKS]}>
             <CreatePageWrapper
                 title="Создание разбора задания"
                 button={
                     theme && (
-                        <Button auto levitation>
+                        <Button
+                            auto
+                            levitation
+                            loading={createTaskAnalysisMutation.isPending}
+                            onClick={() => createTaskAnalysisMutation.mutate()}
+                        >
                             Создать
                         </Button>
                     )
@@ -138,7 +168,7 @@ const CreateTaskAnalisys = () => {
                         />
                     )}
 
-                    {theme && <Editor title="Разбор задания" editorRef={analisysRef} id="analisysEditor" />}
+                    {theme && <Editor title="Разбор задания" editorRef={analysisRef} id="analysisEditor" />}
                 </div>
             </CreatePageWrapper>
         </PrivateWrapper>

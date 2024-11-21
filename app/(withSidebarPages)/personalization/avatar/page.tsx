@@ -61,7 +61,7 @@ const PersonalizationAvatar = () => {
                 </div>
             ) : (
                 <NotContent text="Украшений аватарок не найдено">
-                    <Button href="/store/personalization/avatar" variant="light">
+                    <Button href="/store/personalization/avatar" variant="light" auto>
                         В магазин
                     </Button>
                 </NotContent>

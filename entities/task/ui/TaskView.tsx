@@ -36,6 +36,7 @@ const TaskView: React.FC<Props> = ({ task }) => {
         solution,
         answers,
     } = task || {};
+    const { isDetailedAnswer, theme } = subjectTask || {};
     const { nickname, avatar } = user || {};
 
     return (
@@ -53,7 +54,7 @@ const TaskView: React.FC<Props> = ({ task }) => {
             )} */}
 
             <FakeInput title="Предмет" value={subject.subject} />
-            <FakeInput title="Номер задания" value={subjectTask.theme} />
+            <FakeInput title="Номер задания" value={theme} />
             <FakeInput title="Тема" value={subTheme.subTheme} />
 
             <Checkbox checked={isVerified}>Задание проверено</Checkbox>
@@ -74,7 +75,7 @@ const TaskView: React.FC<Props> = ({ task }) => {
                 </div>
             </div>
 
-            {!subjectTask.isDetailedAnswer && (
+            {!isDetailedAnswer && (
                 <div className={base.baseWrapperGap4}>
                     <Text variant="text3">
                         Ответ{answers.length > 1 && 'ы'} {answers.length > 1 && `(${answers.length})`}

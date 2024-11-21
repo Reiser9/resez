@@ -6,7 +6,6 @@ import pws from '@/shared/styles/pageWithSidebar.module.scss';
 import { ContentWrapper } from '@/shared/wrappers/ContentWrapper';
 import { InnerPageSidebar } from '@/shared/ui/InnerPageSidebar';
 import { SidebarLink } from '@/shared/ui/SidebarLink';
-import { AuthWrapper } from '@/shared/wrappers/AuthWrapper';
 
 export const metadata: Metadata = {
     title: 'ResEz - Полезное',
@@ -23,9 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         Главная
                     </SidebarLink>
                     <SidebarLink href="/useful/points">Баллы ЕГЭ</SidebarLink>
-                    <SidebarLink href="/useful/tasks" disabled>
-                        Разбор заданий
-                    </SidebarLink>
+                    <SidebarLink href="/useful/task-analysis">Разбор заданий</SidebarLink>
                 </InnerPageSidebar>
             </div>
         </ContentWrapper>

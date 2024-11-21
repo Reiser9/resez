@@ -385,7 +385,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                             </div>
 
                                             {data.isAdmin && (
-                                                <Tooltip title="Создатель чата">
+                                                <Tooltip destroyTooltipOnHide title="Создатель чата">
                                                     <IconButton variant="light" circle small>
                                                         <Crown />
                                                     </IconButton>
@@ -393,7 +393,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                             )}
 
                                             {!data.isAdmin && isAdmin && (
-                                                <Tooltip title="Исключить">
+                                                <Tooltip destroyTooltipOnHide title="Исключить">
                                                     <IconButton
                                                         small
                                                         variant="danger"

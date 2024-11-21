@@ -76,7 +76,9 @@ const TaskItemResult: React.FC<Props> = ({ data }) => {
                     </div>
                 )}
 
-                {!!answers?.length && <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>}
+                {!isDetailedAnswer && !!answers?.length && (
+                    <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>
+                )}
             </Spoiler>
 
             {source && <Text fontWeight={600}>Источник: {source}</Text>}

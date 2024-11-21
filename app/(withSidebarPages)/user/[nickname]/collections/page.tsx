@@ -72,7 +72,7 @@ const UserCollections = () => {
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data?.pages[0]?.totalCount === 0 ? (
-                searchValue ? (
+                debounceSearch ? (
                     <NotContent text="Коллекций не найдено" />
                 ) : (
                     <NotContent text="Пользователь не создал ни одной коллекции" />

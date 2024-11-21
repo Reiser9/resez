@@ -144,7 +144,7 @@ const MemoryCardInfo = () => {
                             <div className={base.tagElement}>Терминов: {pairsCount || 0}</div>
 
                             {isPrivate && (
-                                <Tooltip title="Скрыта">
+                                <Tooltip destroyTooltipOnHide title="Скрыта">
                                     <div className={base.tagElementIcon}>
                                         <Lock />
                                     </div>
@@ -152,7 +152,7 @@ const MemoryCardInfo = () => {
                             )}
 
                             {hasPictures && (
-                                <Tooltip title="Есть картинки">
+                                <Tooltip destroyTooltipOnHide title="Есть картинки">
                                     <div className={base.tagElementIcon}>
                                         <Photo />
                                     </div>
@@ -251,7 +251,7 @@ const MemoryCardInfo = () => {
                         </Link>
 
                         {createdAt && (
-                            <Tooltip title="Дата создания">
+                            <Tooltip destroyTooltipOnHide title="Дата создания">
                                 <div className={styles.memoCollectionDateInner}>
                                     <Date />
 

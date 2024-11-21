@@ -25,7 +25,7 @@ const CopyLink: React.FC<Props> = ({ link }) => {
     };
 
     return (
-        <Tooltip title={linkCopied ? 'Скопировано' : 'Скопировать'}>
+        <Tooltip destroyTooltipOnHide title={linkCopied ? 'Скопировано' : 'Скопировать'}>
             <div className={styles.copyLink} onClick={copyBattleLink}>
                 {window.location.host}/i/{link}
                 <Link />

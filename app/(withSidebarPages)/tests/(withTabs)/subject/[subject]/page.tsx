@@ -78,7 +78,7 @@ const TestsSubject = () => {
                     </Text>
 
                     <div className={base.titleWrapper}>
-                        {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && <Tooltip title="Создать">
+                        {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && <Tooltip destroyTooltipOnHide title="Создать">
                             <IconButton circle small variant="light" href="/admin/tests/create">
                                 <Plus />
                             </IconButton>

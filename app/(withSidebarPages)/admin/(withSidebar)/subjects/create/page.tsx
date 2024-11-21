@@ -22,12 +22,14 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 import { useHandlers } from '@/features/collection';
+import { Select } from '@/shared/ui/Select';
 
 const SubjectsCreate = () => {
     const [step, setStep] = React.useState(0);
 
     const [name, setName] = React.useState('');
     const [slug, setSlug] = React.useState('');
+    const [type, setType] = React.useState('ЕГЭ'); // Временно
     const [examMinutes, setExamMinutes] = React.useState('');
     const [order, setOrder] = React.useState('0');
     const [isPublished, setIsPublished] = React.useState(false);
@@ -83,7 +85,7 @@ const SubjectsCreate = () => {
 
         // Проверка на пустые задания
 
-        const id = await createSubject(name, slug, isPublished, order, updatedTasks, isPoint, examMinutes, () => {
+        const id = await createSubject(name, slug, isPublished, order, updatedTasks, isPoint, examMinutes, type, () => {
             setStep(1);
         });
 
@@ -283,6 +285,26 @@ const SubjectsCreate = () => {
                                 lengthLimit={3}
                                 type="number"
                                 infoText="Позиция отображения в списке"
+                            />
+
+                            <Select
+                                value={type}
+                                setValue={setType}
+                                title="Тип"
+                                options={[
+                                    {
+                                        label: 'ЕГЭ',
+                                        value: 'ЕГЭ',
+                                    },
+                                    {
+                                        label: 'ОГЭ',
+                                        value: 'ОГЭ',
+                                    },
+                                    {
+                                        label: 'ЕНТ',
+                                        value: 'ЕНТ',
+                                    },
+                                ]}
                             />
 
                             <Checkbox checked={isPublished} onChange={(e) => setIsPublished(e.target.checked)}>

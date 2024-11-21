@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import cn from 'classnames';
+import Link from 'next/link';
 import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
@@ -11,21 +10,15 @@ import { usePathname } from 'next/navigation';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import { CONFIG } from '@/shared/consts/CONFIG';
 import { useProfileData } from '@/features/user';
 import { Block, Delete, DotsHorizontal, Edit, Message, Paintbruh, Qr, User } from '@/shared/icons';
-import useCopyText from '@/features/utils/useCopyText';
 import { Handshake } from '@/shared/icons/awards/Handshake';
 import { ScrollWithArrows } from '@/shared/ui/ScrollWithArrows';
-import { useShortInfo } from '@/features/user';
+import { UserProfileOverlay } from '@/entities/user/ui';
 
-import { Badge } from '@/shared/ui/Badge';
-import { IconButton } from '@/shared/ui/Button';
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Preloader } from '@/shared/ui/Preloader';
-import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 const tabs = [
     {
@@ -35,132 +28,23 @@ const tabs = [
 ];
 
 const ProfilePage = () => {
-    const [moreProfileMenu, setMoreProfileMenu] = React.useState(false);
-
     const { getProfileData } = useProfileData();
-    const { getShortInfo } = useShortInfo();
-    const { copyTextWithNotify } = useCopyText();
 
     const { data: profileInfo, isLoading: profileInfoIsLoading } = useQuery({
         queryKey: ['profile_data'],
         queryFn: () => getProfileData(),
     });
 
-    const { data: user, isLoading: userIsLoading } = useQuery({
-        queryKey: ['short_info'],
-        queryFn: () => getShortInfo(),
-    });
-
-    const { avatar, nickname, levelInfo } = user?.user || {};
-    const { level, limit, xp } = levelInfo || {};
-
-    const { firstName, lastName, avatarDecoration } = profileInfo || {};
-    const { contentUrl, title, options, contentType } = avatarDecoration || {};
-
     const path = usePathname();
 
-    if (userIsLoading) {
+    if (profileInfoIsLoading) {
         return <Preloader page />;
     }
 
     return (
         <div className={base.baseWrapperGap16}>
             <div className={base.baseWrapperGap0}>
-                <div className={styles.profileBannerInner}>
-                    <Image src="/img/banner.jpg" alt="banner" className={styles.profileBanner} fill />
-
-                    <Link prefetch={false} href="/personalization" className={styles.dataPersonalizationButton}>
-                        <Paintbruh />
-                        Персонализация
-                    </Link>
-
-                    <div className={styles.profileAvatarInner}>
-                        <Badge image={avatar} text={nickname} style={{ width: 92, height: 92 }} />
-
-                        <Link prefetch={false} href="profile/data" className={styles.profileAvatarLink}>
-                            Изменить
-                        </Link>
-
-                        {/* <Tooltip title="Тема пользователя" placement="bottom">
-                            <div
-                                className={styles.profileInfoTheme}
-                                style={{ background: CONFIG.BASE_COLOR }} //theme?.primary || CONFIG.BASE_COLOR
-                            ></div>
-                        </Tooltip> */}
-
-                        {avatarDecoration && (
-                            <AvatarDecoration
-                                contentType={contentType}
-                                title={title}
-                                contentUrl={contentUrl}
-                                options={options}
-                            />
-                        )}
-                    </div>
-                </div>
-
-                <div className={styles.profileInfoInner}>
-                    <div className={styles.profileInfoNameInner}>
-                        {firstName && lastName && (
-                            <Text variant="h3">
-                                {firstName} {lastName}
-                            </Text>
-                        )}
-
-                        <Tooltip title="Скопировать" placement="bottom">
-                            <Text
-                                variant="text2"
-                                className={styles.profileInfoNick}
-                                onClick={() => copyTextWithNotify(nickname, 'Имя пользователя скопировано')}
-                            >
-                                {nickname}
-                            </Text>
-                        </Tooltip>
-                    </div>
-
-                    {/* <div className={styles.profileInfoItem}>
-                        <Tooltip title="QR-код профиля">
-                            <IconButton small variant="light" disabled>
-                                <Qr />
-                            </IconButton>
-                        </Tooltip>
-
-                        <HoverMenu
-                            button={
-                                <IconButton small variant="light" onClick={() => setMoreProfileMenu((prev) => !prev)}>
-                                    <DotsHorizontal />
-                                </IconButton>
-                            }
-                            value={moreProfileMenu}
-                            setValue={setMoreProfileMenu}
-                        >
-                            <MenuLink disabled>
-                                <Edit />
-                                Редактировать
-                            </MenuLink>
-
-                            <MenuLink disabled>
-                                <Message />
-                                Сообщение
-                            </MenuLink>
-
-                            <MenuLink disabled>
-                                <User />
-                                Добавить в друзья
-                            </MenuLink>
-
-                            <MenuLink danger disabled>
-                                <Block />
-                                Заблокировать
-                            </MenuLink>
-
-                            <MenuLink danger disabled>
-                                <Delete />
-                                Удалить из друзей
-                            </MenuLink>
-                        </HoverMenu>
-                    </div> */}
-                </div>
+                {!!profileInfo && <UserProfileOverlay myProfile data={profileInfo} />}
             </div>
 
             {/* <ScrollWithArrows>
@@ -185,7 +69,7 @@ const ProfilePage = () => {
                     <div className={styles.profileSidebarLvlContent}>
                         <p className={styles.profileSidebarLvlValue}>{level}</p>
 
-                        <Tooltip title={`Опыта до нового уровня: ${(limit || 0) - (xp || 0)}`}>
+                        <Tooltip destroyTooltipOnHide title={`Опыта до нового уровня: ${(limit || 0) - (xp || 0)}`}>
                             <div className={styles.profileSidebarLvl}>
                                 <div className={styles.profileSidebarLvlBar}>
                                     <div
@@ -273,6 +157,7 @@ const ProfilePage = () => {
                         <div className={styles.profileSidebarAchievementList}>
                             <div className={styles.profileSidebarAchievementItem}>
                                 <Tooltip
+                                    destroyTooltipOnHide
                                     className={styles.profileSidebarAchievementInner}
                                     title="За помощь в развитии проекта"
                                 >
@@ -281,13 +166,13 @@ const ProfilePage = () => {
                             </div>
 
                             <div className={styles.profileSidebarAchievementItem}>
-                                <Tooltip className={styles.profileSidebarAchievementInner} title="Заголовок">
+                                <Tooltip destroyTooltipOnHide className={styles.profileSidebarAchievementInner} title="Заголовок">
                                     <Lvl30 />
                                 </Tooltip>
                             </div>
 
                             <div className={styles.profileSidebarAchievementItem}>
-                                <Tooltip className={styles.profileSidebarAchievementInner} title="Заголовок">
+                                <Tooltip destroyTooltipOnHide className={styles.profileSidebarAchievementInner} title="Заголовок">
                                     <Lvl75 />
                                 </Tooltip>
                             </div>

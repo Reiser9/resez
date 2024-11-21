@@ -124,7 +124,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
 
                     <Search className={styles.searchInputIcon} />
 
-                    <Tooltip title="Создать группу">
+                    <Tooltip destroyTooltipOnHide title="Создать группу">
                         <button className={styles.searchInputButton} onClick={() => setNewChatModal(true)}>
                             <Plus />
                         </button>

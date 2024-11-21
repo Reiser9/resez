@@ -65,7 +65,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                         </p>
 
                         {isPrivate && (
-                            <Tooltip title="Скрыта">
+                            <Tooltip destroyTooltipOnHide title="Скрыта">
                                 <span className={styles.collectionItemLock}>
                                     <Lock />
                                 </span>
@@ -73,7 +73,7 @@ const CollectionItem: React.FC<Props> = ({ data, loading = false, deleteCallback
                         )}
 
                         {hasPictures && (
-                            <Tooltip title="Есть картинки">
+                            <Tooltip destroyTooltipOnHide title="Есть картинки">
                                 <span className={styles.collectionItemImage}>
                                     <Photo />
                                 </span>

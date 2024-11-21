@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './index.module.scss';
 
-import type { LevelInfo } from '@/entities/user/model';
+import type { LevelInfo } from '@/entities/user';
 
 import { Text } from '@/shared/ui/Text';
 import { LvlProgressBar } from '@/shared/ui/LvlProgressBar';

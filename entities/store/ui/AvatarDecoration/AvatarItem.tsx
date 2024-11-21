@@ -72,13 +72,13 @@ const AvatarItem: React.FC<Props> = ({
             <div className={cn(base.item3, styles.avatarItem)}>
                 <div className={styles.avatarItemTags}>
                     {contentType === 'animation' ? (
-                        <Tooltip title="Анимация">
+                        <Tooltip destroyTooltipOnHide title="Анимация">
                             <span className={styles.avatarItemTag}>
                                 <Clapperboard />
                             </span>
                         </Tooltip>
                     ) : (
-                        <Tooltip title="Изображение">
+                        <Tooltip destroyTooltipOnHide title="Изображение">
                             <span className={styles.avatarItemTag}>
                                 <Photo />
                             </span>
@@ -86,13 +86,13 @@ const AvatarItem: React.FC<Props> = ({
                     )}
 
                     {isPublished ? (
-                        <Tooltip title="В магазине">
+                        <Tooltip destroyTooltipOnHide title="В магазине">
                             <span className={styles.avatarItemTag}>
                                 <Store />
                             </span>
                         </Tooltip>
                     ) : (
-                        <Tooltip title="В черновике">
+                        <Tooltip destroyTooltipOnHide title="В черновике">
                             <span className={styles.avatarItemTag}>
                                 <Notebook />
                             </span>
@@ -106,14 +106,14 @@ const AvatarItem: React.FC<Props> = ({
                     )}
 
                     {updatedAt && (
-                        <Tooltip title={`Обновлено - ${formatDate(updatedAt)}`}>
+                        <Tooltip destroyTooltipOnHide title={`Обновлено - ${formatDate(updatedAt)}`}>
                             <span className={styles.avatarItemTag}>
                                 <Edit />
                             </span>
                         </Tooltip>
                     )}
 
-                    <Tooltip title="Пользователи используют">
+                    <Tooltip destroyTooltipOnHide title="Пользователи используют">
                         <span className={styles.avatarItemTagText}>{usersCount}</span>
                     </Tooltip>
                 </div>

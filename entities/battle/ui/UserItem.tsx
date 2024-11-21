@@ -31,7 +31,7 @@ const UserItem: React.FC<Props> = ({ data }) => {
                 </div>
 
                 {isLeader && (
-                    <Tooltip title="Создатель битвы">
+                    <Tooltip destroyTooltipOnHide title="Создатель битвы">
                         <div className={styles.battleOwner}>
                             <Crown />
                         </div>

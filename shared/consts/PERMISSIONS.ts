@@ -26,6 +26,7 @@ export const PERMISSIONS = {
     UPDATE_TASKS: 'Редактирование заданий',
     DELETE_TASKS: 'Удаление заданий',
     VERIFY_TASKS: 'Верификация заданий',
+    ANALYSIS_TASKS: 'Разбор заданий',
     COMPLAINTS: 'Жалобы',
     ARCHIVE: 'Архив',
     STORE: 'Магазин',
@@ -35,4 +36,5 @@ export const PERMISSIONS = {
     ASSIGN_PRODUCTS: 'Выдача товаров',
     PUBLISH_PRODUCTS: 'Публикация товаров',
     PROMOCODES: 'Промокоды',
+    BIG_FILES_UPLOADING: 'Загрузка больших файлов (до 100 MB)',
 };

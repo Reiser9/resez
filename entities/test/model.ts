@@ -22,6 +22,7 @@ export type TestTask = {
     task: string;
     subTheme: SubjectSubTheme;
     subjectTask: SubjectTheme;
+    testsCount: number;
 };
 
 export type TestById = Test & {
@@ -64,11 +65,7 @@ export type TestResult = {
 export type TestHistory = {
     id: number;
     testId: number;
-    subject: {
-        id: number;
-        subject: string;
-        slug: string;
-    };
+    subject: string;
     durationMinutes: number;
     maxPrimaryScore: number;
     secondsSpent: number;

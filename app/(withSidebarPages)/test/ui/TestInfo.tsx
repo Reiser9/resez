@@ -74,7 +74,7 @@ const TestInfo: React.FC<Props> = ({ data }) => {
                         <div className={base.tagElement}>Вопросов: {tasksCount}</div>
 
                         {isPrivate && (
-                            <Tooltip title="Скрыта">
+                            <Tooltip destroyTooltipOnHide title="Скрыта">
                                 <div className={base.tagElementIcon}>
                                     <Lock />
                                 </div>
@@ -82,13 +82,13 @@ const TestInfo: React.FC<Props> = ({ data }) => {
                         )}
 
                         {isOfficial && (
-                            <Tooltip title="Тест разработан командой ResEz">
+                            <Tooltip destroyTooltipOnHide title="Тест разработан командой ResEz">
                                 <div className={base.tagElement}>ResEz</div>
                             </Tooltip>
                         )}
 
                         {isExam && (
-                            <Tooltip title="Вариант ЕГЭ">
+                            <Tooltip destroyTooltipOnHide title="Вариант ЕГЭ">
                                 <div className={base.tagElement}>ЕГЭ</div>
                             </Tooltip>
                         )}
@@ -126,11 +126,11 @@ const TestInfo: React.FC<Props> = ({ data }) => {
                     </div>
                 </div>
 
-                <Tooltip title="Скопировать">
+                <Tooltip destroyTooltipOnHide title="Скопировать">
                     <Text
                         variant="h4"
                         className={styles.testId}
-                        onClick={() => copyTextWithNotify(String(id), 'ID теста скопировано')}
+                        onClick={() => copyTextWithNotify(String(id), 'Номер варианта скопирован')}
                     >
                         Номер варианта: {id}
                     </Text>
@@ -151,7 +151,7 @@ const TestInfo: React.FC<Props> = ({ data }) => {
                         </Link>
                     )}
 
-                    <Tooltip title="Дата создания теста">
+                    <Tooltip destroyTooltipOnHide title="Дата создания теста">
                         <div className={styles.testDateInner}>
                             <Date />
 

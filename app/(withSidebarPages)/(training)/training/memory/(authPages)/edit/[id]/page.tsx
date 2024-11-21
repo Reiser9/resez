@@ -117,7 +117,7 @@ const MemoryEdit = () => {
                 </Button>
             }
             rightButton={
-                <Tooltip title="Импорт через Exсel">
+                <Tooltip destroyTooltipOnHide title="Импорт через Exсel">
                     <IconButton variant="light" onClick={() => setImportExcelModal(true)}>
                         <Excel />
                     </IconButton>

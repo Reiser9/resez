@@ -92,7 +92,7 @@ const AdminPromo = () => {
                         <ReloadButton onClick={resetRequest} disabled={isPending} />
                     </div>
 
-                    <Tooltip title="Создать">
+                    <Tooltip destroyTooltipOnHide title="Создать">
                         <IconButton small variant="light" href="/admin/promo/create" circle>
                             <Plus />
                         </IconButton>

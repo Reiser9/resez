@@ -7,7 +7,7 @@ import { socket } from '@/api/socket';
 
 import type { Message } from '@/entities/messenger';
 import type { Notify } from '@/entities/notify';
-import type { LevelInfo } from '@/entities/user/model';
+import type { LevelInfo } from '@/entities/user';
 import type { Achievement } from '@/entities/achievement';
 import { useAppSelector } from './useRedux';
 import useAlert from './useAlert';

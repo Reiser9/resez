@@ -106,19 +106,19 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                             </button>
 
                             <div className={styles.dialogItemActions}>
-                                {/* <Tooltip title="Закрепить">
+                                {/* <Tooltip destroyTooltipOnHide title="Закрепить">
                                     <IconButton small variant="light">
                                         <Pin />
                                     </IconButton>
                                 </Tooltip>
 
-                                <Tooltip title="В архив">
+                                <Tooltip destroyTooltipOnHide title="В архив">
                                     <IconButton small variant="light">
                                         <Archive />
                                     </IconButton>
                                 </Tooltip> */}
 
-                                <Tooltip title="Очистить историю сообщений">
+                                <Tooltip destroyTooltipOnHide title="Очистить историю сообщений">
                                     <IconButton small variant="danger" onClick={() => setClearHistoryConfirm(true)}>
                                         <Delete />
                                     </IconButton>
@@ -127,7 +127,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                 {isGroup ? (
                                     !isKicked &&
                                     (isLeft ? (
-                                        <Tooltip title="Вернуться в чат">
+                                        <Tooltip destroyTooltipOnHide title="Вернуться в чат">
                                             <IconButton
                                                 small
                                                 onClick={() =>
@@ -141,7 +141,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                             </IconButton>
                                         </Tooltip>
                                     ) : (
-                                        <Tooltip title="Выйти из чата">
+                                        <Tooltip destroyTooltipOnHide title="Выйти из чата">
                                             <IconButton
                                                 small
                                                 variant="danger"
@@ -152,7 +152,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                         </Tooltip>
                                     ))
                                 ) : (
-                                    // <Tooltip title="Заблокировать">
+                                    // <Tooltip destroyTooltipOnHide title="Заблокировать">
                                     //     <IconButton small variant="danger">
                                     //         <Block />
                                     //     </IconButton>

@@ -65,7 +65,7 @@ const AdminSidebar = () => {
                         <SidebarLink href="/admin/promo">Промокоды</SidebarLink>
                     )}
                     {checkPermission(permissions || [], [PERMISSIONS.PROMOCODES]) && (
-                        <SidebarLink href="/admin/task-analisys">Разбор заданий</SidebarLink>
+                        <SidebarLink href="/admin/task-analysis">Разбор заданий</SidebarLink>
                     )}
                 </>
             )}

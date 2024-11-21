@@ -72,17 +72,17 @@ const UserItem: React.FC<Props> = ({
                         </Link>
 
                         {isOnline ? (
-                            <Tooltip title="Онлайн">
+                            <Tooltip destroyTooltipOnHide title="Онлайн">
                                 <div className={styles.userOnline}></div>
                             </Tooltip>
                         ) : (
-                            <Tooltip title="Оффлайн">
+                            <Tooltip destroyTooltipOnHide title="Оффлайн">
                                 <div className={styles.userOffline}></div>
                             </Tooltip>
                         )}
 
                         {isVerified && (
-                            <Tooltip title="Верифицирован">
+                            <Tooltip destroyTooltipOnHide title="Верифицирован">
                                 <div className={styles.userVerified}>
                                     <Verified className={styles.userVerifiedIcon} />
                                 </div>
@@ -98,7 +98,7 @@ const UserItem: React.FC<Props> = ({
                         )}
 
                         {nickname && (
-                            <Tooltip title="Скопировать">
+                            <Tooltip destroyTooltipOnHide title="Скопировать">
                                 <Text
                                     variant="text2"
                                     className={styles.userInfoNickname}
@@ -181,7 +181,7 @@ const UserItem: React.FC<Props> = ({
                         {!isBlocked && (notify || block) && (
                             <>
                                 {notify && (
-                                    <Tooltip title="Уведомление">
+                                    <Tooltip destroyTooltipOnHide title="Уведомление">
                                         <IconButton
                                             variant="light"
                                             href={`/admin/notifies?users=${id}`}
@@ -193,7 +193,7 @@ const UserItem: React.FC<Props> = ({
                                 )}
 
                                 {block && (
-                                    <Tooltip title="Заблокировать">
+                                    <Tooltip destroyTooltipOnHide title="Заблокировать">
                                         <IconButton
                                             variant="danger"
                                             className={styles.userItemButtonIcons}

@@ -25,11 +25,10 @@ const UsefulPage = () => {
                 />
 
                 <LinkBlock
-                    href="/useful/tasks"
+                    href="/useful/task-analysis"
                     title="Разбор заданий"
                     text="Шпоргалки и напоминалки по каждому заданию ЕГЭ"
                     className={base.item3}
-                    disabled
                 />
             </div>
         </div>

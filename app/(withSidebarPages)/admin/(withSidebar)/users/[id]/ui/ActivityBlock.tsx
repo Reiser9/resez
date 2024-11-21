@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
-import type { ActivityItem } from '@/entities/user/model';
+import type { ActivityItem } from '@/entities/user';
 import { formatDate } from '@/shared/utils/formatDate';
 import { Enter } from '@/shared/icons';
 
