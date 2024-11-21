@@ -82,7 +82,7 @@ const TestsHistoryId = () => {
 
             <div className={base.contentItems}>
                 <div className={base.item4}>
-                    <TextPoint title="Предмет:" text={subject?.subject} />
+                    <TextPoint title="Предмет:" text={subject} /> {/* TODO */}
                 </div>
 
                 {secondsSpent && (
