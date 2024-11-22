@@ -3,7 +3,6 @@
 import React from 'react';
 import { Checkbox } from 'antd';
 
-import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import type { CreatedSubject } from '../model';

@@ -29,7 +29,7 @@ const useSubjects = () => {
         });
 
         const response = await request<PagginationSubjects>({
-            url: `/education-ms/admin/subject?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject?${queryString}`,
             isAuth: true,
         });
 
@@ -44,7 +44,7 @@ const useSubjects = () => {
 
     const getSubjectThemes = async (subjectId: number | string) => {
         const response = await request<{ subjectTasks: SubjectTheme[] }>({
-            url: `/education-ms/admin/subject/${subjectId}/subject-task`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${subjectId}/subject-task`,
             isAuth: true,
         });
 
@@ -59,7 +59,7 @@ const useSubjects = () => {
 
     const getSubjectSubThemes = async (themeId: number | string) => {
         const response = await request<{ subThemes: SubjectSubTheme[] }>({
-            url: `/education-ms/admin/subject-task/${themeId}/sub-theme`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject-task/${themeId}/sub-theme`,
             isAuth: true,
         });
 
@@ -74,7 +74,7 @@ const useSubjects = () => {
 
     const getSubjects = async () => {
         const response = await request<{ subjects: { id: number; subject: string; slug: string }[] }>({
-            url: '/education-ms/subject',
+            url: '/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/subject',
             isAuth: true,
         });
 
@@ -95,11 +95,10 @@ const useSubjects = () => {
         subjectTasks: Task[],
         isMark: boolean,
         durationMinutes: string,
-        examType: string,
         successCallback = () => {},
     ) => {
         const response = await request<{ subject: CreatedSubject }>({
-            url: '/education-ms/admin/subject',
+            url: '/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject',
             isAuth: true,
             method: 'POST',
             data: {
@@ -110,7 +109,6 @@ const useSubjects = () => {
                 order,
                 isMark,
                 subjectTasks,
-                examType,
             },
         });
 
@@ -131,7 +129,7 @@ const useSubjects = () => {
         successCallback = () => {},
     ) => {
         const response = await request({
-            url: `/education-ms/admin/subject/${id}/score-conversion`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${id}/score-conversion`,
             isAuth: true,
             method: 'POST',
             data: {
@@ -162,7 +160,7 @@ const useSubjects = () => {
         successCallback = () => {},
     ) => {
         const response = await request<{ subject: CreatedSubject }>({
-            url: `/education-ms/admin/subject/${subjectId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${subjectId}`,
             isAuth: true,
             method: 'PATCH',
             data: {
@@ -189,7 +187,7 @@ const useSubjects = () => {
 
     const deleteSubject = async (subjectId: number, successCallback = () => {}) => {
         const response = await request<{ subject: Subject }>({
-            url: `/education-ms/admin/subject/${subjectId}/archive`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${subjectId}/archive`,
             isAuth: true,
             method: 'DELETE',
         });
@@ -208,7 +206,7 @@ const useSubjects = () => {
 
     const getSubjectById = async (id: string) => {
         const response = await request<{ subject: CreatedSubject }>({
-            url: `/education-ms/admin/subject/${id}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${id}`,
             isAuth: true,
         });
 
@@ -227,7 +225,7 @@ const useSubjects = () => {
             scoreConversion: ScoreConversion[];
             subjectTasks: SubjectTask[];
         }>({
-            url: `/education-ms/admin/subject/${id}/score-conversion`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${id}/score-conversion`,
             isAuth: true,
         });
 
@@ -247,7 +245,7 @@ const useSubjects = () => {
             subjectTasks: SubjectTask[];
             durationMinutes: number;
         }>({
-            url: `/education-ms/subject/${slug}/score-info`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/subject/${slug}/score-info`,
             isAuth: true,
         });
 
@@ -261,8 +259,8 @@ const useSubjects = () => {
     };
 
     const getAnalysisSubjectBySlug = async (slug: string) => {
-        const response = await request<{tasksAnalysis: {id: number, number: number}[]}>({
-            url: `/education-ms/subject/${slug}/task-analysis`,
+        const response = await request<{ tasksAnalysis: { id: number; number: number }[] }>({
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/subject/${slug}/task-analysis`,
             isAuth: true,
         });
 
@@ -277,7 +275,7 @@ const useSubjects = () => {
 
     const publishSubject = async (id: number, successCallback = () => {}) => {
         const response = await request<SubjectFilter>({
-            url: `/education-ms/admin/subject/${id}/toggle-publish`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${id}/toggle-publish`,
             isAuth: true,
             method: 'PATCH',
         });
@@ -295,7 +293,7 @@ const useSubjects = () => {
 
     const getTasksBySubjectId = async (id: number | string) => {
         const response = await request<{ subjectTasks: SubjectTaskCreate[]; tasksCount: number }>({
-            url: `/education-ms/admin/subject/${id}/task-info`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${id}/task-info`,
             isAuth: true,
         });
 
@@ -310,7 +308,7 @@ const useSubjects = () => {
 
     const getTasksCatalogBySubject = async (slug: string) => {
         const response = await request<{ subjectTasks: SubjectTaskCreate[]; tasksCount: number }>({
-            url: `/education-ms/subject/${slug}/task-info`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/subject/${slug}/task-info`,
             isAuth: true,
         });
 

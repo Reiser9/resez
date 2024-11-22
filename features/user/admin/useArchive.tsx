@@ -21,7 +21,7 @@ const useArchive = () => {
         });
 
         const response = await request<PagginationSubjects>({
-            url: `/education-ms/admin/subject/archived?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/archived?${queryString}`,
             isAuth: true,
         });
 
@@ -36,7 +36,7 @@ const useArchive = () => {
 
     const restoreArchiveSubject = async (subjectId: number, successCallback = () => {}) => {
         const response = await request<{ subject: SubjectFilter }>({
-            url: `/education-ms/admin/subject/${subjectId}/restore`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${subjectId}/restore`,
             isAuth: true,
             method: 'PATCH',
         });
@@ -51,7 +51,7 @@ const useArchive = () => {
 
     const removeArhiveSubject = async (subjectId: number, successCallback = () => {}) => {
         const response = await request<{ subject: SubjectFilter }>({
-            url: `/education-ms/admin/subject/${subjectId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject/${subjectId}`,
             isAuth: true,
             method: 'DELETE',
         });
@@ -123,7 +123,7 @@ const useArchive = () => {
         });
 
         const response = await request<PagginationTasks>({
-            url: `/education-ms/admin/task/archived?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task/archived?${queryString}`,
             isAuth: true,
         });
 
@@ -138,7 +138,7 @@ const useArchive = () => {
 
     const restoreArchiveTask = async (taskId: number, successCallback = () => {}) => {
         const response = await request<{ task: SubjectTask }>({
-            url: `/education-ms/admin/task/${taskId}/restore`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task/${taskId}/restore`,
             isAuth: true,
             method: 'PATCH',
         });

@@ -5,7 +5,7 @@
     gap: 8px;
 }
 
-.notifiesDelayItem{
+div.notifiesDelayItem{
     width: calc(100% / 2 - 8px / 2);
 }
 
@@ -22,7 +22,7 @@
 }
 
 @media (max-width: 375px) {
-    .notifiesDelayItem{
+    div.notifiesDelayItem{
         width: 100%;
     }
 }

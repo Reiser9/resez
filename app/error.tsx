@@ -18,7 +18,11 @@ type Props = {
 
 const ErrorPage: React.FC<Props> = ({ error, reset }) => {
     return (
-        <FullPageWrapper icon={<NotFoundIcon />} code="Упс.." text={`${error.message || 'К сожалению, произошла ошибка'}`}>
+        <FullPageWrapper
+            icon={<NotFoundIcon />}
+            code="Упс.."
+            text={`${error.message || 'К сожалению, произошла ошибка'}`}
+        >
             <Button auto variant="outline" onClick={reset} style={{ minWidth: 160 }}>
                 Перезагрузить
             </Button>

@@ -1,0 +1,26 @@
+.taskSnippetItem{
+    width: 100%;
+    padding: 1.6rem 1.2rem;
+    border-radius: 4px;
+    background: var(--input);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.taskItemDate{
+    color: var(--textGrey);
+}
+
+.taskVerified{
+    width: 20px;
+}
+
+.taskVerified path{
+    stroke: var(--main);
+}
+
+.taskItemContent{
+    width: 100%;
+}

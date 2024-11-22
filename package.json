@@ -44,6 +44,7 @@
     "react-snowfall": "1.2.1",
     "react-swipeable": "7.0.1",
     "react-window": "1.8.10",
+    "recharts": "2.13.3",
     "sanitize-html": "2.13.0",
     "sharp": "0.33.1",
     "socket.io-client": "4.7.4",

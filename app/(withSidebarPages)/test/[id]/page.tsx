@@ -80,7 +80,7 @@ const TestPage = () => {
     } = useInfiniteQuery({
         queryKey: ['admin_tasks', subjectTaskId, currentTaskId],
         queryFn: (pageParam) =>
-            getPagginationTasks(pageParam.pageParam, '', subjectTaskId || '', '', '', '', '', 9, currentTaskId || ''),
+            getPagginationTasks(pageParam.pageParam, '', subjectTaskId || '', '', '', '', 9, currentTaskId || ''),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {
             const nextPage = !lastPage?.isLast ? allPages?.length : undefined;

@@ -161,3 +161,15 @@
 .warn .adminStatsCircle:before, .warn .adminStatsCircle:after{
     background: var(--warn);
 }
+
+.adminChart{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.adminChartSelect{
+    width: 100%;
+}

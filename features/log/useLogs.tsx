@@ -15,7 +15,7 @@ const useLogs = () => {
         });
 
         const response = await request<Logs>({
-            url: `/education-ms/admin/log?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/log?${queryString}`,
             isAuth: true,
         });
 
@@ -30,7 +30,7 @@ const useLogs = () => {
 
     const getLogById = async (id: number | string) => {
         const response = await request<{ log: LogById }>({
-            url: `/education-ms/admin/log/${id}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/log/${id}`,
             isAuth: true,
         });
 

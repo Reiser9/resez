@@ -2,6 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
@@ -9,16 +10,15 @@ import styles from './index.module.scss';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { Delete, DotsHorizontal, Edit, Notebook, Restore } from '@/shared/icons';
+import { useArchive } from '@/features/user';
+import { useSubjects } from '@/features/subjects';
+
 import { TextPoint } from '@/shared/ui/TextPoint';
+import { SubjectFilter } from '@/entities/subject';
+import { Text } from '@/shared/ui/Text';
 import { LoaderForItem } from '@/shared/ui/Preloader';
 import { Modal } from '@/shared/ui/Modal';
 import { Input } from '@/shared/ui/Input';
-
-import { SubjectFilter } from '@/entities/subject';
-import { Text } from '@/shared/ui/Text';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSubjects } from '@/features/subjects';
-import { useArchive } from '@/features/user';
 
 type Props = {
     data: SubjectFilter;

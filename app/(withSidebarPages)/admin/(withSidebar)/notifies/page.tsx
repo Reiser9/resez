@@ -22,6 +22,7 @@ import { useUserPermissions, useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
+import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
@@ -30,7 +31,6 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
-import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { UserOption } from '@/shared/ui/OptionComponents';
 import { TimePicker } from '@/shared/ui/TimePicker';
 

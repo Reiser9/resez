@@ -14,7 +14,6 @@ export type TaskAnalysis = {
         isArchived: boolean;
         createdAt: Date;
         updatedAt: Date;
-        examType: string;
     };
     subjectTask: SubjectTheme;
 };

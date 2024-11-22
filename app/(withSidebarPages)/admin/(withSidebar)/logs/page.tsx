@@ -10,8 +10,8 @@ import { useLogs } from '@/features/log';
 import { Cross } from '@/shared/icons';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { LogItem } from '@/entities/log/ui';
-
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';

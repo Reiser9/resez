@@ -13,11 +13,7 @@ import { Preloader } from '@/shared/ui/Preloader';
 const AdminSidebar = () => {
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions, isLoading: permissionsIsLoading } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -50,7 +46,10 @@ const AdminSidebar = () => {
                         <SidebarLink href="/admin/subjects">Предметы</SidebarLink>
                     )}
                     {checkPermission(permissions || [], [PERMISSIONS.TASKS]) && (
-                        <SidebarLink href="/admin/tasks">Задания</SidebarLink>
+                        <>
+                            <SidebarLink href="/admin/tasks">Задания</SidebarLink>
+                            <SidebarLink href="/admin/task-snippets">Вставки</SidebarLink>
+                        </>
                     )}
                     {checkPermission(permissions || [], [PERMISSIONS.TESTS]) && (
                         <SidebarLink href="/admin/tests">Тесты</SidebarLink>

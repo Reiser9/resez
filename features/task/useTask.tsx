@@ -22,7 +22,6 @@ const useTask = () => {
         subThemeId?: number | string,
         userId?: number | string,
         isVerified?: string,
-        type?: string,
         limit = 9,
         currentTaskId?: number | string,
     ) => {
@@ -34,12 +33,11 @@ const useTask = () => {
             subTheme_id: subThemeId,
             user_id: userId,
             is_verified: isVerified,
-            exam_type: type,
             current_task_id: currentTaskId,
         });
 
         const response = await request<PagginationTasks>({
-            url: `/education-ms/admin/task?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task?${queryString}`,
             isAuth: true,
         });
 
@@ -64,7 +62,7 @@ const useTask = () => {
         successCallback = () => {},
     ) => {
         const response = await request({
-            url: '/education-ms/admin/task',
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task`,
             isAuth: true,
             method: 'POST',
             data: {
@@ -104,7 +102,7 @@ const useTask = () => {
         successCallback = () => {},
     ) => {
         const response = await request({
-            url: `/education-ms/admin/task/${taskId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task/${taskId}`,
             isAuth: true,
             method: 'PATCH',
             data: {
@@ -133,7 +131,7 @@ const useTask = () => {
 
     const toggleVerify = async (taskId: number | string, successCallback = () => {}) => {
         const response = await request<{ task: SubjectTaskById }>({
-            url: `/education-ms/admin/task/${taskId}/toggle-verify`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task/${taskId}/toggle-verify`,
             isAuth: true,
             method: 'PATCH',
         });
@@ -153,7 +151,7 @@ const useTask = () => {
         let response;
 
         response = await request<{ task: SubjectTaskById }>({
-            url: `/education-ms/${forAdmin ? 'admin/' : ''}task/${taskId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/${forAdmin ? 'admin/' : ''}task/${taskId}`,
             isAuth: forAdmin,
         });
 
@@ -173,7 +171,7 @@ const useTask = () => {
             limit,
         });
         const response = await request<PagginationTasksById>({
-            url: `/education-ms/sub-theme/${subthemeId}/task?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/sub-theme/${subthemeId}/task?${queryString}`,
         });
 
         if (catchRequestError(response)) {
@@ -187,7 +185,7 @@ const useTask = () => {
 
     const getSubThemeInfo = async (subthemeId: number | string, successCallback = () => {}) => {
         const response = await request<{ subTheme: SubThemeInfo }>({
-            url: `/education-ms/sub-theme/${subthemeId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/sub-theme/${subthemeId}`,
             isAuth: true,
         });
 
@@ -204,7 +202,7 @@ const useTask = () => {
 
     const archiveTask = async (taskId: number, successCallback = () => {}) => {
         const response = await request({
-            url: `/education-ms/admin/task/${taskId}/archive`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task/${taskId}/archive`,
             isAuth: true,
             method: 'DELETE',
         });
@@ -233,7 +231,7 @@ const useTask = () => {
                 percent: number;
             }[];
         }>({
-            url: '/education-ms/admin/task/match',
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task/match`,
             isAuth: true,
             method: 'POST',
             data: {

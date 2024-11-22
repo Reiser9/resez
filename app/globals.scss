@@ -220,6 +220,10 @@ a, button, input, textarea, select, path, line, rect {
     transition: 0.2s ease-in-out;
 }
 
+.recharts-wrapper path, .recharts-wrapper line, .recharts-wrapper rect{
+    transition: unset;
+}
+
 a {
     text-decoration: none;
     cursor: default;

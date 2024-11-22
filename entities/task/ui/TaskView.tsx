@@ -37,21 +37,21 @@ const TaskView: React.FC<Props> = ({ task }) => {
         answers,
     } = task || {};
     const { isDetailedAnswer, theme } = subjectTask || {};
-    const { nickname, avatar } = user || {};
+    const { nickname } = user || {};
 
     return (
         <>
-            {/* {nickname && (
+            {nickname && (
                 <div className={base.baseWrapperGap4}>
                     <Text variant="text3">Задание создал</Text>
 
                     <Link prefetch={false} href={`/user/${nickname}`} className={base.titleWrapper}>
-                        <Badge text={nickname} image={avatar} />
+                        <Badge text={nickname} />
 
                         <Text>{nickname}</Text>
                     </Link>
                 </div>
-            )} */}
+            )}
 
             <FakeInput title="Предмет" value={subject.subject} />
             <FakeInput title="Номер задания" value={theme} />

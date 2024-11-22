@@ -23,7 +23,6 @@ type Props = {
     subThemeId: string | null;
     isVerified: string | null;
     userId: string | null;
-    typeId: string | null;
 };
 
 const TasksFilter: React.FC<Props> = ({
@@ -34,7 +33,6 @@ const TasksFilter: React.FC<Props> = ({
     subThemeId,
     isVerified,
     userId,
-    typeId
 }) => {
     const router = useRouter();
 
@@ -50,7 +48,6 @@ const TasksFilter: React.FC<Props> = ({
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [verify, setVerify] = React.useState<string | null>(null);
     const [user, setUser] = React.useState<string | null>(null);
-    const [type, setType] = React.useState<string | null>(null);
 
     const [subjects, setSubjects] = React.useState<SubjectFilter[]>([]);
     const [subjectsFilter, setSubjectsFilter] = React.useState<SubjectFilter[]>([]);
@@ -64,11 +61,7 @@ const TasksFilter: React.FC<Props> = ({
         queryFn: getUserPermissions,
     });
 
-    const {
-        data: users,
-        isPending: usersIsLoading,
-        isError: usersError,
-    } = useQuery({
+    const { data: users, isPending: usersIsLoading } = useQuery({
         queryKey: ['users_short_search', userSearchDebounce],
         queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
         enabled: checkPermission(permissions || [], [PERMISSIONS.USERS]),
@@ -105,7 +98,6 @@ const TasksFilter: React.FC<Props> = ({
         setTheme(null);
         setSubTheme(null);
         setUser(null);
-        setType(null);
         setVerify(null);
         router.replace('/admin/tasks');
     };
@@ -117,37 +109,24 @@ const TasksFilter: React.FC<Props> = ({
             subTheme_id: subTheme,
             is_verified: verify,
             user_id: user,
-            type_id: type
         });
         router.replace(`?${newUrl}`);
         setFilterOpen(false);
     };
 
-    const {
-        data: subjectsData,
-        isLoading: subjectsIsLoading,
-        isError: subjectsError,
-    } = useQuery({
+    const { data: subjectsData, isLoading: subjectsIsLoading } = useQuery({
         queryKey: ['subjects'],
         queryFn: () => getPagginationSubjects(0, 9999),
         enabled: checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]),
     });
 
-    const {
-        data: themesData,
-        isLoading: themesIsLoading,
-        isError: themesError,
-    } = useQuery({
+    const { data: themesData, isLoading: themesIsLoading } = useQuery({
         queryKey: ['themes', subject],
         queryFn: () => getSubjectThemes(String(subject)),
         enabled: !!subject && checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]),
     });
 
-    const {
-        data: subThemesData,
-        isLoading: subThemesIsLoading,
-        isError: subThemesError,
-    } = useQuery({
+    const { data: subThemesData, isLoading: subThemesIsLoading } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
         enabled: !!theme && checkPermission(permissions || [], [PERMISSIONS.SUBJECTS]),
@@ -197,12 +176,6 @@ const TasksFilter: React.FC<Props> = ({
             setUser(userId);
         }
     }, [userId]);
-
-    React.useEffect(() => {
-        if (typeId) {
-            setType(typeId);
-        }
-    }, [typeId]);
 
     React.useEffect(() => {
         if (isVerified) {
@@ -315,27 +288,6 @@ const TasksFilter: React.FC<Props> = ({
                     {
                         label: 'Нет',
                         value: 'false',
-                    },
-                ]}
-            />
-
-            <Select
-                title="Тип"
-                onChange={(value) => setType(value)}
-                value={type}
-                clear
-                options={[
-                    {
-                        label: 'ЕГЭ',
-                        value: 'ЕГЭ',
-                    },
-                    {
-                        label: 'ОГЭ',
-                        value: 'ОГЭ',
-                    },
-                    {
-                        label: 'ЕНТ',
-                        value: 'ЕНТ',
                     },
                 ]}
             />

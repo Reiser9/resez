@@ -20,11 +20,7 @@ import { Text } from '@/shared/ui/Text';
 const AdminArchiveSubjects = () => {
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -65,7 +61,7 @@ const AdminArchiveSubjects = () => {
                     ))}
                 </div>
             ) : isError ? (
-                <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
+                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>
                     <div className={base.contentItems}>

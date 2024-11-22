@@ -14,7 +14,7 @@ const Logo = () => {
     return (
         <Link href="/" className={cn(styles.logoInner, styles[event.class])}>
             <span className={styles.logo}>
-                ResEz
+                {process.env.NEXT_PUBLIC_APP_NAME}
                 {event?.decor && (
                     <Image width={15} height={15} src={event?.decor} alt="event" className={styles.logoDecor} />
                 )}

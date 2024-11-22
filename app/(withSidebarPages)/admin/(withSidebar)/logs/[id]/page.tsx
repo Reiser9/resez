@@ -9,10 +9,13 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import type { CreatedSubject } from '@/entities/subject';
+import type { SubjectTaskById } from '@/entities/task';
 import { useLogs } from '@/features/log';
 import { Cross } from '@/shared/icons';
 import { formatDate } from '@/shared/utils/formatDate';
 import { SubjectView } from '@/entities/subject/ui';
+import { LOG_TYPES } from '@/shared/consts/LOG_TYPES';
+import { TaskView } from '@/entities/task/ui';
 
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
@@ -20,9 +23,6 @@ import { BackButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
 import { Spoiler } from '@/shared/ui/Spoiler';
-import { LOG_TYPES } from '@/shared/consts/LOG_TYPES';
-import { SubjectTaskById } from '@/entities/task';
-import { TaskView } from '@/entities/task/ui';
 
 const AdminLogById = () => {
     const { id } = useParams();
@@ -35,7 +35,7 @@ const AdminLogById = () => {
         enabled: !!id,
     });
 
-    const { user, type, entityId, createdAt, currentEntity, oldEntity } = data || {};
+    const { user, type, createdAt, currentEntity, oldEntity } = data || {};
     const { nickname, avatar, id: userId } = user || {};
 
     if (isLoading) {
@@ -43,7 +43,7 @@ const AdminLogById = () => {
     }
 
     if (isError) {
-        return <NotContent danger icon={<Cross />} text="Ошибка при загрузке данных" />;
+        return <NotContent danger icon={<Cross />} text="Произошла ошибка при загрузке данных" />;
     }
 
     return (
@@ -94,9 +94,7 @@ const AdminLogById = () => {
 
                             {(type === LOG_TYPES.CREATE_TASK ||
                                 type === LOG_TYPES.EDIT_TASK ||
-                                type === LOG_TYPES.ARCHIVE_TASK) && (
-                                <TaskView task={oldEntity as SubjectTaskById} />
-                            )}
+                                type === LOG_TYPES.ARCHIVE_TASK) && <TaskView task={oldEntity as SubjectTaskById} />}
                         </div>
                     </Spoiler>
                 )}

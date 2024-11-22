@@ -24,7 +24,7 @@ const useTest = () => {
         });
 
         const response = await request<PagginationTests>({
-            url: `/education-ms/admin/test?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/test?${queryString}`,
             isAuth: true,
         });
 
@@ -45,7 +45,7 @@ const useTest = () => {
         });
 
         const response = await request<PagginationTests>({
-            url: `/education-ms/test/official?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/test/official?${queryString}`,
             isAuth: true,
         });
 
@@ -65,7 +65,7 @@ const useTest = () => {
         successCallback = () => {},
     ) => {
         const response = await request<{ test: any }>({
-            url: '/education-ms/admin/test/exam',
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/test/exam`,
             isAuth: true,
             method: 'POST',
             data: {
@@ -89,7 +89,7 @@ const useTest = () => {
 
     const getTestById = async (id: number | string) => {
         const response = await request<TestById>({
-            url: `/education-ms/test/${id}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/test/${id}`,
             isAuth: true,
         });
 
@@ -104,7 +104,7 @@ const useTest = () => {
 
     const deleteTest = async (id: number | string, successCallback = () => {}) => {
         const response = await request<{ test: Test }>({
-            url: `/education-ms/admin/test/${id}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/test/${id}`,
             isAuth: true,
             method: 'DELETE',
         });
@@ -123,7 +123,7 @@ const useTest = () => {
 
     const getDetailedTasksByTestId = async (id: number | string) => {
         const response = await request<{ tasks: SubjectTaskById[] }>({
-            url: `/education-ms/test/${id}/task/detailed`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/test/${id}/task/detailed`,
             isAuth: true,
         });
 
@@ -144,7 +144,7 @@ const useTest = () => {
         successCallback = () => {},
     ) => {
         const response = await request<TestResult>({
-            url: `/education-ms/test/${id}/submit`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/test/${id}/submit`,
             isAuth: true,
             method: 'POST',
             data: {
@@ -172,7 +172,7 @@ const useTest = () => {
         });
 
         const response = await request<PagginationTestsHistory>({
-            url: `/education-ms/test-history?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/test-history?${queryString}`,
             isAuth: true,
         });
 
@@ -187,7 +187,7 @@ const useTest = () => {
 
     const getTestHistoryById = async (id: number | string) => {
         const response = await request<{ history: TestHistoryById }>({
-            url: `/education-ms/test-history/${id}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/test-history/${id}`,
             isAuth: true,
         });
 
@@ -207,7 +207,7 @@ const useTest = () => {
         successCallback = () => {},
     ) => {
         const response = await request({
-            url: `/education-ms/admin/test/${testId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/test/${testId}`,
             isAuth: true,
             method: 'PATCH',
             data: {

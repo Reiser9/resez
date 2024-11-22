@@ -16,7 +16,7 @@ const useTaskAnalysis = () => {
         });
 
         const response = await request<TaskAnalysisPaggination>({
-            url: `/education-ms/admin/task-analysis?${queryString}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis?${queryString}`,
             isAuth: true,
         });
 
@@ -31,7 +31,7 @@ const useTaskAnalysis = () => {
 
     const createTaskAnalysis = async (taskId: number | string, content: string, successCallback = () => {}) => {
         const response = await request<TaskAnalysis>({
-            url: '/education-ms/admin/task-analysis',
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis`,
             isAuth: true,
             method: 'POST',
             data: {
@@ -53,8 +53,8 @@ const useTaskAnalysis = () => {
     };
 
     const togglePublish = async (taskAnalysisId: number | string, successCallback = () => {}) => {
-        const response = await request<{taskAnalysis: TaskAnalysis}>({
-            url: `/education-ms/admin/task-analysis/${taskAnalysisId}/toggle-publish`,
+        const response = await request<{ taskAnalysis: TaskAnalysis }>({
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis/${taskAnalysisId}/toggle-publish`,
             isAuth: true,
             method: 'PATCH',
         });
@@ -72,7 +72,7 @@ const useTaskAnalysis = () => {
 
     const getTaskAnalysisById = async (taskAnalysisId: number | string, successCallback = () => {}) => {
         const response = await request<TaskAnalysis>({
-            url: `/education-ms/admin/task-analysis/${taskAnalysisId}`,
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis/${taskAnalysisId}`,
             isAuth: true,
         });
 
@@ -85,18 +85,16 @@ const useTaskAnalysis = () => {
         if ('data' in response) {
             return response.data;
         }
-    }
-    
-    const editTaskAnalysis = async () => {
+    };
 
-    }
+    const editTaskAnalysis = async () => {};
 
     return {
         getPagginationTasksAnalysis,
         createTaskAnalysis,
         togglePublish,
         getTaskAnalysisById,
-        editTaskAnalysis
+        editTaskAnalysis,
     };
 };
 

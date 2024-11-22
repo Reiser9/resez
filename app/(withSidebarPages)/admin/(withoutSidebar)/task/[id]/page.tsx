@@ -32,11 +32,7 @@ const TaskPage = () => {
         enabled: !!id,
     });
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions, isLoading: permissionsIsLoading } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });

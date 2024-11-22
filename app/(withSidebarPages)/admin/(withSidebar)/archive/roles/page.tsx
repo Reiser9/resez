@@ -21,11 +21,7 @@ import { NotContent } from '@/shared/ui/NotContent';
 const AdminArchiveRoles = () => {
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -38,7 +34,7 @@ const AdminArchiveRoles = () => {
         queryClient.resetQueries({ queryKey: ['archive_roles'] });
     };
 
-    const revalidateRoles = () => {
+    const revalidateRequest = () => {
         queryClient.invalidateQueries({ queryKey: ['archive_roles'] });
     };
 
@@ -70,7 +66,7 @@ const AdminArchiveRoles = () => {
                     ))}
                 </div>
             ) : isError ? (
-                <NotContent text="Ошибка при загрузке предметов" icon={<Cross />} danger />
+                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>
                     <div className={base.contentItems}>
@@ -79,7 +75,7 @@ const AdminArchiveRoles = () => {
                                 <RoleItem
                                     key={data.id}
                                     data={data}
-                                    deleteRole={() => deleteRole(String(data.id), revalidateRoles)}
+                                    deleteRole={() => deleteRole(String(data.id), revalidateRequest)}
                                     loading={rolesIsLoading.includes(String(data.id))}
                                     edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_ROLES])}
                                     remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_ROLES])}
