@@ -74,7 +74,7 @@ const useSubjects = () => {
 
     const getSubjects = async () => {
         const response = await request<{ subjects: { id: number; subject: string; slug: string }[] }>({
-            url: '/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/subject',
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/subject`,
             isAuth: true,
         });
 
@@ -98,7 +98,7 @@ const useSubjects = () => {
         successCallback = () => {},
     ) => {
         const response = await request<{ subject: CreatedSubject }>({
-            url: '/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject',
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/subject`,
             isAuth: true,
             method: 'POST',
             data: {

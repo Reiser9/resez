@@ -35,31 +35,35 @@ const TaskAnalysisSubjects = () => {
     }
 
     return (
-        <div className={base.baseWrapperGap4}>
-            <Text fontWeight={600}>Предмет:</Text>
+        <>
+            <div className={base.baseWrapperGap4}>
+                <Text fontWeight={600}>Предмет:</Text>
 
-            {subjectsIsLoading ? (
-                <ScrollSkeleton />
-            ) : (
-                !!subjects?.subjects?.length && (
-                    <ScrollWithArrows>
-                        {subjects?.subjects.map((data) => (
-                            <Link
-                                key={data.id}
-                                prefetch={false}
-                                href={`/useful/task-analysis/${data.slug}`}
-                                replace
-                                className={cn(base.tag, {
-                                    [base.active]: slug === data.slug,
-                                })}
-                            >
-                                {data.subject}
-                            </Link>
-                        ))}
-                    </ScrollWithArrows>
-                )
-            )}
-        </div>
+                {subjectsIsLoading ? (
+                    <ScrollSkeleton />
+                ) : (
+                    !!subjects?.subjects?.length && (
+                        <ScrollWithArrows>
+                            {subjects?.subjects.map((data) => (
+                                <Link
+                                    key={data.id}
+                                    prefetch={false}
+                                    href={`/useful/task-analysis/${data.slug}`}
+                                    replace
+                                    className={cn(base.tag, {
+                                        [base.active]: slug === data.slug,
+                                    })}
+                                >
+                                    {data.subject}
+                                </Link>
+                            ))}
+                        </ScrollWithArrows>
+                    )
+                )}
+            </div>
+
+            {!slug && <NotContent text="Выберите предмет" />}
+        </>
     );
 };
 
