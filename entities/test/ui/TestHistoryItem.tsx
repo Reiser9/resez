@@ -34,7 +34,7 @@ const TestHistoryItem: React.FC<Props> = ({ data }) => {
 
     return (
         <div className={cn(base.item3, styles.testHistoryItem)}>
-            <Text variant="h4">{subject}</Text>
+            <Text variant="h4">{subject.subject}</Text>
 
             <TextPoint title="Дата решения:" text={formatDate(createdAt)} />
             <TextPoint title="Затрачено времени:" text={formatTime(secondsSpent)} />

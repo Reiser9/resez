@@ -29,7 +29,7 @@ interface InputsProps {
     commentText?: string;
     resizable?: boolean;
     color?: 'default' | 'white';
-    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement> | React.ChangeEvent<HTMLInputElement>) => void;
+    onInputChange?: (value: string) => void;
     resizeChange?: (value: string) => void;
     children?: React.ReactNode;
 }
@@ -71,7 +71,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             commentText,
             color = 'default',
             wrapperClass,
-            onChange,
+            onInputChange,
             resizeChange,
             resizable = false,
             className,
@@ -100,7 +100,9 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                         })}
                         maxLength={lengthLimit}
                         value={value}
-                        onChange={onChange ? onChange : (e) => setValue(e.target.value)}
+                        onChange={
+                            onInputChange ? (e) => onInputChange(e.target.value) : (e) => setValue(e.target.value)
+                        }
                         {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
                     ></textarea>
                 );
@@ -142,13 +144,14 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
                     value={value}
                     onWheel={handleWheel}
                     onChange={(e) => {
-                        const value = e.target.value;
-                        if (textLength > lengthLimit) {
+                        let value = e.target.value;
+
+                        if (value.length > lengthLimit) {
                             return;
                         }
 
-                        if (onChange) {
-                            onChange(e);
+                        if (onInputChange) {
+                            onInputChange(value);
                         }
 
                         setValue(value);

@@ -3,7 +3,7 @@ export const getHolidayEvent = (): { icon: string; decor: string; class: string;
     const day = today.getDate();
     const month = today.getMonth() + 1;
 
-    if (month === 6 || month === 1 || month === 2) {
+    if (month === 12 || month === 1 || month === 2) {
         return {
             icon: '/img/newyear.svg',
             decor: '/img/newyear-decor.svg',

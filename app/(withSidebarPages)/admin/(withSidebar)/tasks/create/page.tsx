@@ -128,10 +128,10 @@ const AdminTaskCreate = () => {
         setAnswers(newAnswers);
     };
 
-    const changeAnswer = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>, id: number) => {
+    const changeAnswer = (value: string, id: number) => {
         let newAnswers = [...answers];
 
-        newAnswers[id] = e.target.value;
+        newAnswers[id] = value;
         setAnswers(newAnswers);
     };
 
@@ -372,7 +372,7 @@ const AdminTaskCreate = () => {
                                         {!!answers.length &&
                                             answers.map((answer, id) => (
                                                 <div key={id} className={styles.answerItem}>
-                                                    <Input value={answer} onChange={(e) => changeAnswer(e, id)} />
+                                                    <Input value={answer} onInputChange={(value) => changeAnswer(value, id)} />
 
                                                     {answers.length > 1 && (
                                                         <IconButton

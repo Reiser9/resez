@@ -28,7 +28,7 @@ const PointsSubject = () => {
     const { isMark, scoreConversion, subjectTasks, durationMinutes } = data || {};
 
     if (isLoading) {
-        return <Preloader />;
+        return <Preloader page small />;
     }
 
     if (isError) {

@@ -75,7 +75,7 @@ const SubjectTaskItem: React.FC<Props<CreatedTask | Task>> = ({ index, task, tas
 
             <Input
                 value={task.theme}
-                onChange={(e) => updateCreatedTask(index, 'theme', e.target.value)}
+                onInputChange={(value) => updateCreatedTask(index, 'theme', value)}
                 title="Тема задания"
                 trackLength
                 lengthLimit={150}
@@ -83,7 +83,7 @@ const SubjectTaskItem: React.FC<Props<CreatedTask | Task>> = ({ index, task, tas
 
             <Input
                 value={`${task.primaryScore}`}
-                onChange={(e) => updateCreatedTask(index, 'primaryScore', e.target.value)}
+                onInputChange={(value) => updateCreatedTask(index, 'primaryScore', value)}
                 title="Первичный балл"
                 lengthLimit={2}
                 type="number"
@@ -100,7 +100,7 @@ const SubjectTaskItem: React.FC<Props<CreatedTask | Task>> = ({ index, task, tas
                 <div className={styles.subjectItemDeleteInner} key={`subthemeId_${subThemeId}`}>
                     <Input
                         value={theme.subTheme}
-                        onChange={(e) => updateCreatedSubTheme(index, subThemeId, e.target.value)}
+                        onInputChange={(value) => updateCreatedSubTheme(index, subThemeId, value)}
                         title={`Подтема (${theme.tasksCount || 0})`}
                         trackLength
                         lengthLimit={150}

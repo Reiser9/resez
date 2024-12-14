@@ -44,7 +44,7 @@ const SubjectsCreate = () => {
             ],
             tasksCount: 0,
             isDetailedAnswer: false,
-            primaryScore: 0,
+            primaryScore: '',
         },
     ]);
 
@@ -152,7 +152,9 @@ const SubjectsCreate = () => {
 
         if (isPoint) {
             let updatedScores = elements.map((data) => {
-                const { primaryScore, secondaryScore, isGreen, isRed } = data || {};
+                const { primaryScore, secondaryScore } = data || {};
+                const isGreen = Number(primaryScore) - 1 >= green;
+                const isRed = Number(primaryScore) - 1 <= red;
                 const score = String(secondaryScore).split('-');
 
                 if (score.length !== 2) {
