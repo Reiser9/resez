@@ -1,4 +1,5 @@
 import type { Paggination } from '../pagination';
+import type { UserShort } from '../user';
 
 export type TypesLocalNotify = 'success' | 'info' | 'warn' | 'error' | 'default';
 type TypesNotify = 'Сессия' | 'Информация' | 'Подарок' | 'Голосование' | 'Добавление';
@@ -15,7 +16,7 @@ export type LocalNotify = {
 export type Notify = {
     id: number;
     title: string;
-    author: string | null;
+    author: string;
     date: Date;
     content: string;
     type: TypesNotify;
@@ -23,10 +24,26 @@ export type Notify = {
 };
 
 export type Notifies = Paggination & {
-    notifies: Notify[];
+    notifications: Notify[];
 };
 
 export type NotifyType = {
     id: number;
     type: string;
+};
+
+export type NotifySendDTO = {
+    id: number,
+    type: TypesNotify,
+    title: string,
+    content: string,
+    author: string,
+    date: Date,
+    updatedAt: Date,
+    user: UserShort,
+    isEdited: boolean
+}
+
+export type AdminNotifiesPaggination = Paggination & {
+    notifications: NotifySendDTO[];
 };

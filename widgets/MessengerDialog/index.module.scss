@@ -348,8 +348,26 @@ button.dialogBack{
     color: var(--error);
 }
 
+.messangerImageButton{
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--main);
+    background: var(--input);
+    border-radius: 4px;
+    transition: background .2s linear;
+}
+
+.messangerImageButton svg{
+    width: 24px;
+    flex-shrink: 0;
+}
+
 @media (any-hover: hover) {
-    .infoModalAvatarAction{
+    .infoModalAvatarAction, .messangerImageButton{
         cursor: pointer;
     }
 
@@ -360,6 +378,10 @@ button.dialogBack{
 
     .infoModalAvatarInner:hover .infoModalAvatarAction{
         opacity: 1;
+    }
+
+    .messangerImageButton:hover{
+        background: var(--lighten);
     }
 }
 

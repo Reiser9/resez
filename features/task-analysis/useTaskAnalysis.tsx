@@ -87,7 +87,52 @@ const useTaskAnalysis = () => {
         }
     };
 
-    const editTaskAnalysis = async () => {};
+    const editTaskAnalysis = async (
+        taskAnalysisId: number | string,
+        taskId: number | string,
+        content: string,
+        successCallback = () => {},
+    ) => {
+        const response = await request<TaskAnalysis>({
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis/${taskAnalysisId}`,
+            isAuth: true,
+            method: 'PATCH',
+            data: {
+                subjectTaskId: taskId,
+                content,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Разбор задания сохранен', 'success');
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const archiveTaskAnalysis = async (taskAnalysisId: number | string, successCallback = () => {}) => {
+        const response = await request({
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis/${taskAnalysisId}/archive`,
+            isAuth: true,
+            method: 'DELETE',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Разбор задания перенесен в архив', 'success');
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
 
     return {
         getPagginationTasksAnalysis,
@@ -95,6 +140,7 @@ const useTaskAnalysis = () => {
         togglePublish,
         getTaskAnalysisById,
         editTaskAnalysis,
+        archiveTaskAnalysis
     };
 };
 

@@ -31,9 +31,9 @@ const AdminEditTaskAnalysis = () => {
     const { id } = useParams();
 
     const [subjectId, setSubjectId] = React.useState<number | null>(null);
-    const [subject, setSubject] = React.useState<string>('');
+    const [subject, setSubject] = React.useState('');
     const [themeId, setThemeId] = React.useState<number | null>(null);
-    const [theme, setTheme] = React.useState<string>('');
+    const [theme, setTheme] = React.useState('');
     const [analysisEditorIsReady, setAnalysisEditorIsReady] = React.useState(false);
 
     const analysisRef = React.useRef<EditorCore | null>(null);
@@ -64,9 +64,9 @@ const AdminEditTaskAnalysis = () => {
                 return alertNotify('Предупреждение', 'Разбор задания не должен быть пустым', 'warn');
             }
 
-            // editTaskAnalysis(theme, content, () => {
-            //     router.push('/admin/task-analysis');
-            // });
+            editTaskAnalysis(String(id), themeId, content, () => {
+                router.push('/admin/task-analysis');
+            });
         },
     });
 

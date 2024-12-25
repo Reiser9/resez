@@ -7,7 +7,7 @@ import { Stack, TypesTest } from '@/shared/icons';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
-            <SubjectsTabs baseUrl="/tests/subject/" exact={false} />
+            <SubjectsTabs baseUrl="/tests/subject/" />
 
             <InfoBlock
                 icon={<Stack />}

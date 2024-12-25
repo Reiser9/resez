@@ -18,6 +18,7 @@ import useShortInfo from '@/features/user/data/useShortInfo';
 import { Audio } from '../Audio';
 import { Text } from '../Text';
 import { Badge } from '../Badge';
+import Image from 'next/image';
 
 type Props = {
     data: Message;
@@ -39,7 +40,7 @@ const DialogMessageItem: React.FC<Props> = ({
     setIsEditedMessage,
     ...props
 }) => {
-    const { id, createdAt, updatedAt, isEdited, message, sender, type } = data || {};
+    const { id, createdAt, updatedAt, isEdited, message, sender, type, files } = data || {};
     const { avatar, nickname, id: userId } = sender || {};
 
     const { getShortInfo } = useShortInfo();
@@ -111,6 +112,23 @@ const DialogMessageItem: React.FC<Props> = ({
                                     </Tooltip>
                                 )}
                             </Text>
+                        )}
+
+                        {!!files?.length && (
+                            <div className={styles.messangerImages}>
+                                {files.map((image, index) => (
+                                    <div
+                                        key={image.id}
+                                        className={cn(styles.messangerImage, {
+                                            [styles.full]:
+                                                files.length === 1 ||
+                                                (files.length % 2 === 1 && index + 1 === files.length),
+                                        })}
+                                    >
+                                        <Image src={image.url} alt={image.name} fill />
+                                    </div>
+                                ))}
+                            </div>
                         )}
 
                         {audio && <Audio audio={audio} />}

@@ -1,5 +1,6 @@
 'use client';
 
+import type { FileInfo } from '@/entities/file';
 import type { ChatsDTO, Message, ChatInfo, ChatItem } from '@/entities/messenger';
 import useRequest from '@/shared/hooks/useRequest';
 
@@ -34,11 +35,17 @@ const useMessenger = () => {
         }
     };
 
-    const sendMessageInChat = async (chatId: string, message: string, successCallback = () => {}) => {
+    const sendMessageInChat = async (
+        chatId: string,
+        message: string,
+        files: FileInfo[] = [],
+        successCallback = () => {},
+    ) => {
         const response = await request<{ message: Message[] }>({
             url: `/messenger/message/chat/${chatId}`,
             data: {
                 message,
+                files,
             },
             method: 'POST',
             isAuth: true,

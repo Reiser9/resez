@@ -166,8 +166,6 @@ const PairItem: React.FC<Props> = ({
                         resizeChange={(value) => handleChange(number, value, 'questionText')}
                         title="Термин"
                         resizable
-                        lengthLimit={750}
-                        trackLength
                         value={questionText}
                     />
 
@@ -215,8 +213,6 @@ const PairItem: React.FC<Props> = ({
                         resizeChange={(value) => handleChange(number, value, 'answerText')}
                         title="Определение"
                         resizable
-                        lengthLimit={750}
-                        trackLength
                         value={answerText}
                     />
 

@@ -1,12 +1,13 @@
 'use client';
 
+import type { File } from '@/entities/file';
 import useRequest from '@/shared/hooks/useRequest';
 
 const useFile = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
     const uploadImageOnServerByUrl = async (url: string) => {
-        const response = await request({
+        const response = await request<File>({
             url: '/api/upload/image-by-url',
             data: {
                 url,
@@ -26,7 +27,7 @@ const useFile = () => {
     };
 
     const uploadFile = async (file: FormData) => {
-        const response = await request<{ file: { url: string }; success: number }>({
+        const response = await request<File>({
             url: '/api/upload',
             data: file,
             method: 'POST',

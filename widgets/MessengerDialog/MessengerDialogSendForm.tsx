@@ -7,12 +7,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import styles from './index.module.scss';
 
 import type { Message } from '@/entities/messenger';
+import type { FileInfo } from '@/entities/file';
 import { Clip, Cross, Microphone, Send, Warn } from '@/shared/icons';
 import { useMessenger } from '@/features/messenger';
 
 import { Text } from '@/shared/ui/Text';
 import { Input } from '@/shared/ui/Input';
 import { IconButton } from '@/shared/ui/Button';
+import { useFile } from '@/features/file';
+import { File } from '@/shared/ui/File';
 
 type Props = {
     dialogId: string | undefined;
@@ -37,12 +40,15 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
 }) => {
     const [message, setMessage] = React.useState('');
     const [sendingMessage, setSendingMessage] = React.useState(false);
+    const [messageFiles, setMessageFiles] = React.useState<FileInfo[]>([]);
+    const [choosedFile, setChoosedFile] = React.useState<File | null>(null);
 
     const queryClient = useQueryClient();
 
     const sendMessageInputRef = React.useRef<HTMLInputElement>(null);
 
     const { sendMessageInChat, editMessage: editMessageHandler } = useMessenger();
+    const { uploadFile } = useFile();
 
     const revalidateChat = async () => {
         await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
@@ -54,7 +60,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!message || !message.trim() || !dialogId || sendingMessage) {
+        if (((!messageFiles || !messageFiles.length) && (!message || !message.trim())) || !dialogId || sendingMessage) {
             return;
         }
 
@@ -68,12 +74,26 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
         }
 
         setSendingMessage(true);
-        await sendMessageInChat(String(dialogId), message.replace(/\s+/g, ' '), () => {
+        await sendMessageInChat(String(dialogId), message.replace(/\s+/g, ' '), messageFiles, () => {
             setMessage('');
             revalidateChat();
+        }).finally(() => {
+            setSendingMessage(false);
         });
-        setSendingMessage(false);
     };
+
+    React.useEffect(() => {
+        if (choosedFile) {
+            const formData = new FormData();
+
+            formData.append('file', choosedFile);
+            uploadFile(formData).then((result) => {
+                if (!result) return;
+
+                setMessageFiles((prev) => [...prev, result.file]);
+            });
+        }
+    }, [choosedFile]);
 
     React.useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
@@ -162,9 +182,13 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                     )}
 
                     <form className={styles.messangerDialogSendWrapper} onSubmit={sendMessage}>
-                        {/* <IconButton>
-                        <Clip />
-                    </IconButton> */}
+                        <File id="messangerImage" onChange={(file: File) => setChoosedFile(file)} />
+
+                        <label htmlFor="messangerImage">
+                            <span className={styles.messangerImageButton}>
+                                <Clip />
+                            </span>
+                        </label>
 
                         <Input
                             ref={sendMessageInputRef}
@@ -175,16 +199,16 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
 
                         <IconButton className={styles.sendButton} disabled={sendingMessage}>
                             {/* <Microphone
-                            className={cn(styles.iconButton, {
-                                [styles.fade]: !message,
-                            })}
-                        />
+                                className={cn(styles.iconButton, {
+                                    [styles.fade]: !message,
+                                })}
+                            />
 
-                        <Send
-                            className={cn(styles.iconButton, {
-                                [styles.fade]: message,
-                            })}
-                        /> */}
+                            <Send
+                                className={cn(styles.iconButton, {
+                                    [styles.fade]: message,
+                                })}
+                            /> */}
 
                             <Send className={cn(styles.iconButton, styles.fade)} />
                         </IconButton>

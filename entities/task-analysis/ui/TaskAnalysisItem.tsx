@@ -31,6 +31,7 @@ type Props = {
     remove?: boolean;
     verify?: boolean;
     toggleVerify?: () => void;
+    archiveCallback?: () => void;
 };
 
 const TaskAnalysisItem: React.FC<Props> = ({
@@ -39,6 +40,7 @@ const TaskAnalysisItem: React.FC<Props> = ({
     remove = false,
     verify = false,
     toggleVerify = () => {},
+    archiveCallback = () => {}
 }) => {
     const { id, content, createdAt, updatedAt, isPublished, user, subject, subjectTask } = data || {};
     const { number, theme } = subjectTask || {};
@@ -46,7 +48,7 @@ const TaskAnalysisItem: React.FC<Props> = ({
     const { avatar, nickname } = user || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
-    // const [confirmDelete, setConfirmDelete] = React.useState(false);
+    const [confirmDelete, setConfirmDelete] = React.useState(false);
 
     return (
         <>
@@ -105,7 +107,10 @@ const TaskAnalysisItem: React.FC<Props> = ({
                                 )}
 
                                 {remove && (
-                                    <MenuLink danger>
+                                    <MenuLink danger onClick={() => {
+                                        setConfirmDelete(true);
+                                        setActionMenu(false);
+                                    }}>
                                         <Delete />
                                         Удалить
                                     </MenuLink>
@@ -153,14 +158,14 @@ const TaskAnalysisItem: React.FC<Props> = ({
                 )}
             </div>
 
-            {/* {remove && (
+            {remove && (
                 <ConfirmModal
                     text="Вы действительно хотите архивировать задание? Задание больше не будет доступно пользователям"
                     value={confirmDelete}
                     setValue={setConfirmDelete}
                     callback={archiveCallback}
                 />
-            )} */}
+            )}
         </>
     );
 };

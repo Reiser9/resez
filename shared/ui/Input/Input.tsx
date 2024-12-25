@@ -66,7 +66,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
             isError = false,
             isSuccess = false,
             errorMessage,
-            lengthLimit = 9999,
+            lengthLimit = 99999,
             infoText,
             commentText,
             color = 'default',

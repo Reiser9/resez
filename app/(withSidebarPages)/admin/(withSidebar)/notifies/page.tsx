@@ -22,7 +22,7 @@ import { useUserPermissions, useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import { NOTIFY_TYPES } from '@/shared/consts/NOTIFY_TYPES';
 
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
@@ -48,13 +48,13 @@ const AdminNotifies = () => {
     const [searchValue, setSearchValue] = React.useState('');
     const [userIDs, setUserIDs] = React.useState<string[]>([]);
 
-    const [type, setType] = React.useState<string | null>(null);
+    const [type, setType] = React.useState<string>('INFO');
 
     const [sendAnonim, setSendAnonim] = React.useState(false);
     const [sendForOne, setSendForOne] = React.useState(false);
     const [delayedSend, setDelayedSend] = React.useState(false);
 
-    const { sendNotify, getNotifyTypes } = useNotify();
+    const { sendNotify } = useNotify();
     const { alertNotify } = useAlert();
     const { getPaginationUsersShort } = useUsers();
     const userSearchDebounce = useDebounce(searchValue, 500);
@@ -67,15 +67,6 @@ const AdminNotifies = () => {
     const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
-    });
-
-    const {
-        data: notifyTypes,
-        isPending,
-        isError,
-    } = useQuery({
-        queryKey: ['notify_types'],
-        queryFn: getNotifyTypes,
     });
 
     const {
@@ -121,7 +112,8 @@ const AdminNotifies = () => {
             setSendAnonim(false);
             setSendForOne(false);
             setDelayedSend(false);
-            setType(null);
+            setType('INFO');
+            setUserIDs([]);
             editorRef.current?.clear();
             router.replace('/admin/notifies');
         });
@@ -139,137 +131,125 @@ const AdminNotifies = () => {
     }, [usersIdParam]);
 
     return (
-        <PrivateWrapper permissions={[PERMISSIONS.NOTIFIES]}>
-            <div className={base.baseWrapperGap16}>
-                <div className={base.titleInner}>
-                    <Text variant="h3">Отправка уведомления</Text>
-                </div>
-
-                <div className={base.formMedium}>
-                    <Input value={title} setValue={setTitle} title="Заголовок" lengthLimit={100} trackLength />
-
-                    <Checkbox checked={sendAnonim} onChange={(e) => setSendAnonim(e.target.checked)}>
-                        Отправить от имени
-                    </Checkbox>
-
-                    {sendAnonim && (
-                        <Input
-                            value={author}
-                            setValue={setAuthor}
-                            title="Имя отправителя"
-                            lengthLimit={30}
-                            trackLength
-                        />
-                    )}
-
-                    {checkPermission(permissions || [], [PERMISSIONS.USERS]) && (
-                        <>
-                            <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
-                                Отправить пользователю
-                            </Checkbox>
-
-                            {sendForOne && (
-                                <div className={base.baseWrapperGap4}>
-                                    <Text variant="text3">Пользователь</Text>
-
-                                    <SelectAnt
-                                        value={userIDs}
-                                        onChange={(value) => setUserIDs(value)}
-                                        allowClear={false}
-                                        suffixIcon={<ArrowBottom width="16" />}
-                                        notFoundContent={
-                                            usersIsLoading ? (
-                                                <Preloader small wrapperClassName={styles.loader} />
-                                            ) : usersError ? (
-                                                <NotContent
-                                                    text="Произошло ошибка при загрузке данных"
-                                                    danger
-                                                    icon={<Cross />}
-                                                    small
-                                                />
-                                            ) : (
-                                                <NotContent text="Пользователей не найдено" />
-                                            )
-                                        }
-                                        loading={usersIsLoading}
-                                        removeIcon={<Cross width="14" />}
-                                        options={users?.users.map((data) => ({
-                                            label: data.nickname,
-                                            value: String(data.id),
-                                            id: `ID: ${data.id}`,
-                                            avatar: data.avatar,
-                                        }))}
-                                        optionRender={({ data }) => {
-                                            const { label, id, avatar } = data || {};
-
-                                            return <UserOption id={id} avatar={avatar} nickname={label} />;
-                                        }}
-                                        showSearch
-                                        mode="multiple"
-                                        maxTagCount="responsive"
-                                        filterOption={false}
-                                        onSearch={(value) => setSearchValue(value.trim())}
-                                        onClear={() => setSearchValue('')}
-                                        className={styles.notifyUserSelect}
-                                    />
-                                </div>
-                            )}
-                        </>
-                    )}
-
-                    <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
-                        Отложенная отправка
-                    </Checkbox>
-
-                    {delayedSend && (
-                        <div className={styles.notifiesDelayInner}>
-                            <DatePicker
-                                disablePrevDate
-                                title="Выберите дату"
-                                wrapperClass={styles.notifiesDelayItem}
-                                value={date}
-                                setValue={setDate}
-                            />
-
-                            <TimePicker
-                                title="Выберите время"
-                                format="HH:mm"
-                                wrapperClass={styles.notifiesDelayItem}
-                                value={time}
-                                setValue={setTime}
-                                suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
-                            />
-                        </div>
-                    )}
-
-                    {!!notifyTypes?.length && (
-                        <Select
-                            title="Тип уведомления"
-                            notContentText="Типов уведомления не найдено"
-                            loading={isPending}
-                            error={isError}
-                            onChange={(value) => setType(value)}
-                            value={type}
-                            options={notifyTypes?.map((data) => ({
-                                label: data.type,
-                                value: String(data.id),
-                            }))}
-                        />
-                    )}
-
-                    <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
-                </div>
-
-                <Button
-                    auto
-                    onClick={() => createNotifyMutation.mutate()}
-                    loading={createNotifyMutation.isPending}
-                    levitation
-                >
-                    Отправить
-                </Button>
+        <>
+            <div className={base.titleInner}>
+                <Text variant="h3">Отправка уведомления</Text>
             </div>
-        </PrivateWrapper>
+
+            <div className={base.formMedium}>
+                <Input value={title} setValue={setTitle} title="Заголовок" lengthLimit={100} trackLength />
+
+                <Checkbox checked={sendAnonim} onChange={(e) => setSendAnonim(e.target.checked)}>
+                    Отправить от имени
+                </Checkbox>
+
+                {sendAnonim && (
+                    <Input value={author} setValue={setAuthor} title="Имя отправителя" lengthLimit={30} trackLength />
+                )}
+
+                {checkPermission(permissions || [], [PERMISSIONS.USERS]) && (
+                    <>
+                        <Checkbox checked={sendForOne} onChange={(e) => setSendForOne(e.target.checked)}>
+                            Отправить пользователю
+                        </Checkbox>
+
+                        {sendForOne && (
+                            <div className={base.baseWrapperGap4}>
+                                <Text variant="text3">Пользователь</Text>
+
+                                <SelectAnt
+                                    value={userIDs}
+                                    onChange={(value) => setUserIDs(value)}
+                                    allowClear={false}
+                                    suffixIcon={<ArrowBottom width="16" />}
+                                    notFoundContent={
+                                        usersIsLoading ? (
+                                            <Preloader small wrapperClassName={styles.loader} />
+                                        ) : usersError ? (
+                                            <NotContent
+                                                text="Произошло ошибка при загрузке данных"
+                                                danger
+                                                icon={<Cross />}
+                                                small
+                                            />
+                                        ) : (
+                                            <NotContent text="Пользователей не найдено" />
+                                        )
+                                    }
+                                    loading={usersIsLoading}
+                                    removeIcon={<Cross width="14" />}
+                                    options={users?.users.map((data) => ({
+                                        label: data.nickname,
+                                        value: String(data.id),
+                                        id: `ID: ${data.id}`,
+                                        avatar: data.avatar,
+                                    }))}
+                                    optionRender={({ data }) => {
+                                        const { label, id, avatar } = data || {};
+
+                                        return <UserOption id={id} avatar={avatar} nickname={label} />;
+                                    }}
+                                    showSearch
+                                    mode="multiple"
+                                    maxTagCount="responsive"
+                                    filterOption={false}
+                                    onSearch={(value) => setSearchValue(value.trim())}
+                                    onClear={() => setSearchValue('')}
+                                    className={styles.notifyUserSelect}
+                                />
+                            </div>
+                        )}
+                    </>
+                )}
+
+                <Checkbox checked={delayedSend} onChange={(e) => setDelayedSend(e.target.checked)}>
+                    Отложенная отправка
+                </Checkbox>
+
+                {delayedSend && (
+                    <div className={styles.notifiesDelayInner}>
+                        <DatePicker
+                            disablePrevDate
+                            title="Выберите дату"
+                            wrapperClass={styles.notifiesDelayItem}
+                            value={date}
+                            setValue={setDate}
+                        />
+
+                        <TimePicker
+                            title="Выберите время"
+                            format="HH:mm"
+                            wrapperClass={styles.notifiesDelayItem}
+                            value={time}
+                            setValue={setTime}
+                            suffixIcon={<Clock style={{ width: 18, color: 'var(--text)' }} />}
+                        />
+                    </div>
+                )}
+
+                <Select
+                    title="Тип уведомления"
+                    notContentText="Типов уведомления не найдено"
+                    onChange={(value) => setType(value)}
+                    value={type}
+                    options={NOTIFY_TYPES.map((data) => ({
+                        label: data.type,
+                        value: data.name,
+                    }))}
+                />
+
+                <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />
+            </div>
+
+            <Button
+                auto
+                onClick={() => createNotifyMutation.mutate()}
+                loading={createNotifyMutation.isPending}
+                levitation
+            >
+                Отправить
+            </Button>
+        </>
     );
 };
 

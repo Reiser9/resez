@@ -1,1 +1,9 @@
-export type { LocalNotify, TypesLocalNotify, Notify, Notifies, NotifyType } from './model';
+export type {
+    LocalNotify,
+    TypesLocalNotify,
+    Notify,
+    Notifies,
+    NotifyType,
+    AdminNotifiesPaggination,
+    NotifySendDTO,
+} from './model';

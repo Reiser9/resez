@@ -76,6 +76,40 @@
     color: var(--main);
 }
 
+.messangerImages{
+    width: 100%;
+    margin-top: 0.4rem;
+    border-radius: 8px;
+    background: var(--input);
+    padding: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.messangerImage{
+    width: calc(100% / 2 - 8px / 2);
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+@media (max-width: 400px) {
+    .messangerImage{
+        width: 100%;
+    }
+}
+
+.messangerImage.full{
+    width: 100%;
+}
+
+.messangerImage img{
+    object-fit: cover;
+}
+
 @media (any-hover: hover) {
     .messangerDialogItemActions{
         transition: .2s linear;

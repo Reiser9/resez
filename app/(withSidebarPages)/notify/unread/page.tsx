@@ -83,8 +83,8 @@ const UnreadNotifyPage = () => {
                 <NotContent text="Уведомлений не найдено" />
             ) : (
                 <div className={base.contentItems}>
-                    {data?.pages.map((session) =>
-                        session?.notifies.map((data) => (
+                    {data?.pages.map((notify) =>
+                        notify?.notifications.map((data) => (
                             <NotifyItem
                                 key={data.id}
                                 data={data}

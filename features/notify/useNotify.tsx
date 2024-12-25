@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { Notifies, Notify, NotifyType } from '@/entities/notify';
+import type { AdminNotifiesPaggination, Notifies, Notify, NotifySendDTO, NotifyType } from '@/entities/notify';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 import useRequest from '@/shared/hooks/useRequest';
 import useAlert from '@/shared/hooks/useAlert';
@@ -23,7 +23,7 @@ const useNotify = () => {
         });
 
         const response = await request<Notifies>({
-            url: `/notify?${queryString}`,
+            url: `/notification-ms/notification?${queryString}`,
             isAuth: true,
         });
 
@@ -39,7 +39,7 @@ const useNotify = () => {
     const readAllNotifies = async (successCallback = () => {}) => {
         setIsLoading(true);
         const response = await request<Notify>({
-            url: '/notify/read-all',
+            url: '/notification-ms/notification/read-all',
             isAuth: true,
             method: 'PATCH',
         });
@@ -56,9 +56,10 @@ const useNotify = () => {
     const readNotifyById = async (id: number, successCallback = () => {}) => {
         setNotifyIsLoading((prev) => [...prev, id]);
         const response = await request<Notify>({
-            url: `/notify/read/${id}`,
+            url: `/notification-ms/notification/read/${id}`,
             isAuth: true,
             method: 'PATCH',
+            baseURL: process.env.NEXT_PUBLIC_NOTIFICATION_URL,
         });
         setNotifyIsLoading((prev) => prev.filter((item) => item !== id));
 
@@ -73,9 +74,9 @@ const useNotify = () => {
         title: string,
         author: string,
         userIDs: number[] | string[],
-        date: string,
+        sendAt: string,
         content: string,
-        type: string | null,
+        type: string,
         successCallback = () => {},
     ) => {
         const titleTrim = title?.trim();
@@ -85,27 +86,18 @@ const useNotify = () => {
             return alertNotify('Предупреждение', 'Заголовок не может быть пустым', 'warn');
         }
 
-        let notifyData: {
-            title: string;
-            content: string;
-            users: number[] | string[];
-            author: string;
-            date?: string;
-            notifyTypeId?: number | string;
-        } = {
-            title,
-            content,
-            users: userIDs || [],
-            author: authorTrim,
-            ...(date && { date }),
-            ...(type && { notifyTypeId: type }),
-        };
-
         const response = await request({
-            url: '/admin/notify',
+            url: '/notification-ms/admin/notification',
             method: 'POST',
             isAuth: true,
-            data: notifyData,
+            data: {
+                title,
+                content,
+                userIds: userIDs || [],
+                ...(authorTrim && { author: authorTrim }),
+                type,
+                ...(sendAt && { sendAt }),
+            },
         });
 
         if (catchRequestError(response)) {
@@ -118,7 +110,7 @@ const useNotify = () => {
 
     const getUnreadNotifies = async (successCallback = () => {}) => {
         const response = await request<{ count: number }>({
-            url: '/notify/unread-count',
+            url: '/notification-ms/notification/unread-count',
             isAuth: true,
         });
 
@@ -133,9 +125,17 @@ const useNotify = () => {
         }
     };
 
-    const getNotifyTypes = async () => {
-        const response = await request<{ types: NotifyType[] }>({
-            url: '/admin/notify-type',
+    const getPagginationAdminNotifies = async (page: number, delayed?: boolean, senderId?: number) => {
+        const limit = 10;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+            delayed,
+            senderId,
+        });
+
+        const response = await request<AdminNotifiesPaggination>({
+            url: `/notification-ms/admin/notification?${queryString}`,
             isAuth: true,
         });
 
@@ -144,7 +144,95 @@ const useNotify = () => {
         }
 
         if ('data' in response) {
-            return response.data.types;
+            return response.data;
+        }
+    };
+
+    const getNotificationById = async (notificationId: number | string) => {
+        const response = await request<{ notification: NotifySendDTO }>({
+            url: `/notification-ms/admin/notification/${notificationId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.notification;
+        }
+    };
+
+    const updateNotificationById = async (
+        notificationId: number,
+        title: string,
+        author: string,
+        userIDs: number[] | string[],
+        date: string,
+        content: string,
+        type: string,
+        successCallback = () => {},
+    ) => {
+        const titleTrim = title?.trim();
+        const authorTrim = author?.trim();
+
+        if (!titleTrim) {
+            return alertNotify('Предупреждение', 'Заголовок не может быть пустым', 'warn');
+        }
+
+        const response = await request<{ notification: NotifySendDTO }>({
+            url: `/notification-ms/admin/notification/${notificationId}`,
+            isAuth: true,
+            method: 'PATCH',
+            data: {
+                title,
+                content,
+                userIds: userIDs || [],
+                author: authorTrim,
+                type,
+                ...(date && { date }),
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Уведомление изменено', 'success');
+
+        if ('data' in response) {
+            return response.data.notification;
+        }
+    };
+
+    const removeNotificationById = async (notificationId: number, successCallback = () => {}) => {
+        const response = await request({
+            url: `/notification-ms/admin/notification/${notificationId}`,
+            isAuth: true,
+            method: 'DELETE',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Уведомление удалено', 'success');
+    };
+
+    const getUserNotificationById = async (notificationId: number) => {
+        const response = await request({
+            url: `/notification-ms/admin/notification/${notificationId}/user`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
         }
     };
 
@@ -156,7 +244,11 @@ const useNotify = () => {
         readNotifyById,
         sendNotify,
         getUnreadNotifies,
-        getNotifyTypes,
+        getPagginationAdminNotifies,
+        getNotificationById,
+        updateNotificationById,
+        removeNotificationById,
+        getUserNotificationById,
     };
 };
 

@@ -13,11 +13,11 @@ import { formatDate } from '@/shared/utils/formatDate';
 import { useMessenger } from '@/features/messenger';
 import { MessengerDialogTopBar } from './MessengerDialogTopBar';
 import { MessengerDialogSendForm } from './MessengerDialogSendForm';
+import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { DialogMessageItem } from '@/shared/ui/DialogMessageItem';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Preloader } from '@/shared/ui/Preloader';
-import useShortInfo from '@/features/user/data/useShortInfo';
 
 type Props = {
     dialogId: string | undefined;

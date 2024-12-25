@@ -1,4 +1,6 @@
+import { FileInfo } from '../file';
 import type { Paggination } from '../pagination';
+import type { UserShort } from '../user';
 
 export type Message = {
     chatId: number;
@@ -8,12 +10,9 @@ export type Message = {
     createdAt: Date;
     updatedAt: Date;
     isEdited: boolean;
-    sender: {
-        id: number;
-        nickname: string;
-        avatar: string;
-    };
+    sender: UserShort;
     readsCount: number;
+    files: (FileInfo & { id: number })[];
 };
 
 export type ChatInfo = {

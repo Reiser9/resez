@@ -23,7 +23,7 @@ import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
 
 const AdminTaskAnalisys = () => {
     const queryClient = useQueryClient();
-    const { getPagginationTasksAnalysis, togglePublish } = useTaskAnalysis();
+    const { getPagginationTasksAnalysis, togglePublish, archiveTaskAnalysis } = useTaskAnalysis();
     const { getUserPermissions } = useUserPermissions();
 
     const { data: permissions } = useQuery({
@@ -101,6 +101,7 @@ const AdminTaskAnalisys = () => {
                                         remove={checkPermission(permissions || [], [PERMISSIONS.ANALYSIS_TASKS])}
                                         verify={checkPermission(permissions || [], [PERMISSIONS.ANALYSIS_TASKS])}
                                         toggleVerify={() => togglePublish(data.id, revalidateRequest)}
+                                        archiveCallback={() => archiveTaskAnalysis(data.id, revalidateRequest)}
                                     />
                                 )),
                             )}

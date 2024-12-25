@@ -2,32 +2,32 @@ import { Warn, News, Gift, Vote, Added, Tools, Unknown } from '../icons';
 
 export const getNotifyType = (type?: string) => {
     switch (type) {
-        case 'Сессия':
+        case 'SESSION':
             return {
                 icon: <Warn />,
                 name: 'session',
             };
-        case 'Информация':
+        case 'INFO':
             return {
                 icon: <News />,
                 name: 'info',
             };
-        case 'Подарок':
+        case 'GIFT':
             return {
                 icon: <Gift />,
                 name: 'gift',
             };
-        case 'Голосование':
+        case 'VOTING':
             return {
                 icon: <Vote />,
                 name: 'vote',
             };
-        case 'Добавление':
+        case 'ADD':
             return {
                 icon: <Added />,
                 name: 'added',
             };
-        case 'Обновление':
+        case 'UPDATE':
             return {
                 icon: <Tools />,
                 name: 'update',

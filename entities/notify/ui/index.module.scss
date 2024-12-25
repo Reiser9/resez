@@ -1,0 +1,54 @@
+.notifyItem{
+    background: var(--input);
+    border-radius: 8px;
+    padding: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.notifyItemWrapper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notifyItemIconInner{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--main);
+    background: var(--lighten);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notifyItemIconInner svg{
+    width: 24px;
+}
+
+.notifyItemIconInner.session{
+    background: var(--notifyRed);
+}
+
+.notifyItemIconInner.session svg{
+    color: var(--error);
+}
+
+.notifyItemTextContent{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    word-break: break-word;
+    max-height: 120px;
+    overflow: hidden;
+}
+
+.notifyItemButtonInner{
+    margin-top: auto;
+}
