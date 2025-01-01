@@ -51,3 +51,20 @@ export type SubThemeInfo = {
     id: number;
     subTheme: string;
 };
+
+export type TaskComment = {
+    id: number;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+    user: UserShort;
+};
+
+export type TaskCommentWithReplies = TaskComment & {
+    repliesCount: number;
+    replies: TaskComment[];
+};
+
+export type PagginationTaskComments = Paggination & {
+    comments: TaskCommentWithReplies[];
+};

@@ -129,3 +129,5 @@ export { Dices } from './Dices';
 export { Swords } from './Swords';
 export { Battle } from './picture/Battle';
 export { Task } from './Task';
+export { Insert } from './Insert';
+export { Comment } from './Comment';

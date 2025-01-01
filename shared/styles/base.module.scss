@@ -343,12 +343,17 @@
 .format h5,
 .format h6 {
     width: 100%;
+    font-weight: 700;
 }
 
 @media (max-width: 768px) {
     .format {
         font-size: 1.4rem;
     }
+}
+
+.format{
+
 }
 
 .aic {

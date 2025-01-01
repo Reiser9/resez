@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
 import React from 'react';
+import cn from 'classnames';
 import Embed from '@editorjs/embed';
 import Table from '@editorjs/table';
 import List from '@editorjs/list';
@@ -16,17 +17,46 @@ import { OutputData } from '@editorjs/editorjs';
 import { ToolConstructable } from '@editorjs/editorjs/types/tools/index';
 import { ToolSettings } from '@editorjs/editorjs/types/tools/tool-settings';
 import { createReactEditorJS } from 'react-editor-js';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
+import base from '@/shared/styles/base.module.scss';
 
+import type { TaskSnippetDTO } from '@/entities/task-snippet';
+import { EDITOR_TRANSLATE } from '@/shared/consts/EDITOR_TRANSLATE';
 import { CustomMath } from './CustomMathTool';
 import { CustomFiles } from './CustomFiles';
 import { CustomVoice } from './CustomVoice';
+import { CustomInsert } from './CustomInsert';
 import { useFile } from '@/features/file';
+import { useTaskSnippet } from '@/features/task-snippet';
+import { Cross } from '@/shared/icons';
 
 import { Text } from '../Text';
+import { Modal } from '../Modal';
+import { Preloader } from '../Preloader';
+import { NotContent } from '../NotContent';
+import { TaskSnippetItem } from '@/entities/task-snippet/ui';
+import { Button } from '../Button';
 
 const ReactEditorJS = createReactEditorJS();
+
+type Tools =
+    | 'embed'
+    | 'header'
+    | 'table'
+    | 'list'
+    | 'code'
+    | 'image'
+    | 'raw'
+    | 'marker'
+    | 'checklist'
+    | 'inlineCode'
+    | 'simpleImage'
+    | 'math'
+    | 'files'
+    | 'audio'
+    | 'insert';
 
 type Props = {
     placeholder?: string;
@@ -35,6 +65,7 @@ type Props = {
     title?: string;
     editorRef: React.MutableRefObject<EditorCore | null>;
     onReady?: () => void;
+    enabledTools?: Tools[];
 };
 
 export interface EditorCore {
@@ -45,8 +76,38 @@ export interface EditorCore {
     get dangerouslyLowLevelInstance(): any | null;
 }
 
+const subscribers: ((insert: TaskSnippetDTO) => void)[] = [];
+
 const Editor: React.FC<Props> = (props) => {
-    const { placeholder = '', id = '', minHeight = 60, title, editorRef, onReady, ...editorProps } = props;
+    const [insertModal, setInsertModal] = React.useState(false);
+    const [choosedInsert, setChoosedInsert] = React.useState<TaskSnippetDTO | null>(null);
+
+    const {
+        placeholder = '',
+        id = '',
+        minHeight = 60,
+        title,
+        editorRef,
+        onReady,
+        enabledTools = [
+            'embed',
+            'header',
+            'table',
+            'list',
+            'code',
+            'image',
+            'raw',
+            'marker',
+            'checklist',
+            'inlineCode',
+            'simpleImage',
+            'math',
+            'files',
+            'audio',
+            'insert',
+        ],
+        ...editorProps
+    } = props;
 
     const { uploadImageOnServerByUrl, uploadFile } = useFile();
 
@@ -68,155 +129,149 @@ const Editor: React.FC<Props> = (props) => {
         return await uploadFile(formData);
     };
 
-    const EDITOR_TOOLS: { [toolName: string]: ToolConstructable | ToolSettings } = {
-        embed: Embed,
-        header: {
-            class: Header,
-            inlineToolbar: true,
-        },
-        table: Table,
-        list: List,
-        code: Code,
-        image: {
-            class: Image,
-            config: {
-                uploader: {
-                    uploadByFile: uploadFileHandler,
-                    uploadByUrl: uploadImageByUrl,
-                },
-            },
-        },
-        raw: Raw,
-        marker: Marker,
-        checklist: CheckList,
-        inlineCode: InlineCode,
-        simpleImage: SimpleImage,
-        math: CustomMath,
-        files: {
-            class: CustomFiles as any,
-            config: {
-                uploadRequest: uploadFileHandler,
-            },
-        },
-        audio: {
-            class: CustomVoice as any,
-            config: {
-                uploadRequest: uploadFileHandler,
-            },
-        },
+    const subscribeToInsert = (callback: (insert: TaskSnippetDTO) => void) => {
+        subscribers.push(callback);
     };
 
-    const localLang = {
-        messages: {
-            ui: {
-                blockTunes: {
-                    toggler: {
-                        'Click to tune': 'Нажмите, чтобы настроить',
-                        'or drag to move': 'или перетащите',
-                    },
-                },
-                inlineToolbar: {
-                    converter: {
-                        'Convert to': 'Конвертировать в',
-                    },
-                },
-                toolbar: {
-                    toolbox: {
-                        Add: 'Добавить',
-                    },
-                },
-            },
-            toolNames: {
-                Text: 'Параграф',
-                Heading: 'Заголовок',
-                List: 'Список',
-                Image: 'Изображение',
-                Checklist: 'Чеклист',
-                Code: 'Код',
-                'Raw HTML': 'HTML',
-                Table: 'Таблица',
-                Link: 'Ссылка',
-                Marker: 'Маркер',
-                Bold: 'Полужирный',
-                Italic: 'Курсив',
-                InlineCode: 'Моноширинный',
-            },
-            tools: {
-                warning: {
-                    Title: 'Название',
-                    Message: 'Сообщение',
-                },
-                link: {
-                    'Add a link': 'Вставьте ссылку',
-                },
-                stub: {
-                    'The block can not be displayed correctly.': 'Блок не может быть отображен',
-                },
-                header: {
-                    'Heading 1': 'Заголовок 1',
-                    'Heading 2': 'Заголовок 2',
-                    'Heading 3': 'Заголовок 3',
-                    'Heading 4': 'Заголовок 4',
-                    'Heading 5': 'Заголовок 5',
-                    'Heading 6': 'Заголовок 6',
-                },
-                image: {
-                    'Select an Image': 'Загрузить изображение',
-                    Caption: 'Описание',
-                    'With border': 'С обводкой',
-                    'Stretch image': 'Расстянуть',
-                    'With background': 'С задним фоном',
-                },
-                table: {
-                    'Add column to left': 'Добавить колонку слева',
-                    'Add column to right': 'Добавить колонку справа',
-                    'Add row above': 'Добавить строку выше',
-                    'Add row below': 'Добавить строку ниже',
-                    'Delete column': 'Удалить колонку',
-                    'Delete row': 'Удалить строку',
-                    'With headings': 'С заголовками',
-                    'Without headings': 'Без заголовков',
-                },
-                list: {
-                    Ordered: 'Упорядоченный',
-                    Unordered: 'Неупорядоченный',
-                },
-                code: {
-                    'Enter a code': 'Введите код',
-                },
-            },
-            blockTunes: {
-                delete: {
-                    Delete: 'Удалить',
-                    'Click to delete': 'Подтвердить',
-                },
-                moveUp: {
-                    'Move up': 'Переместить вверх',
-                },
-                moveDown: {
-                    'Move down': 'Переместить вниз',
-                },
-            },
-        },
+    const handleSelectInsertion = (insert: TaskSnippetDTO) => {
+        setChoosedInsert(insert);
+        subscribers.forEach((callback) => callback(insert));
+        setInsertModal(false);
     };
+
+    const EDITOR_TOOLS: { [toolName: string]: ToolConstructable | ToolSettings } = {
+        ...(enabledTools?.includes('embed') && { embed: Embed }),
+        ...(enabledTools?.includes('header') && {
+            header: {
+                class: Header,
+                inlineToolbar: true,
+            },
+        }),
+        ...(enabledTools?.includes('table') && { table: Table }),
+        ...(enabledTools?.includes('list') && { list: List }),
+        ...(enabledTools?.includes('code') && { code: Code }),
+        ...(enabledTools?.includes('image') && {
+            image: {
+                class: Image,
+                config: {
+                    uploader: {
+                        uploadByFile: uploadFileHandler,
+                        uploadByUrl: uploadImageByUrl,
+                    },
+                },
+            },
+        }),
+        ...(enabledTools?.includes('raw') && { raw: Raw }),
+        ...(enabledTools?.includes('marker') && { marker: Marker }),
+        ...(enabledTools?.includes('checklist') && { checklist: CheckList }),
+        ...(enabledTools?.includes('inlineCode') && { inlineCode: InlineCode }),
+        ...(enabledTools?.includes('simpleImage') && { simpleImage: SimpleImage }),
+        ...(enabledTools?.includes('math') && { math: CustomMath }),
+        ...(enabledTools?.includes('files') && {
+            files: {
+                class: CustomFiles as any,
+                config: {
+                    uploadRequest: uploadFileHandler,
+                },
+            },
+        }),
+        ...(enabledTools?.includes('audio') && {
+            audio: {
+                class: CustomVoice as any,
+                config: {
+                    uploadRequest: uploadFileHandler,
+                },
+            },
+        }),
+        ...(enabledTools?.includes('insert') && {
+            insert: {
+                class: CustomInsert as any,
+                config: {
+                    setInsertModal,
+                    choosedInsert,
+                    setChoosedInsert,
+                    subscribeToInsert,
+                },
+            },
+        }),
+    };
+
+    const { getPagginationTasksSnippets } = useTaskSnippet();
+
+    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+        queryKey: ['admin_task_snippets'],
+        queryFn: (pageParam) => getPagginationTasksSnippets(pageParam.pageParam),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
+
+            return nextPage;
+        },
+    });
 
     return (
-        <div className={styles.editorWrapper}>
-            {title && <Text variant="text3">{title}</Text>}
+        <>
+            <div className={styles.editorWrapper}>
+                {title && <Text variant="text3">{title}</Text>}
 
-            <ReactEditorJS
-                onInitialize={handleInitialize}
-                tools={EDITOR_TOOLS}
-                minHeight={minHeight}
-                holder={id}
-                placeholder={placeholder}
-                i18n={localLang}
-                onReady={onReady}
-                {...editorProps}
-            >
-                <div id={id} className={styles.editor}></div>
-            </ReactEditorJS>
-        </div>
+                <ReactEditorJS
+                    onInitialize={handleInitialize}
+                    tools={EDITOR_TOOLS}
+                    minHeight={minHeight}
+                    holder={id}
+                    placeholder={placeholder}
+                    i18n={EDITOR_TRANSLATE}
+                    onReady={onReady}
+                    {...editorProps}
+                >
+                    <div id={id} className={styles.editor}></div>
+                </ReactEditorJS>
+            </div>
+
+            {enabledTools?.includes('insert') && (
+                <Modal
+                    title={`Вставки (${
+                        !isError && !isPending && !!data?.pages[0]?.totalCount && data?.pages[0]?.totalCount
+                    })`}
+                    value={insertModal}
+                    setValue={setInsertModal}
+                >
+                    {isPending ? (
+                        <Preloader page small />
+                    ) : isError ? (
+                        <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                    ) : data?.pages[0]?.totalCount ? (
+                        <div className={cn(base.baseWrapperGap16, base.aic)}>
+                            <div className={base.contentItems}>
+                                {data?.pages.map((task) =>
+                                    task?.snippets.map((data) => (
+                                        <TaskSnippetItem
+                                            key={data.id}
+                                            data={data}
+                                            choose
+                                            chooseCallback={() => handleSelectInsertion(data)}
+                                        />
+                                    )),
+                                )}
+                            </div>
+
+                            {!isError && hasNextPage && (
+                                <Button
+                                    auto
+                                    onClick={fetchNextPage}
+                                    loading={isFetchingNextPage}
+                                    className={base.buttonShowMore}
+                                >
+                                    Показать еще
+                                </Button>
+                            )}
+                        </div>
+                    ) : (
+                        <NotContent text="Вставок заданий не найдено" />
+                    )}
+                </Modal>
+            )}
+        </>
     );
 };
 

@@ -152,6 +152,56 @@
     background: var(--error);
 }
 
+.taskTestItemCommentButton{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.taskTestItemCommentButton svg{
+    width: 20px;
+    flex-shrink: 0;
+}
+
+// Task Modal
+.taskTestCommentInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.taskTestCommentForm{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 1.2rem 0;
+    background: var(--white);
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+}
+
+.taskTestCommentFormContent{
+    width: 100%;
+    display: flex;
+    gap: 8px;
+}
+
+@media (max-width: 520px) {
+    .taskTestCommentForm{
+        bottom: -22px;
+    }
+}
+
+.taskTestCommentSend{
+    flex-shrink: 0;
+}
+
 // TaskView
 .taskViewEditor{
     width: 100%;
@@ -160,4 +210,93 @@
     border-radius: 4px;
     min-height: 44px;
     word-break: break-word;
+}
+
+// TaskComment
+.taskCommentItem, .taskReplyCommentItem{
+    width: 100%;
+    padding: 1.2rem 1.6rem;
+    border-radius: 4px;
+    background: var(--input);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.taskReplyCommentItem{
+    padding: 0;
+    padding-top: 0.8rem;
+    margin-top: 0.8rem;
+    border-top: 1px solid var(--lighten);
+}
+
+.taskCommentItemContent{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.taskCommentItemAvatar{
+    display: flex;
+    flex-shrink: 0;
+}
+
+.taskCommentNickname{
+    font-weight: 600;
+}
+
+.taskCommentItemBottom{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.taskCommentItemReply{
+    color: var(--main);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.taskCommentItemReply.error{
+    color: var(--error);
+}
+
+.taskTestCommentAuth{
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+    color: var(--textGrey);
+    font-size: 1.4rem;
+    padding: 1.2rem;
+}
+
+.taskTestCommentAuth a{
+    color: var(--main);
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.taskTestCommentCancel{
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.taskTestCommentCancel svg{
+    width: 20px;
+}
+
+@media (any-hover: hover) {
+    .taskCommentNickname:hover{
+        color: var(--main);
+    }
+
+    .taskTestCommentCancel{
+        cursor: pointer;
+    }
 }

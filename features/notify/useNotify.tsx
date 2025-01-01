@@ -59,7 +59,6 @@ const useNotify = () => {
             url: `/notification-ms/notification/read/${id}`,
             isAuth: true,
             method: 'PATCH',
-            baseURL: process.env.NEXT_PUBLIC_NOTIFICATION_URL,
         });
         setNotifyIsLoading((prev) => prev.filter((item) => item !== id));
 

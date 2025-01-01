@@ -10,7 +10,7 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import type { TaskSnippetDTO } from '../model';
-import { Delete, DotsHorizontal, Edit } from '@/shared/icons';
+import { Check, Delete, DotsHorizontal, Edit } from '@/shared/icons';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 
 import { Text } from '@/shared/ui/Text';
@@ -25,7 +25,9 @@ type Props = {
     data: TaskSnippetDTO;
     edit?: boolean;
     remove?: boolean;
+    choose?: boolean;
     removeCallback?: () => void;
+    chooseCallback?: () => void;
 };
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
@@ -33,7 +35,14 @@ const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/Cust
     loading: () => <DynamicSkeleton />,
 });
 
-const TaskSnippetItem: React.FC<Props> = ({ data, edit = false, remove = false, removeCallback = () => {} }) => {
+const TaskSnippetItem: React.FC<Props> = ({
+    data,
+    edit = false,
+    remove = false,
+    choose = false,
+    removeCallback = () => {},
+    chooseCallback = () => {},
+}) => {
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmDelete, setConfirmDelete] = React.useState(false);
 
@@ -47,7 +56,7 @@ const TaskSnippetItem: React.FC<Props> = ({ data, edit = false, remove = false, 
                     <div className={cn(base.titleInnerNowrap, base.aifs)}>
                         <Text variant="h4">{title}</Text>
 
-                        {(edit || remove) && (
+                        {(edit || remove || choose) && (
                             <HoverMenu
                                 button={
                                     <IconButton variant="light" small onClick={() => setActionMenu((prev) => !prev)}>
@@ -61,6 +70,13 @@ const TaskSnippetItem: React.FC<Props> = ({ data, edit = false, remove = false, 
                                     <MenuLink href={`/admin/task-snippets/edit/${id}`}>
                                         <Edit />
                                         Редактировать
+                                    </MenuLink>
+                                )}
+
+                                {choose && (
+                                    <MenuLink onClick={chooseCallback}>
+                                        <Check />
+                                        Выбрать
                                     </MenuLink>
                                 )}
 

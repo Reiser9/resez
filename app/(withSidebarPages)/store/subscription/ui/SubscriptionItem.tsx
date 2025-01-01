@@ -60,7 +60,13 @@ const SubscriptionItem: React.FC<Props> = ({ data, userSubscription, buyCallback
                 )}
             </div>
 
-            <ConfirmModal value={confirmBuy} setValue={setConfirmBuy} callback={() => buyCallback(id)}>
+            <ConfirmModal
+                value={confirmBuy}
+                setValue={setConfirmBuy}
+                rejectCallback={() => buyCallback(id)}
+                rejectText="Да"
+                confirmText="Нет"
+            >
                 <Text>Вы действительно хотите купить подписку {subscription}?</Text>
 
                 {subscriptionOfUserId && (

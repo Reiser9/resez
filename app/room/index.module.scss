@@ -1,0 +1,27 @@
+.callForm{
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.callFormContent{
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem 2.4rem;
+    border-radius: 8px;
+    background: var(--input);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 48px;
+}
+
+.callFormInputs{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}

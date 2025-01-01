@@ -112,6 +112,9 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
                     }
                 }
                 break;
+            case 'insert':
+                // <snippet id=1 />
+                break;
             default:
                 break;
         }

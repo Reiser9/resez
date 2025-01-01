@@ -630,10 +630,6 @@ input::placeholder {
     background: var(--hover) !important;
 }
 
-.ce-header {
-    padding: 0 !important;
-}
-
 .codex-editor a {
     text-decoration: none;
     color: var(--main);
@@ -1053,4 +1049,36 @@ p.mathquill {
     padding: 0.6rem 1.2rem;
     font-size: 1.4rem;
     background: var(--white);
+}
+
+/* Custom insert */
+.insertInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 0.8rem 0;
+}
+
+.insertContent{
+    width: 100%;
+    border-radius: 8px;
+    padding: 1.2rem;
+    background: var(--white);
+    min-height: 75px;
+}
+
+.insertButton{
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    background: var(--main);
+    color: #fff;
+    width: 100%;
+    text-align: center;
+}
+
+.ce-header{
+    padding: 0.65rem 0!important;
+    font-weight: 700;
 }

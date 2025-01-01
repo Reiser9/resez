@@ -9,7 +9,7 @@ const useTaskSnippet = () => {
     const { request, catchRequestError, errorController } = useRequest();
     const { alertNotify } = useAlert();
 
-    const getPagginationTasksSnippets = async (page: number, subjectId: string | number, limit = 9) => {
+    const getPagginationTasksSnippets = async (page: number, subjectId?: string | number, limit = 9) => {
         const queryString = buildQueryString({
             offset: page * limit,
             limit,
