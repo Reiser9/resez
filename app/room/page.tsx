@@ -27,7 +27,7 @@ export default function Page() {
 
     const connectToRoom = async () => {
         try {
-            const resp = await fetch(`/api/token?room=${room}&username=${name}`);
+            const resp = await fetch(`/api2/token?room=${room}&username=${name}`);
             const data = await resp.json();
             setToken(data.token);
         } catch (e) {
