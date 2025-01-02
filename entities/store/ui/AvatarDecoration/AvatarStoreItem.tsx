@@ -4,6 +4,7 @@ import React from 'react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from '../index.module.scss';
@@ -28,15 +29,16 @@ import { Text } from '@/shared/ui/Text';
 import { Badge } from '@/shared/ui/Badge';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
 import { IconButton } from '@/shared/ui/Button';
-import { ConfirmModal } from '@/shared/ui/Modal';
+import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 import { AvatarDecoration } from '@/shared/ui/AvatarDecoration';
 
 type Props = {
     data: AvatarDecorationType;
     addProductToProfile: () => void;
+    openProductModal?: () => void;
 };
 
-const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
+const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile, openProductModal = () => {} }) => {
     const {
         title,
         contentType,
@@ -49,6 +51,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
         requiredSubscription,
         seasonStartDate,
         seasonEndDate,
+        id,
     } = data || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
@@ -68,7 +71,7 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
     return (
         <>
             <div className={cn(base.item3, styles.avatarItem)}>
-                <div className={styles.avatarItemContent}>
+                <div className={styles.avatarItemContent} onClick={openProductModal}>
                     {isCollected && (
                         <div className={styles.avatarItemCollected}>
                             <Check />
@@ -102,7 +105,10 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                     )}
 
                     {requiredSubscription && (
-                        <Tooltip destroyTooltipOnHide title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}>
+                        <Tooltip
+                            destroyTooltipOnHide
+                            title={`Для покупки требуется подписка ${requiredSubscription.subscription}`}
+                        >
                             <span className={styles.avatarItemTag}>
                                 {requiredSubscription.subscription === 'ResEz Premium' ? (
                                     <ResezPremium />
@@ -114,7 +120,10 @@ const AvatarStoreItem: React.FC<Props> = ({ data, addProductToProfile }) => {
                     )}
 
                     {requiredAchievement && (
-                        <Tooltip destroyTooltipOnHide title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}>
+                        <Tooltip
+                            destroyTooltipOnHide
+                            title={`Для покупки требуется достижение "${requiredAchievement.achievement}"`}
+                        >
                             <span className={styles.avatarItemTag}>
                                 <Trophy />
                             </span>

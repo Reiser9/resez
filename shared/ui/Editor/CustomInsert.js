@@ -15,15 +15,15 @@ export class CustomInsert {
 
         this.button = null;
         this.content = null;
-        
+
         this.choosedInsert = config.choosedInsert;
         this.setChoosedInsert = config.setChoosedInsert;
 
         this.subscribeToInsert = config.subscribeToInsert;
-        this.setInsertModal = config.setInsertModal;
+        this.setInsertModalHandler = config.setInsertModalHandler;
 
         if (this.subscribeToInsert) {
-            this.subscribeToInsert(this.updateInsert);
+            this.subscribeToInsert(this.updateInsert, this.uniqueId);
         }
     }
 
@@ -42,20 +42,26 @@ export class CustomInsert {
         this.button.addEventListener('click', this.openModal);
         container.appendChild(this.button);
 
+        if (this.data?.insert?.id && this.data?.insert?.content) {
+            this.choosedInsert = {
+                content: this.data.insert.content,
+                id: this.data.insert.id,
+            };
+            this.updateContent();
+        }
+
         return container;
     }
 
     openModal = () => {
-        if (this.setInsertModal) {
-            this.setInsertModal(true);
+        if (this.setInsertModalHandler && this.uniqueId) {
+            this.setInsertModalHandler(this.uniqueId);
         }
     };
 
     updateContent() {
         if (this.content) {
-            this.content.innerHTML = this.choosedInsert
-                ? `${this.choosedInsert.content}`
-                : 'Выберите вставку..';
+            this.content.innerHTML = this.choosedInsert ? `${this.choosedInsert.content}` : 'Выберите вставку..';
         }
 
         if (this.button) {
@@ -63,8 +69,13 @@ export class CustomInsert {
         }
     }
 
-    updateInsert = (newInsert) => {
-        this.choosedInsert = newInsert;
+    updateInsert = (newInsert, id) => {
+        if(this.uniqueId !== id) return;
+
+        this.choosedInsert = {
+            content: newInsert.content,
+            id: newInsert.id,
+        };
         this.updateContent();
     };
 

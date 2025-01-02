@@ -33,16 +33,17 @@ export type NotifyType = {
 };
 
 export type NotifySendDTO = {
-    id: number,
-    type: TypesNotify,
-    title: string,
-    content: string,
-    author: string,
-    date: Date,
-    updatedAt: Date,
-    user: UserShort,
-    isEdited: boolean
-}
+    id: number;
+    type: TypesNotify;
+    title: string;
+    content: string;
+    author: string;
+    date: Date;
+    updatedAt: Date;
+    user: UserShort;
+    isEdited: boolean;
+    isDelayed: boolean;
+};
 
 export type AdminNotifiesPaggination = Paggination & {
     notifications: NotifySendDTO[];

@@ -33,6 +33,7 @@ export type SubjectTaskById = SubjectTask & {
     isCorrect: boolean;
     primaryScore: number;
     answers: string[];
+    commentsCount: number;
 };
 
 export type PagginationTasks = Paggination & {

@@ -53,7 +53,8 @@ const TaskTestItem: React.FC<Props> = ({
 }) => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
-    const { task, solution, subjectTask, id, source, subTheme, subject, isVerified, answers } = data || {};
+    const { task, solution, subjectTask, id, source, subTheme, subject, isVerified, answers, commentsCount } =
+        data || {};
     const { isDetailedAnswer } = subjectTask || {};
 
     const [warn, setWarn] = React.useState(false);
@@ -264,7 +265,7 @@ const TaskTestItem: React.FC<Props> = ({
 
                 <button className={styles.taskTestItemCommentButton} onClick={openCommentModal}>
                     <Comment />
-                    Комментарии
+                    Комментарии ({commentsCount})
                 </button>
             </div>
 
@@ -305,12 +306,7 @@ const TaskTestItem: React.FC<Props> = ({
 
                     <div className={base.baseWrapperGap8}>
                         <Text variant="text" fontWeight={600}>
-                            Комментарии{' '}
-                            {!isError &&
-                                !isPending &&
-                                !!comments?.pages[0]?.totalCount &&
-                                `(${comments?.pages[0].totalCount})`}
-                            :
+                            Комментарии:
                         </Text>
 
                         <div className={styles.taskTestCommentInner}>

@@ -27,7 +27,9 @@ export default function Page() {
 
     const connectToRoom = async () => {
         try {
-            const resp = await fetch(`/api2/token?room=${room}&username=${name}`);
+            const resp = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/api/live-kit/token?room=${room}&username=${name}`,
+            );
             const data = await resp.json();
             setToken(data.token);
         } catch (e) {

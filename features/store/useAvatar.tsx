@@ -181,6 +181,21 @@ const useAvatar = () => {
         }
     };
 
+    const getAvatarById = async (avatarId: number | string) => {
+        const response = await request<{ product: AvatarDecorationProfileAndStore }>({
+            url: `/store/avatar-decoration/${avatarId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.product;
+        }
+    };
+
     return {
         getPaginationAvatars,
         getPaginationStoreAvatars,
@@ -191,6 +206,7 @@ const useAvatar = () => {
         applyAvatarDecoration,
         resetAvatarDecoration,
         deleteAvatar,
+        getAvatarById,
     };
 };
 

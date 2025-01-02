@@ -1,0 +1,100 @@
+.wheelPage{
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+}
+
+.wheelCircleInner{
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+
+.wheelCircle{
+    width: 100%;
+    height: 100%;
+}
+
+.wheelCursor{
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: var(--main);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.wheelTextInner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2rem;
+    gap: 4px;
+}
+
+.wheelPlayersInner{
+    width: 100%;
+    max-width: 630px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.wheelPlayers{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.wheelPlayer{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.wheelPlayerChance{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.wheelPlayerChanceItem{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.wheelPlayerBet{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.wheelPlayerBet svg{
+    width: 20px;
+}
+
+.wheelPlayerChanceColor{
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}

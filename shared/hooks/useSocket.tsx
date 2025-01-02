@@ -62,7 +62,7 @@ const useSocket = () => {
     React.useEffect(() => {
         socket.connect();
 
-        socket.on('notify', (data: { notify: Notify }) => {
+        socket.on('notification', (data: { notify: Notify }) => {
             queryRef.current.invalidateQueries({ queryKey: ['notify'] });
             queryRef.current.invalidateQueries({ queryKey: ['notify_count'] });
             alertNotify('Новое уведомление', 'Нажмите, чтобы посмотреть', 'info', '/notify', 4000);
@@ -131,7 +131,7 @@ const useSocket = () => {
         });
 
         return () => {
-            socket.off('notify');
+            socket.off('notification');
             socket.off('end-session');
             socket.off('blocked');
             socket.off('unblocked');

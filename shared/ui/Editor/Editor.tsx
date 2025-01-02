@@ -76,11 +76,12 @@ export interface EditorCore {
     get dangerouslyLowLevelInstance(): any | null;
 }
 
-const subscribers: ((insert: TaskSnippetDTO) => void)[] = [];
+const subscribers: ((insert: TaskSnippetDTO, id: number) => void)[] = [];
 
 const Editor: React.FC<Props> = (props) => {
     const [insertModal, setInsertModal] = React.useState(false);
     const [choosedInsert, setChoosedInsert] = React.useState<TaskSnippetDTO | null>(null);
+    const [choosedInsertId, setChoosedInsertId] = React.useState<number | null>(null);
 
     const {
         placeholder = '',
@@ -129,14 +130,21 @@ const Editor: React.FC<Props> = (props) => {
         return await uploadFile(formData);
     };
 
-    const subscribeToInsert = (callback: (insert: TaskSnippetDTO) => void) => {
+    const subscribeToInsert = (callback: (insert: TaskSnippetDTO, id: number) => void) => {
         subscribers.push(callback);
     };
 
-    const handleSelectInsertion = (insert: TaskSnippetDTO) => {
+    const handleSelectInsertion = (insert: TaskSnippetDTO, id: number | null) => {
+        if (!id) return;
+
         setChoosedInsert(insert);
-        subscribers.forEach((callback) => callback(insert));
+        subscribers.forEach((callback) => callback(insert, id));
         setInsertModal(false);
+    };
+
+    const setInsertModalHandler = (id: number) => {
+        setInsertModal(true);
+        setChoosedInsertId(id);
     };
 
     const EDITOR_TOOLS: { [toolName: string]: ToolConstructable | ToolSettings } = {
@@ -187,7 +195,7 @@ const Editor: React.FC<Props> = (props) => {
             insert: {
                 class: CustomInsert as any,
                 config: {
-                    setInsertModal,
+                    setInsertModalHandler,
                     choosedInsert,
                     setChoosedInsert,
                     subscribeToInsert,
@@ -207,6 +215,7 @@ const Editor: React.FC<Props> = (props) => {
 
             return nextPage;
         },
+        enabled: insertModal,
     });
 
     return (
@@ -249,7 +258,7 @@ const Editor: React.FC<Props> = (props) => {
                                             key={data.id}
                                             data={data}
                                             choose
-                                            chooseCallback={() => handleSelectInsertion(data)}
+                                            chooseCallback={() => handleSelectInsertion(data, choosedInsertId)}
                                         />
                                     )),
                                 )}

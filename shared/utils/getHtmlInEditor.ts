@@ -113,7 +113,11 @@ export const getHtmlInEditor = (blocks: OutputBlockData[] = []) => {
                 }
                 break;
             case 'insert':
-                // <snippet id=1 />
+                if (block.data?.insert) {
+                    const { id } = block.data.insert || {};
+
+                    html += `<div class="snippet" id="${id}"></div>`;
+                }
                 break;
             default:
                 break;
@@ -191,6 +195,14 @@ export const convertHtmlToEditorBlocks = (html: string) => {
                 },
                 audioName: node.getElementsByTagName('audio')[0].getAttribute('data-name'),
                 uniqueId: node.getElementsByTagName('audio')[0].getAttribute('data-unique'),
+            };
+        } else if (node.nodeName === 'DIV' && node.className === 'snippet') {
+            block.type = 'insert';
+            block.data = {
+                insert: {
+                    id: node.getAttribute('id'),
+                    content: node.innerHTML
+                },
             };
         } else if (node.nodeName === 'DIV') {
             block.type = 'table';

@@ -3,14 +3,14 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import cn from 'classnames';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 
-import { Cross, DotsHorizontal, Edit } from '@/shared/icons';
+import { Cross, DotsHorizontal, Edit, Send } from '@/shared/icons';
 import { useNotify } from '@/features/notify';
 
 import { Preloader } from '@/shared/ui/Preloader';
@@ -35,7 +35,12 @@ const NotifyAdminById = () => {
 
     const [actionMenu, setActionMenu] = React.useState(false);
 
-    const { getNotificationById } = useNotify();
+    const queryClient = useQueryClient();
+    const { getNotificationById, sendDelayedNotificationNowById } = useNotify();
+
+    const revalidateNotifyById = () => {
+        queryClient.invalidateQueries({ queryKey: ['notification_admin_by_id', id] });
+    };
 
     const {
         data,
@@ -43,11 +48,16 @@ const NotifyAdminById = () => {
         isError,
     } = useQuery({
         queryKey: ['notification_admin_by_id', id],
+
         queryFn: () => getNotificationById(String(id)),
         enabled: !!id,
     });
 
-    const { author, content, date, isEdited, title, type, updatedAt, user } = data || {};
+    const sendNowDelayedNotifyMutation = useMutation({
+        mutationFn: () => sendDelayedNotificationNowById(String(id), revalidateNotifyById),
+    });
+
+    const { author, content, date, isEdited, title, type, updatedAt, user, isDelayed } = data || {};
     const { id: userId, avatar, nickname } = user || {};
 
     if (notificationIsLoading) {
@@ -80,6 +90,16 @@ const NotifyAdminById = () => {
                         <Edit />
                         Редактировать
                     </MenuLink>
+
+                    {isDelayed && (
+                        <MenuLink
+                            disabled={sendNowDelayedNotifyMutation.isPending}
+                            onClick={() => sendNowDelayedNotifyMutation.mutate()}
+                        >
+                            <Send />
+                            Отправить сейчас
+                        </MenuLink>
+                    )}
                 </HoverMenu>
             </div>
 
@@ -104,6 +124,10 @@ const NotifyAdminById = () => {
 
                 <div className={base.item4}>
                     <TextPoint title="Редактировалось" text={isEdited ? 'Да' : 'Нет'} />
+                </div>
+
+                <div className={base.item4}>
+                    <TextPoint title="Отложенное" text={isDelayed ? 'Да' : 'Нет'} />
                 </div>
 
                 <div className={base.item4}>

@@ -18,7 +18,7 @@ const AdminNotifiesLog = () => {
     const { getPagginationAdminNotifies } = useNotify();
 
     const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['roles'],
+        queryKey: ['admin_notifies'],
         queryFn: (param) => getPagginationAdminNotifies(param.pageParam),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages) => {

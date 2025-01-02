@@ -235,6 +235,25 @@ const useNotify = () => {
         }
     };
 
+    const sendDelayedNotificationNowById = async (notificationId: number | string, successCallback = () => {}) => {
+        const response = await request({
+            url: `/notification-ms/admin/notification/${notificationId}/send-now`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+        alertNotify('Успешно', 'Отложенное уведомление отправлено', 'success');
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         isLoading,
         notifyIsLoading,
@@ -248,6 +267,7 @@ const useNotify = () => {
         updateNotificationById,
         removeNotificationById,
         getUserNotificationById,
+        sendDelayedNotificationNowById,
     };
 };
 
