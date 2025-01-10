@@ -1,10 +1,13 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
+import cn from 'classnames';
 
 import styles from '../index.module.scss';
 
 import type { Subscription, SubscriptionOfUser } from '@/entities/subscription';
-import { ResCoin } from '@/shared/icons';
+import { ResCoin, SubDecor1, SubDecor2, SubDecor3, SubDecor4, SubDecor5, SubDecor6 } from '@/shared/icons';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 
 import { Text } from '@/shared/ui/Text';
@@ -28,36 +31,75 @@ const SubscriptionItem: React.FC<Props> = ({ data, userSubscription, buyCallback
 
     return (
         <>
-            <div className={styles.subscriptionItem}>
-                <div className={styles.subscriptionItemIcon}>
+            <div className={styles.subscriptionItem} key={data.id}>
+                <div className={cn(styles.subscriptionItemTop, styles.long)}>
+                    {data.subscription === 'ResEz Premium' ? (
+                        <>
+                            <SubDecor1 className={styles.subscriptionItemDecor1} />
+                            <SubDecor2 className={styles.subscriptionItemDecor2} />
+                            <SubDecor3 className={styles.subscriptionItemDecor3} />
+                        </>
+                    ) : (
+                        <>
+                            <SubDecor4 className={styles.subscriptionItemDecor1} />
+                            <SubDecor6 className={styles.subscriptionItemDecor2} />
+                            <SubDecor5 className={styles.subscriptionItemDecor3} />
+                        </>
+                    )}
+
                     <div className={styles.subscriptionItemIconInner}>
                         <Image src={icon} alt={subscription} fill />
                     </div>
 
-                    <Text variant="h3">{subscription}</Text>
+                    <div className={styles.subscriptionInfo}>
+                        <p className={styles.subscriptionInfoTitle}>{data.subscription}</p>
+
+                        <p className={styles.subscriptionInfoPrice}>
+                            {data.price} <ResCoin /> в месяц
+                        </p>
+
+                        {isAuth ? (
+                            subscriptionOfUserId !== id && (
+                                <Button onClick={() => setConfirmBuy(true)}>Подключить</Button>
+                            )
+                        ) : (
+                            <Button href="/login">Авторизоваться</Button>
+                        )}
+
+                        {subscriptionOfUserId === id && (
+                            <>
+                                <Text variant="text2" fontWeight={600} center>
+                                    Подключено, истекает{' '}
+                                    {isSubscriptionPermanent ? 'никогда' : formatDate(subscriptionExpiredDate)}
+                                </Text>
+
+                                <Button small variant="empty" color="danger">
+                                    Отключить
+                                </Button>
+                            </>
+                        )}
+                    </div>
                 </div>
 
-                <Text fontWeight={600} textClassName={styles.subscriptionItemPrice}>
-                    Цена: {price} <ResCoin />
-                </Text>
+                <div className={styles.subscriptionItemContent}>
+                    <div className={styles.subscriptionItemContentWrap}>
+                        <Text fontWeight={600} color="main">
+                            Отличный вариант, чтобы начать готовиться к экзаменам с ResEz.
+                        </Text>
 
-                {isAuth ? (
-                    subscriptionOfUserId !== id && (
-                        <Button variant="light" onClick={() => setConfirmBuy(true)}>
-                            Купить
-                        </Button>
-                    )
-                ) : (
-                    <Button variant="light" href="/login">
-                        Авторизоваться
-                    </Button>
-                )}
+                        <div className={styles.subscriptionItemPoints}>
+                            <p className={styles.subscriptionItemPoint}>Всё, что было в ResEz Free</p>
 
-                {subscriptionOfUserId === id && (
-                    <Text fontWeight={600}>
-                        Подписка истекает: {isSubscriptionPermanent ? 'Никогда' : formatDate(subscriptionExpiredDate)}
-                    </Text>
-                )}
+                            <p className={styles.subscriptionItemPoint}>Система наград и достижений.</p>
+
+                            <p className={styles.subscriptionItemPoint}>Приоритетная техническая поддержка.</p>
+
+                            <p className={styles.subscriptionItemPoint}>Дополнительные персонализации.</p>
+
+                            <p className={styles.subscriptionItemPoint}>Подробная аналитика и статистика решений.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <ConfirmModal

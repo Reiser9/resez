@@ -17,6 +17,7 @@ type Props = {
     buttonText?: string;
     href?: string;
     smallPadding?: boolean;
+    targetBlank?: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
 const Block: React.FC<Props> = ({
@@ -28,6 +29,7 @@ const Block: React.FC<Props> = ({
     buttonText,
     href,
     smallPadding,
+    targetBlank = false,
     ...props
 }) => {
     return (
@@ -43,7 +45,12 @@ const Block: React.FC<Props> = ({
                 {text && <p className={`${typography.text} ${styles.mainSubtitle}`}>{parse(text)}</p>}
 
                 {buttonText && href && (
-                    <Link prefetch={false} href={href} className={styles.mainBlockLink}>
+                    <Link
+                        prefetch={false}
+                        href={href}
+                        target={targetBlank ? '_blank' : ''}
+                        className={styles.mainBlockLink}
+                    >
                         {buttonText}
 
                         <ArrowRight />

@@ -3,6 +3,7 @@
 import React, { HTMLAttributes } from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
+import Image from 'next/image';
 import { Tooltip } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,18 +12,16 @@ import styles from './index.module.scss';
 
 import type { Message } from '@/entities/messenger';
 import { formatDate } from '@/shared/utils/formatDate';
-import { Pencil } from '@/shared/icons';
-import { useAppSelector } from '@/shared/hooks/useRedux';
+import { Check, Clock, Pencil, DoubleCheck } from '@/shared/icons';
 import useShortInfo from '@/features/user/data/useShortInfo';
 
 import { Audio } from '../Audio';
 import { Text } from '../Text';
 import { Badge } from '../Badge';
-import Image from 'next/image';
 
 type Props = {
     data: Message;
-    audio?: string;
+    // audio?: string;
     selectMessage: (value: Message) => void;
     isSelected?: boolean;
     onDoubleClick?: () => void;
@@ -32,7 +31,7 @@ type Props = {
 
 const DialogMessageItem: React.FC<Props> = ({
     data,
-    audio,
+    // audio,
     selectMessage,
     isSelected = false,
     onDoubleClick,
@@ -40,7 +39,7 @@ const DialogMessageItem: React.FC<Props> = ({
     setIsEditedMessage,
     ...props
 }) => {
-    const { id, createdAt, updatedAt, isEdited, message, sender, type, files } = data || {};
+    const { id, createdAt, updatedAt, isEdited, message, sender, type, files, isRead, readers } = data || {};
     const { avatar, nickname, id: userId } = sender || {};
 
     const { getShortInfo } = useShortInfo();
@@ -58,11 +57,11 @@ const DialogMessageItem: React.FC<Props> = ({
                 [styles.selected]: isSelected,
                 [styles.notReaded]: false,
             })}
-            onClick={type !== 'Системное' ? () => selectMessage(data) : () => {}}
-            onDoubleClick={type !== 'Системное' ? onDoubleClick : () => {}}
+            onClick={type && type !== 'System' ? () => selectMessage(data) : () => {}}
+            onDoubleClick={type && type !== 'System' ? onDoubleClick : () => {}}
             {...props}
         >
-            {type === 'Системное' ? (
+            {type === 'System' ? (
                 <div className={styles.messangerDialogItemEvent}>
                     <Text variant="text2">{message}</Text>
                 </div>
@@ -100,6 +99,11 @@ const DialogMessageItem: React.FC<Props> = ({
                                 </div>
 
                                 <p className={styles.messangerDialogItemTime}>{formatDate(createdAt, 'HH:mm')}</p>
+
+                                {userId === myId && <div className={styles.messangerDialogItemStatus}>
+                                    {isRead ? <DoubleCheck /> : <Check />}
+                                    {/* <Clock /> */}
+                                </div>}
                             </div>
                         </div>
 
@@ -116,22 +120,30 @@ const DialogMessageItem: React.FC<Props> = ({
 
                         {!!files?.length && (
                             <div className={styles.messangerImages}>
-                                {files.map((image, index) => (
-                                    <div
-                                        key={image.id}
-                                        className={cn(styles.messangerImage, {
-                                            [styles.full]:
-                                                files.length === 1 ||
-                                                (files.length % 2 === 1 && index + 1 === files.length),
-                                        })}
-                                    >
-                                        <Image src={image.url} alt={image.name} fill />
-                                    </div>
-                                ))}
+                                {files.map((image, index) => {
+                                    if (!image?.url) return;
+
+                                    return (
+                                        <div
+                                            key={image.id}
+                                            className={cn(styles.messangerImage, {
+                                                [styles.full]:
+                                                    files.length === 1 ||
+                                                    (files.length % 2 === 1 && index + 1 === files.length),
+                                            })}
+                                        >
+                                            <Image
+                                                src={image.url}
+                                                alt={image.name || 'Alt картинки отсутствует'}
+                                                fill
+                                            />
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
 
-                        {audio && <Audio audio={audio} />}
+                        {/* {audio && <Audio audio={audio} />} */}
                     </div>
                 </>
             )}

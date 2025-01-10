@@ -11,6 +11,7 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 
 import type { EditorCore } from '@/shared/ui/Editor/Editor';
+import { NOTIFY_TYPES } from '@/shared/consts/NOTIFY_TYPES';
 import useAlert from '@/shared/hooks/useAlert';
 import { isDateTimePast } from '@/shared/utils/isDateTimePast';
 import { formatDate } from '@/shared/utils/formatDate';
@@ -22,7 +23,6 @@ import { useUserPermissions, useUsers } from '@/features/user';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { checkPermission } from '@/shared/utils/checkPermissions';
-import { NOTIFY_TYPES } from '@/shared/consts/NOTIFY_TYPES';
 
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
@@ -31,7 +31,7 @@ import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Preloader } from '@/shared/ui/Preloader';
 import { NotContent } from '@/shared/ui/NotContent';
-import { UserOption } from '@/shared/ui/OptionComponents';
+import { NotifyTypeOption, UserOption } from '@/shared/ui/OptionComponents';
 import { TimePicker } from '@/shared/ui/TimePicker';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
@@ -74,8 +74,8 @@ const AdminNotifies = () => {
         isPending: usersIsLoading,
         isError: usersError,
     } = useQuery({
-        queryKey: ['users_short_search', userSearchDebounce, userIDs],
-        queryFn: () => getPaginationUsersShort(0, userSearchDebounce, userIDs),
+        queryKey: ['users_short_search', userSearchDebounce],
+        queryFn: () => getPaginationUsersShort(0, userSearchDebounce),
         enabled: checkPermission(permissions || [], [PERMISSIONS.USERS]),
     });
 
@@ -120,7 +120,7 @@ const AdminNotifies = () => {
     };
 
     const createNotifyMutation = useMutation({
-        mutationFn: () => createNotify(),
+        mutationFn: createNotify,
     });
 
     React.useEffect(() => {
@@ -128,7 +128,7 @@ const AdminNotifies = () => {
             setSendForOne(true);
             setUserIDs(usersIdParam.split(','));
         }
-    }, [usersIdParam]);
+    }, []);
 
     return (
         <>
@@ -235,7 +235,13 @@ const AdminNotifies = () => {
                     options={NOTIFY_TYPES.map((data) => ({
                         label: data.type,
                         value: data.name,
+                        icon: data.icon
                     }))}
+                    optionRender={({ data }) => {
+                        const { label, icon } = data || {};
+
+                        return <NotifyTypeOption label={label} icon={icon} />;
+                    }}
                 />
 
                 <Editor title="Сообщение" editorRef={editorRef} id="notifyEditor" />

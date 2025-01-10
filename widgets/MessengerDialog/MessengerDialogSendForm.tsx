@@ -47,12 +47,13 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
 
     const sendMessageInputRef = React.useRef<HTMLInputElement>(null);
 
-    const { sendMessageInChat, editMessage: editMessageHandler } = useMessenger();
+    const { sendMessageInChat, editMessage: editMessageHandler, readMessages } = useMessenger();
     const { uploadFile } = useFile();
 
     const revalidateChat = async () => {
         await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
         await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+        await queryClient.invalidateQueries({ queryKey: ['unread_chats_count'] });
 
         scrollDialogToBottom();
     };
@@ -77,9 +78,15 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
         await sendMessageInChat(String(dialogId), message.replace(/\s+/g, ' '), messageFiles, () => {
             setMessage('');
             revalidateChat();
-        }).finally(() => {
-            setSendingMessage(false);
-        });
+        })
+            .then((data) => {
+                if (!data) return;
+
+                readMessages(data.id);
+            })
+            .finally(() => {
+                setSendingMessage(false);
+            });
     };
 
     React.useEffect(() => {
@@ -197,7 +204,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                             placeholder="Напишите сообщение"
                         />
 
-                        <IconButton className={styles.sendButton} disabled={sendingMessage}>
+                        <IconButton className={styles.sendButton} disabled={!message || sendingMessage}>
                             {/* <Microphone
                                 className={cn(styles.iconButton, {
                                     [styles.fade]: !message,

@@ -10,7 +10,7 @@ import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import type { ChatItem } from '@/entities/messenger';
-import { Block, Delete, DotsHorizontal, Enter, Mute, Pin } from '@/shared/icons';
+import { Block, Check, Delete, DotsHorizontal, DoubleCheck, Enter, Mute, Pin } from '@/shared/icons';
 import { getFormattedDate } from '@/shared/utils/getFormattedDate';
 import { useChat, useMessenger } from '@/features/messenger';
 import useShortInfo from '@/features/user/data/useShortInfo';
@@ -26,8 +26,8 @@ type Props = {
 } & HTMLAttributes<HTMLDivElement>;
 
 const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...props }) => {
-    const { id, isGroup, isLeft, isAdmin, lastMessage, picture, chat, isKicked } = data || {};
-    const { createdAt, updatedAt, isEdited, message, sender, type, readsCount } = lastMessage || {};
+    const { id, isGroup, isLeft, isAdmin, latestMessage, picture, chat, isKicked } = data || {};
+    const { createdAt, updatedAt, isEdited, message, sender, type, isRead, files } = latestMessage || {};
     const { nickname, avatar, id: senderId } = sender || {};
 
     const [clearHistoryConfirm, setClearHistoryConfirm] = React.useState(false);
@@ -47,7 +47,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
     const { leaveFromChat, returnInChat } = useChat();
     const { getShortInfo } = useShortInfo();
 
-    const { data: user, isLoading: userIsLoading } = useQuery({
+    const { data: user } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
     });
@@ -77,7 +77,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                     image={picture}
                     text={chat}
                     style={{ width: 48, height: 48 }}
-                    indicator={readsCount <= 999 ? readsCount : '999+'}
+                    // indicator={readsCount <= 999 ? readsCount : '999+'}
                 />
 
                 <div className={styles.dialogItemTextInner}>
@@ -88,7 +88,16 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                             {mute && <Mute className={styles.dialogItemMute} />}
                         </div>
 
-                        {createdAt && <p className={styles.dialogItemDate}>{getFormattedDate(createdAt, 'short')}</p>}
+                        <div className={base.titleWrapper}>
+                            {createdAt && (
+                                <p className={styles.dialogItemDate}>{getFormattedDate(createdAt, 'short')}</p>
+                            )}
+
+                            <div className={styles.messangerDialogItemStatus}>
+                                {isRead ? <DoubleCheck /> : <Check />}
+                                {/* <Clock /> */}
+                            </div>
+                        </div>
                     </div>
 
                     <div className={base.titleInnerNowrap}>
@@ -97,7 +106,9 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                 <Badge isUserAvatar size="small" image={avatar} text={nickname} />
                             )}
 
-                            {message && <p className={styles.dialogItemMessage}>{message}</p>}
+                            <p className={styles.dialogItemMessage}>
+                                {message} <span>{!!files.length && `${files.length} фото`}</span>
+                            </p>
                         </div>
 
                         <div className={styles.dialogItemMoreInner} onClick={(e) => e.stopPropagation()}>

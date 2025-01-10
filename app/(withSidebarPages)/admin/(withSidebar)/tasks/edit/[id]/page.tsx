@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Checkbox } from 'antd';
@@ -12,6 +12,7 @@ import base from '@/shared/styles/base.module.scss';
 
 import type { SubjectTheme, SubjectSubTheme } from '@/entities/subject';
 import type { SubjectTask } from '@/entities/task';
+import type { Source } from '@/entities/task-source';
 import type { EditorCore } from '@/shared/ui/Editor/Editor';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { checkPermission } from '@/shared/utils/checkPermissions';
@@ -21,11 +22,13 @@ import { useTask } from '@/features/task';
 import { useSubjects } from '@/features/subjects';
 import { convertHtmlToEditorBlocks, getHtmlInEditor } from '@/shared/utils/getHtmlInEditor';
 import { Delete, Plus, ScanEye, Shufle } from '@/shared/icons';
-import TaskItem from '@/entities/task/ui/TaskItem';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
 import { generatePairs } from '@/shared/utils/generatePairs';
 import { useHandlers } from '@/features/collection';
+import TaskItem from '@/entities/task/ui/TaskItem';
+import { CreateTaskSourceForm } from '@/features/task-source/ui';
+import { useTaskSource } from '@/features/task-source';
 
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
@@ -47,11 +50,7 @@ const AdminTaskEdit = () => {
     const { getUserPermissions } = useUserPermissions();
     const { scrollTop } = useHandlers();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -62,7 +61,7 @@ const AdminTaskEdit = () => {
     const [theme, setTheme] = React.useState<string | null>(null);
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [answers, setAnswers] = React.useState<string[]>(['']);
-    const [source, setSource] = React.useState('');
+    const [sourceId, setSourceId] = React.useState('');
     const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
 
     const [taskEditorIsReady, setTaskEditorIsReady] = React.useState(false);
@@ -72,6 +71,8 @@ const AdminTaskEdit = () => {
     const [themesFilter, setThemesFilter] = React.useState<SubjectTheme[]>([]);
     const [subThemes, setSubThemes] = React.useState<SubjectSubTheme[]>([]);
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubTheme[]>([]);
+    const [sourceRelation, setSourceRelation] = React.useState<Source[]>([]);
+    const [sourceFilter, setSourceFilter] = React.useState<Source[]>([]);
 
     const [modalCheckMatch, setModalCheckMatch] = React.useState(false);
     const [matchesIsLoading, setMatchesIsLoading] = React.useState(false);
@@ -87,14 +88,11 @@ const AdminTaskEdit = () => {
 
     const { getSubjectThemes, getSubjectSubThemes } = useSubjects();
     const { editTask, getTaskById, checkMatchTasks } = useTask();
+    const { getSources } = useTaskSource();
     const { alertNotify } = useAlert();
     const router = useRouter();
 
-    const {
-        data,
-        isLoading: taskIsLoading,
-        isError,
-    } = useQuery({
+    const { data, isLoading: taskIsLoading } = useQuery({
         queryKey: ['task_by_id', id],
         queryFn: () => getTaskById(String(id), true),
         enabled: !!id,
@@ -103,24 +101,21 @@ const AdminTaskEdit = () => {
     const { user } = data || {};
     const { nickname, avatar } = user || {};
 
-    const {
-        data: themesData,
-        isLoading: themesIsLoading,
-        isError: themesError,
-    } = useQuery({
+    const { data: themesData, isLoading: themesIsLoading } = useQuery({
         queryKey: ['themes', subjectId],
         queryFn: () => getSubjectThemes(String(subjectId)),
         enabled: !!subjectId,
     });
 
-    const {
-        data: subThemesData,
-        isLoading: subThemesIsLoading,
-        isError: subThemesError,
-    } = useQuery({
+    const { data: subThemesData, isLoading: subThemesIsLoading } = useQuery({
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
         enabled: !!theme,
+    });
+
+    const { data: sourcesData, isLoading: sourcesIsLoading } = useQuery({
+        queryKey: ['sources'],
+        queryFn: getSources,
     });
 
     const getMatchTasks = async () => {
@@ -205,7 +200,7 @@ const AdminTaskEdit = () => {
             isVerified,
             solutionContent,
             isDetailedAnswer ? [] : allAnswers,
-            source,
+            sourceId,
             () => {
                 if (window.history.length > 1) {
                     router.back();
@@ -234,6 +229,14 @@ const AdminTaskEdit = () => {
         setSubThemesFilter(filteredOptions);
     };
 
+    const handleSearchSources = (value: string) => {
+        const filteredOptions = sourceRelation.filter((source) =>
+            source.source.toLowerCase().includes(value.toLowerCase()),
+        );
+
+        setSourceFilter(filteredOptions);
+    };
+
     const generateAnswers = () => {
         if (!answers.length || !answers[0]) return;
 
@@ -254,7 +257,8 @@ const AdminTaskEdit = () => {
 
     React.useEffect(() => {
         if (data) {
-            const { subject, isVerified, source, answers, subjectTask, subTheme } = data;
+            const { subject, isVerified, sourceRelation, answers, subjectTask, subTheme } = data;
+            const { source } = sourceRelation || {};
 
             setSubjectId(subject?.id);
             setSubject(subject?.subject);
@@ -268,7 +272,7 @@ const AdminTaskEdit = () => {
             setIsVerified(isVerified);
             setAnswers(!!answers.length ? answers : ['']);
 
-            setSource(source);
+            setSourceId(source);
         }
     }, [data]);
 
@@ -315,6 +319,13 @@ const AdminTaskEdit = () => {
             setSubThemesFilter(subThemesData);
         }
     }, [subThemesData]);
+
+    React.useEffect(() => {
+        if (sourcesData) {
+            setSourceRelation(sourcesData);
+            setSourceFilter(sourcesData);
+        }
+    }, [sourcesData]);
 
     if (taskIsLoading) {
         return <Preloader page />;
@@ -462,7 +473,28 @@ const AdminTaskEdit = () => {
                         </>
                     )}
 
-                    <Input title="Источник" value={source} setValue={setSource} />
+                    <Select
+                        title="Источник"
+                        notContentText="Источников не найдено"
+                        value={sourceId}
+                        onChange={(value) => setSourceId(value)}
+                        loading={sourcesIsLoading}
+                        options={sourceFilter?.map((data) => ({
+                            label: data.source,
+                            value: String(data.id),
+                        }))}
+                        showSearch
+                        onSearch={handleSearchSources}
+                        filterOption={false}
+                        clear
+                        dropdownRender={(menu) => (
+                            <>
+                                {menu}
+
+                                <CreateTaskSourceForm />
+                            </>
+                        )}
+                    />
                 </div>
             </CreatePageWrapper>
 

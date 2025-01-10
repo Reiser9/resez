@@ -53,9 +53,10 @@ const TaskTestItem: React.FC<Props> = ({
 }) => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
-    const { task, solution, subjectTask, id, source, subTheme, subject, isVerified, answers, commentsCount } =
+    const { task, solution, subjectTask, id, sourceRelation, subTheme, subject, isVerified, answers, commentsCount } =
         data || {};
     const { isDetailedAnswer } = subjectTask || {};
+    const { slug, source } = sourceRelation || {};
 
     const [warn, setWarn] = React.useState(false);
     const [warnText, setWarnText] = React.useState('');
@@ -257,7 +258,7 @@ const TaskTestItem: React.FC<Props> = ({
                     )}
 
                     {!isDetailedAnswer && !!answers?.length && (
-                        <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>
+                        <p className={styles.taskTestItemAnswer}>Ответ: {answers[0]}</p>
                     )}
                 </Spoiler>
 
@@ -298,7 +299,7 @@ const TaskTestItem: React.FC<Props> = ({
                         )}
 
                         {!isDetailedAnswer && !!answers?.length && (
-                            <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>
+                            <p className={styles.taskTestItemAnswer}>Ответ: {answers[0]}</p>
                         )}
                     </Spoiler>
 

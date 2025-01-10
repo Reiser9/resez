@@ -171,6 +171,15 @@ const CollectionSettings: React.FC<Props> = ({ id, openModal, setOpenModal }) =>
                                 setValue={setTestAnswerOnFrontLocal}
                             />
 
+                            {/* <SettingsItem
+                                title="Ответы сразу"
+                                text="При ответе на вопрос вам сразу будет показан результат"
+                                checked={testAnswerOnFrontLocal}
+                                name="testAnswerOnFrontLocal"
+                                fullWidth
+                                setValue={setTestAnswerOnFrontLocal}
+                            /> */}
+
                             <div className={styles.memoSettingsQuestion}>
                                 <Text fontWeight={600}>Количество вопросов в тесте</Text>
 

@@ -26,6 +26,29 @@
     padding: 0 1.2rem;
 }
 
+.sidebarLinkCount{
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--error);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 12px;
+    border-radius: 50%;
+    transition: .2s linear;
+}
+
+.sidebarLinkCount > span{
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: .2s linear;
+}
+
 @media (max-width: 1500px) {
     .sidebar {
         max-width: 56px;
@@ -35,6 +58,17 @@
         height: calc(100% + 1px);
         z-index: 10;
         overflow-x: hidden;
+    }
+
+    .sidebarLinkCount{
+        width: 12px;
+        height: 12px;
+        top: 22px;
+        transform: translateY(0);
+    }
+
+    .sidebarLinkCount > span{
+        opacity: 0;
     }
 
     .sidebarFooter {
@@ -50,6 +84,17 @@
         max-width: 250px;
     }
 
+    .sidebar:hover .sidebarLinkCount{
+        width: 24px;
+        height: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .sidebar:hover .sidebarLinkCount > span{
+        opacity: 1;
+    }
+
     .sidebar:hover .sidebarFooter {
         opacity: 1;
         pointer-events: all;
@@ -59,6 +104,17 @@
 @media (max-width: 1500px) and (any-hover: none) {
     .sidebar.active {
         max-width: 260px;
+    }
+
+    .sidebar.active .sidebarLinkCount{
+        width: 24px;
+        height: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .sidebar.active .sidebarLinkCount > span{
+        opacity: 1;
     }
 
     .sidebar.active .sidebarFooter {

@@ -41,7 +41,7 @@ const useMessenger = () => {
         files: FileInfo[] = [],
         successCallback = () => {},
     ) => {
-        const response = await request<{ message: Message[] }>({
+        const response = await request<{ message: Message }>({
             url: `/messenger/message/chat/${chatId}`,
             data: {
                 message,
@@ -56,6 +56,10 @@ const useMessenger = () => {
         }
 
         successCallback();
+
+        if ('data' in response) {
+            return response.data.message;
+        }
     };
 
     const editMessage = async (messageId: number, message: string, successCallback = () => {}) => {
@@ -120,6 +124,37 @@ const useMessenger = () => {
         }
     };
 
+    const getCountUnreadChats = async () => {
+        const response = await request<{ count: number }>({
+            url: `/messenger/chat/unread-count`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.count;
+        }
+    };
+
+    const readMessages = async (messageId: number | string) => {
+        const response = await request({
+            url: `/messenger/message/${messageId}/read`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     return {
         getDialogs,
         getChatById,
@@ -128,6 +163,8 @@ const useMessenger = () => {
         clearChatHistory,
         deleteMessageById,
         joinChatFromLink,
+        getCountUnreadChats,
+        readMessages,
     };
 };
 

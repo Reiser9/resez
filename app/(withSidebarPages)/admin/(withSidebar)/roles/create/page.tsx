@@ -31,7 +31,7 @@ export type TreePermission = {
 };
 
 const AdminCreateRole = () => {
-    const [name, setName] = React.useState<string>('');
+    const [name, setName] = React.useState('');
 
     const [textColor, setTextColor] = React.useState<string | Color>(CONFIG.BASE_COLOR);
     const [textColorFormatHex, setTextColorFormatHex] = React.useState<'hex' | 'rgb' | 'hsb' | undefined>('hex');

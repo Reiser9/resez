@@ -120,6 +120,7 @@ const MainPage = () => {
                         smallPadding
                         buttonText="Обратиться"
                         href={process.env.NEXT_PUBLIC_VK_LINK}
+                        targetBlank
                     />
 
                     <Block

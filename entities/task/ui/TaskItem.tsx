@@ -65,12 +65,13 @@ const TaskItem: React.FC<Props> = ({
         task,
         user,
         isArchived,
-        source,
+        sourceRelation,
         updatedAt,
         tests,
         testsCount,
     } = data || {};
     const { avatar, nickname } = user || {};
+    const { slug, source } = sourceRelation || {};
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [confirmDelete, setConfirmDelete] = React.useState(false);

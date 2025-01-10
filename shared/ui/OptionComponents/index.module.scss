@@ -20,3 +20,26 @@
     gap: 8px;
     padding-right: 0.8rem;
 }
+
+.notifyTypeOption{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notifyTypeOptionIcon{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--main);
+    background: var(--lighten);
+}
+
+.notifyTypeOptionIcon svg{
+    width: 24px;
+    flex-shrink: 0;
+}

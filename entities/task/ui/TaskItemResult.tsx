@@ -77,7 +77,7 @@ const TaskItemResult: React.FC<Props> = ({ data }) => {
                 )}
 
                 {!isDetailedAnswer && !!answers?.length && (
-                    <p className={styles.taskTestItemAnswer}>Ответ: {answers.join(' или ')}</p>
+                    <p className={styles.taskTestItemAnswer}>Ответ: {answers[0]}</p>
                 )}
             </Spoiler>
 

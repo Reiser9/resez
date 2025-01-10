@@ -1,5 +1,6 @@
 import type { Paggination } from '../pagination';
 import type { SubjectFilter, SubjectSubTheme, CreatedTask } from '../subject';
+import type { Source } from '../task-source';
 import type { UserShort } from '../user';
 
 export type SubjectTask = {
@@ -7,7 +8,7 @@ export type SubjectTask = {
     task: string;
     isVerified: boolean;
     isArchived: boolean;
-    source: string;
+    sourceRelation: Source;
     user: UserShort;
     createdAt: Date;
     updatedAt: Date;

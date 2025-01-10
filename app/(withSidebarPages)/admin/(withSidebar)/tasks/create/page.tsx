@@ -1,6 +1,6 @@
 'use client';
 
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { Checkbox } from 'antd';
 import { useQuery } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import styles from '../index.module.scss';
 
 import type { SubjectFilter, SubjectSubTheme, SubjectTheme } from '@/entities/subject';
 import type { SubjectTask } from '@/entities/task';
+import type { Source } from '@/entities/task-source';
 import { CreatePageWrapper } from '@/shared/wrappers/CreatePageWrapper';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
@@ -33,6 +34,8 @@ import { Input } from '@/shared/ui/Input';
 import { EditorCore } from '@/shared/ui/Editor/Editor';
 import { Modal } from '@/shared/ui/Modal';
 import { NotContent } from '@/shared/ui/NotContent';
+import { useTaskSource } from '@/features/task-source';
+import { CreateTaskSourceForm } from '@/features/task-source/ui';
 
 const Editor = dynamic(() => import('@/shared/ui/Editor/Editor'), {
     ssr: false,
@@ -43,11 +46,7 @@ const AdminTaskCreate = () => {
     const { getUserPermissions } = useUserPermissions();
     const { scrollTop } = useHandlers();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -57,7 +56,7 @@ const AdminTaskCreate = () => {
     const [theme, setTheme] = React.useState<string | null>(null);
     const [subTheme, setSubTheme] = React.useState<string | null>(null);
     const [answers, setAnswers] = React.useState<string[]>(['']);
-    const [source, setSource] = React.useState('');
+    const [sourceId, setSourceId] = React.useState('');
     const [isDetailedAnswer, setIsDetailedAnswer] = React.useState(false);
 
     const [subjects, setSubjects] = React.useState<SubjectFilter[]>([]);
@@ -66,6 +65,8 @@ const AdminTaskCreate = () => {
     const [themesFilter, setThemesFilter] = React.useState<SubjectTheme[]>([]);
     const [subThemes, setSubThemes] = React.useState<SubjectSubTheme[]>([]);
     const [subThemesFilter, setSubThemesFilter] = React.useState<SubjectSubTheme[]>([]);
+    const [sourceRelation, setSourceRelation] = React.useState<Source[]>([]);
+    const [sourceFilter, setSourceFilter] = React.useState<Source[]>([]);
 
     const [modalCheckMatch, setModalCheckMatch] = React.useState(false);
     const [matchesIsLoading, setMatchesIsLoading] = React.useState(false);
@@ -81,6 +82,7 @@ const AdminTaskCreate = () => {
 
     const { getPagginationSubjects, getSubjectThemes, getSubjectSubThemes } = useSubjects();
     const { createTask, checkMatchTasks } = useTask();
+    const { getSources } = useTaskSource();
     const { alertNotify } = useAlert();
     const router = useRouter();
 
@@ -111,6 +113,11 @@ const AdminTaskCreate = () => {
         queryKey: ['subthemes', theme],
         queryFn: () => getSubjectSubThemes(String(theme)),
         enabled: !!theme,
+    });
+
+    const { data: sourcesData, isLoading: sourcesIsLoading } = useQuery({
+        queryKey: ['sources'],
+        queryFn: getSources,
     });
 
     const addAnswer = () => {
@@ -163,7 +170,7 @@ const AdminTaskCreate = () => {
             isVerified,
             solutionContent,
             isDetailedAnswer ? [] : allAnswers,
-            source,
+            sourceId,
             () => {
                 router.back();
                 scrollTop();
@@ -221,6 +228,14 @@ const AdminTaskCreate = () => {
         setModalCheckMatch(true);
     };
 
+    const handleSearchSources = (value: string) => {
+        const filteredOptions = sourceRelation.filter((source) =>
+            source.source.toLowerCase().includes(value.toLowerCase()),
+        );
+
+        setSourceFilter(filteredOptions);
+    };
+
     const generateAnswers = () => {
         if (!answers.length || !answers[0]) return;
 
@@ -269,6 +284,13 @@ const AdminTaskCreate = () => {
             setSubThemesFilter(subThemesData);
         }
     }, [subThemesData]);
+
+    React.useEffect(() => {
+        if (sourcesData) {
+            setSourceRelation(sourcesData);
+            setSourceFilter(sourcesData);
+        }
+    }, [sourcesData]);
 
     return (
         <PrivateWrapper permissions={[PERMISSIONS.CREATE_TASKS]}>
@@ -372,7 +394,10 @@ const AdminTaskCreate = () => {
                                         {!!answers.length &&
                                             answers.map((answer, id) => (
                                                 <div key={id} className={styles.answerItem}>
-                                                    <Input value={answer} onInputChange={(value) => changeAnswer(value, id)} />
+                                                    <Input
+                                                        value={answer}
+                                                        onInputChange={(value) => changeAnswer(value, id)}
+                                                    />
 
                                                     {answers.length > 1 && (
                                                         <IconButton
@@ -411,7 +436,28 @@ const AdminTaskCreate = () => {
                                 </>
                             )}
 
-                            <Input title="Источник" value={source} setValue={setSource} />
+                            <Select
+                                title="Источник"
+                                notContentText="Источников не найдено"
+                                value={sourceId}
+                                onChange={(value) => setSourceId(value)}
+                                loading={sourcesIsLoading}
+                                options={sourceFilter?.map((data) => ({
+                                    label: data.source,
+                                    value: String(data.id),
+                                }))}
+                                showSearch
+                                onSearch={handleSearchSources}
+                                filterOption={false}
+                                clear
+                                dropdownRender={(menu) => (
+                                    <>
+                                        {menu}
+
+                                        <CreateTaskSourceForm />
+                                    </>
+                                )}
+                            />
                         </>
                     )}
                 </div>

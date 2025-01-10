@@ -128,3 +128,19 @@
     overflow-x: hidden;
     text-overflow: ellipsis;
 }
+
+.dialogItemMessage span{
+    color: var(--main);
+}
+
+.messangerDialogItemStatus{
+    width: 18px;
+    height: 18px;
+    display: flex;
+    color: var(--main);
+}
+
+.messangerDialogItemStatus svg{
+    width: 100%;
+    flex-shrink: 0;
+}

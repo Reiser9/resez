@@ -16,6 +16,7 @@ import { useWarn } from '@/features/admin';
 import useAlert from '@/shared/hooks/useAlert';
 import { useUserPermissions } from '@/features/user';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import { useMessenger } from '@/features/messenger';
 
 import { Input } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
@@ -29,17 +30,21 @@ const Sidebar = () => {
     const sidebarRef = React.useRef<HTMLDivElement>(null);
 
     const { getUserPermissions } = useUserPermissions();
+    const { getCountUnreadChats } = useMessenger();
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
         enabled: isAuth,
     });
+
+    const { data: unreadChatsCount } = useQuery({
+        queryKey: ['unread_chats_count'],
+        queryFn: getCountUnreadChats,
+        enabled: isAuth,
+    });
+
     const { showSidebar, setShowSidebar } = useSidebarContext();
 
     const { createWarn } = useWarn();
@@ -96,6 +101,7 @@ const Sidebar = () => {
                     <SidebarLink href="/messenger" onClick={closeSidebar}>
                         <Message />
                         Мессенджер
+                        {!!unreadChatsCount && <span className={styles.sidebarLinkCount}><span>{unreadChatsCount}</span></span>}
                     </SidebarLink>
 
                     <SidebarLink href="/useful" onClick={closeSidebar}>

@@ -1,4 +1,4 @@
-import { FileInfo } from '../file';
+import type { FileInfo } from '../file';
 import type { Paggination } from '../pagination';
 import type { UserShort } from '../user';
 
@@ -6,12 +6,16 @@ export type Message = {
     chatId: number;
     id: number;
     message: string;
-    type: 'Системное' | 'Обычное' | 'Голосовое' | 'Видео';
+    type: 'Default' | 'Deleted' | 'System' | 'Voice' | 'Video';
     createdAt: Date;
     updatedAt: Date;
     isEdited: boolean;
     sender: UserShort;
-    readsCount: number;
+    readers: UserShort &
+        {
+            readDate: Date;
+        }[];
+    isRead: boolean;
     files: (FileInfo & { id: number })[];
 };
 
@@ -33,7 +37,7 @@ export type ChatInfo = {
 };
 
 export type ChatItem = ChatInfo & {
-    lastMessage: Message;
+    latestMessage: Message;
 };
 
 export type ChatsDTO = {

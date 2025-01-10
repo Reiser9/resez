@@ -26,7 +26,7 @@ type Props = {
 
 const TaskView: React.FC<Props> = ({ task }) => {
     const {
-        source,
+        sourceRelation,
         isVerified,
         user,
         subject,
@@ -38,6 +38,7 @@ const TaskView: React.FC<Props> = ({ task }) => {
     } = task || {};
     const { isDetailedAnswer, theme } = subjectTask || {};
     const { nickname } = user || {};
+    const { source } = sourceRelation || {};
 
     return (
         <>

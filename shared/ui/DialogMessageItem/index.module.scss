@@ -110,6 +110,18 @@
     object-fit: cover;
 }
 
+.messangerDialogItemStatus{
+    width: 18px;
+    height: 18px;
+    display: flex;
+    color: var(--main);
+}
+
+.messangerDialogItemStatus svg{
+    width: 100%;
+    flex-shrink: 0;
+}
+
 @media (any-hover: hover) {
     .messangerDialogItemActions{
         transition: .2s linear;

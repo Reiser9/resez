@@ -91,12 +91,13 @@ const useSocket = () => {
         socket.on('message', (message: Message) => {
             queryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
             queryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+            queryRef.current.invalidateQueries({ queryKey: ['unread_chats_count'] });
 
             if (
                 currentUserIdRef.current &&
                 currentUserIdRef.current !== message?.sender?.id &&
                 Number(currentDialogIdRef.current) != message.chatId &&
-                message.type !== 'Системное'
+                message.type !== 'System'
             ) {
                 alertNotify(message.sender.nickname, message.message, 'info', `/messenger/${message.chatId}`, 10000);
             }
@@ -106,10 +107,9 @@ const useSocket = () => {
             queryRef.current.invalidateQueries({ queryKey: ['user_permissions'] });
             refreshToken();
 
-            if(action === "role"){
+            if (action === 'role') {
                 alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
-            }
-            else if(action === "subscription"){
+            } else if (action === 'subscription') {
                 alertNotify('Информация', 'Ваша подписка изменена', 'info', '', 4000);
             }
         });

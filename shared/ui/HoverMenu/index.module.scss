@@ -126,12 +126,12 @@
 
 @keyframes fadeInOverlay{
     0%{
-        opacity: 0;
         pointer-events: none;
+        background: none;
     }
     100%{
-        opacity: 1;
         pointer-events: all;
+        background: rgba(0, 0, 0, .5);
     }
 }
 
