@@ -1,4 +1,4 @@
-import { Added, Gift, Info, Tools, Vote, Warn } from '../icons';
+import { Added, Gift, Info, Party, Tools, Vote, Warn } from '../icons';
 
 export const NOTIFY_TYPES = [
     {
@@ -36,5 +36,11 @@ export const NOTIFY_TYPES = [
         name: 'UPDATE',
         id: 6,
         icon: <Tools />,
+    },
+    {
+        type: 'Конкурс',
+        name: 'CONTEST',
+        id: 7,
+        icon: <Party />,
     },
 ];

@@ -2,20 +2,21 @@
 
 import React, { FormEvent } from 'react';
 import cn from 'classnames';
+import EmojiPicker, { EmojiStyle, SkinTonePickerLocation } from 'emoji-picker-react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 
 import type { Message } from '@/entities/messenger';
 import type { FileInfo } from '@/entities/file';
-import { Clip, Cross, Microphone, Send, Warn } from '@/shared/icons';
+import { Clip, Cross, Emoji, Microphone, Send, Warn } from '@/shared/icons';
 import { useMessenger } from '@/features/messenger';
 
 import { Text } from '@/shared/ui/Text';
-import { Input } from '@/shared/ui/Input';
 import { IconButton } from '@/shared/ui/Button';
 import { useFile } from '@/features/file';
 import { File } from '@/shared/ui/File';
+import { useThemeContext } from '@/shared/context/ThemeProvider';
 
 type Props = {
     dialogId: string | undefined;
@@ -42,6 +43,9 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     const [sendingMessage, setSendingMessage] = React.useState(false);
     const [messageFiles, setMessageFiles] = React.useState<FileInfo[]>([]);
     const [choosedFile, setChoosedFile] = React.useState<File | null>(null);
+
+    const [emojiShow, setEmojiShow] = React.useState(false);
+    const emojiRef = React.useRef<HTMLDivElement>(null);
 
     const queryClient = useQueryClient();
 
@@ -105,7 +109,14 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     React.useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
             if (e.key.length === 1) {
-                sendMessageInputRef.current?.focus();
+                const inputElement = sendMessageInputRef.current;
+
+                if (inputElement) {
+                    inputElement.focus();
+
+                    const length = inputElement.value.length;
+                    inputElement.setSelectionRange(length, length);
+                }
             }
         };
 
@@ -113,6 +124,20 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
 
         return () => {
             document.removeEventListener('keypress', handleKeyPress);
+        };
+    }, []);
+
+    React.useEffect(() => {
+        const handleOutsideClick = (e: MouseEvent) => {
+            if (emojiRef.current && !emojiRef.current.contains(e.target as Node)) {
+                setEmojiShow(false);
+            }
+        };
+
+        document.addEventListener('click', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('click', handleOutsideClick);
         };
     }, []);
 
@@ -191,34 +216,57 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                     <form className={styles.messangerDialogSendWrapper} onSubmit={sendMessage}>
                         <File id="messangerImage" onChange={(file: File) => setChoosedFile(file)} />
 
-                        <label htmlFor="messangerImage">
+                        <label htmlFor="messangerImage" className={cn(styles.messangerFormButton, styles.fileButton)}>
                             <span className={styles.messangerImageButton}>
                                 <Clip />
                             </span>
                         </label>
 
-                        <Input
+                        <input
+                            type="text"
+                            placeholder="Напишите сообщение"
                             ref={sendMessageInputRef}
                             value={message}
-                            setValue={setMessage}
-                            placeholder="Напишите сообщение"
+                            onChange={(e) => setMessage(e.target.value)}
+                            className={styles.messangerDialogSendInput}
                         />
 
-                        <IconButton className={styles.sendButton} disabled={!message || sendingMessage}>
-                            {/* <Microphone
-                                className={cn(styles.iconButton, {
-                                    [styles.fade]: !message,
-                                })}
-                            />
+                        <div className={styles.messangerFormButtons}>
+                            <div style={{ position: 'relative' }} ref={emojiRef}>
+                                <div
+                                    className={cn(styles.messangerFormButton, styles.emojiButton, {
+                                        [styles.active]: emojiShow,
+                                    })}
+                                    onClick={() => setEmojiShow((prev) => !prev)}
+                                >
+                                    <Emoji />
+                                </div>
 
-                            <Send
-                                className={cn(styles.iconButton, {
-                                    [styles.fade]: message,
-                                })}
-                            /> */}
+                                <div
+                                    className={cn(styles.emojiInner, {
+                                        [styles.active]: emojiShow,
+                                    })}
+                                >
+                                    <EmojiPicker
+                                        emojiStyle={EmojiStyle.NATIVE}
+                                        onEmojiClick={(el) => setMessage((prev) => `${prev}${el.emoji}`)}
+                                        lazyLoadEmojis
+                                        searchPlaceHolder="Поиск.."
+                                        skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                                        searchDisabled
+                                    />
+                                </div>
+                            </div>
 
-                            <Send className={cn(styles.iconButton, styles.fade)} />
-                        </IconButton>
+                            <button
+                                className={cn(styles.messangerFormButton, styles.sendButton, {
+                                    [styles.disabled]: !message || sendingMessage,
+                                })}
+                                onClick={() => setEmojiShow(false)}
+                            >
+                                <Send className={cn(styles.iconButton, styles.fade)} />
+                            </button>
+                        </div>
                     </form>
                 </>
             )}

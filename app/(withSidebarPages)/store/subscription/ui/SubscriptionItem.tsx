@@ -83,21 +83,43 @@ const SubscriptionItem: React.FC<Props> = ({ data, userSubscription, buyCallback
 
                 <div className={styles.subscriptionItemContent}>
                     <div className={styles.subscriptionItemContentWrap}>
-                        <Text fontWeight={600} color="main">
-                            Отличный вариант, чтобы начать готовиться к экзаменам с ResEz.
-                        </Text>
+                        {data.subscription === 'ResEz Premium' ? (
+                            <>
+                                <Text fontWeight={600} color="main">
+                                    Больше контента, больше шансов на успех!
+                                </Text>
 
-                        <div className={styles.subscriptionItemPoints}>
-                            <p className={styles.subscriptionItemPoint}>Всё, что было в ResEz Free</p>
+                                <div className={styles.subscriptionItemPoints}>
+                                    <p className={styles.subscriptionItemPoint}>Всё, что было в ResEz Free</p>
 
-                            <p className={styles.subscriptionItemPoint}>Система наград и достижений.</p>
+                                    <p className={styles.subscriptionItemPoint}>Отправка файлов в мессенджере</p>
 
-                            <p className={styles.subscriptionItemPoint}>Приоритетная техническая поддержка.</p>
+                                    <p className={styles.subscriptionItemPoint}>Подробная аналитика и статистика решений.</p>
 
-                            <p className={styles.subscriptionItemPoint}>Дополнительные персонализации.</p>
+                                    <p className={styles.subscriptionItemPoint}>Голосовые сообщения в месседжере</p>
 
-                            <p className={styles.subscriptionItemPoint}>Подробная аналитика и статистика решений.</p>
-                        </div>
+                                    <p className={styles.subscriptionItemPoint}>
+                                        Бесплатная персонализация каждый месяц
+                                    </p>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <Text fontWeight={600} color="main">
+                                    Идеальное решение для максимальной подготовки к ЕГЭ!
+                                </Text>
+
+                                <div className={styles.subscriptionItemPoints}>
+                                    <p className={styles.subscriptionItemPoint}>Всё, что было в ResEz Plus</p>
+
+                                    <p className={styles.subscriptionItemPoint}>Отправка файлов в мессенджере большего объема</p>
+
+                                    <p className={styles.subscriptionItemPoint}>Звонки и видеосообщения</p>
+
+                                    <p className={styles.subscriptionItemPoint}>Улучшенная персонализация каждый месяц</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

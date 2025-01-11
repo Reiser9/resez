@@ -146,3 +146,5 @@ export { SubDecor3 } from './picture/SubDecor3';
 export { SubDecor4 } from './picture/SubDecor4';
 export { SubDecor5 } from './picture/SubDecor5';
 export { SubDecor6 } from './picture/SubDecor6';
+export { Emoji } from './Emoji';
+export { Party } from './Party';

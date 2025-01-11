@@ -44,7 +44,7 @@ const DialogMessageItem: React.FC<Props> = ({
 
     const { getShortInfo } = useShortInfo();
 
-    const { data: user, isLoading: userIsLoading } = useQuery({
+    const { data: user } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
     });
@@ -100,10 +100,12 @@ const DialogMessageItem: React.FC<Props> = ({
 
                                 <p className={styles.messangerDialogItemTime}>{formatDate(createdAt, 'HH:mm')}</p>
 
-                                {userId === myId && <div className={styles.messangerDialogItemStatus}>
-                                    {isRead ? <DoubleCheck /> : <Check />}
-                                    {/* <Clock /> */}
-                                </div>}
+                                {userId === myId && (
+                                    <div className={styles.messangerDialogItemStatus}>
+                                        {isRead ? <DoubleCheck /> : <Check />}
+                                        {/* <Clock /> */}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -144,6 +146,16 @@ const DialogMessageItem: React.FC<Props> = ({
                         )}
 
                         {/* {audio && <Audio audio={audio} />} */}
+
+                        {/* <div className={styles.messangerReactionItems}>
+                            <div className={styles.messangerReactionItem} onClick={e => e.stopPropagation()}>
+                                🦍 2
+                            </div>
+
+                            <div className={cn(styles.messangerReactionItem, styles.active)} onClick={e => e.stopPropagation()}>
+                                👍 1
+                            </div>
+                        </div> */}
                     </div>
                 </>
             )}

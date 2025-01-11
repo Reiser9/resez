@@ -41,6 +41,7 @@ import { Preloader } from '@/shared/ui/Preloader';
 import { Badge } from '@/shared/ui/Badge';
 import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 import { CopyLink } from '@/shared/ui/CopyLink';
+import { Input } from '@/shared/ui/Input';
 
 type Props = {
     selectedMessegesIDs: Message[];
@@ -67,6 +68,9 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
     const [confirmDeleteDialog, setConfirmDeleteDialog] = React.useState(false);
     const [deleteHistoryCheckbox, setDeleteHistoryCheckbox] = React.useState(false);
 
+    const [confirmDeleteMessages, setConfirmDeleteMessages] = React.useState(false);
+    const [deleteMessageForAll, setDeleteMessageForAll] = React.useState(false);
+
     const [chatAvatar, setChatAvatar] = React.useState<File>();
 
     const queryClient = useQueryClient();
@@ -74,7 +78,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
 
     const { deleteUserFromChat, getChatUsers, leaveFromChat, returnInChat, updateChatAvatar, removeChatAvatar } =
         useChat();
-    const { clearChatHistory } = useMessenger();
+    const { clearChatHistory, deleteMessageById } = useMessenger();
 
     const { data: chatUsers, isLoading } = useQuery({
         queryKey: ['messanger_chat_users', id],
@@ -90,6 +94,16 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
 
     const deleteUserFromChatHandler = (chatId?: number, userId?: number) => {
         deleteUserFromChat(chatId, userId, revalidateChat);
+    };
+
+    const deleteMessagesHandler = () => {
+        const selectedIds = selectedMessegesIDs.map((data) => data.id);
+
+        deleteMessageById(selectedIds, deleteMessageForAll, () => {
+            setSelectedMessegesIDs([]);
+            setDeleteMessageForAll(false);
+            revalidateChat();
+        });
     };
 
     const leaveFromChatHandler = async () => {
@@ -165,7 +179,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                 <ArrowLeft />
                             </IconButton>
 
-                            {/* {!!selectedMessegesIDs.length && (
+                            {!!selectedMessegesIDs.length && (
                                 <div className={styles.selectedMessages}>
                                     <p className={styles.selectedMessagesText}>
                                         Выделено: {selectedMessegesIDs.length}
@@ -173,47 +187,54 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
 
                                     <Cross onClick={() => setSelectedMessegesIDs([])} />
                                 </div>
-                            )} */}
-                        </div>
-
-                        {/* {!selectedMessegesIDs.length && ( */}
-                        <div className={styles.messangerTopBarInfo}>
-                            <div className={styles.messangerTopBarWrapper}>
-                                {isGroup ? (
-                                    <div className={styles.messangerTopBarName} onClick={() => setInfoModal(true)}>
-                                        {chat}
-                                    </div>
-                                ) : (
-                                    <Link prefetch={false} href={`/user/${chat}`} className={typography.h4}>
-                                        {chat}
-                                    </Link>
-                                )}
-
-                                {/* <Mute className={styles.messangerTopBarMute} /> */}
-                            </div>
-
-                            {!isLeft && !isKicked && (
-                                <div className={styles.messangerTopBarOnline}>
-                                    <Text variant="text2" textClassName={styles.lastOnline}>
-                                        {isGroup
-                                            ? `Участников: ${membersCount}`
-                                            : `${
-                                                  isOnline
-                                                      ? 'Онлайн'
-                                                      : lastSeen
-                                                      ? `Был(а) в сети ${getFormattedDate(lastSeen)}`
-                                                      : 'Был(а) в сети очень давно'
-                                              }`}
-                                    </Text>
-
-                                    {/* {!isGroup && <Mobile />} */}
-                                </div>
                             )}
                         </div>
-                        {/* )} */}
+
+                        {!selectedMessegesIDs.length && (
+                            <div className={styles.messangerTopBarInfoWrapper}>
+                                <Badge image={picture} text={chat} />
+
+                                <div className={styles.messangerTopBarInfo}>
+                                    <div className={styles.messangerTopBarWrapper}>
+                                        {isGroup ? (
+                                            <div
+                                                className={styles.messangerTopBarName}
+                                                onClick={() => setInfoModal(true)}
+                                            >
+                                                {chat}
+                                            </div>
+                                        ) : (
+                                            <Link prefetch={false} href={`/user/${chat}`} className={typography.h4}>
+                                                {chat}
+                                            </Link>
+                                        )}
+
+                                        {/* <Mute className={styles.messangerTopBarMute} /> */}
+                                    </div>
+
+                                    {!isLeft && !isKicked && (
+                                        <div className={styles.messangerTopBarOnline}>
+                                            <Text variant="text2" textClassName={styles.lastOnline}>
+                                                {isGroup
+                                                    ? `Участников: ${membersCount}`
+                                                    : `${
+                                                          isOnline
+                                                              ? 'Онлайн'
+                                                              : lastSeen
+                                                              ? `Был(а) ${getFormattedDate(lastSeen)}`
+                                                              : 'Был(а) очень давно'
+                                                      }`}
+                                            </Text>
+
+                                            {!isGroup && <Mobile />}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         <div className={base.titleWrapper}>
-                            {/* {!!selectedMessegesIDs.length && (
+                            {!!selectedMessegesIDs.length && (
                                 <>
                                     {selectedMessegesIDs.length === 1 && (
                                         <Button
@@ -232,11 +253,11 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                         Переслать
                                     </Button>
 
-                                    <IconButton small variant="danger">
+                                    <IconButton small variant="danger" onClick={() => setConfirmDeleteMessages(true)}>
                                         <Delete />
                                     </IconButton>
                                 </>
-                            )} */}
+                            )}
 
                             <HoverMenu
                                 button={
@@ -290,17 +311,17 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                             Профиль
                                         </MenuLink>
 
-                                        {/* <MenuLink danger>
+                                        <MenuLink danger>
                                             <Block />
                                             Заблокировать
-                                        </MenuLink> */}
+                                        </MenuLink>
                                     </>
                                 )}
 
-                                {/* <MenuLink>
+                                <MenuLink>
                                     <Phone />
                                     Звонок
-                                </MenuLink> */}
+                                </MenuLink>
 
                                 <MenuLink
                                     danger
@@ -350,14 +371,14 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                         {inviteLink && <CopyLink link={inviteLink} />}
 
                         <div className={styles.messangerNewChatUsersSearch}>
-                            {/* <Button variant="light">
+                            <Button variant="light">
                                 <Plus />
                                 Добавить участника
-                            </Button> */}
+                            </Button>
 
-                            {/* <div className={styles.messangerNewChatSearch}>
+                            <div className={styles.messangerNewChatSearch}>
                                 <Input placeholder="Поиск" color="white" />
-                            </div> */}
+                            </div>
 
                             <div className={styles.messangerUsersList}>
                                 {isLoading ? (
@@ -445,6 +466,20 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                         onChange={(e) => setDeleteHistoryCheckbox(e.target.checked)}
                     >
                         Также удалить чат
+                    </Checkbox>
+                </div>
+            </ConfirmModal>
+
+            <ConfirmModal
+                text={`Вы действительно хотите удалить ${selectedMessegesIDs.length > 1 ? 'сообщения' : 'сообщение'}?`}
+                value={confirmDeleteMessages}
+                setValue={setConfirmDeleteMessages}
+                confirmText="Удалить"
+                callback={deleteMessagesHandler}
+            >
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'center', margin: '1.2rem 0' }}>
+                    <Checkbox checked={deleteMessageForAll} onChange={(e) => setDeleteMessageForAll(e.target.checked)}>
+                        Удалить для всех
                     </Checkbox>
                 </div>
             </ConfirmModal>

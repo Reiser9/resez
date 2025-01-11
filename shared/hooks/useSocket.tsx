@@ -99,7 +99,7 @@ const useSocket = () => {
                 Number(currentDialogIdRef.current) != message.chatId &&
                 message.type !== 'System'
             ) {
-                alertNotify(message.sender.nickname, message.message, 'info', `/messenger/${message.chatId}`, 10000);
+                alertNotify(message?.sender?.nickname, message?.message, 'info', `/messenger/${message.chatId}`, 10000);
             }
         });
 

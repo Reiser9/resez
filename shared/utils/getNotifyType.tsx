@@ -1,4 +1,4 @@
-import { Warn, News, Gift, Vote, Added, Tools, Unknown } from '../icons';
+import { Warn, News, Gift, Vote, Added, Tools, Unknown, Party } from '../icons';
 
 export const getNotifyType = (type?: string) => {
     switch (type) {
@@ -31,6 +31,11 @@ export const getNotifyType = (type?: string) => {
             return {
                 icon: <Tools />,
                 name: 'update',
+            };
+        case 'CONTEST':
+            return {
+                icon: <Party />,
+                name: 'contest',
             };
         default:
             return {

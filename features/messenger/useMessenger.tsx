@@ -3,6 +3,7 @@
 import type { FileInfo } from '@/entities/file';
 import type { ChatsDTO, Message, ChatInfo, ChatItem } from '@/entities/messenger';
 import useRequest from '@/shared/hooks/useRequest';
+import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useMessenger = () => {
     const { request, catchRequestError, errorController } = useRequest();
@@ -93,9 +94,14 @@ const useMessenger = () => {
         successCallback();
     };
 
-    const deleteMessageById = async (messageId: number, forAll = false, successCallback = () => {}) => {
+    const deleteMessageById = async (messageIds: number[], forAll = false, successCallback = () => {}) => {
+        const queryString = buildQueryString({
+            for_all: forAll,
+            ids: messageIds
+        });
+
         const response = await request<{ message: Message }>({
-            url: `/messenger/message/${messageId}?for_all=${forAll}`,
+            url: `/messenger/message?${queryString}`,
             method: 'DELETE',
             isAuth: true,
         });

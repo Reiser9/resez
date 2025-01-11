@@ -122,6 +122,31 @@
     flex-shrink: 0;
 }
 
+.messangerReactionItems{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 0.4rem;
+}
+
+.messangerReactionItem{
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0.4rem 0.8rem;
+    background: var(--lighten);
+    color: var(--main);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.messangerReactionItem.active{
+    background: var(--main);
+    color: #fff;
+}
+
 @media (any-hover: hover) {
     .messangerDialogItemActions{
         transition: .2s linear;

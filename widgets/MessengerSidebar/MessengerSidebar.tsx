@@ -5,7 +5,7 @@ import cn from 'classnames';
 import Image from 'next/image';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-// import { Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
 
@@ -119,7 +119,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                     [styles.hide]: !!dialogId,
                 })}
             >
-                {/* <div className={styles.searchInputInner}>
+                <div className={styles.searchInputInner}>
                     <input type="text" className={styles.searchInput} placeholder="Поиск" />
 
                     <Search className={styles.searchInputIcon} />
@@ -129,7 +129,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                             <Plus />
                         </button>
                     </Tooltip>
-                </div> */}
+                </div>
 
                 <div className={styles.messangerSidebarDialogsContent} ref={chatListRef}>
                     {isLoading ? (
@@ -197,13 +197,13 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                         </div>
 
                         {/* Доработать как нибудь, показав выбранных участников сразу */}
-                        {/* <div className={styles.messangerNewChatUsersAdded}>
+                        <div className={styles.messangerNewChatUsersAdded}>
                             {chatUsers.length
                             ? chatUsers.map((data, id) => <div key={id}>
                                 {data}
                             </div>)
                             : <div className={styles.messangerNewChatUsersAddedText}>Выберите собеседников</div>}
-                        </div> */}
+                        </div>
 
                         <div className={styles.messangerNewChatUsersSearch}>
                             {!usersError && (

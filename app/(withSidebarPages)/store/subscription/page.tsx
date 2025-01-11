@@ -79,18 +79,26 @@ const StoreSubscription = () => {
                         <div className={styles.subscriptionItemContent}>
                             <div className={styles.subscriptionItemContentWrap}>
                                 <Text fontWeight={600} color="main">
-                                    Начни подготовку к экзаменам с ResEz, нужный функционал.
+                                    Всё необходимое для старта – совершенно бесплатно!
                                 </Text>
 
                                 <div className={styles.subscriptionItemPoints}>
-                                    <p className={styles.subscriptionItemPoint}>Все задания ЕГЭ из банка ФИПИ.</p>
+                                    <p className={styles.subscriptionItemPoint}>Решение вариантов ЕГЭ с возможностью посмотреть историю решений</p>
 
                                     <p className={styles.subscriptionItemPoint}>
-                                        Подробные справочные материалы по каждому заданию.
+                                        Доступ к таблице баллов ЕГЭ
                                     </p>
 
                                     <p className={styles.subscriptionItemPoint}>
-                                        Сохранение истории решений с оценкой прогресса.
+                                        Разборы заданий ЕГЭ
+                                    </p>
+
+                                    <p className={styles.subscriptionItemPoint}>
+                                        Внутрипроектный мессенджер
+                                    </p>
+
+                                    <p className={styles.subscriptionItemPoint}>
+                                        Лояльная поддержка
                                     </p>
 
                                     <p className={styles.subscriptionItemPoint}>Отсутствие рекламы.</p>

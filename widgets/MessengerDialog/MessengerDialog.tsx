@@ -158,8 +158,8 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
                                             <DialogMessageItem
                                                 data={data}
                                                 selectMessage={selectMessage}
-                                                // isSelected={selectedMessegesIDs.includes(data)}
-                                                // onDoubleClick={() => setReplyMessage(data)}
+                                                isSelected={selectedMessegesIDs.includes(data)}
+                                                onDoubleClick={() => setReplyMessage(data)}
                                                 setEditMessage={setEditMessage}
                                                 setIsEditedMessage={setIsEditedMessage}
                                             />

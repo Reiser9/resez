@@ -17,7 +17,6 @@ import {
     Moon,
     Notify,
     ResCoin,
-    ResezPremium,
     Snowflake,
     Ticket,
     Trophy,
