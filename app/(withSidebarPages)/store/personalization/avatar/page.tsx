@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -10,10 +11,11 @@ import { useAvatar } from '@/features/store';
 import { Cross } from '@/shared/icons';
 import { AvatarStoreItem } from '@/entities/store/ui';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { Modal } from '@/shared/ui/Modal';
 import { Preloader } from '@/shared/ui/Preloader';
@@ -47,15 +49,9 @@ const StorePersonalizationAvatar = () => {
         addAvatarDecorationToProfile(id, revalidateAvatars);
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['store_avatars'],
-        queryFn: getPaginationStoreAvatars,
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationStoreAvatars(pageParam),
     });
 
     const {
@@ -103,27 +99,27 @@ const StorePersonalizationAvatar = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data.pages[0]?.totalCount ? (
-                    <div className={base.contentItems}>
-                        {data?.pages.map((avatar) =>
-                            avatar?.products?.map((data) => (
-                                <AvatarStoreItem
-                                    key={data.id}
-                                    data={data}
-                                    addProductToProfile={() => addProductToProfileHandler(data.id)}
-                                    openProductModal={() => openProductModal(data.id)}
-                                />
-                            )),
-                        )}
+                ) : data?.pages[0]?.totalCount ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={base.contentItems}>
+                            {data?.pages.map((avatar) =>
+                                avatar?.products?.map((data) => (
+                                    <AvatarStoreItem
+                                        key={data.id}
+                                        data={data}
+                                        addProductToProfile={() => addProductToProfileHandler(data.id)}
+                                        openProductModal={() => openProductModal(data.id)}
+                                    />
+                                )),
+                            )}
+                        </div>
+
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Украшений аватарок не найдено" />
-                )}
-
-                {!isError && hasNextPage && (
-                    <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                        Показать еще
-                    </Button>
                 )}
             </div>
 

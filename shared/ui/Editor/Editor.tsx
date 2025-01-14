@@ -17,7 +17,6 @@ import { OutputData } from '@editorjs/editorjs';
 import { ToolConstructable } from '@editorjs/editorjs/types/tools/index';
 import { ToolSettings } from '@editorjs/editorjs/types/tools/tool-settings';
 import { createReactEditorJS } from 'react-editor-js';
-import { useInfiniteQuery } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -31,13 +30,13 @@ import { CustomInsert } from './CustomInsert';
 import { useFile } from '@/features/file';
 import { useTaskSnippet } from '@/features/task-snippet';
 import { Cross } from '@/shared/icons';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
+import { TaskSnippetItem } from '@/entities/task-snippet/ui';
 
 import { Text } from '../Text';
 import { Modal } from '../Modal';
 import { Preloader } from '../Preloader';
 import { NotContent } from '../NotContent';
-import { TaskSnippetItem } from '@/entities/task-snippet/ui';
-import { Button } from '../Button';
 
 const ReactEditorJS = createReactEditorJS();
 
@@ -206,15 +205,9 @@ const Editor: React.FC<Props> = (props) => {
 
     const { getPagginationTasksSnippets } = useTaskSnippet();
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['admin_task_snippets'],
-        queryFn: (pageParam) => getPagginationTasksSnippets(pageParam.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPagginationTasksSnippets(pageParam),
         enabled: insertModal,
     });
 
@@ -264,16 +257,9 @@ const Editor: React.FC<Props> = (props) => {
                                 )}
                             </div>
 
-                            {!isError && hasNextPage && (
-                                <Button
-                                    auto
-                                    onClick={fetchNextPage}
-                                    loading={isFetchingNextPage}
-                                    className={base.buttonShowMore}
-                                >
-                                    Показать еще
-                                </Button>
-                            )}
+                            {isFetchingNextPage && <Preloader offIndent small page />}
+
+                            {!isFetchingNextPage && <div ref={endPage}></div>}
                         </div>
                     ) : (
                         <NotContent text="Вставок заданий не найдено" />

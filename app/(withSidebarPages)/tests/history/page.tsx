@@ -1,18 +1,21 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
 import { Cross, Filter } from '@/shared/icons';
 import { useTest } from '@/features/test';
 import { TestHistoryItem } from '@/entities/test/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { TestHistoryItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const TestsHistory = () => {
     const [testHistoryFilters, setTestHistoryFilters] = React.useState(false);
@@ -28,15 +31,9 @@ const TestsHistory = () => {
         queryClient.resetQueries({ queryKey: ['test_history'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['test_history'],
-        queryFn: (param) => getPagginationTestsHistory(param.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPagginationTestsHistory(pageParam),
     });
 
     return (
@@ -60,11 +57,17 @@ const TestsHistory = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
-                <div className={base.contentItems}>
-                    {data?.pages.map((history) =>
-                        history?.history?.map((data) => <TestHistoryItem key={data.id} data={data} />),
-                    )}
+            ) : data?.pages[0]?.totalCount ? (
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((history) =>
+                            history?.history?.map((data) => <TestHistoryItem key={data.id} data={data} />),
+                        )}
+                    </div>
+
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Вы еще не решили ни одного теста">
@@ -72,12 +75,6 @@ const TestsHistory = () => {
                         Решать тесты
                     </Button>
                 </NotContent>
-            )}
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
             )}
         </>
     );

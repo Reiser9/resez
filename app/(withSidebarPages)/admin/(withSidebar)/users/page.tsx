@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -14,12 +15,14 @@ import { useDebounce } from '@/shared/hooks/useDebounce';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { UserItem } from '@/entities/admin/ui';
 import UsersFilter from './UsersFilter';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { SearchInput } from '@/shared/ui/Input';
 import { NotContent } from '@/shared/ui/NotContent';
 import { UserAdminItemSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { IconButton, ReloadButton } from '@/shared/ui/Button';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminUsers = () => {
     const [usersFilter, setUsersFilter] = React.useState(false);
@@ -33,7 +36,7 @@ const AdminUsers = () => {
     const verified = searchParams.get('verified');
     const isHasRole = searchParams.get('has_role');
     const role = searchParams.get('role');
-    
+
     const { getUserPermissions } = useUserPermissions();
 
     const { data: permissions } = useQuery({
@@ -56,11 +59,11 @@ const AdminUsers = () => {
         });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['adminUsers', online, blocked, verified, isHasRole, role, userSearchDebounce],
-        queryFn: (param) =>
+        queryFn: (pageParam) =>
             getPaginationUsers(
-                param.pageParam,
+                pageParam,
                 online || '',
                 blocked || '',
                 verified || '',
@@ -68,12 +71,6 @@ const AdminUsers = () => {
                 role || '',
                 userSearchDebounce,
             ),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
         refetchInterval: 10000,
     });
 
@@ -108,30 +105,32 @@ const AdminUsers = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data?.pages[0]?.totalCount === 0 ? (
-                    <NotContent text="Пользователей не найдено" />
-                ) : (
-                    <div className={base.contentItems}>
-                        {data?.pages.map((user) =>
-                            user?.users.map((data) => (
-                                <UserItem
-                                    key={data.id}
-                                    data={data}
-                                    userBlock={(reason: string) => blockUser(data.id, reason, () => revalidateRequest())}
-                                    userUnblock={() => unblockUser(data.id, () => revalidateRequest())}
-                                    notify={checkPermission(permissions || [], [PERMISSIONS.NOTIFIES])}
-                                    block={checkPermission(permissions || [], [PERMISSIONS.BLOCK_USERS])}
-                                    loading={usersIsLoading.includes(data.id)}
-                                />
-                            )),
-                        )}
-                    </div>
-                )}
+                ) : data?.pages[0]?.totalCount ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={base.contentItems}>
+                            {data?.pages.map((user) =>
+                                user?.users.map((data) => (
+                                    <UserItem
+                                        key={data.id}
+                                        data={data}
+                                        userBlock={(reason: string) =>
+                                            blockUser(data.id, reason, () => revalidateRequest())
+                                        }
+                                        userUnblock={() => unblockUser(data.id, () => revalidateRequest())}
+                                        notify={checkPermission(permissions || [], [PERMISSIONS.NOTIFIES])}
+                                        block={checkPermission(permissions || [], [PERMISSIONS.BLOCK_USERS])}
+                                        loading={usersIsLoading.includes(data.id)}
+                                    />
+                                )),
+                            )}
+                        </div>
 
-                {!isError && hasNextPage && (
-                    <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                        Показать еще
-                    </Button>
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
+                    </div>
+                ) : (
+                    <NotContent text="Пользователей не найдено" />
                 )}
             </div>
 

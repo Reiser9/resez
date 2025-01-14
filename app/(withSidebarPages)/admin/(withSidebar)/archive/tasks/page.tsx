@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -11,11 +11,13 @@ import { Cross } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { TaskItem } from '@/entities/task/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { NotContent } from '@/shared/ui/NotContent';
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminArchiveTasks = () => {
     const { getUserPermissions } = useUserPermissions();
@@ -36,15 +38,9 @@ const AdminArchiveTasks = () => {
         queryClient.resetQueries({ queryKey: ['archive_tasks'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['archive_tasks'],
-        queryFn: (param) => getArhiveTasks(param.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getArhiveTasks(pageParam),
     });
 
     return (
@@ -66,7 +62,7 @@ const AdminArchiveTasks = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
+            ) : data?.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>
                     <div className={base.contentItems}>
                         {data?.pages.map((task) =>
@@ -83,16 +79,9 @@ const AdminArchiveTasks = () => {
                         )}
                     </div>
 
-                    {!isError && hasNextPage && (
-                        <Button
-                            auto
-                            onClick={fetchNextPage}
-                            loading={isFetchingNextPage}
-                            className={base.buttonShowMore}
-                        >
-                            Показать еще
-                        </Button>
-                    )}
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Заданий не найдено" />

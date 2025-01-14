@@ -23,11 +23,7 @@ import { SubjectItemSkeleton } from '@/shared/ui/Skeleton';
 const AdminSubjects = () => {
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });

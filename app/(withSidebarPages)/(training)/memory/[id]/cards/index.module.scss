@@ -137,6 +137,10 @@
     gap: 8px;
 }
 
+.front p, .back p{
+    font-weight: inherit;
+}
+
 .front img, .back img{
     object-fit: contain;
 }

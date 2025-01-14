@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -11,12 +12,14 @@ import Tabs from '../ui/Tabs';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { CollectionItem } from '@/entities/collection/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { SearchInput } from '@/shared/ui/Input';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
 import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const MemoryLiked = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -35,15 +38,9 @@ const MemoryLiked = () => {
         queryClient.invalidateQueries({ queryKey: ['collections_liked'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['collections_liked', debounceSearch],
-        queryFn: (page) => getLikedPaginationCollections(page.pageParam, debounceSearch),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getLikedPaginationCollections(pageParam, debounceSearch),
         enabled: isAuth,
     });
 
@@ -79,36 +76,29 @@ const MemoryLiked = () => {
                         </div>
                     ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                    ) : data?.pages[0]?.totalCount === 0 ? (
-                        debounceSearch ? (
-                            <NotContent text="По вашему запросу коллекций не найдено" />
-                        ) : (
-                            <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />
-                        )
-                    ) : (
-                        <div className={base.contentItems}>
-                            {data?.pages.map((collection) =>
-                                collection?.collections?.map((data) => (
-                                    <CollectionItem
-                                        key={data.id}
-                                        data={data}
-                                        loading={collectionsIsLoading.includes(String(data.id))}
-                                        deleteCallback={() => deleteCollectionHandler(String(data.id))}
-                                    />
-                                )),
-                            )}
-                        </div>
-                    )}
+                    ) : data?.pages[0]?.totalCount ? (
+                        <div className={cn(base.baseWrapperGap16, base.aic)}>
+                            <div className={base.contentItems}>
+                                {data?.pages.map((collection) =>
+                                    collection?.collections?.map((data) => (
+                                        <CollectionItem
+                                            key={data.id}
+                                            data={data}
+                                            loading={collectionsIsLoading.includes(String(data.id))}
+                                            deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                                        />
+                                    )),
+                                )}
+                            </div>
 
-                    {!isError && hasNextPage && (
-                        <Button
-                            auto
-                            onClick={fetchNextPage}
-                            loading={isFetchingNextPage}
-                            className={base.buttonShowMore}
-                        >
-                            Показать еще
-                        </Button>
+                            {isFetchingNextPage && <Preloader offIndent small page />}
+
+                            {!isFetchingNextPage && <div ref={endPage}></div>}
+                        </div>
+                    ) : debounceSearch ? (
+                        <NotContent text="По вашему запросу коллекций не найдено" />
+                    ) : (
+                        <NotContent text="Вы еще не лайкнули не одну коллекцию" icon={<Heart />} />
                     )}
                 </>
             ) : (

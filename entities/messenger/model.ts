@@ -15,8 +15,18 @@ export type Message = {
         {
             readDate: Date;
         }[];
+    reactions: (UserShort & {
+        reaction: string;
+        reactionDate: Date;
+    })[];
     isRead: boolean;
     files: (FileInfo & { id: number })[];
+    parentMessage: {
+        files: (FileInfo & { id: number })[];
+        id: number;
+        message: string;
+        sender: UserShort;
+    } | null;
 };
 
 export type ChatInfo = {
@@ -34,6 +44,7 @@ export type ChatInfo = {
     picture: string;
     membersCount?: number;
     inviteLink: string;
+    unreadMessagesCount: number;
 };
 
 export type ChatItem = ChatInfo & {

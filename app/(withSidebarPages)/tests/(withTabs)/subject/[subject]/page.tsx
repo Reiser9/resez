@@ -3,6 +3,7 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -20,18 +21,13 @@ import { useAppSelector } from '@/shared/hooks/useRedux';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton } from '@/shared/ui/Button';
-import { Tooltip } from 'antd';
 
 const TestsSubject = () => {
     const { subject } = useParams();
     const { getUserPermissions } = useUserPermissions();
     const isAuth = useAppSelector((state) => state.user.isAuth);
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        error: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
         enabled: isAuth,
@@ -78,11 +74,13 @@ const TestsSubject = () => {
                     </Text>
 
                     <div className={base.titleWrapper}>
-                        {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && <Tooltip destroyTooltipOnHide title="Создать">
-                            <IconButton circle small variant="light" href="/admin/tests/create">
-                                <Plus />
-                            </IconButton>
-                        </Tooltip>}
+                        {checkPermission(permissions || [], [PERMISSIONS.CREATE_OFFICIAL_TESTS]) && (
+                            <Tooltip destroyTooltipOnHide title="Создать">
+                                <IconButton circle small variant="light" href="/admin/tests/create">
+                                    <Plus />
+                                </IconButton>
+                            </Tooltip>
+                        )}
 
                         {Number(data?.pages[0]?.totalCount) > 3 && (
                             <Button auto small variant="light" href={`/tests/subject/${subject}/recommended`}>

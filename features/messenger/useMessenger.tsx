@@ -41,12 +41,14 @@ const useMessenger = () => {
         message: string,
         files: FileInfo[] = [],
         successCallback = () => {},
+        parentMessageId?: number,
     ) => {
         const response = await request<{ message: Message }>({
             url: `/messenger/message/chat/${chatId}`,
             data: {
                 message,
                 files,
+                ...(parentMessageId && { parentMessageId }),
             },
             method: 'POST',
             isAuth: true,
@@ -97,7 +99,7 @@ const useMessenger = () => {
     const deleteMessageById = async (messageIds: number[], forAll = false, successCallback = () => {}) => {
         const queryString = buildQueryString({
             for_all: forAll,
-            ids: messageIds
+            ids: messageIds,
         });
 
         const response = await request<{ message: Message }>({
@@ -145,7 +147,7 @@ const useMessenger = () => {
         }
     };
 
-    const readMessages = async (messageId: number | string) => {
+    const readMessages = async (messageId: number | string, successCallback = () => {}) => {
         const response = await request({
             url: `/messenger/message/${messageId}/read`,
             isAuth: true,
@@ -155,6 +157,50 @@ const useMessenger = () => {
         if (catchRequestError(response)) {
             return errorController(response);
         }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getReactionForMessage = async (messageId: number | string, reaction: string, successCallback = () => {}) => {
+        const response = await request({
+            url: `/messenger/message/${messageId}/reaction`,
+            isAuth: true,
+            method: 'PATCH',
+            data: {
+                reaction,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const userTyping = async (chatId: number | string, isTyping: boolean, successCallback = () => {}) => {
+        const response = await request({
+            url: `/messenger/chat/${chatId}/typing`,
+            isAuth: true,
+            method: 'POST',
+            data: {
+                isTyping,
+            },
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
 
         if ('data' in response) {
             return response.data;
@@ -171,6 +217,8 @@ const useMessenger = () => {
         joinChatFromLink,
         getCountUnreadChats,
         readMessages,
+        getReactionForMessage,
+        userTyping,
     };
 };
 

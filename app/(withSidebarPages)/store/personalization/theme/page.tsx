@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -10,11 +11,13 @@ import { useTheme } from '@/features/store';
 import { Cross } from '@/shared/icons';
 import { ThemeStoreItem } from '@/entities/store/ui';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const StorePersonalizationAvatar = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -40,15 +43,9 @@ const StorePersonalizationAvatar = () => {
         addThemeToProfile(id, revalidateThemes);
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['store_themes'],
-        queryFn: getPaginationStoreThemes,
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationStoreThemes(pageParam),
     });
 
     return (
@@ -69,26 +66,26 @@ const StorePersonalizationAvatar = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
-                <div className={base.contentItems}>
-                    {data?.pages.map((theme) =>
-                        theme?.products?.map((data) => (
-                            <ThemeStoreItem
-                                key={data.id}
-                                data={data}
-                                addProductToProfile={() => addProductToProfileHandler(data.id)}
-                            />
-                        )),
-                    )}
+            ) : data?.pages[0]?.totalCount ? (
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((theme) =>
+                            theme?.products?.map((data) => (
+                                <ThemeStoreItem
+                                    key={data.id}
+                                    data={data}
+                                    addProductToProfile={() => addProductToProfileHandler(data.id)}
+                                />
+                            )),
+                        )}
+                    </div>
+
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Тем не найдено" />
-            )}
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
             )}
         </div>
     );

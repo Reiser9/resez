@@ -14,6 +14,7 @@ import { useChat, useMessenger } from '@/features/messenger';
 import { useSearchUser } from '@/features/user';
 import { setDialogsScrollPosition } from '@/store/slices/messenger';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useRedux';
+import { socket } from '@/api/socket';
 
 import { UserAddItem } from '@/shared/ui/UserAddItem';
 import { Input } from '@/shared/ui/Input';
@@ -37,6 +38,9 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
     const [chatAvatarPreview, setChatAvatarPreview] = React.useState<string | ArrayBuffer | null>(null);
     const [chatUsers, setChatUsers] = React.useState<number[]>([]);
 
+    const [typingUsers, setTypingUsers] = React.useState<{ id: number; nickname: string }[]>([]);
+    const [typingChatId, setTypingChatId] = React.useState<string | number | null>(null);
+
     const chatListRef = React.useRef<HTMLDivElement>(null);
 
     const dialogsScrollPosition = useAppSelector((state) => state.messenger.dialogsScrollPosition);
@@ -56,6 +60,7 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
 
     const revalidateChats = async () => {
         await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+        await queryClient.invalidateQueries({ queryKey: ['unread_chats_count'] });
     };
 
     const addUserInChat = (id: number) => {
@@ -112,6 +117,34 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
         }
     }, [dialogId]);
 
+    React.useEffect(() => {
+        socket.on(
+            'typing',
+            (user: {
+                chatId: number | string;
+                user: {
+                    id: number;
+                    nickname: string;
+                };
+                isTyping: boolean;
+            }) => {
+                const { chatId, isTyping, user: userInfo } = user || {};
+
+                setTypingChatId(chatId);
+
+                if (isTyping) {
+                    setTypingUsers((prev) => [...prev, userInfo]);
+                } else {
+                    setTypingUsers((prev) => prev.filter((user) => user.id !== userInfo.id));
+                }
+            },
+        );
+
+        return () => {
+            socket.off('typing');
+        };
+    }, []);
+
     return (
         <>
             <div
@@ -142,6 +175,8 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                                 key={key}
                                 data={data}
                                 active={dialogId == String(data.id)}
+                                isTyping={data.id == typingChatId && typingUsers.length > 0}
+                                typingUsers={typingUsers}
                                 onClick={() => {
                                     setScrollDialogs();
                                     router.push(`/messenger/${data.id}`);
@@ -198,11 +233,11 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
 
                         {/* Доработать как нибудь, показав выбранных участников сразу */}
                         <div className={styles.messangerNewChatUsersAdded}>
-                            {chatUsers.length
-                            ? chatUsers.map((data, id) => <div key={id}>
-                                {data}
-                            </div>)
-                            : <div className={styles.messangerNewChatUsersAddedText}>Выберите собеседников</div>}
+                            {chatUsers.length ? (
+                                chatUsers.map((data, id) => <div key={id}>{data}</div>)
+                            ) : (
+                                <div className={styles.messangerNewChatUsersAddedText}>Выберите собеседников</div>
+                            )}
                         </div>
 
                         <div className={styles.messangerNewChatUsersSearch}>

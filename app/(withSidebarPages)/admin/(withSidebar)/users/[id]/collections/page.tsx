@@ -1,19 +1,22 @@
 'use client';
 
 import React from 'react';
+import cn from 'classnames';
 import { useParams } from 'next/navigation';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
 import { Cross, Reload } from '@/shared/icons';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
+import { useUsers } from '@/features/user';
+import { CollectionItem } from '@/entities/collection/ui';
 
-import { Button, IconButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
-import { useUsers } from '@/features/user';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
-import { CollectionItem } from '@/entities/collection/ui';
+import { Preloader } from '@/shared/ui/Preloader';
+import { IconButton } from '@/shared/ui/Button';
 
 const AdminUserByIdCollections = () => {
     const { getUserCollections } = useUsers();
@@ -29,15 +32,9 @@ const AdminUserByIdCollections = () => {
         queryClient.resetQueries({ queryKey: ['user_collections_by_id', id] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['user_collections_by_id', id],
-        queryFn: (param) => getUserCollections(param.pageParam, String(id)),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
+        queryKey: ['user_collections_by_id', String(id)],
+        queryFn: (pageParam) => getUserCollections(pageParam, String(id)),
         enabled: !!id,
     });
 
@@ -63,19 +60,19 @@ const AdminUserByIdCollections = () => {
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : data?.pages[0]?.totalCount ? (
-                <div className={base.contentItems}>
-                    {data?.pages.map((collection) =>
-                        collection?.collections?.map((data) => <CollectionItem key={data.id} data={data} />),
-                    )}
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((collection) =>
+                            collection?.collections?.map((data) => <CollectionItem key={data.id} data={data} />),
+                        )}
+                    </div>
+
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Коллекций не найдено" />
-            )}
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
             )}
         </div>
     );

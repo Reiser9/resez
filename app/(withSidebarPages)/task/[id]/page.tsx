@@ -11,13 +11,15 @@ import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useTask } from '@/features/task';
 import { TaskTestItem } from '@/entities/task/ui';
+import { Cross } from '@/shared/icons';
+import { useAppSelector } from '@/shared/hooks/useRedux';
+import { useUserPermissions } from '@/features/user';
 
 import { Preloader } from '@/shared/ui/Preloader';
 import { TextPoint } from '@/shared/ui/TextPoint';
 import { Text } from '@/shared/ui/Text';
 import { InfoSidebar } from '@/shared/ui/InfoSidebar';
-import { useUserPermissions } from '@/features/user';
-import { useAppSelector } from '@/shared/hooks/useRedux';
+import { NotContent } from '@/shared/ui/NotContent';
 
 const TaskPage = () => {
     const { id } = useParams();
@@ -28,17 +30,13 @@ const TaskPage = () => {
     const { getTaskById } = useTask();
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
         enabled: isAuth,
     });
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isPending, isError } = useQuery({
         queryKey: ['task_by_id', id],
         queryFn: () => getTaskById(String(id)),
         enabled: !!id,
@@ -46,8 +44,12 @@ const TaskPage = () => {
 
     const { subject, subjectTask, subTheme } = data || {};
 
-    if (isLoading) {
+    if (isPending) {
         return <Preloader page />;
+    }
+
+    if (isError) {
+        return <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />;
     }
 
     return (

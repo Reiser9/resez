@@ -1,31 +1,29 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { Text } from '@/shared/ui/Text';
-import { NotContent } from '@/shared/ui/NotContent';
 import { Cross } from '@/shared/icons';
-import { Button, ReloadButton } from '@/shared/ui/Button';
 import { NotifyItem } from '@/shared/ui/Notify';
 import { useNotify } from '@/features/notify';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
+
+import { Text } from '@/shared/ui/Text';
+import { NotContent } from '@/shared/ui/NotContent';
 import { NotifyItemSkeleton } from '@/shared/ui/Skeleton';
+import { Button, ReloadButton } from '@/shared/ui/Button';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const UnreadNotifyPage = () => {
     const { isLoading, notifyIsLoading, getPaginationNotifies, readNotifyById, readAllNotifies } = useNotify();
     const queryClient = useQueryClient();
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['notify'],
-        queryFn: (param) => getPaginationNotifies(param.pageParam, true),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationNotifies(pageParam, true),
     });
 
     const revalidateNotify = () => {
@@ -79,28 +77,28 @@ const UnreadNotifyPage = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data?.pages[0]?.totalCount === 0 ? (
-                <NotContent text="Уведомлений не найдено" />
-            ) : (
-                <div className={base.contentItems}>
-                    {data?.pages.map((notify) =>
-                        notify?.notifications.map((data) => (
-                            <NotifyItem
-                                key={data.id}
-                                data={data}
-                                callback={() => readNotify(data.id)}
-                                loading={notifyIsLoading.includes(data.id)}
-                                unread
-                            />
-                        )),
-                    )}
-                </div>
-            )}
+            ) : data?.pages[0]?.totalCount ? (
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((notify) =>
+                            notify?.notifications.map((data) => (
+                                <NotifyItem
+                                    key={data.id}
+                                    data={data}
+                                    callback={() => readNotify(data.id)}
+                                    loading={notifyIsLoading.includes(data.id)}
+                                    unread
+                                />
+                            )),
+                        )}
+                    </div>
 
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
+                </div>
+            ) : (
+                <NotContent text="Уведомлений не найдено" />
             )}
         </div>
     );

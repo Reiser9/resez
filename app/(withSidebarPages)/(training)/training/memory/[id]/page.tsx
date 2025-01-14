@@ -4,7 +4,7 @@ import React from 'react';
 import cn from 'classnames';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Tooltip } from 'antd';
 
 import base from '@/shared/styles/base.module.scss';
@@ -34,6 +34,7 @@ import { Copy } from '@/shared/icons/Copy';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import useShortInfo from '@/features/user/data/useShortInfo';
 import { CollectionPairItem } from '@/entities/collection/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { BackButton, Button, IconButton } from '@/shared/ui/Button';
 import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
@@ -69,7 +70,7 @@ const MemoryCardInfo = () => {
         enabled: !!id,
     });
 
-    const { data: userInfo, isLoading: userIsLoading } = useQuery({
+    const { data: userInfo } = useQuery({
         queryKey: ['short_info'],
         queryFn: () => getShortInfo(),
         enabled: isAuth,
@@ -79,20 +80,13 @@ const MemoryCardInfo = () => {
 
     const {
         data: collectionPairs,
-        isPending: collectionPairsIsLoading,
+        endPage,
+        isPending: collectionPairsIsPending,
         isError: collectionPairsError,
-        fetchNextPage,
         isFetchingNextPage,
-        hasNextPage,
-    } = useInfiniteQuery({
-        queryKey: ['pairs_collection_by_id', id, searchValue],
-        queryFn: (param) => getPairsCollectionById(param.pageParam, String(id), searchValue),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+    } = useInfiniteScroll({
+        queryKey: ['pairs_collection_by_id', String(id), searchValue],
+        queryFn: (pageParam) => getPairsCollectionById(pageParam, String(id), searchValue),
         enabled: !!id,
     });
 
@@ -127,14 +121,12 @@ const MemoryCardInfo = () => {
         likeCollection(String(id), revalidateCollection);
     };
 
-    if (isLoading) {
-        return <Preloader page />;
-    }
-
     return (
         <div className={base.baseWrapperGap16}>
-            {isError ? (
-                <NotContent text="Ошибка при загрузке коллекции" icon={<Cross />} danger />
+            {isLoading ? (
+                <Preloader page small />
+            ) : isError ? (
+                <NotContent text="Произошла ошибка при загрузке данных коллекции" icon={<Cross />} danger />
             ) : (
                 <>
                     <div className={styles.memoCollectionTitleInner}>
@@ -215,24 +207,24 @@ const MemoryCardInfo = () => {
                                 )}
 
                                 {/* <MenuLink
-                                    onClick={() => {
-                                        setActionMenu(false);
-                                    }}
-                                    disabled
-                                >
-                                    <Share />
-                                    Поделиться
-                                </MenuLink>
+                            onClick={() => {
+                                setActionMenu(false);
+                            }}
+                            disabled
+                        >
+                            <Share />
+                            Поделиться
+                        </MenuLink>
 
-                                <MenuLink
-                                    onClick={() => {
-                                        setActionMenu(false);
-                                    }}
-                                    disabled
-                                >
-                                    <Copy />
-                                    Дублировать
-                                </MenuLink> */}
+                        <MenuLink
+                            onClick={() => {
+                                setActionMenu(false);
+                            }}
+                            disabled
+                        >
+                            <Copy />
+                            Дублировать
+                        </MenuLink> */}
                             </HoverMenu>
                         </div>
                     </div>
@@ -278,66 +270,61 @@ const MemoryCardInfo = () => {
                             <TypesLearn />
                         </LinkBlock>
                     </div>
-
-                    <div className={cn(base.contentItems, styles.memoCollectionPairsInner)}>
-                        <div className={base.titleInner}>
-                            <Text variant="h4">Термины ({pairsCount || 0})</Text>
-
-                            <button
-                                className={styles.memoCollectionsShowAnswers}
-                                onClick={() => setShowAnswers((prev) => !prev)}
-                            >
-                                {showAnswers ? 'Скрыть ответы' : 'Показать ответы'}
-                            </button>
-                        </div>
-
-                        <SearchInput value={search} setValue={setSearch} />
-
-                        <div className={base.contentItems}>
-                            {collectionPairsIsLoading ? (
-                                <div className={base.contentItems}>
-                                    {[...Array(4)].map((_, id) => (
-                                        <CatalogItemSkeleton key={id} />
-                                    ))}
-                                </div>
-                            ) : collectionPairsError ? (
-                                <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                            ) : collectionPairs?.pages[0]?.totalCount ? (
-                                <div className={base.contentItems}>
-                                    {collectionPairs?.pages.map((pair) =>
-                                        pair?.cards?.map((data) => (
-                                            <CollectionPairItem key={data.id} data={data} showAnswers={showAnswers} />
-                                        )),
-                                    )}
-                                </div>
-                            ) : (
-                                <NotContent text="Терминов не найдено" />
-                            )}
-
-                            {!collectionPairsError && hasNextPage && (
-                                <Button
-                                    auto
-                                    onClick={fetchNextPage}
-                                    loading={isFetchingNextPage}
-                                    className={base.buttonShowMore}
-                                >
-                                    Показать еще
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-
-                    <ConfirmModal
-                        value={deleteCollectionModal}
-                        setValue={setDeleteCollectionModal}
-                        text="Вы действительно хотите удалить коллекцию?"
-                        confirmText="Удалить"
-                        callback={deleteCollectionHandler}
-                    />
-
-                    <CollectionSettings id={String(id)} openModal={settingsModal} setOpenModal={setSettingsModal} />
                 </>
             )}
+
+            <div className={cn(base.contentItems, styles.memoCollectionPairsInner)}>
+                <div className={base.titleInner}>
+                    <Text variant="h4">Термины ({pairsCount || 0})</Text>
+
+                    <button
+                        className={styles.memoCollectionsShowAnswers}
+                        onClick={() => setShowAnswers((prev) => !prev)}
+                    >
+                        {showAnswers ? 'Скрыть ответы' : 'Показать ответы'}
+                    </button>
+                </div>
+
+                <SearchInput value={search} setValue={setSearch} />
+
+                <div className={base.contentItems}>
+                    {collectionPairsIsPending ? (
+                        <div className={base.contentItems}>
+                            {[...Array(4)].map((_, id) => (
+                                <CatalogItemSkeleton key={id} />
+                            ))}
+                        </div>
+                    ) : collectionPairsError ? (
+                        <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
+                    ) : collectionPairs?.pages[0]?.totalCount ? (
+                        <div className={cn(base.baseWrapperGap16, base.aic)}>
+                            <div className={base.contentItems}>
+                                {collectionPairs?.pages.map((pair) =>
+                                    pair?.cards?.map((data) => (
+                                        <CollectionPairItem key={data.id} data={data} showAnswers={showAnswers} />
+                                    )),
+                                )}
+                            </div>
+
+                            {isFetchingNextPage && <Preloader offIndent small page />}
+
+                            {!isFetchingNextPage && <div ref={endPage}></div>}
+                        </div>
+                    ) : (
+                        <NotContent text="Терминов не найдено" />
+                    )}
+                </div>
+            </div>
+
+            <ConfirmModal
+                value={deleteCollectionModal}
+                setValue={setDeleteCollectionModal}
+                text="Вы действительно хотите удалить коллекцию?"
+                confirmText="Удалить"
+                callback={deleteCollectionHandler}
+            />
+
+            <CollectionSettings id={String(id)} openModal={settingsModal} setOpenModal={setSettingsModal} />
         </div>
     );
 };

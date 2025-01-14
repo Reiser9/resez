@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import styles from './index.module.scss';
@@ -14,6 +14,7 @@ import { useMessenger } from '@/features/messenger';
 import { MessengerDialogTopBar } from './MessengerDialogTopBar';
 import { MessengerDialogSendForm } from './MessengerDialogSendForm';
 import useShortInfo from '@/features/user/data/useShortInfo';
+import { socket } from '@/api/socket';
 
 import { DialogMessageItem } from '@/shared/ui/DialogMessageItem';
 import { NotContent } from '@/shared/ui/NotContent';
@@ -29,15 +30,23 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
 
     const [isEditedMessage, setIsEditedMessage] = React.useState(false);
     const [editMessage, setEditMessage] = React.useState<MessageType>();
+    const [typingUsers, setTypingUsers] = React.useState<{ id: number; nickname: string }[]>([]);
+    const [typingChatId, setTypingChatId] = React.useState<string | number | null>(null);
 
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     const messagerDialogRef = React.useRef<null | HTMLDivElement>(null);
     const currentMessagesRef = React.useRef<MessageType>();
     let currentDate: null | string;
 
-    const { getChatById } = useMessenger();
+    const { getChatById, readMessages } = useMessenger();
     const { getShortInfo } = useShortInfo();
+
+    const revalidateChat = async () => {
+        queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+        queryClient.invalidateQueries({ queryKey: ['unread_chats_count'] });
+    };
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['messenger_dialogs_by_id', dialogId],
@@ -68,6 +77,10 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
                 top: messagerDialogRef.current.scrollHeight,
             });
         }
+    };
+
+    const readMessagesHandler = async (messageId: number) => {
+        await readMessages(messageId, revalidateChat);
     };
 
     React.useEffect(() => {
@@ -101,6 +114,39 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
 
         return () => {
             window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
+
+    React.useEffect(() => {
+        if (data && data.messages?.length) {
+            readMessagesHandler(data.messages[data.messages.length - 1].id);
+        }
+    }, [data]);
+
+    React.useEffect(() => {
+        socket.on(
+            'typing',
+            (user: {
+                chatId: number | string;
+                user: {
+                    id: number;
+                    nickname: string;
+                };
+                isTyping: boolean;
+            }) => {
+                const { chatId, isTyping, user: userInfo } = user || {};
+
+                setTypingChatId(chatId);
+                if (isTyping) {
+                    setTypingUsers((prev) => [...prev, userInfo]);
+                } else {
+                    setTypingUsers((prev) => prev.filter((user) => user.id !== userInfo.id));
+                }
+            },
+        );
+
+        return () => {
+            socket.off('typing');
         };
     }, []);
 
@@ -170,6 +216,14 @@ export const MessengerDialog: React.FC<Props> = ({ dialogId }) => {
 
                                     return messageElement;
                                 })}
+
+                                <div className={styles.messangerDialogTyping}>
+                                    {!!typingUsers.length && dialogId === typingChatId && (
+                                        <p className={styles.messangerDialogTypingText}>
+                                            {typingUsers.map((user) => user.nickname).join(' и ')} печатает...
+                                        </p>
+                                    )}
+                                </div>
                             </>
                         ) : (
                             <NotContent icon={<Message />} text="В данном чате еще нет сообщений." />

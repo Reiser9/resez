@@ -1,17 +1,20 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
 import { ThemeProfileItem } from '@/entities/store/ui';
 import { useTheme } from '@/features/store';
 import { Cross } from '@/shared/icons';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { NotContent } from '@/shared/ui/NotContent';
 import { Button } from '@/shared/ui/Button';
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const PersonalizationTheme = () => {
     const queryClient = useQueryClient();
@@ -26,15 +29,9 @@ const PersonalizationTheme = () => {
         queryClient.resetQueries({ queryKey: ['profile_theme'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['profile_theme'],
-        queryFn: getPaginationProfileThemes,
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationProfileThemes(pageParam),
     });
 
     return (
@@ -47,18 +44,24 @@ const PersonalizationTheme = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
-                <div className={base.contentItems}>
-                    {data?.pages.map((theme) =>
-                        theme?.products?.map((data) => (
-                            <ThemeProfileItem
-                                key={data.id}
-                                data={data}
-                                useProduct={() => applyTheme(data.id, revalidateThemes)}
-                                resetProduct={() => resetTheme(revalidateThemes)}
-                            />
-                        )),
-                    )}
+            ) : data?.pages[0]?.totalCount ? (
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((theme) =>
+                            theme?.products?.map((data) => (
+                                <ThemeProfileItem
+                                    key={data.id}
+                                    data={data}
+                                    useProduct={() => applyTheme(data.id, revalidateThemes)}
+                                    resetProduct={() => resetTheme(revalidateThemes)}
+                                />
+                            )),
+                        )}
+                    </div>
+
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Тем не найдено">
@@ -66,12 +69,6 @@ const PersonalizationTheme = () => {
                         В магазин
                     </Button>
                 </NotContent>
-            )}
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
             )}
         </>
     );

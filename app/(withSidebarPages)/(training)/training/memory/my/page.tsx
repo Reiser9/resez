@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -12,12 +13,14 @@ import Tabs from '../ui/Tabs';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { CollectionItem } from '@/entities/collection/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { SearchInput } from '@/shared/ui/Input';
 import { Text } from '@/shared/ui/Text';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { CollectionItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const MemoryMy = () => {
     const isAuth = useAppSelector((state) => state.user.isAuth);
@@ -36,15 +39,9 @@ const MemoryMy = () => {
         queryClient.invalidateQueries({ queryKey: ['collections'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['collections', debounceSearch],
-        queryFn: (param) => getPaginationCollections(param.pageParam, debounceSearch),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationCollections(pageParam, debounceSearch),
         enabled: isAuth,
     });
 
@@ -88,40 +85,33 @@ const MemoryMy = () => {
                         </div>
                     ) : isError ? (
                         <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                    ) : data?.pages[0]?.totalCount === 0 ? (
-                        debounceSearch ? (
-                            <NotContent text="По вашему запросу коллекций не найдено" />
-                        ) : (
-                            <NotContent text="Коллекций не найдено">
-                                <Button href="/training/memory/create" variant="light" auto>
-                                    Создать коллекцию
-                                </Button>
-                            </NotContent>
-                        )
-                    ) : (
-                        <div className={base.contentItems}>
-                            {data?.pages.map((collection) =>
-                                collection?.collections?.map((data) => (
-                                    <CollectionItem
-                                        key={data.id}
-                                        data={data}
-                                        loading={collectionsIsLoading.includes(String(data.id))}
-                                        deleteCallback={() => deleteCollectionHandler(String(data.id))}
-                                    />
-                                )),
-                            )}
-                        </div>
-                    )}
+                    ) : data?.pages[0]?.totalCount ? (
+                        <div className={cn(base.baseWrapperGap16, base.aic)}>
+                            <div className={base.contentItems}>
+                                {data?.pages.map((collection) =>
+                                    collection?.collections?.map((data) => (
+                                        <CollectionItem
+                                            key={data.id}
+                                            data={data}
+                                            loading={collectionsIsLoading.includes(String(data.id))}
+                                            deleteCallback={() => deleteCollectionHandler(String(data.id))}
+                                        />
+                                    )),
+                                )}
+                            </div>
 
-                    {!isError && hasNextPage && (
-                        <Button
-                            auto
-                            onClick={fetchNextPage}
-                            loading={isFetchingNextPage}
-                            className={base.buttonShowMore}
-                        >
-                            Показать еще
-                        </Button>
+                            {isFetchingNextPage && <Preloader offIndent small page />}
+
+                            {!isFetchingNextPage && <div ref={endPage}></div>}
+                        </div>
+                    ) : debounceSearch ? (
+                        <NotContent text="По вашему запросу коллекций не найдено" />
+                    ) : (
+                        <NotContent text="Коллекций не найдено">
+                            <Button href="/training/memory/create" variant="light" auto>
+                                Создать коллекцию
+                            </Button>
+                        </NotContent>
                     )}
                 </>
             ) : (

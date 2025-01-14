@@ -22,11 +22,23 @@ import { ConfirmModal } from '../Modal';
 type Props = {
     data: ChatItem;
     mute?: boolean;
+    isTyping?: boolean;
+    typingUsers?: {
+        id: number;
+        nickname: string;
+    }[];
     active?: boolean;
 } & HTMLAttributes<HTMLDivElement>;
 
-const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...props }) => {
-    const { id, isGroup, isLeft, isAdmin, latestMessage, picture, chat, isKicked } = data || {};
+const DialogItem: React.FC<Props> = ({
+    data,
+    active = false,
+    mute = false,
+    isTyping = false,
+    typingUsers,
+    ...props
+}) => {
+    const { id, isGroup, isLeft, isAdmin, latestMessage, picture, chat, isKicked, unreadMessagesCount } = data || {};
     const { createdAt, updatedAt, isEdited, message, sender, type, isRead, files } = latestMessage || {};
     const { nickname, avatar, id: senderId } = sender || {};
 
@@ -41,6 +53,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
     const revalidateChat = () => {
         queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
         queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
+        queryClient.invalidateQueries({ queryKey: ['unread_chats_count'] });
     };
 
     const { clearChatHistory } = useMessenger();
@@ -77,7 +90,7 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                     image={picture}
                     text={chat}
                     style={{ width: 48, height: 48 }}
-                    // indicator={readsCount <= 999 ? readsCount : '999+'}
+                    indicator={unreadMessagesCount <= 999 ? unreadMessagesCount : '999+'}
                 />
 
                 <div className={styles.dialogItemTextInner}>
@@ -93,22 +106,30 @@ const DialogItem: React.FC<Props> = ({ data, active = false, mute = false, ...pr
                                 <p className={styles.dialogItemDate}>{getFormattedDate(createdAt, 'short')}</p>
                             )}
 
-                            <div className={styles.messangerDialogItemStatus}>
-                                {isRead ? <DoubleCheck /> : <Check />}
-                                {/* <Clock /> */}
-                            </div>
+                            {isRead !== null && (
+                                <div className={styles.messangerDialogItemStatus}>
+                                    {isRead ? <DoubleCheck /> : <Check />}
+                                    {/* <Clock /> */}
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     <div className={base.titleInnerNowrap}>
                         <div className={styles.dialogItemMessageInner}>
-                            {senderId && userId === senderId && (
+                            {!isTyping && senderId && userId === senderId && (
                                 <Badge isUserAvatar size="small" image={avatar} text={nickname} />
                             )}
 
-                            <p className={styles.dialogItemMessage}>
-                                {message} <span>{!!files.length && `${files.length} фото`}</span>
-                            </p>
+                            {isTyping ? (
+                                <p className={styles.messangerDialogTypingText}>
+                                    {typingUsers?.map((user) => user.nickname).join(' и ')} печатает...
+                                </p>
+                            ) : (
+                                <p className={styles.dialogItemMessage}>
+                                    {message} <span>{!!files.length && `${files.length} фото`}</span>
+                                </p>
+                            )}
                         </div>
 
                         <div className={styles.dialogItemMoreInner} onClick={(e) => e.stopPropagation()}>

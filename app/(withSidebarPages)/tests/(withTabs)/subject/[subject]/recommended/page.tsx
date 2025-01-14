@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -13,11 +14,12 @@ import { checkPermission } from '@/shared/utils/checkPermissions';
 import { useTest } from '@/features/test';
 import { useUserPermissions } from '@/features/user';
 import { useAppSelector } from '@/shared/hooks/useRedux';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
-import { Button } from '@/shared/ui/Button';
 import { TestItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const RecommendedSubjectTests = () => {
     const { subject } = useParams();
@@ -31,25 +33,15 @@ const RecommendedSubjectTests = () => {
         queryClient.invalidateQueries({ queryKey: ['official_tests_by_subject'] });
     };
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        error: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
         enabled: isAuth,
     });
 
-    const { data, isPending, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-        queryKey: ['official_tests_by_subject'],
-        queryFn: (params) => getPagginationOfficialTests(params.pageParam, String(subject)),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
+        queryKey: ['official_tests_by_subject', String(subject)],
+        queryFn: (pageParam) => getPagginationOfficialTests(pageParam, String(subject)),
         enabled: !!subject,
     });
 
@@ -71,29 +63,29 @@ const RecommendedSubjectTests = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data.pages[0]?.totalCount ? (
-                    <div className={base.contentItems}>
-                        {data?.pages.map((avatar) =>
-                            avatar?.tests.map((data) => (
-                                <TestItem
-                                    key={data.id}
-                                    data={data}
-                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
-                                    removeCallback={() => deleteTest(data.id, revalidateTests)}
-                                />
-                            )),
-                        )}
+                ) : data?.pages[0]?.totalCount ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={base.contentItems}>
+                            {data?.pages.map((avatar) =>
+                                avatar?.tests.map((data) => (
+                                    <TestItem
+                                        key={data.id}
+                                        data={data}
+                                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_SUBJECTS])}
+                                        removeCallback={() => deleteTest(data.id, revalidateTests)}
+                                    />
+                                )),
+                            )}
+                        </div>
+
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Вариантов не найдено" icon={<Tests />} />
                 )}
             </div>
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
-            )}
         </div>
     );
 };

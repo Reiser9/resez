@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { Tooltip } from 'antd';
 
@@ -16,11 +16,13 @@ import TaskItem from '@/entities/task/ui/TaskItem';
 import { useUserPermissions } from '@/features/user';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import TasksFilter from './TasksFilter';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminTasks = () => {
     const [tasksFilter, setTasksFilter] = React.useState(false);
@@ -54,23 +56,17 @@ const AdminTasks = () => {
         });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['admin_tasks', subjectId, subjectTaskId, subThemeId, userId, isVerified],
         queryFn: (pageParam) =>
             getPagginationTasks(
-                pageParam.pageParam,
+                pageParam,
                 subjectId || '',
                 subjectTaskId || '',
                 subThemeId || '',
                 userId || '',
                 isVerified || '',
             ),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
-
-            return nextPage;
-        },
     });
 
     const toggleVerifyHandler = (id: number) => {
@@ -116,7 +112,7 @@ const AdminTasks = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Ошибка при загрузке заданий" icon={<Cross />} danger />
-                ) : data.pages[0]?.totalCount ? (
+                ) : data?.pages[0]?.totalCount ? (
                     <div className={cn(base.baseWrapperGap16, base.aic)}>
                         <div className={base.contentItems}>
                             {data?.pages.map((task) =>
@@ -135,16 +131,9 @@ const AdminTasks = () => {
                             )}
                         </div>
 
-                        {!isError && hasNextPage && (
-                            <Button
-                                auto
-                                onClick={fetchNextPage}
-                                loading={isFetchingNextPage}
-                                className={base.buttonShowMore}
-                            >
-                                Показать еще
-                            </Button>
-                        )}
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Заданий не найдено" />

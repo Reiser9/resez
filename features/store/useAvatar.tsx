@@ -36,10 +36,15 @@ const useAvatar = () => {
         }
     };
 
-    const getPaginationStoreAvatars = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationStoreAvatars = async (page: number) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<AvatarDecorationPagginationProfileAndStore>({
-            url: `/store/avatar-decoration?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/store/avatar-decoration?${queryString}`,
             isAuth: true,
         });
 
@@ -52,10 +57,15 @@ const useAvatar = () => {
         }
     };
 
-    const getPaginationProfileAvatars = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationProfileAvatars = async (page: number) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<AvatarDecorationPagginationProfileAndStore>({
-            url: `/user/avatar-decoration?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/user/avatar-decoration?${queryString}`,
             isAuth: true,
         });
 

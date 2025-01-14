@@ -38,10 +38,15 @@ const useTheme = () => {
         }
     };
 
-    const getPaginationStoreThemes = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationStoreThemes = async (page: number) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<ThemePagginationProfileAndStore>({
-            url: `/store/theme?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/store/theme?${queryString}`,
             isAuth: true,
         });
 
@@ -54,10 +59,15 @@ const useTheme = () => {
         }
     };
 
-    const getPaginationProfileThemes = async ({ pageParam }: { pageParam: number }) => {
+    const getPaginationProfileThemes = async (page: number) => {
         const limit = 9;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
         const response = await request<ThemePagginationProfileAndStore>({
-            url: `/user/theme?offset=${pageParam * limit}&limit=${limit}`,
+            url: `/user/theme?${queryString}`,
             isAuth: true,
         });
 

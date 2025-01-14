@@ -37,6 +37,13 @@ const useSocket = () => {
     const currentUserIdRef = React.useRef(user?.id);
     const queryRef = React.useRef(queryClient);
 
+    const notifySound = () => {
+        const audio = new Audio('/sounds/message-notify.mp3');
+        audio.play().catch((error) => {
+            console.error('Failed to play the audio:', error);
+        });
+    };
+
     React.useEffect(() => {
         queryRef.current = queryClient;
     }, [queryClient]);
@@ -65,12 +72,14 @@ const useSocket = () => {
         socket.on('notification', (data: { notify: Notify }) => {
             queryRef.current.invalidateQueries({ queryKey: ['notify'] });
             queryRef.current.invalidateQueries({ queryKey: ['notify_count'] });
+            notifySound();
             alertNotify('Новое уведомление', 'Нажмите, чтобы посмотреть', 'info', '/notify', 4000);
         });
 
         socket.on('end-session', () => {
             clearLocalData();
             alertNotify('Сессия завершена', 'Кто-то завершил вашу сессию', 'error');
+            notifySound();
         });
 
         socket.on('blocked', async (data: { reason: string }) => {
@@ -81,6 +90,7 @@ const useSocket = () => {
                 '',
                 5000,
             );
+            notifySound();
             queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 
@@ -99,6 +109,7 @@ const useSocket = () => {
                 Number(currentDialogIdRef.current) != message.chatId &&
                 message.type !== 'System'
             ) {
+                notifySound();
                 alertNotify(message?.sender?.nickname, message?.message, 'info', `/messenger/${message.chatId}`, 10000);
             }
         });
@@ -106,6 +117,7 @@ const useSocket = () => {
         socket.on('refresh', (action: string) => {
             queryRef.current.invalidateQueries({ queryKey: ['user_permissions'] });
             refreshToken();
+            notifySound();
 
             if (action === 'role') {
                 alertNotify('Информация', 'Ваши права доступа изменены', 'info', '', 4000);
@@ -122,11 +134,13 @@ const useSocket = () => {
                 '/profile/achievements',
                 4000,
             );
+            notifySound();
             queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 
         socket.on('new-level', (data: LevelInfo) => {
             alertNotify('Информация', `Получен новый уровень: ${data.level}`, 'info', '', 4000);
+            notifySound();
             queryRef.current.invalidateQueries({ queryKey: ['short_info'] });
         });
 

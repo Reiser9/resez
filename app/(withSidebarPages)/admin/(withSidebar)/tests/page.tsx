@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -14,20 +14,18 @@ import { useTest } from '@/features/test';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { useUserPermissions } from '@/features/user';
 import { TestItem } from '@/entities/test/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { TestItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminTests = () => {
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -43,15 +41,9 @@ const AdminTests = () => {
         queryClient.resetQueries({ queryKey: ['tests'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['tests'],
-        queryFn: (params) => getPagginationTests(params.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPagginationTests(pageParam),
     });
 
     return (
@@ -87,7 +79,7 @@ const AdminTests = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Ошибка при загрузке тестов" icon={<Cross />} danger />
-                ) : data.pages[0]?.totalCount ? (
+                ) : data?.pages[0]?.totalCount ? (
                     <div className={cn(base.baseWrapperGap16, base.aic)}>
                         <div className={base.contentItems}>
                             {data?.pages.map((test) =>
@@ -104,16 +96,9 @@ const AdminTests = () => {
                             )}
                         </div>
 
-                        {!isError && hasNextPage && (
-                            <Button
-                                auto
-                                onClick={fetchNextPage}
-                                loading={isFetchingNextPage}
-                                className={base.buttonShowMore}
-                            >
-                                Показать еще
-                            </Button>
-                        )}
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Тестов не найдено" />

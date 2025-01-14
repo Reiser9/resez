@@ -39,7 +39,20 @@ const DialogMessageItem: React.FC<Props> = ({
     setIsEditedMessage,
     ...props
 }) => {
-    const { id, createdAt, updatedAt, isEdited, message, sender, type, files, isRead, readers } = data || {};
+    const {
+        id,
+        createdAt,
+        updatedAt,
+        isEdited,
+        message,
+        sender,
+        type,
+        files,
+        isRead,
+        readers,
+        parentMessage,
+        reactions,
+    } = data || {};
     const { avatar, nickname, id: userId } = sender || {};
 
     const { getShortInfo } = useShortInfo();
@@ -109,6 +122,12 @@ const DialogMessageItem: React.FC<Props> = ({
                             </div>
                         </div>
 
+                        {parentMessage && (
+                            <div className={styles.messangerDialogReplyMessage}>
+                                <p>{parentMessage.message}</p>
+                            </div>
+                        )}
+
                         {message && (
                             <Text className={styles.messangerDialogItemMessage}>
                                 {message}{' '}
@@ -147,15 +166,21 @@ const DialogMessageItem: React.FC<Props> = ({
 
                         {/* {audio && <Audio audio={audio} />} */}
 
-                        {/* <div className={styles.messangerReactionItems}>
-                            <div className={styles.messangerReactionItem} onClick={e => e.stopPropagation()}>
-                                🦍 2
+                        {!!reactions.length && (
+                            <div className={styles.messangerReactionItems}>
+                                {reactions.map((data) => (
+                                    <div
+                                        key={data.id}
+                                        className={cn(styles.messangerReactionItem, {
+                                            [styles.active]: data.id === myId,
+                                        })}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        {data.reaction}
+                                    </div>
+                                ))}
                             </div>
-
-                            <div className={cn(styles.messangerReactionItem, styles.active)} onClick={e => e.stopPropagation()}>
-                                👍 1
-                            </div>
-                        </div> */}
+                        )}
                     </div>
                 </>
             )}

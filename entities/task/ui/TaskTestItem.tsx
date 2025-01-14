@@ -26,6 +26,7 @@ import { Preloader } from '@/shared/ui/Preloader';
 import TaskCommentItem from './TaskCommentItem';
 import { useAppSelector } from '@/shared/hooks/useRedux';
 import { useShortInfo } from '@/features/user';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -150,20 +151,13 @@ const TaskTestItem: React.FC<Props> = ({
 
     const {
         data: comments,
+        endPage,
         isPending,
         isError,
-        fetchNextPage,
         isFetchingNextPage,
-        hasNextPage,
-    } = useInfiniteQuery({
-        queryKey: ['task_comment_by_id', id],
-        queryFn: (param) => getPagginationTaskComments(param.pageParam, id),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+    } = useInfiniteScroll({
+        queryKey: ['task_comment_by_id', String(id)],
+        queryFn: (pageParam) => getPagginationTaskComments(pageParam, String(id)),
         enabled: !!id && taskModal,
     });
 
@@ -315,37 +309,36 @@ const TaskTestItem: React.FC<Props> = ({
                                 <Preloader page small />
                             ) : isError ? (
                                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                            ) : comments.pages[0]?.totalCount ? (
-                                comments?.pages.map((comment) =>
-                                    comment?.comments?.map((data) => (
-                                        <TaskCommentItem
-                                            key={data.id}
-                                            data={data}
-                                            replyComment={replyComment}
-                                            edit={userId === data.user.id}
-                                            editCommentCallback={(text: string, id: number) => editComment(text, id)}
-                                            remove={userId === data.user.id}
-                                            removeCallback={(id: number) => removeTaskComment(id, revalidateComments)}
-                                            myId={userId}
-                                        />
-                                    )),
-                                )
+                            ) : comments?.pages[0]?.totalCount ? (
+                                comments?.pages.map((comment) => (
+                                    <>
+                                        {comment?.comments?.map((data) => (
+                                            <TaskCommentItem
+                                                key={data.id}
+                                                data={data}
+                                                replyComment={replyComment}
+                                                edit={userId === data.user.id}
+                                                editCommentCallback={(text: string, id: number) =>
+                                                    editComment(text, id)
+                                                }
+                                                remove={userId === data.user.id}
+                                                removeCallback={(id: number) =>
+                                                    removeTaskComment(id, revalidateComments)
+                                                }
+                                                myId={userId}
+                                            />
+                                        ))}
+
+                                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                                        {!isFetchingNextPage && <div ref={endPage}></div>}
+                                    </>
+                                ))
                             ) : (
                                 <NotContent
                                     text="У данного задания еще нет комментариев, напишите его первым."
                                     icon={<Comment />}
                                 />
-                            )}
-
-                            {!isError && hasNextPage && (
-                                <Button
-                                    auto
-                                    onClick={fetchNextPage}
-                                    loading={isFetchingNextPage}
-                                    className={base.buttonShowMore}
-                                >
-                                    Показать еще
-                                </Button>
                             )}
                         </div>
 

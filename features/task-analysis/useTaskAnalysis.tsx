@@ -70,9 +70,26 @@ const useTaskAnalysis = () => {
         }
     };
 
-    const getTaskAnalysisById = async (taskAnalysisId: number | string, successCallback = () => {}) => {
+    const getAdminTaskAnalysisById = async (taskAnalysisId: number | string, successCallback = () => {}) => {
         const response = await request<TaskAnalysis>({
             url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/admin/task-analysis/${taskAnalysisId}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
+    const getTaskAnalysisById = async (taskAnalysisId: number | string, successCallback = () => {}) => {
+        const response = await request<TaskAnalysis>({
+            url: `/${process.env.NEXT_PUBLIC_EDUCATIONMS_NAME}/task-analysis/${taskAnalysisId}`,
             isAuth: true,
         });
 
@@ -138,6 +155,7 @@ const useTaskAnalysis = () => {
         getPagginationTasksAnalysis,
         createTaskAnalysis,
         togglePublish,
+        getAdminTaskAnalysisById,
         getTaskAnalysisById,
         editTaskAnalysis,
         archiveTaskAnalysis

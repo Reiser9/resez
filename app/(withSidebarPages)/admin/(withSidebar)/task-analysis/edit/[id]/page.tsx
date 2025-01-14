@@ -38,7 +38,7 @@ const AdminEditTaskAnalysis = () => {
 
     const analysisRef = React.useRef<EditorCore | null>(null);
 
-    const { getTaskAnalysisById, editTaskAnalysis } = useTaskAnalysis();
+    const { getAdminTaskAnalysisById, editTaskAnalysis } = useTaskAnalysis();
     const { alertNotify } = useAlert();
     const router = useRouter();
 
@@ -48,7 +48,7 @@ const AdminEditTaskAnalysis = () => {
         isError: taskAnalysisError,
     } = useQuery({
         queryKey: ['task_analysis_by_id', id],
-        queryFn: () => getTaskAnalysisById(String(id)),
+        queryFn: () => getAdminTaskAnalysisById(String(id)),
         enabled: !!id,
     });
 

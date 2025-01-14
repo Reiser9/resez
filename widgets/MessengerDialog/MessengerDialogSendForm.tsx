@@ -2,7 +2,7 @@
 
 import React, { FormEvent } from 'react';
 import cn from 'classnames';
-import EmojiPicker, { EmojiStyle, SkinTonePickerLocation } from 'emoji-picker-react';
+import EmojiPicker, { EmojiClickData, EmojiStyle, SkinTonePickerLocation } from 'emoji-picker-react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
@@ -16,7 +16,6 @@ import { Text } from '@/shared/ui/Text';
 import { IconButton } from '@/shared/ui/Button';
 import { useFile } from '@/features/file';
 import { File } from '@/shared/ui/File';
-import { useThemeContext } from '@/shared/context/ThemeProvider';
 
 type Props = {
     dialogId: string | undefined;
@@ -47,11 +46,21 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     const [emojiShow, setEmojiShow] = React.useState(false);
     const emojiRef = React.useRef<HTMLDivElement>(null);
 
+    const [isTyping, setIsTyping] = React.useState(false);
+    const typingTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    const hasSentTypingRequest = React.useRef(false);
+
     const queryClient = useQueryClient();
 
     const sendMessageInputRef = React.useRef<HTMLInputElement>(null);
 
-    const { sendMessageInChat, editMessage: editMessageHandler, readMessages } = useMessenger();
+    const {
+        sendMessageInChat,
+        editMessage: editMessageHandler,
+        readMessages,
+        getReactionForMessage,
+        userTyping,
+    } = useMessenger();
     const { uploadFile } = useFile();
 
     const revalidateChat = async () => {
@@ -79,18 +88,39 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
         }
 
         setSendingMessage(true);
-        await sendMessageInChat(String(dialogId), message.replace(/\s+/g, ' '), messageFiles, () => {
-            setMessage('');
-            revalidateChat();
-        })
+        await sendMessageInChat(
+            String(dialogId),
+            message.replace(/\s+/g, ' '),
+            messageFiles,
+            () => {
+                setMessage('');
+                revalidateChat();
+            },
+            replyMessage?.id,
+        )
             .then((data) => {
                 if (!data) return;
 
-                readMessages(data.id);
+                readMessages(data?.id);
+                setReplyMessage(null);
             })
             .finally(() => {
                 setSendingMessage(false);
             });
+    };
+
+    const getReactionHandler = () => {
+        getReactionForMessage(811, '😀');
+    };
+
+    const sendTyping = (typing: boolean) => {
+        if (!dialogId) return;
+
+        userTyping(dialogId, typing);
+    };
+
+    const handleEmojiSelect = (el: EmojiClickData) => {
+        setMessage((prev) => `${prev}${el.emoji}`);
     };
 
     React.useEffect(() => {
@@ -109,14 +139,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     React.useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
             if (e.key.length === 1) {
-                const inputElement = sendMessageInputRef.current;
-
-                if (inputElement) {
-                    inputElement.focus();
-
-                    const length = inputElement.value.length;
-                    inputElement.setSelectionRange(length, length);
-                }
+                sendMessageInputRef?.current?.focus();
             }
         };
 
@@ -159,6 +182,29 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
             setIsEditedMessage(false);
         }
     }, [replyMessage]);
+
+    React.useEffect(() => {
+        if (isTyping && !hasSentTypingRequest.current) {
+            sendTyping(true);
+            hasSentTypingRequest.current = true;
+        }
+
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            setIsTyping(false);
+            sendTyping(false);
+            hasSentTypingRequest.current = false;
+        }, 2000);
+
+        return () => {
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+        };
+    }, [message]);
 
     return (
         <div className={styles.messangerDialogSendInner}>
@@ -227,7 +273,10 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                             placeholder="Напишите сообщение"
                             ref={sendMessageInputRef}
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
+                            onChange={(e) => {
+                                setMessage(e.target.value);
+                                setIsTyping(true);
+                            }}
                             className={styles.messangerDialogSendInput}
                         />
 
@@ -249,7 +298,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
                                 >
                                     <EmojiPicker
                                         emojiStyle={EmojiStyle.NATIVE}
-                                        onEmojiClick={(el) => setMessage((prev) => `${prev}${el.emoji}`)}
+                                        onEmojiClick={handleEmojiSelect}
                                         lazyLoadEmojis
                                         searchPlaceHolder="Поиск.."
                                         skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}

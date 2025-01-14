@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
@@ -16,9 +16,10 @@ import { useUserPermissions } from '@/features/user';
 import { checkPermission } from '@/shared/utils/checkPermissions';
 import { TaskSnippetItem } from '@/entities/task-snippet/ui';
 import SnippetsFilter from './SnippetsFilter';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { IconButton, ReloadButton } from '@/shared/ui/Button';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Preloader } from '@/shared/ui/Preloader';
 
@@ -47,15 +48,9 @@ const AdminTaskSnippets = () => {
         queryClient.resetQueries({ queryKey: ['admin_task_snippets', subjectId] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['admin_task_snippets', subjectId],
-        queryFn: (pageParam) => getPagginationTasksSnippets(pageParam.pageParam, subjectId || ''),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPagginationTasksSnippets(pageParam, subjectId || ''),
     });
 
     return (
@@ -107,16 +102,9 @@ const AdminTaskSnippets = () => {
                             )}
                         </div>
 
-                        {!isError && hasNextPage && (
-                            <Button
-                                auto
-                                onClick={fetchNextPage}
-                                loading={isFetchingNextPage}
-                                className={base.buttonShowMore}
-                            >
-                                Показать еще
-                            </Button>
-                        )}
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Вставок заданий не найдено" />

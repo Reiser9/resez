@@ -3,10 +3,10 @@
 import React from 'react';
 import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
+import base from '@/shared/styles/base.module.scss';
 
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
@@ -15,11 +15,13 @@ import { Cross, Filter, Plus } from '@/shared/icons';
 import { useTaskAnalysis } from '@/features/task-analysis';
 import { useUserPermissions } from '@/features/user';
 import { TaskAnalysisItem } from '@/entities/task-analysis/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
-import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
+import { IconButton, ReloadButton } from '@/shared/ui/Button';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminTaskAnalisys = () => {
     const queryClient = useQueryClient();
@@ -41,15 +43,9 @@ const AdminTaskAnalisys = () => {
         queryClient.resetQueries({ queryKey: ['admin_tasks_analysis'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['admin_tasks_analysis'],
-        queryFn: (pageParam) => getPagginationTasksAnalysis(pageParam.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPagginationTasksAnalysis(pageParam),
     });
 
     return (
@@ -89,7 +85,7 @@ const AdminTaskAnalisys = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Ошибка при загрузке заданий" icon={<Cross />} danger />
-                ) : data.pages[0]?.totalCount ? (
+                ) : data?.pages[0]?.totalCount ? (
                     <div className={cn(base.baseWrapperGap16, base.aic)}>
                         <div className={base.contentItems}>
                             {data?.pages.map((task) =>
@@ -107,16 +103,9 @@ const AdminTaskAnalisys = () => {
                             )}
                         </div>
 
-                        {!isError && hasNextPage && (
-                            <Button
-                                auto
-                                onClick={fetchNextPage}
-                                loading={isFetchingNextPage}
-                                className={base.buttonShowMore}
-                            >
-                                Показать еще
-                            </Button>
-                        )}
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Разборов заданий не найдено" />

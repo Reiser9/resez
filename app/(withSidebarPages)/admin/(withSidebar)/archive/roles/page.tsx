@@ -2,7 +2,7 @@
 
 import React from 'react';
 import cn from 'classnames';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -12,11 +12,13 @@ import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { useRoles } from '@/features/role';
 import { useArchive, useUserPermissions } from '@/features/user';
 import { RoleItem } from '@/entities/role/ui';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { RoleItemSkeleton } from '@/shared/ui/Skeleton';
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminArchiveRoles = () => {
     const { getUserPermissions } = useUserPermissions();
@@ -38,15 +40,9 @@ const AdminArchiveRoles = () => {
         queryClient.invalidateQueries({ queryKey: ['archive_roles'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['archive_roles'],
-        queryFn: (param) => getArhiveRoles(param.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getArhiveRoles(pageParam),
     });
 
     return (
@@ -67,7 +63,7 @@ const AdminArchiveRoles = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
+            ) : data?.pages[0]?.totalCount ? (
                 <div className={cn(base.baseWrapperGap16, base.aic)}>
                     <div className={base.contentItems}>
                         {data?.pages.map((subject) =>
@@ -84,16 +80,9 @@ const AdminArchiveRoles = () => {
                         )}
                     </div>
 
-                    {!isError && hasNextPage && (
-                        <Button
-                            auto
-                            onClick={fetchNextPage}
-                            loading={isFetchingNextPage}
-                            className={base.buttonShowMore}
-                        >
-                            Показать еще
-                        </Button>
-                    )}
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Ролей не найдено" />

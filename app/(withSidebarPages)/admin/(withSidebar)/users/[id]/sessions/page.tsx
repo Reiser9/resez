@@ -1,19 +1,22 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 
 import { Cross, Reload } from '@/shared/icons';
 import { useSessions, useUsers } from '@/features/user';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
-import { BackButton, Button, IconButton } from '@/shared/ui/Button';
+import { BackButton, IconButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { SessionItemSkeleton } from '@/shared/ui/Skeleton';
 import { SessionItem } from '@/shared/ui/SessionItem';
 import { NotContent } from '@/shared/ui/NotContent';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminUserByIdSessions = () => {
     const { getUserSessions } = useUsers();
@@ -29,15 +32,9 @@ const AdminUserByIdSessions = () => {
         queryClient.resetQueries({ queryKey: ['user_sessions_by_id', id] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['user_sessions_by_id', id],
-        queryFn: (param) => getUserSessions(param.pageParam, String(id)),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
+        queryKey: ['user_sessions_by_id', String(id)],
+        queryFn: (pageParam) => getUserSessions(pageParam, String(id)),
         enabled: !!id,
     });
 
@@ -63,17 +60,17 @@ const AdminUserByIdSessions = () => {
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : (
-                <div className={base.contentItems}>
-                    {data?.pages.map((session) =>
-                        session?.sessions?.map((data) => <SessionItem key={data.id} data={data} />),
-                    )}
-                </div>
-            )}
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((session) =>
+                            session?.sessions?.map((data) => <SessionItem key={data.id} data={data} />),
+                        )}
+                    </div>
 
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
+                </div>
             )}
         </div>
     );

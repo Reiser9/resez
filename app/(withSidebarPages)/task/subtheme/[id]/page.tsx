@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import cn from 'classnames';
 import { useParams } from 'next/navigation';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from '../../[id]/index.module.scss';
@@ -12,16 +13,16 @@ import { useTask } from '@/features/task';
 import { TaskTestItem } from '@/entities/task/ui';
 import { Cross } from '@/shared/icons';
 import { checkPermission } from '@/shared/utils/checkPermissions';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
+import { useUserPermissions } from '@/features/user';
+import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 
 import { InfoSidebar } from '@/shared/ui/InfoSidebar';
 import { Preloader } from '@/shared/ui/Preloader';
 import { Text } from '@/shared/ui/Text';
 import { TextPoint } from '@/shared/ui/TextPoint';
-import { Button } from '@/shared/ui/Button';
 import { TaskItemSkeleton } from '@/shared/ui/Skeleton';
 import { NotContent } from '@/shared/ui/NotContent';
-import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
-import { useUserPermissions } from '@/features/user';
 
 const TaskSubThemePage = () => {
     const { id } = useParams();
@@ -32,25 +33,15 @@ const TaskSubThemePage = () => {
     const { getTasksBySubThemeId, getSubThemeInfo } = useTask();
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
         enabled: isAuth,
     });
 
-    const { data, isLoading, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['task_by_subtheme_id', id],
-        queryFn: (param) => getTasksBySubThemeId(param.pageParam, String(id)),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
+        queryKey: ['task_by_subtheme_id', String(id)],
+        queryFn: (pageParam) => getTasksBySubThemeId(pageParam, String(id)),
         enabled: !!id,
     });
 
@@ -69,7 +60,7 @@ const TaskSubThemePage = () => {
     return (
         <div className={styles.taskInner}>
             <div className={base.taskContent}>
-                {isLoading ? (
+                {isPending ? (
                     <div className={base.contentItems}>
                         {[...Array(4)].map((_, id) => (
                             <TaskItemSkeleton key={id} />
@@ -77,29 +68,29 @@ const TaskSubThemePage = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data?.pages[0]?.totalCount === 0 ? (
-                    <NotContent text="Заданий не найдено" />
-                ) : (
-                    <div className={styles.tasksContent}>
-                        {data?.pages.map((task) =>
-                            task?.tasks.map((data) => (
-                                <TaskTestItem
-                                    key={data.id}
-                                    data={data}
-                                    taskWithLink
-                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
-                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
-                                    verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
-                                />
-                            )),
-                        )}
-                    </div>
-                )}
+                ) : data?.pages[0]?.totalCount ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={styles.tasksContent}>
+                            {data?.pages.map((task) =>
+                                task?.tasks.map((data) => (
+                                    <TaskTestItem
+                                        key={data.id}
+                                        data={data}
+                                        taskWithLink
+                                        edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_TASKS])}
+                                        remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_TASKS])}
+                                        verify={checkPermission(permissions || [], [PERMISSIONS.VERIFY_TASKS])}
+                                    />
+                                )),
+                            )}
+                        </div>
 
-                {!isError && hasNextPage && (
-                    <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                        Показать еще
-                    </Button>
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
+                    </div>
+                ) : (
+                    <NotContent text="Заданий не найдено" />
                 )}
             </div>
 

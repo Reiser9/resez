@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -11,11 +12,13 @@ import { Cross } from '@/shared/icons';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { LogItem } from '@/entities/log/ui';
 import { PrivateWrapper } from '@/shared/wrappers/PrivateWrapper';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
-import { Button, ReloadButton } from '@/shared/ui/Button';
+import { ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
 import { LogItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminLogs = () => {
     const { getPagginationLogs } = useLogs();
@@ -30,15 +33,9 @@ const AdminLogs = () => {
         queryClient.resetQueries({ queryKey: ['logs'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['logs'],
-        queryFn: (param) => getPagginationLogs(param.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPagginationLogs(pageParam),
     });
 
     return (
@@ -61,18 +58,18 @@ const AdminLogs = () => {
                     </div>
                 ) : isError ? (
                     <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-                ) : data.pages[0]?.totalCount ? (
-                    <div className={base.contentItems}>
-                        {data?.pages.map((log) => log?.logs?.map((data) => <LogItem key={data.id} data={data} />))}
+                ) : data?.pages[0]?.totalCount ? (
+                    <div className={cn(base.baseWrapperGap16, base.aic)}>
+                        <div className={base.contentItems}>
+                            {data?.pages.map((log) => log?.logs?.map((data) => <LogItem key={data.id} data={data} />))}
+                        </div>
+
+                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                        {!isFetchingNextPage && <div ref={endPage}></div>}
                     </div>
                 ) : (
                     <NotContent text="Логов не найдено" />
-                )}
-
-                {!isError && hasNextPage && (
-                    <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                        Показать еще
-                    </Button>
                 )}
             </div>
         </PrivateWrapper>

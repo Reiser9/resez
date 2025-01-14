@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import cn from 'classnames';
 import { Tooltip } from 'antd';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
@@ -12,20 +13,18 @@ import { checkPermission } from '@/shared/utils/checkPermissions';
 import { PERMISSIONS } from '@/shared/consts/PERMISSIONS';
 import { AvatarItem, ThemeItem } from '@/entities/store/ui';
 import { useUserPermissions } from '@/features/user';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { NotContent } from '@/shared/ui/NotContent';
 import { AvatarItemSkeleton } from '@/shared/ui/Skeleton';
 import { Button, IconButton, ReloadButton } from '@/shared/ui/Button';
 import { Text } from '@/shared/ui/Text';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const AdminStoreAvatar = () => {
     const { getUserPermissions } = useUserPermissions();
 
-    const {
-        data: permissions,
-        isLoading: permissionsIsLoading,
-        isError: permissionsError,
-    } = useQuery({
+    const { data: permissions } = useQuery({
         queryKey: ['user_permissions'],
         queryFn: getUserPermissions,
     });
@@ -41,15 +40,9 @@ const AdminStoreAvatar = () => {
         queryClient.resetQueries({ queryKey: ['admin_themes'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['admin_themes'],
-        queryFn: (param) => getPaginationThemes(param.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationThemes(pageParam),
     });
 
     const togglePublishHandler = (id: number) => {
@@ -85,30 +78,30 @@ const AdminStoreAvatar = () => {
                 </div>
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
-            ) : data.pages[0]?.totalCount ? (
-                <div className={base.contentItems}>
-                    {data?.pages.map((theme) =>
-                        theme?.products?.map((data) => (
-                            <ThemeItem
-                                key={data.id}
-                                data={data}
-                                edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_PRODUCTS])}
-                                publish={checkPermission(permissions || [], [PERMISSIONS.PUBLISH_PRODUCTS])}
-                                remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_PRODUCTS])}
-                                togglePublish={() => togglePublishHandler(data.id)}
-                                deleteCallback={() => deleteTheme(data.id, revalidateTheme)}
-                            />
-                        )),
-                    )}
+            ) : data?.pages[0]?.totalCount ? (
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages.map((theme) =>
+                            theme?.products?.map((data) => (
+                                <ThemeItem
+                                    key={data.id}
+                                    data={data}
+                                    edit={checkPermission(permissions || [], [PERMISSIONS.UPDATE_PRODUCTS])}
+                                    publish={checkPermission(permissions || [], [PERMISSIONS.PUBLISH_PRODUCTS])}
+                                    remove={checkPermission(permissions || [], [PERMISSIONS.DELETE_PRODUCTS])}
+                                    togglePublish={() => togglePublishHandler(data.id)}
+                                    deleteCallback={() => deleteTheme(data.id, revalidateTheme)}
+                                />
+                            )),
+                        )}
+                    </div>
+
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
             ) : (
                 <NotContent text="Тем не найдено" />
-            )}
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
             )}
         </div>
     );

@@ -1,20 +1,23 @@
 'use client';
 
 import React from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import cn from 'classnames';
+import { useQueryClient } from '@tanstack/react-query';
 
 import base from '@/shared/styles/base.module.scss';
 
-import { BackButton } from '@/shared/ui/Button';
-import { Text } from '@/shared/ui/Text';
 import { SessionItem } from '@/shared/ui/SessionItem';
 import { useSessions } from '@/features/user';
-import { Reload } from '@/shared/icons/Reload';
-import { IconButton, Button } from '@/shared/ui/Button';
-import { NotContent } from '@/shared/ui/NotContent';
-import { Cross } from '@/shared/icons';
+import { Cross, Reload } from '@/shared/icons';
 import { useLogout } from '@/features/user';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
+
+import { NotContent } from '@/shared/ui/NotContent';
+import { IconButton } from '@/shared/ui/Button';
+import { Text } from '@/shared/ui/Text';
+import { BackButton } from '@/shared/ui/Button';
 import { SessionItemSkeleton } from '@/shared/ui/Skeleton';
+import { Preloader } from '@/shared/ui/Preloader';
 
 const ProfileSessions = () => {
     const { sessionsIsLoading, getPaginationSessions, endSessionById } = useSessions();
@@ -29,15 +32,9 @@ const ProfileSessions = () => {
         queryClient.resetQueries({ queryKey: ['sessions'] });
     };
 
-    const { data, isPending, isError, fetchNextPage, isFetchingNextPage, hasNextPage } = useInfiniteQuery({
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
         queryKey: ['sessions'],
-        queryFn: (param) => getPaginationSessions(param.pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages.length : undefined;
-
-            return nextPage;
-        },
+        queryFn: (pageParam) => getPaginationSessions(pageParam),
     });
 
     const endSessionByIdHandler = (id: number) => {
@@ -70,28 +67,28 @@ const ProfileSessions = () => {
             ) : isError ? (
                 <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />
             ) : (
-                <div className={base.contentItems}>
-                    {data?.pages[0]?.current && (
-                        <SessionItem current data={data?.pages[0]?.current} callback={logout} loading={isLoading} />
-                    )}
+                <div className={cn(base.baseWrapperGap16, base.aic)}>
+                    <div className={base.contentItems}>
+                        {data?.pages[0]?.current && (
+                            <SessionItem current data={data?.pages[0]?.current} callback={logout} loading={isLoading} />
+                        )}
 
-                    {data?.pages.map((session) =>
-                        session?.other?.map((data) => (
-                            <SessionItem
-                                key={data.id}
-                                data={data}
-                                callback={() => endSessionByIdHandler(data.id)}
-                                loading={sessionsIsLoading.includes(data.id)}
-                            />
-                        )),
-                    )}
+                        {data?.pages.map((session) =>
+                            session?.other?.map((data) => (
+                                <SessionItem
+                                    key={data.id}
+                                    data={data}
+                                    callback={() => endSessionByIdHandler(data.id)}
+                                    loading={sessionsIsLoading.includes(data.id)}
+                                />
+                            )),
+                        )}
+                    </div>
+
+                    {isFetchingNextPage && <Preloader offIndent small page />}
+
+                    {!isFetchingNextPage && <div ref={endPage}></div>}
                 </div>
-            )}
-
-            {!isError && hasNextPage && (
-                <Button auto onClick={fetchNextPage} loading={isFetchingNextPage} className={base.buttonShowMore}>
-                    Показать еще
-                </Button>
             )}
         </div>
     );
