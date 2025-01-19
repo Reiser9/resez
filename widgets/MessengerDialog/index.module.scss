@@ -88,6 +88,7 @@
     gap: 8px;
     padding: 0.8rem 2.4rem 0 2.4rem;
     border-top: 1px solid var(--input);
+    position: relative;
 }
 
 @media (max-width: 768px) {
@@ -467,8 +468,60 @@ button.dialogBack{
     }
 }
 
+.messangerDialogBottom{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--input);
+    border: 1px solid var(--input);
+    color: var(--main);
+    padding: 0;
+    position: absolute;
+    bottom: calc(100% + 12px);
+    right: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: .2s linear;
+}
+
+.messangerDialogBottom.active{
+    pointer-events: all;
+    opacity: 1;
+}
+
+.messangerDialogBottom svg{
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.messangerDialogBottom span{
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--main);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .messangerDialogBottom{
+        right: 8px;
+    }
+}
+
 @media (any-hover: hover) {
-    .infoModalAvatarAction, .infoModalChatLink, .selectedMessages, .messangerTopBarName, .messangerFormButton, .emojiButton{
+    .infoModalAvatarAction, .infoModalChatLink, .selectedMessages, .messangerTopBarName, .messangerFormButton, .emojiButton,
+    .messangerDialogBottom{
         cursor: pointer;
     }
 
@@ -483,5 +536,9 @@ button.dialogBack{
 
     .messangerFormButton:hover{
         background: var(--lighten);
+    }
+
+    .messangerDialogBottom:hover{
+        border: 1px solid var(--main);
     }
 }

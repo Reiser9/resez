@@ -99,13 +99,15 @@ const useSocket = () => {
         });
 
         socket.on('message', (message: Message) => {
-            queryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
+            queryRef.current.invalidateQueries({ queryKey: ['dialog_messanges_by_id'] });
             queryRef.current.invalidateQueries({ queryKey: ['messenger_dialogs'] });
             queryRef.current.invalidateQueries({ queryKey: ['unread_chats_count'] });
 
+            if (!message) return;
+
             if (
                 currentUserIdRef.current &&
-                currentUserIdRef.current !== message?.sender?.id &&
+                currentUserIdRef.current !== message.sender?.id &&
                 Number(currentDialogIdRef.current) != message.chatId &&
                 message.type !== 'System'
             ) {

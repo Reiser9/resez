@@ -2,6 +2,10 @@ import type { FileInfo } from '../file';
 import type { Paggination } from '../pagination';
 import type { UserShort } from '../user';
 
+export type PagginationMessages = Paggination & {
+    messages: Message[];
+};
+
 export type Message = {
     chatId: number;
     id: number;

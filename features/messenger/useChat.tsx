@@ -28,11 +28,7 @@ const useChat = () => {
         }
     };
 
-    const getChatUsers = async (chatId?: number) => {
-        if (!chatId) {
-            return;
-        }
-
+    const getChatUsers = async (chatId: number | string) => {
         const response = await request<ChatUsersPaggination>({
             url: `/messenger/chat/${chatId}/user?limit=20`,
             isAuth: true,
@@ -47,11 +43,7 @@ const useChat = () => {
         }
     };
 
-    const deleteUserFromChat = async (chatId?: number, userId?: number, successCallback = () => {}) => {
-        if (!chatId) {
-            return;
-        }
-
+    const deleteUserFromChat = async (chatId: number | string, userId?: number, successCallback = () => {}) => {
         const response = await request<ChatUser>({
             url: `/messenger/chat/${chatId}/remove-user/${userId}`,
             isAuth: true,
@@ -65,7 +57,7 @@ const useChat = () => {
         successCallback();
     };
 
-    const leaveFromChat = async (chatId: number, clearHistory = false, successCallback = () => {}) => {
+    const leaveFromChat = async (chatId: number | string, clearHistory = false, successCallback = () => {}) => {
         const response = await request<{ chat: ChatItem }>({
             url: `/messenger/chat/${chatId}/leave?clear_history=${clearHistory}`,
             method: 'DELETE',
@@ -79,7 +71,7 @@ const useChat = () => {
         successCallback();
     };
 
-    const returnInChat = async (chatId: number, successCallback = () => {}) => {
+    const returnInChat = async (chatId: number | string, successCallback = () => {}) => {
         const response = await request<{ chat: ChatItem }>({
             url: `/messenger/chat/${chatId}/return`,
             isAuth: true,
@@ -92,7 +84,7 @@ const useChat = () => {
         successCallback();
     };
 
-    const updateChatAvatar = async (data: FormData, chatId: number, successCallback = () => {}) => {
+    const updateChatAvatar = async (data: FormData, chatId: number | string, successCallback = () => {}) => {
         const response = await request<{ chat: ChatItem }>({
             url: `/messenger/chat/${chatId}/picture`,
             isAuth: true,
@@ -110,7 +102,7 @@ const useChat = () => {
         successCallback();
     };
 
-    const removeChatAvatar = async (chatId: number, successCallback = () => {}) => {
+    const removeChatAvatar = async (chatId: number | string, successCallback = () => {}) => {
         const response = await request<{ chat: ChatItem }>({
             url: `/messenger/chat/${chatId}/picture`,
             isAuth: true,

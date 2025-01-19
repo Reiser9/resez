@@ -4,17 +4,19 @@ import React from 'react';
 import cn from 'classnames';
 import Image from 'next/image';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Tooltip } from 'antd';
 
 import styles from './index.module.scss';
+import base from '@/shared/styles/base.module.scss';
 
+import type { TypingUsers } from '@/app/(withSidebarPages)/messenger/[[...id]]/page';
 import { Cross, Photo, Plus, Search, User } from '@/shared/icons';
 import { useChat, useMessenger } from '@/features/messenger';
 import { useSearchUser } from '@/features/user';
 import { setDialogsScrollPosition } from '@/store/slices/messenger';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks/useRedux';
-import { socket } from '@/api/socket';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { UserAddItem } from '@/shared/ui/UserAddItem';
 import { Input } from '@/shared/ui/Input';
@@ -26,10 +28,12 @@ import { NotContent } from '@/shared/ui/NotContent';
 import { DialogItem } from '@/shared/ui/DialogItem';
 
 type Props = {
-    dialogId: string | undefined;
+    typingUsersInfo: TypingUsers[];
 };
 
-const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
+const MessengerSidebar: React.FC<Props> = ({ typingUsersInfo }) => {
+    const { id } = useParams();
+
     const [newChatModal, setNewChatModal] = React.useState(false);
     const [newChatIsLoading, setNewChatIsLoading] = React.useState(false);
 
@@ -38,9 +42,6 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
     const [chatAvatarPreview, setChatAvatarPreview] = React.useState<string | ArrayBuffer | null>(null);
     const [chatUsers, setChatUsers] = React.useState<number[]>([]);
 
-    const [typingUsers, setTypingUsers] = React.useState<{ id: number; nickname: string }[]>([]);
-    const [typingChatId, setTypingChatId] = React.useState<string | number | null>(null);
-
     const chatListRef = React.useRef<HTMLDivElement>(null);
 
     const dialogsScrollPosition = useAppSelector((state) => state.messenger.dialogsScrollPosition);
@@ -48,7 +49,12 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
     const { getDialogs } = useMessenger();
     const { createChat } = useChat();
     const { getPaginationUsers } = useSearchUser();
-    const { data, isLoading, isError } = useQuery({ queryKey: ['messenger_dialogs'], queryFn: getDialogs });
+
+    const { data, endPage, isError, isFetchingNextPage, isPending } = useInfiniteScroll({
+        queryKey: ['messenger_dialogs'],
+        queryFn: (pageParam) => getDialogs(pageParam),
+    });
+
     const {
         data: usersData,
         isLoading: usersIsLoading,
@@ -115,41 +121,13 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
         if (currentElement) {
             currentElement.scrollTop = dialogsScrollPosition;
         }
-    }, [dialogId]);
-
-    React.useEffect(() => {
-        socket.on(
-            'typing',
-            (user: {
-                chatId: number | string;
-                user: {
-                    id: number;
-                    nickname: string;
-                };
-                isTyping: boolean;
-            }) => {
-                const { chatId, isTyping, user: userInfo } = user || {};
-
-                setTypingChatId(chatId);
-
-                if (isTyping) {
-                    setTypingUsers((prev) => [...prev, userInfo]);
-                } else {
-                    setTypingUsers((prev) => prev.filter((user) => user.id !== userInfo.id));
-                }
-            },
-        );
-
-        return () => {
-            socket.off('typing');
-        };
-    }, []);
+    }, [id]);
 
     return (
         <>
             <div
                 className={cn(styles.messangerSidebar, {
-                    [styles.hide]: !!dialogId,
+                    [styles.hide]: !!id,
                 })}
             >
                 <div className={styles.searchInputInner}>
@@ -165,26 +143,35 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                 </div>
 
                 <div className={styles.messangerSidebarDialogsContent} ref={chatListRef}>
-                    {isLoading ? (
+                    {isPending ? (
                         <Preloader page small />
                     ) : isError ? (
-                        <NotContent danger icon={<Cross />} text="Произошла ошибка при загрузке диалогов" />
-                    ) : data?.chats.length ? (
-                        data?.chats.map((data, key) => (
-                            <DialogItem
-                                key={key}
-                                data={data}
-                                active={dialogId == String(data.id)}
-                                isTyping={data.id == typingChatId && typingUsers.length > 0}
-                                typingUsers={typingUsers}
-                                onClick={() => {
-                                    setScrollDialogs();
-                                    router.push(`/messenger/${data.id}`);
-                                }}
-                            />
-                        ))
+                        <NotContent text="Ошибка при загрузке диалогов" icon={<Cross />} danger />
+                    ) : data?.pages[0]?.totalCount ? (
+                        <div className={cn(base.baseWrapperGap16, base.aic)}>
+                            <div className={base.contentItems}>
+                                {data?.pages.map((dialog) =>
+                                    dialog?.chats.map((data) => (
+                                        <DialogItem
+                                            key={data.id}
+                                            data={data}
+                                            active={id == String(data.id)}
+                                            typingInfo={typingUsersInfo.find((item) => item.chatId == data.id)}
+                                            onClick={() => {
+                                                setScrollDialogs();
+                                                router.push(`/messenger/${data.id}`);
+                                            }}
+                                        />
+                                    )),
+                                )}
+                            </div>
+
+                            {isFetchingNextPage && <Preloader offIndent small page />}
+
+                            {!isFetchingNextPage && <div ref={endPage}></div>}
+                        </div>
                     ) : (
-                        <NotContent icon={<User />} text="Диалогов не найдено" />
+                        <NotContent text="Диалогов не найдено" />
                     )}
                 </div>
             </div>
@@ -228,12 +215,12 @@ const MessengerSidebar: React.FC<Props> = ({ dialogId }) => {
                         <div className={styles.messangerNewChatUsersInfo}>
                             <p className={styles.messangerNewChatUsersTitle}>Пользователи:</p>
 
-                            <p className={styles.messangerNewChatUsersCount}>{chatUsers.length}</p>
+                            <p className={styles.messangerNewChatUsersCount}>{chatUsers?.length}</p>
                         </div>
 
                         {/* Доработать как нибудь, показав выбранных участников сразу */}
                         <div className={styles.messangerNewChatUsersAdded}>
-                            {chatUsers.length ? (
+                            {chatUsers?.length ? (
                                 chatUsers.map((data, id) => <div key={id}>{data}</div>)
                             ) : (
                                 <div className={styles.messangerNewChatUsersAddedText}>Выберите собеседников</div>

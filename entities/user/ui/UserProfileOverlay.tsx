@@ -54,8 +54,7 @@ const UserProfileOverlay: React.FC<Props> = ({ myProfile = false, data }) => {
         const data = await sendStartMessageUser(String(userId), message, () => {
             setMessageModal(false);
             setMessage('');
-        });
-        setSendMessageIsLoading(false);
+        }).finally(() => setSendMessageIsLoading(false));
 
         if (data) {
             router.push(`/messenger/${data.chatId}`);

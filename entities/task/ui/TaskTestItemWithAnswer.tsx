@@ -11,9 +11,6 @@ import styles from './index.module.scss';
 import { Input } from '@/shared/ui/Input';
 import { DynamicSkeleton } from '@/shared/ui/Skeleton';
 import { Text } from '@/shared/ui/Text';
-import { Modal } from '@/shared/ui/Modal';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { Warn } from '@/shared/icons';
 import { TestTask } from '@/entities/test';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
@@ -32,63 +29,39 @@ const TaskTestItemWithAnswer: React.FC<Props> = ({ data, setValue }) => {
     const { number, theme, isDetailedAnswer } = subjectTask || {};
     const { subTheme: subThemeName } = subTheme || {};
 
-    const [warn, setWarn] = React.useState(false);
-    const [warnText, setWarnText] = React.useState('');
-
     return (
-        <>
-            <div className={styles.taskTestItem}>
-                <div className={base.titleInner}>
-                    <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
-                        <span className={base.titleWrapper}>
-                            <span className={base.circle32}>{number}</span>
+        <div className={styles.taskTestItem}>
+            <Link prefetch={false} href={`/task/${id}`} className={styles.taskItemWrapper}>
+                <span className={base.titleWrapper}>
+                    <span className={base.circle32}>{number}</span>
 
-                            <Text variant="h4">Задание</Text>
-                        </span>
+                    <Text variant="h4">Задание</Text>
+                </span>
 
-                        {theme && <p className={styles.taskTheme}>{theme}</p>}
+                {theme && <p className={styles.taskTheme}>{theme}</p>}
 
-                        {subTheme && <p className={styles.taskTheme}>{subThemeName}</p>}
-                    </Link>
+                {subTheme && <p className={styles.taskTheme}>{subThemeName}</p>}
+            </Link>
 
-                    {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
-                        <Warn />
-                    </IconButton> */}
+            {task && (
+                <div className={base.format}>
+                    <CustomHtmlParser html={task} />
                 </div>
+            )}
 
-                {task && (
-                    <div className={base.format}>
-                        <CustomHtmlParser html={task} />
-                    </div>
-                )}
+            {isDetailedAnswer ? (
+                <p className={styles.taskTestItemDetailed}>
+                    Задание проверяется самостоятельно, решите данное задание в тетради и на следующей странице вы
+                    сможете проверить его
+                </p>
+            ) : (
+                <div className={cn(base.baseWrapperGap4, styles.testTaskItemAnswer)}>
+                    <p className={styles.answerTitle}>Ответ:</p>
 
-                {isDetailedAnswer ? (
-                    <p className={styles.taskTestItemDetailed}>
-                        Задание проверяется самостоятельно, решите данное задание в тетради и на следующей странице вы
-                        сможете проверить его
-                    </p>
-                ) : (
-                    <div className={cn(base.baseWrapperGap4, styles.testTaskItemAnswer)}>
-                        <p className={styles.answerTitle}>Ответ:</p>
-
-                        <Input setValue={(e) => setValue(id, String(e))} color="white" />
-                    </div>
-                )}
-            </div>
-
-            {/* <Modal value={warn} setValue={setWarn} title="Жалоба на задание" size="small">
-                <Input
-                    value={warnText}
-                    setValue={setWarnText}
-                    variant="textarea"
-                    title="Опишите проблему"
-                    trackLength
-                    lengthLimit={1000}
-                />
-
-                <Button>Отправить</Button>
-            </Modal> */}
-        </>
+                    <Input setValue={(e) => setValue(id, String(e))} color="white" />
+                </div>
+            )}
+        </div>
     );
 };
 

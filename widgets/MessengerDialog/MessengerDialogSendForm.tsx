@@ -3,13 +3,14 @@
 import React, { FormEvent } from 'react';
 import cn from 'classnames';
 import EmojiPicker, { EmojiClickData, EmojiStyle, SkinTonePickerLocation } from 'emoji-picker-react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 
 import styles from './index.module.scss';
 
 import type { Message } from '@/entities/messenger';
 import type { FileInfo } from '@/entities/file';
-import { Clip, Cross, Emoji, Microphone, Send, Warn } from '@/shared/icons';
+import { ArrowBottom, Clip, Cross, Emoji, Microphone, Send, Warn } from '@/shared/icons';
 import { useMessenger } from '@/features/messenger';
 
 import { Text } from '@/shared/ui/Text';
@@ -18,30 +19,33 @@ import { useFile } from '@/features/file';
 import { File } from '@/shared/ui/File';
 
 type Props = {
-    dialogId: string | undefined;
     scrollDialogToBottom: () => void;
     replyMessage: Message | null;
     setReplyMessage: (value: Message | null) => void;
     isEditedMessage: boolean;
     setIsEditedMessage: (value: boolean) => void;
     editMessage?: Message;
-    isKicked?: boolean;
+    messagerDialogRef: React.MutableRefObject<HTMLDivElement | null>;
+    bottomDialogRef: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export const MessengerDialogSendForm: React.FC<Props> = ({
-    dialogId,
     scrollDialogToBottom,
     replyMessage,
     setReplyMessage,
     isEditedMessage,
     setIsEditedMessage,
     editMessage,
-    isKicked = false,
+    messagerDialogRef,
+    bottomDialogRef,
 }) => {
+    const { id: dialogId } = useParams();
+
     const [message, setMessage] = React.useState('');
     const [sendingMessage, setSendingMessage] = React.useState(false);
     const [messageFiles, setMessageFiles] = React.useState<FileInfo[]>([]);
     const [choosedFile, setChoosedFile] = React.useState<File | null>(null);
+    const [showScrollButton, setShowScrollButton] = React.useState(false);
 
     const [emojiShow, setEmojiShow] = React.useState(false);
     const emojiRef = React.useRef<HTMLDivElement>(null);
@@ -60,27 +64,42 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
         readMessages,
         getReactionForMessage,
         userTyping,
+        getChatInfoById,
     } = useMessenger();
     const { uploadFile } = useFile();
 
-    const revalidateChat = async () => {
-        await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
+    const revalidateChat = async (withoutScroll = false) => {
+        await queryClient.invalidateQueries({ queryKey: ['dialog_messanges_by_id'] });
         await queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
         await queryClient.invalidateQueries({ queryKey: ['unread_chats_count'] });
+
+        if (withoutScroll) return;
 
         scrollDialogToBottom();
     };
 
+    const { data, isPending, isError } = useQuery({
+        queryKey: ['dialog_info_by_id', dialogId],
+        queryFn: () => getChatInfoById(String(dialogId)),
+        enabled: !!dialogId,
+    });
+
+    const { isKicked, unreadMessagesCount } = data || {};
+
     const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (((!messageFiles || !messageFiles.length) && (!message || !message.trim())) || !dialogId || sendingMessage) {
+        if (
+            ((!messageFiles || !messageFiles?.length) && (!message || !message.trim())) ||
+            !dialogId ||
+            sendingMessage
+        ) {
             return;
         }
 
         if (isEditedMessage && editMessage?.id) {
             if (editMessage?.message !== message.replace(/\s+/g, ' ')) {
-                await editMessageHandler(editMessage?.id, message.replace(/\s+/g, ' '), revalidateChat);
+                await editMessageHandler(editMessage?.id, message.replace(/\s+/g, ' '), () => revalidateChat(true));
             }
 
             setMessage('');
@@ -94,6 +113,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
             messageFiles,
             () => {
                 setMessage('');
+                setMessageFiles([]);
                 revalidateChat();
             },
             replyMessage?.id,
@@ -116,7 +136,7 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
     const sendTyping = (typing: boolean) => {
         if (!dialogId) return;
 
-        userTyping(dialogId, typing);
+        userTyping(String(dialogId), typing);
     };
 
     const handleEmojiSelect = (el: EmojiClickData) => {
@@ -206,8 +226,47 @@ export const MessengerDialogSendForm: React.FC<Props> = ({
         };
     }, [message]);
 
+    React.useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setShowScrollButton(!entry.isIntersecting);
+            },
+            {
+                root: messagerDialogRef.current,
+                threshold: 1.0,
+            },
+        );
+
+        if (bottomDialogRef.current) {
+            observer.observe(bottomDialogRef.current);
+        }
+
+        return () => {
+            if (bottomDialogRef.current) {
+                observer.disconnect();
+            }
+
+            sendTyping(false);
+        };
+    }, []);
+
+    if (isError || isPending) {
+        return;
+    }
+
     return (
         <div className={styles.messangerDialogSendInner}>
+            <button
+                className={cn(styles.messangerDialogBottom, {
+                    [styles.active]: showScrollButton,
+                })}
+                onClick={scrollDialogToBottom}
+            >
+                <ArrowBottom />
+
+                {!!unreadMessagesCount && <span>{unreadMessagesCount <= 9 ? unreadMessagesCount : '9+'}</span>}
+            </button>
+
             {isKicked ? (
                 <div className={styles.messangerDialogSendKick}>
                     <Warn />

@@ -1,16 +1,21 @@
 'use client';
 
 import type { FileInfo } from '@/entities/file';
-import type { ChatsDTO, Message, ChatInfo, ChatItem } from '@/entities/messenger';
+import type { ChatsDTO, Message, ChatInfo, ChatItem, PagginationMessages } from '@/entities/messenger';
 import useRequest from '@/shared/hooks/useRequest';
 import { buildQueryString } from '@/shared/utils/buildQueryString';
 
 const useMessenger = () => {
     const { request, catchRequestError, errorController } = useRequest();
 
-    const getDialogs = async () => {
-        // Сделать с пагинацией
-        const response = await request<ChatsDTO>({ url: '/messenger/chat?limit=20', isAuth: true });
+    const getDialogs = async (page: number) => {
+        const limit = 10;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
+        const response = await request<ChatsDTO>({ url: `/messenger/chat?${queryString}`, isAuth: true });
 
         if (catchRequestError(response)) {
             return errorController(response);
@@ -21,14 +26,35 @@ const useMessenger = () => {
         }
     };
 
-    const getChatById = async (id: string, failedCallback = () => {}) => {
-        const response = await request<{ chat: ChatInfo; messages: Message[] }>({
+    const getChatInfoById = async (id: string) => {
+        const response = await request<{ chat: ChatInfo }>({
             url: `/messenger/chat/${id}`,
             isAuth: true,
         });
 
         if (catchRequestError(response)) {
-            return errorController(response, '', failedCallback);
+            return errorController(response);
+        }
+
+        if ('data' in response) {
+            return response.data.chat;
+        }
+    };
+
+    const getPaginationMessages = async (page: number, chatId: number | string) => {
+        const limit = 20;
+        const queryString = buildQueryString({
+            offset: page * limit,
+            limit,
+        });
+
+        const response = await request<PagginationMessages>({
+            url: `/messenger/chat/${chatId}/message?${queryString}`,
+            isAuth: true,
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
         }
 
         if ('data' in response) {
@@ -82,7 +108,7 @@ const useMessenger = () => {
         successCallback();
     };
 
-    const clearChatHistory = async (chatId: number, successCallback = () => {}) => {
+    const clearChatHistory = async (chatId: number | string, successCallback = () => {}) => {
         const response = await request<{ chat: ChatItem }>({
             url: `/messenger/chat/${chatId}/history`,
             method: 'DELETE',
@@ -165,6 +191,24 @@ const useMessenger = () => {
         }
     };
 
+    const readAllMessagesByChatId = async (chatId: number | string, successCallback = () => {}) => {
+        const response = await request({
+            url: `/messenger/chat/${chatId}/read`,
+            isAuth: true,
+            method: 'PATCH',
+        });
+
+        if (catchRequestError(response)) {
+            return errorController(response);
+        }
+
+        successCallback();
+
+        if ('data' in response) {
+            return response.data;
+        }
+    };
+
     const getReactionForMessage = async (messageId: number | string, reaction: string, successCallback = () => {}) => {
         const response = await request({
             url: `/messenger/message/${messageId}/reaction`,
@@ -209,7 +253,8 @@ const useMessenger = () => {
 
     return {
         getDialogs,
-        getChatById,
+        getChatInfoById,
+        getPaginationMessages,
         sendMessageInChat,
         editMessage,
         clearChatHistory,
@@ -217,6 +262,7 @@ const useMessenger = () => {
         joinChatFromLink,
         getCountUnreadChats,
         readMessages,
+        readAllMessagesByChatId,
         getReactionForMessage,
         userTyping,
     };

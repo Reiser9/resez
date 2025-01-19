@@ -268,7 +268,7 @@ const TestingTestById = () => {
                                                             key={data.id}
                                                             id={String(data.number)}
                                                             text={data.answer || '-'}
-                                                            value={data.correctAnswers.join(' или ') || '-'}
+                                                            value={data.correctAnswers[0] || '-'}
                                                             status={data.isCorrect ? 'success' : 'error'}
                                                         />
                                                     ))}

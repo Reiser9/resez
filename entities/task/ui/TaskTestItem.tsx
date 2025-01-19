@@ -3,30 +3,31 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import base from '@/shared/styles/base.module.scss';
 import styles from './index.module.scss';
 
 import type { SubjectTaskById } from '../model';
-import { Archive, Check, Comment, Cross, DotsHorizontal, Edit, Notebook, Send, Warn } from '@/shared/icons';
+import { Archive, Check, Comment, Cross, DotsHorizontal, Edit, Notebook, Send } from '@/shared/icons';
 
-import { Spoiler } from '@/shared/ui/Spoiler';
-import { Button, IconButton } from '@/shared/ui/Button';
-import { Modal } from '@/shared/ui/Modal';
-import { Text } from '@/shared/ui/Text';
-import { DynamicSkeleton } from '@/shared/ui/Skeleton';
-import { Input } from '@/shared/ui/Input';
-import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
-import { NotContent } from '@/shared/ui/NotContent';
 import { useTaskComment } from '@/features/task';
 import useAlert from '@/shared/hooks/useAlert';
-import { Preloader } from '@/shared/ui/Preloader';
 import TaskCommentItem from './TaskCommentItem';
 import { useAppSelector } from '@/shared/hooks/useRedux';
-import { useShortInfo } from '@/features/user';
 import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
+import { useShortInfo } from '@/features/user';
+
+import { Preloader } from '@/shared/ui/Preloader';
+import { NotContent } from '@/shared/ui/NotContent';
+import { HoverMenu, MenuLink } from '@/shared/ui/HoverMenu';
+import { Input } from '@/shared/ui/Input';
+import { DynamicSkeleton } from '@/shared/ui/Skeleton';
+import { Text } from '@/shared/ui/Text';
+import { Spoiler } from '@/shared/ui/Spoiler';
+import { IconButton } from '@/shared/ui/Button';
+import { Modal } from '@/shared/ui/Modal';
 
 const CustomHtmlParser = dynamic(() => import('@/shared/ui/CustomHtmlParser/CustomHtmlParser'), {
     ssr: false,
@@ -58,9 +59,6 @@ const TaskTestItem: React.FC<Props> = ({
         data || {};
     const { isDetailedAnswer } = subjectTask || {};
     const { slug, source } = sourceRelation || {};
-
-    const [warn, setWarn] = React.useState(false);
-    const [warnText, setWarnText] = React.useState('');
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [taskModal, setTaskModal] = React.useState(false);
@@ -192,10 +190,6 @@ const TaskTestItem: React.FC<Props> = ({
                     ) : (
                         <div className={styles.taskItemWrapper}>{taskInfoContent()}</div>
                     )}
-
-                    {/* <IconButton small variant="warn" onClick={() => setWarn(true)}>
-                        <Warn />
-                    </IconButton> */}
 
                     {(edit || remove) && (
                         <HoverMenu

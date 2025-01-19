@@ -11,6 +11,7 @@ const useDialog = () => {
             url: `/messenger/message/user/${userId}`,
             data: {
                 message,
+                files: [],
             },
             method: 'POST',
             isAuth: true,

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import cn from 'classnames';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Checkbox, Tooltip } from 'antd';
 
@@ -11,7 +11,7 @@ import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
 import typography from '@/shared/styles/typography.module.scss';
 
-import type { ChatInfo, Message } from '@/entities/messenger/model';
+import type { Message } from '@/entities/messenger/model';
 import {
     ArrowLeft,
     Block,
@@ -42,25 +42,16 @@ import { Badge } from '@/shared/ui/Badge';
 import { ConfirmModal, Modal } from '@/shared/ui/Modal';
 import { CopyLink } from '@/shared/ui/CopyLink';
 import { Input } from '@/shared/ui/Input';
+import { NotContent } from '@/shared/ui/NotContent';
 
 type Props = {
-    selectedMessegesIDs: Message[];
-    setSelectedMessegesIDs: (value: Message[]) => void;
-    data?: ChatInfo;
+    selectedMesseges: Message[];
+    setSelectedMesseges: (value: Message[]) => void;
     setReplyMessage: (value: Message | null) => void;
-    dataLoading: boolean;
 };
 
-export const MessengerDialogTopBar: React.FC<Props> = ({
-    selectedMessegesIDs,
-    setSelectedMessegesIDs,
-    data,
-    setReplyMessage,
-    dataLoading,
-}) => {
-    const { id, chat, isGroup, isLeft, isAdmin, picture, membersCount, userId, isKicked, inviteLink, activity } =
-        data || {};
-    const { isOnline, lastSeen } = activity || {};
+export const MessengerDialogTopBar: React.FC<Props> = ({ selectedMesseges, setSelectedMesseges, setReplyMessage }) => {
+    const { id } = useParams();
 
     const [actionMenu, setActionMenu] = React.useState(false);
     const [infoModal, setInfoModal] = React.useState(false);
@@ -78,29 +69,39 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
 
     const { deleteUserFromChat, getChatUsers, leaveFromChat, returnInChat, updateChatAvatar, removeChatAvatar } =
         useChat();
-    const { clearChatHistory, deleteMessageById } = useMessenger();
+    const { clearChatHistory, deleteMessageById, getChatInfoById } = useMessenger();
 
-    const { data: chatUsers, isLoading } = useQuery({
+    const { data: chatUsers, isPending: chatUsersIsLoading } = useQuery({
         queryKey: ['messanger_chat_users', id],
-        queryFn: () => getChatUsers(id),
+        queryFn: () => getChatUsers(String(id)),
         enabled: !!id && infoModal,
     });
 
+    const { data, isPending, isError } = useQuery({
+        queryKey: ['dialog_info_by_id', id],
+        queryFn: () => getChatInfoById(String(id)),
+        enabled: !!id,
+    });
+
+    const { chat, isGroup, isLeft, isAdmin, picture, membersCount, userId, isKicked, inviteLink, activity } =
+        data || {};
+    const { isOnline, lastSeen } = activity || {};
+
     const revalidateChat = () => {
         queryClient.invalidateQueries({ queryKey: ['messanger_chat_users'] });
-        queryClient.invalidateQueries({ queryKey: ['messenger_dialogs_by_id'] });
+        queryClient.invalidateQueries({ queryKey: ['dialog_messanges_by_id'] });
         queryClient.invalidateQueries({ queryKey: ['messenger_dialogs'] });
     };
 
-    const deleteUserFromChatHandler = (chatId?: number, userId?: number) => {
+    const deleteUserFromChatHandler = (chatId: number | string, userId?: number) => {
         deleteUserFromChat(chatId, userId, revalidateChat);
     };
 
     const deleteMessagesHandler = () => {
-        const selectedIds = selectedMessegesIDs.map((data) => data.id);
+        const selectedIds = selectedMesseges.map((data) => data.id);
 
         deleteMessageById(selectedIds, deleteMessageForAll, () => {
-            setSelectedMessegesIDs([]);
+            setSelectedMesseges([]);
             setDeleteMessageForAll(false);
             revalidateChat();
         });
@@ -111,7 +112,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
             return;
         }
 
-        await leaveFromChat(id, deleteHistoryCheckbox, () => {
+        await leaveFromChat(String(id), deleteHistoryCheckbox, () => {
             revalidateChat();
 
             if (deleteHistoryCheckbox) {
@@ -125,7 +126,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
             return;
         }
 
-        returnInChat(id, revalidateChat);
+        returnInChat(String(id), revalidateChat);
     };
 
     const clearChatHistoryHandler = async () => {
@@ -133,7 +134,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
             return;
         }
 
-        await clearChatHistory(id, () => {
+        await clearChatHistory(String(id), () => {
             revalidateChat();
             router.push('/messenger');
         });
@@ -147,7 +148,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
         let formData = new FormData();
         formData.append('picture', chatAvatar);
 
-        await updateChatAvatar(formData, id, revalidateChat);
+        await updateChatAvatar(formData, String(id), revalidateChat);
     };
 
     const removeChatAvatarHandler = async () => {
@@ -155,7 +156,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
             return;
         }
 
-        await removeChatAvatar(id, revalidateChat);
+        await removeChatAvatar(String(id), revalidateChat);
     };
 
     React.useEffect(() => {
@@ -164,179 +165,182 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
         }
     }, [chatAvatar]);
 
+    if (isPending) {
+        return (
+            <div className={styles.messangerTopBar}>
+                <Preloader offIndent small page />
+            </div>
+        );
+    }
+
+    if(isError){
+        return;
+    }
+
     return (
         <>
             <div className={styles.messangerTopBar}>
-                {!dataLoading && (
-                    <>
-                        <div className={base.titleWrapper} style={{ minWidth: 38 }}>
-                            <IconButton
-                                className={styles.dialogBack}
-                                small
-                                variant="light"
-                                onClick={() => router.push('/messenger')}
-                            >
-                                <ArrowLeft />
-                            </IconButton>
+                <div className={base.titleWrapper} style={{ minWidth: 38 }}>
+                    <IconButton
+                        className={styles.dialogBack}
+                        small
+                        variant="light"
+                        onClick={() => router.push('/messenger')}
+                    >
+                        <ArrowLeft />
+                    </IconButton>
 
-                            {!!selectedMessegesIDs.length && (
-                                <div className={styles.selectedMessages}>
-                                    <p className={styles.selectedMessagesText}>
-                                        Выделено: {selectedMessegesIDs.length}
-                                    </p>
+                    {!!selectedMesseges.length && (
+                        <div className={styles.selectedMessages}>
+                            <p className={styles.selectedMessagesText}>Выделено: {selectedMesseges.length}</p>
 
-                                    <Cross onClick={() => setSelectedMessegesIDs([])} />
+                            <Cross onClick={() => setSelectedMesseges([])} />
+                        </div>
+                    )}
+                </div>
+
+                {!selectedMesseges.length && (
+                    <div className={styles.messangerTopBarInfoWrapper}>
+                        <Badge image={picture} text={chat} />
+
+                        <div className={styles.messangerTopBarInfo}>
+                            <div className={styles.messangerTopBarWrapper}>
+                                {isGroup ? (
+                                    <div className={styles.messangerTopBarName} onClick={() => setInfoModal(true)}>
+                                        {chat}
+                                    </div>
+                                ) : (
+                                    <Link prefetch={false} href={`/user/${chat}`} className={typography.h4}>
+                                        {chat}
+                                    </Link>
+                                )}
+
+                                {/* <Mute className={styles.messangerTopBarMute} /> */}
+                            </div>
+
+                            {!isLeft && !isKicked && (
+                                <div className={styles.messangerTopBarOnline}>
+                                    <Text variant="text2" textClassName={styles.lastOnline}>
+                                        {isGroup
+                                            ? `Участников: ${membersCount}`
+                                            : `${
+                                                  isOnline
+                                                      ? 'Онлайн'
+                                                      : lastSeen
+                                                      ? `Был(а) ${getFormattedDate(lastSeen)}`
+                                                      : 'Был(а) очень давно'
+                                              }`}
+                                    </Text>
+
+                                    {!isGroup && <Mobile />}
                                 </div>
                             )}
                         </div>
+                    </div>
+                )}
 
-                        {!selectedMessegesIDs.length && (
-                            <div className={styles.messangerTopBarInfoWrapper}>
-                                <Badge image={picture} text={chat} />
-
-                                <div className={styles.messangerTopBarInfo}>
-                                    <div className={styles.messangerTopBarWrapper}>
-                                        {isGroup ? (
-                                            <div
-                                                className={styles.messangerTopBarName}
-                                                onClick={() => setInfoModal(true)}
-                                            >
-                                                {chat}
-                                            </div>
-                                        ) : (
-                                            <Link prefetch={false} href={`/user/${chat}`} className={typography.h4}>
-                                                {chat}
-                                            </Link>
-                                        )}
-
-                                        {/* <Mute className={styles.messangerTopBarMute} /> */}
-                                    </div>
-
-                                    {!isLeft && !isKicked && (
-                                        <div className={styles.messangerTopBarOnline}>
-                                            <Text variant="text2" textClassName={styles.lastOnline}>
-                                                {isGroup
-                                                    ? `Участников: ${membersCount}`
-                                                    : `${
-                                                          isOnline
-                                                              ? 'Онлайн'
-                                                              : lastSeen
-                                                              ? `Был(а) ${getFormattedDate(lastSeen)}`
-                                                              : 'Был(а) очень давно'
-                                                      }`}
-                                            </Text>
-
-                                            {!isGroup && <Mobile />}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        <div className={base.titleWrapper}>
-                            {!!selectedMessegesIDs.length && (
-                                <>
-                                    {selectedMessegesIDs.length === 1 && (
-                                        <Button
-                                            variant="light"
-                                            small
-                                            onClick={() => {
-                                                setReplyMessage(selectedMessegesIDs[0]);
-                                                setSelectedMessegesIDs([]);
-                                            }}
-                                        >
-                                            Ответить
-                                        </Button>
-                                    )}
-
-                                    <Button variant="light" small>
-                                        Переслать
-                                    </Button>
-
-                                    <IconButton small variant="danger" onClick={() => setConfirmDeleteMessages(true)}>
-                                        <Delete />
-                                    </IconButton>
-                                </>
-                            )}
-
-                            <HoverMenu
-                                button={
-                                    <IconButton small variant="light" onClick={() => setActionMenu((prev) => !prev)}>
-                                        <DotsHorizontal />
-                                    </IconButton>
-                                }
-                                value={actionMenu}
-                                setValue={setActionMenu}
-                            >
-                                {isGroup && (
-                                    <>
-                                        {!isLeft && !isKicked && (
-                                            <MenuLink
-                                                onClick={() => {
-                                                    setActionMenu(false);
-                                                    setInfoModal(true);
-                                                }}
-                                            >
-                                                <User />
-                                                Группа
-                                            </MenuLink>
-                                        )}
-
-                                        {isLeft ? (
-                                            <MenuLink onClick={enterToChat}>
-                                                <Enter />
-                                                Вернуться в чат
-                                            </MenuLink>
-                                        ) : (
-                                            !isKicked && (
-                                                <MenuLink
-                                                    danger
-                                                    onClick={() => {
-                                                        setActionMenu(false);
-                                                        setConfirmQuit(true);
-                                                    }}
-                                                >
-                                                    <Cross />
-                                                    Выйти из чата
-                                                </MenuLink>
-                                            )
-                                        )}
-                                    </>
-                                )}
-
-                                {!isGroup && (
-                                    <>
-                                        <MenuLink onClick={() => router.push(`/user/${chat}`)}>
-                                            <User />
-                                            Профиль
-                                        </MenuLink>
-
-                                        <MenuLink danger>
-                                            <Block />
-                                            Заблокировать
-                                        </MenuLink>
-                                    </>
-                                )}
-
-                                <MenuLink>
-                                    <Phone />
-                                    Звонок
-                                </MenuLink>
-
-                                <MenuLink
-                                    danger
+                <div className={base.titleWrapper}>
+                    {!!selectedMesseges.length && (
+                        <>
+                            {selectedMesseges.length === 1 && (
+                                <Button
+                                    variant="light"
+                                    small
                                     onClick={() => {
-                                        setActionMenu(false);
-                                        setConfirmDeleteDialog(true);
+                                        setReplyMessage(selectedMesseges[0]);
+                                        setSelectedMesseges([]);
                                     }}
                                 >
-                                    <Delete />
-                                    Удалить чат
+                                    Ответить
+                                </Button>
+                            )}
+
+                            <Button variant="light" small>
+                                Переслать
+                            </Button>
+
+                            <IconButton small variant="danger" onClick={() => setConfirmDeleteMessages(true)}>
+                                <Delete />
+                            </IconButton>
+                        </>
+                    )}
+
+                    <HoverMenu
+                        button={
+                            <IconButton small variant="light" onClick={() => setActionMenu((prev) => !prev)}>
+                                <DotsHorizontal />
+                            </IconButton>
+                        }
+                        value={actionMenu}
+                        setValue={setActionMenu}
+                    >
+                        {isGroup && (
+                            <>
+                                {!isLeft && !isKicked && (
+                                    <MenuLink
+                                        onClick={() => {
+                                            setActionMenu(false);
+                                            setInfoModal(true);
+                                        }}
+                                    >
+                                        <User />
+                                        Группа
+                                    </MenuLink>
+                                )}
+
+                                {isLeft ? (
+                                    <MenuLink onClick={enterToChat}>
+                                        <Enter />
+                                        Вернуться в чат
+                                    </MenuLink>
+                                ) : (
+                                    !isKicked && (
+                                        <MenuLink
+                                            danger
+                                            onClick={() => {
+                                                setActionMenu(false);
+                                                setConfirmQuit(true);
+                                            }}
+                                        >
+                                            <Cross />
+                                            Выйти из чата
+                                        </MenuLink>
+                                    )
+                                )}
+                            </>
+                        )}
+
+                        {!isGroup && (
+                            <>
+                                <MenuLink onClick={() => router.push(`/user/${chat}`)}>
+                                    <User />
+                                    Профиль
                                 </MenuLink>
-                            </HoverMenu>
-                        </div>
-                    </>
-                )}
+
+                                <MenuLink danger>
+                                    <Block />
+                                    Заблокировать
+                                </MenuLink>
+                            </>
+                        )}
+
+                        <MenuLink>
+                            <Phone />
+                            Звонок
+                        </MenuLink>
+
+                        <MenuLink
+                            danger
+                            onClick={() => {
+                                setActionMenu(false);
+                                setConfirmDeleteDialog(true);
+                            }}
+                        >
+                            <Delete />
+                            Удалить чат
+                        </MenuLink>
+                    </HoverMenu>
+                </div>
             </div>
 
             {!isLeft && !isKicked && (
@@ -381,7 +385,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                             </div>
 
                             <div className={styles.messangerUsersList}>
-                                {isLoading ? (
+                                {chatUsersIsLoading ? (
                                     <Preloader small page />
                                 ) : (
                                     chatUsers?.users?.map((data) => (
@@ -419,7 +423,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
                                                         small
                                                         variant="danger"
                                                         circle
-                                                        onClick={() => deleteUserFromChatHandler(id, data.id)}
+                                                        onClick={() => deleteUserFromChatHandler(String(id), data.id)}
                                                     >
                                                         <Cross />
                                                     </IconButton>
@@ -471,7 +475,7 @@ export const MessengerDialogTopBar: React.FC<Props> = ({
             </ConfirmModal>
 
             <ConfirmModal
-                text={`Вы действительно хотите удалить ${selectedMessegesIDs.length > 1 ? 'сообщения' : 'сообщение'}?`}
+                text={`Вы действительно хотите удалить ${selectedMesseges.length > 1 ? 'сообщения' : 'сообщение'}?`}
                 value={confirmDeleteMessages}
                 setValue={setConfirmDeleteMessages}
                 confirmText="Удалить"

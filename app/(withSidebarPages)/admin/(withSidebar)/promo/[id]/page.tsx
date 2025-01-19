@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { useParams } from 'next/navigation';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';

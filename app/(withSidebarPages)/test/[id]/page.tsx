@@ -3,7 +3,7 @@
 import React from 'react';
 import cn from 'classnames';
 import { useParams } from 'next/navigation';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import styles from './index.module.scss';
 import base from '@/shared/styles/base.module.scss';
@@ -20,12 +20,12 @@ import { useUserPermissions } from '@/features/user';
 import { useTask } from '@/features/task';
 import { TaskItem } from '@/entities/task/ui';
 import TestInfo from '../ui/TestInfo';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 import { Text } from '@/shared/ui/Text';
 import { NotContent } from '@/shared/ui/NotContent';
 import { Modal } from '@/shared/ui/Modal';
 import { Preloader } from '@/shared/ui/Preloader';
-import { Button } from '@/shared/ui/Button';
 
 const TestPage = () => {
     const { getUserPermissions } = useUserPermissions();
@@ -63,30 +63,17 @@ const TestPage = () => {
     const {
         data: test,
         isLoading: testIsLoading,
-        isError,
+        isError: testIsError,
     } = useQuery({
         queryKey: ['test_by_id', id],
         queryFn: () => getTestById(String(id)),
         enabled: !!id,
     });
 
-    const {
-        data,
-        isPending,
-        isError: adminTasksError,
-        fetchNextPage,
-        isFetchingNextPage,
-        hasNextPage,
-    } = useInfiniteQuery({
-        queryKey: ['admin_tasks', subjectTaskId, currentTaskId],
+    const { data, endPage, isPending, isError, isFetchingNextPage } = useInfiniteScroll({
+        queryKey: ['admin_tasks', String(subjectTaskId), String(currentTaskId)],
         queryFn: (pageParam) =>
-            getPagginationTasks(pageParam.pageParam, '', subjectTaskId || '', '', '', '', 9, currentTaskId || ''),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            const nextPage = !lastPage?.isLast ? allPages?.length : undefined;
-
-            return nextPage;
-        },
+            getPagginationTasks(pageParam, '', subjectTaskId || '', '', '', '', 9, currentTaskId || ''),
         enabled: !!subjectTaskId && !!currentTaskId,
     });
 
@@ -123,7 +110,7 @@ const TestPage = () => {
         return <Preloader page />;
     }
 
-    if (isError) {
+    if (testIsError) {
         return <NotContent text="Произошла ошибка при загрузке данных" icon={<Cross />} danger />;
     }
 
@@ -162,7 +149,7 @@ const TestPage = () => {
                 <Modal title="Заменить задание" value={swapModal} setValue={setSwapModal}>
                     {isPending ? (
                         <Preloader small page />
-                    ) : adminTasksError ? (
+                    ) : isError ? (
                         <NotContent icon={<Cross />} danger text="Произошла ошибка при загрузке данных" />
                     ) : (
                         <div className={base.baseWrapperGap24}>
@@ -222,16 +209,9 @@ const TestPage = () => {
                                             )}
                                         </div>
 
-                                        {!adminTasksError && hasNextPage && (
-                                            <Button
-                                                auto
-                                                onClick={fetchNextPage}
-                                                loading={isFetchingNextPage}
-                                                className={base.buttonShowMore}
-                                            >
-                                                Показать еще
-                                            </Button>
-                                        )}
+                                        {isFetchingNextPage && <Preloader offIndent small page />}
+
+                                        {!isFetchingNextPage && <div ref={endPage}></div>}
                                     </div>
                                 ) : (
                                     <NotContent text="Заданий не найдено" />

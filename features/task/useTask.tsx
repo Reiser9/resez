@@ -73,7 +73,7 @@ const useTask = () => {
                 isVerified,
                 solution,
                 answers,
-                sourceId,
+                ...(sourceId && { sourceId }),
             },
         });
 
